@@ -1,0 +1,19 @@
+{
+  "clock_enabled": false,
+  "output": {
+    "accepted": 0,
+    "attempted": 0,
+    "connected": null,
+    "disconnects": 1,
+    "error": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+    "failed": 0,
+    "generation": null,
+    "last_failure": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+    "ready": false,
+    "rearm_required": false,
+    "status": null
+  },
+  "playing": false,
+  "selected_index": 0,
+  "ui_notice": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement"
+}

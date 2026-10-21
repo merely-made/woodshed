@@ -1,0 +1,11 @@
+{
+  "README.md": "bc5f3ccffaaa460d1a3b0c177819f8378bfb67101c285974ac50a61c48b7f44f",
+  "checks/build-final.log": "ef095cb5da9e217fabf30e0c3f81165c13ebddfb1c3dcc8e38420835aca6d852",
+  "checks/core-check.log": "6064cf63e9ee745785cd42c65e28dc84386731df88359965716e76ab791b0f96",
+  "checks/linux-check.log": "e5b09a6709dbbf68149bcd8f9497befe086a118c330f99e48cfd921e68cec433",
+  "checks/windows-check.log": "a4eb3f92ff258a74c609e8f5a22fdf5afe2a97d7a5dcaec12c0f05a741bc0407",
+  "preservation.json": "6bbd6c1873dd7866221e2f2a0dba6725d5ac6824e80e64f7358d45abdee4933a",
+  "receipt.json": "25247df1a033d42667134905791fbf3ad8ea51f861b60f46381c526bc6a2f25c",
+  "source.sha256": "1d14641fe055de8b8baaa02e9f0b416a3cf73e0309e3ea46f90eba381d69ebd0",
+  "task.patch": "b62d04fbaf4390a553191251ad04cb0c196293d78d0ad8f3ff0fdcd66246f23d"
+}

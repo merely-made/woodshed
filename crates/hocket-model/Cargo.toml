@@ -11,6 +11,7 @@ rust-version = "1.97.1"
 publish = false
 
 [dependencies]
+audio-packs.workspace = true
 # Intentionally minimal — this crate must remain framework-agnostic.
 # No cpal, no xilem, no masonry, no winit.
 serde = { workspace = true }

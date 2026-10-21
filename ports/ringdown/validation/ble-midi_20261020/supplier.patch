@@ -1,0 +1,1902 @@
+--- upstream/Cargo.toml
++++ maintained/Cargo.toml
+@@ -23,7 +23,7 @@
+ async-trait = "0.1.83"
+ 
+ [target.'cfg(target_os = "linux")'.dependencies]
+-bluer = { version = "0.17.3", features = ["bluetoothd"] }
++bluer = { path = "vendor/bluer", version = "0.17.4", features = ["bluetoothd"] }
+ 
+ [target.'cfg(target_os = "windows")'.dependencies]
+ windows = { version = "0.57.0", features = [
+--- upstream/src/error.rs
++++ maintained/src/error.rs
+@@ -7,6 +7,10 @@
+     Windows,
+     PermissionDenied,
+     ChannelError,
++    NotSubscribed,
++    WouldBlock,
++    Unsupported,
++    Expired,
+ }
+ 
+ impl From<ErrorType> for &'static str {
+@@ -17,6 +21,10 @@
+             ErrorType::Windows => "Windows",
+             ErrorType::PermissionDenied => "PermissionDenied",
+             ErrorType::ChannelError => "ChannelError",
++            ErrorType::NotSubscribed => "NotSubscribed",
++            ErrorType::WouldBlock => "WouldBlock",
++            ErrorType::Unsupported => "Unsupported",
++            ErrorType::Expired => "Expired",
+         }
+     }
+ }
+@@ -39,6 +47,10 @@
+ }
+ 
+ impl Error {
++    pub fn kind(&self) -> &ErrorType {
++        &self.error_type
++    }
++
+     pub fn new<T: Into<String>>(name: T, description: T, error_type: ErrorType) -> Self {
+         let name: String = name.into();
+         let description: String = description.into();
+--- upstream/src/gatt/peripheral_event.rs
++++ maintained/src/gatt/peripheral_event.rs
+@@ -26,6 +26,8 @@
+ #[derive(Debug, Clone)]
+ pub struct PeripheralRequest {
+     pub client: String,
++    /// Changes on every subscription; zero for read/write requests.
++    pub generation: u64,
+     pub service: Uuid,
+     pub characteristic: Uuid,
+ }
+--- upstream/src/peripheral/bluez/characteristic_utils.rs
++++ maintained/src/peripheral/bluez/characteristic_utils.rs
+@@ -114,7 +114,7 @@
+ 
+     return Some(CharacteristicRead {
+         read: true,
+-        secure_read: is_secure,
++        encrypt_read: is_secure,
+         fun: Box::new(move |request: CharacteristicReadRequest| {
+             let sender_tx_clone = sender_tx.clone();
+             async move {
+@@ -159,7 +159,7 @@
+         write: is_write,
+         write_without_response: is_write_with_response,
+         authenticated_signed_writes: is_authnticated_signed_write,
+-        secure_write: is_write_encryption,
++        encrypt_write: is_write_encryption,
+         method: CharacteristicWriteMethod::Fun(Box::new(
+             move |value: Vec<u8>, request: CharacteristicWriteRequest| {
+                 let sender_tx_clone = sender_tx.clone();
+@@ -202,6 +202,8 @@
+ 
+     return Some(CharacteristicNotify {
+         notify: notify || notify_encryption_required,
++        encrypt_notify: notify_encryption_required,
++        encrypt_indicate: indicate_encryption_required,
+         indicate: indicate || indicate_encryption_required,
+         method: CharacteristicNotifyMethod::Io,
+         ..Default::default()
+@@ -231,7 +233,7 @@
+     let value = descriptor.value;
+     return Some(DescriptorRead {
+         read: true,
+-        secure_read: is_secure,
++        encrypt_read: is_secure,
+         fun: Box::new(move |_: DescriptorReadRequest| {
+             let value_clone = value.clone();
+             async move {
+@@ -268,7 +270,7 @@
+     return Some(DescriptorWrite {
+         write: is_write || is_write_with_response,
+         encrypt_authenticated_write: is_authnticated_signed_write,
+-        secure_write: is_write_encryption,
++        encrypt_write: is_write_encryption,
+         fun: Box::new(move |value: Vec<u8>, _: DescriptorWriteRequest| {
+             async move {
+                 log::info!("Descriptor Write {value:?}");
+@@ -292,6 +294,7 @@
+         .send(PeripheralEvent::ReadRequest {
+             request: PeripheralRequest {
+                 client: request.device_address.to_string(),
++                generation: 0,
+                 service: service_uuid,
+                 characteristic,
+             },
+@@ -324,6 +327,7 @@
+         .send(PeripheralEvent::WriteRequest {
+             request: PeripheralRequest {
+                 client: request.device_address.to_string(),
++                generation: 0,
+                 service: service_uuid,
+                 characteristic,
+             },
+--- upstream/src/peripheral/bluez/mod.rs
++++ maintained/src/peripheral/bluez/mod.rs
+@@ -10,16 +10,16 @@
+ };
+ use async_trait::async_trait;
+ use bluer::{
++    Adapter, AdapterEvent, AdapterProperty,
+     adv::{Advertisement, AdvertisementHandle},
+     gatt::{
++        CharacteristicWriter,
+         local::{Application, ApplicationHandle, CharacteristicControlEvent},
+-        CharacteristicWriter,
+     },
+-    Adapter, AdapterEvent, AdapterProperty,
+ };
+ use bluez_utils::CharNotifyHandler;
+ use characteristic_utils::parse_services;
+-use futures::{channel::oneshot, StreamExt};
++use futures::{StreamExt, channel::oneshot};
+ use std::{
+     collections::{BTreeMap, BTreeSet, HashMap},
+     sync::{Arc, Mutex},
+@@ -36,7 +36,9 @@
+     adv_handle: Option<AdvertisementHandle>,
+     app_handle: Option<ApplicationHandle>,
+     sender_tx: Sender<PeripheralEvent>,
+-    writers: Arc<Mutex<HashMap<Uuid, Arc<CharacteristicWriter>>>>,
++    writers: Arc<Mutex<HashMap<Uuid, (String, u64, Arc<CharacteristicWriter>)>>>,
++    tasks: Vec<tokio::task::JoinHandle<()>>,
++    generation: Arc<std::sync::atomic::AtomicU64>,
+     _drop_tx: oneshot::Sender<()>,
+ }
+ 
+@@ -47,7 +49,12 @@
+     async fn new(sender_tx: Sender<PeripheralEvent>) -> Result<Self, Error> {
+         let session = bluer::Session::new().await?;
+         let adapter = session.default_adapter().await?;
+-        adapter.set_powered(true).await?;
++        if !adapter.is_powered().await? {
++            return Err(Error::from_string(
++                "Bluetooth adapter is powered off".into(),
++                ErrorType::Bluez,
++            ));
++        }
+         log::debug!(
+             "Initialize Bluetooth adapter {} with address {}",
+             adapter.name(),
+@@ -59,13 +66,14 @@
+             let sender = sender_tx.clone();
+             tokio::spawn(async move {
+                 let stream_future = async {
+-                    while let Some(AdapterEvent::PropertyChanged(event)) =
+-                        adapter_stream.next().await
+-                    {
++                    while let Some(event) = adapter_stream.next().await {
++                        let AdapterEvent::PropertyChanged(event) = event else {
++                            continue;
++                        };
+                         match event {
+                             AdapterProperty::ActiveAdvertisingInstances(i) => {
+                                 log::debug!("ActiveAdvertisingInstances: {i}")
+-                            }
++                            },
+                             AdapterProperty::Powered(powered) => {
+                                 if let Err(err) = sender
+                                     .send(PeripheralEvent::StateUpdate {
+@@ -75,8 +83,8 @@
+                                 {
+                                     log::error!("Error sending state update event: {:?}", err);
+                                 }
+-                            }
+-                            _ => {}
++                            },
++                            _ => {},
+                         }
+                     }
+                 };
+@@ -94,6 +102,8 @@
+             app_handle: None,
+             sender_tx,
+             writers: Arc::new(Mutex::new(HashMap::new())),
++            tasks: Vec::new(),
++            generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+             _drop_tx: drop_tx,
+         })
+     }
+@@ -123,28 +133,34 @@
+             local_name: Some(name.to_string()),
+             ..Default::default()
+         };
++        // Publish services before advertising. StopAdvertising must not remove
++        // the application while a central is using its characteristic.
++        if self.app_handle.is_none() {
++            let (handlers, services) =
++                parse_services(self.services.clone(), self.sender_tx.clone());
++            self.app_handle = Some(
++                self.adapter
++                    .serve_gatt_application(Application {
++                        services,
++                        ..Default::default()
++                    })
++                    .await?,
++            );
++            self.setup_char_handlers(handlers);
++        }
+         let adv_handle: AdvertisementHandle = self.adapter.advertise(le_advertisement).await?;
+ 
+-        let (handlers, services) = parse_services(self.services.clone(), self.sender_tx.clone());
+-
+-        let app_handle = self
+-            .adapter
+-            .serve_gatt_application(Application {
+-                services,
+-                ..Default::default()
+-            })
+-            .await?;
+-
+-        self.setup_char_handlers(handlers);
+-
+         self.adv_handle = Some(adv_handle);
+-        self.app_handle = Some(app_handle);
+         Ok(())
+     }
+ 
+     async fn stop_advertising(&mut self) -> Result<(), Error> {
+         self.adv_handle = None;
+-        self.app_handle = None;
++        Ok(())
++    }
++
++    async fn shutdown(&mut self) -> Result<(), Error> {
++        self.cleanup();
+         Ok(())
+     }
+ 
+@@ -156,22 +172,33 @@
+     async fn update_characteristic(
+         &mut self,
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+     ) -> Result<(), Error> {
+-        let writers = match self.writers.lock() {
+-            Ok(w) => w,
+-            Err(err) => return Err(Error::from_string(err.to_string(), ErrorType::Bluez)),
++        if std::time::Instant::now() > deadline {
++            return Err(Error::from_type(ErrorType::Expired));
++        }
++        let writer = {
++            let writers = self
++                .writers
++                .lock()
++                .map_err(|_| Error::from_type(ErrorType::ChannelError))?;
++            let (peer, current, writer) = writers
++                .get(&characteristic)
++                .ok_or_else(|| Error::from_type(ErrorType::NotSubscribed))?;
++            if *peer != client || *current != generation {
++                return Err(Error::from_type(ErrorType::NotSubscribed));
++            }
++            writer.clone()
+         };
+-        let writer = writers.get(&characteristic).cloned();
+-        drop(writers);
+-        tokio::spawn(async move {
+-            if let Some(writer) = writer {
+-                if let Err(err) = writer.send(&value).await {
+-                    log::error!("Error sending value {err:?}")
+-                }
+-            }
+-        });
+-        Ok(())
++        // This writer belongs to the original connection, not a later lookup.
++        writer
++            .send(&value)
++            .await
++            .map(|_| ())
++            .map_err(|error| Error::from_string(error.to_string(), ErrorType::Bluez))
+     }
+ }
+ 
+@@ -182,32 +209,38 @@
+             let sender_tx = self.sender_tx.clone();
+             let writers = self.writers.clone();
+ 
+-            tokio::spawn(async move {
++            let generation = self.generation.clone();
++            self.tasks.push(tokio::spawn(async move {
+                 while let Some(CharacteristicControlEvent::Notify(writer)) =
+                     handler.control.next().await
+                 {
+                     let writer = Arc::new(writer);
++                    let current = generation.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+ 
+                     let peripheral_request = PeripheralRequest {
+                         client: writer.device_address().to_string(),
++                        generation: current,
+                         service: handler.service_uuid,
+                         characteristic: handler.characteristic_uuid,
+                     };
+ 
+-                    if let Err(err) = sender_tx
++                    if let Ok(mut writers_lock) = writers.lock() {
++                        writers_lock.insert(
++                            handler.characteristic_uuid,
++                            (peripheral_request.client.clone(), current, writer.clone()),
++                        );
++                    } else {
++                        break;
++                    }
++                    if sender_tx
+                         .send(PeripheralEvent::CharacteristicSubscriptionUpdate {
+                             request: peripheral_request.clone(),
+                             subscribed: true,
+                         })
+                         .await
++                        .is_err()
+                     {
+-                        log::error!("Error sending read request event: {:?}", err);
+-                    }
+-
+-                    if let Ok(mut writers_lock) = writers.lock() {
+-                        writers_lock.insert(handler.characteristic_uuid, writer.clone());
+-                    } else {
+-                        log::error!("Failed to lock writers for adding a writer");
++                        break;
+                     }
+ 
+                     if let Err(err) = writer.closed().await {
+@@ -230,13 +263,24 @@
+                         log::error!("Error sending read request event: {:?}", err);
+                     }
+                 }
+-            });
++            }));
++        }
++    }
++
++    fn cleanup(&mut self) {
++        self.adv_handle = None;
++        self.app_handle = None;
++        for task in self.tasks.drain(..) {
++            task.abort();
++        }
++        if let Ok(mut writers) = self.writers.lock() {
++            writers.clear();
+         }
+     }
+ }
+ 
+ impl Drop for Peripheral {
+     fn drop(&mut self) {
+-        // required for drop order
+-    }
+-}
++        self.cleanup();
++    }
++}
+--- upstream/src/peripheral/corebluetooth/mac_utils.rs
++++ maintained/src/peripheral/corebluetooth/mac_utils.rs
+@@ -6,5 +6,6 @@
+ #[link(name = "Foundation", kind = "framework")]
+ #[link(name = "CoreBluetooth", kind = "framework")]
+ extern "C" {
++    pub fn dispatch_release(object: *mut c_void);
+     pub fn dispatch_queue_create(label: *const c_char, attr: *const c_void) -> *mut c_void;
+ }
+--- upstream/src/peripheral/corebluetooth/mod.rs
++++ maintained/src/peripheral/corebluetooth/mod.rs
+@@ -10,7 +10,7 @@
+     gatt::{peripheral_event::PeripheralEvent, service::Service},
+ };
+ use async_trait::async_trait;
+-use peripheral_manager::{is_authorized, run_peripheral_thread, ManagerEvent};
++use peripheral_manager::{ManagerEvent, is_authorized, run_peripheral_thread};
+ use tokio::sync::{mpsc::Sender, oneshot};
+ use uuid::Uuid;
+ 
+@@ -31,6 +31,14 @@
+         let (manager_tx, manager_rx) = tokio::sync::mpsc::channel(256);
+         run_peripheral_thread(sender_tx, manager_rx);
+         Ok(Peripheral { manager_tx })
++    }
++
++    async fn shutdown(&mut self) -> Result<(), Error> {
++        let (responder, receiver) = oneshot::channel();
++        self.manager_tx
++            .send(ManagerEvent::Shutdown { responder })
++            .await?;
++        receiver.await?
+     }
+ 
+     async fn is_powered(&mut self) -> Result<bool, Error> {
+@@ -83,12 +91,18 @@
+     async fn update_characteristic(
+         &mut self,
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+     ) -> Result<(), Error> {
+         let (responder, responder_rx) = oneshot::channel();
+         self.manager_tx
+             .send(ManagerEvent::UpdateCharacteristic {
+                 characteristic,
++                client,
++                generation,
++                deadline,
+                 value,
+                 responder,
+             })
+--- upstream/src/peripheral/corebluetooth/peripheral_delegate.rs
++++ maintained/src/peripheral/corebluetooth/peripheral_delegate.rs
+@@ -6,7 +6,7 @@
+         WriteRequestResponse,
+     },
+ };
+-use objc2::{declare_class, msg_send_id, mutability, rc::Retained, ClassType, DeclaredClass};
++use objc2::{ClassType, DeclaredClass, declare_class, msg_send_id, mutability, rc::Retained};
+ use objc2_core_bluetooth::{
+     CBATTError, CBATTRequest, CBCentral, CBCharacteristic, CBManagerState, CBPeripheralManager,
+     CBPeripheralManagerDelegate, CBService,
+@@ -18,11 +18,13 @@
+     sync::{Arc, Mutex},
+ };
+ use tokio::sync::{mpsc::Sender, oneshot};
+-use tokio::time::{timeout, Duration};
++use tokio::time::{Duration, timeout};
+ use uuid::Uuid;
+ 
+ pub struct IVars {
+     pub sender: Sender<PeripheralEvent>,
++    pub subscribers: Mutex<HashMap<(Uuid, String), (u64, Retained<CBCentral>)>>,
++    pub generation: std::sync::atomic::AtomicU64,
+     pub services_resolver: Arc<Mutex<HashMap<Uuid, oneshot::Sender<Option<String>>>>>,
+     pub advertisement_resolver: Arc<Mutex<Option<oneshot::Sender<Option<String>>>>>,
+ }
+@@ -47,6 +49,7 @@
+         #[method(peripheralManagerDidUpdateState:)]
+          fn delegate_peripheralmanagerdidupdatestate(&self, peripheral: &CBPeripheralManager){
+                 let state = unsafe { peripheral.state() };
++                if state != CBManagerState::PoweredOn { self.clear_subscribers(); }
+                 self.send_event(PeripheralEvent::StateUpdate { is_powered : state == CBManagerState::PoweredOn });
+          }
+ 
+@@ -94,9 +97,14 @@
+                 if service.is_none() {
+                     return;
+                 }
++                let generation = self.ivars().generation.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++                if let Ok(mut peers) = self.ivars().subscribers.lock() {
++                    peers.insert((characteristic.get_uuid(), central.identifier().to_string()), (generation, Retained::retain(central as *const _ as *mut _).unwrap()));
++                }
+                 self.send_event(PeripheralEvent::CharacteristicSubscriptionUpdate {
+                     request: PeripheralRequest {
+                         client: central.identifier().to_string(),
++                        generation,
+                         service: characteristic.service().unwrap().get_uuid(),
+                         characteristic: characteristic.get_uuid(),
+                     },
+@@ -117,9 +125,12 @@
+                 return;
+             }
+ 
++            let old = self.ivars().subscribers.lock().ok().and_then(|mut peers| peers.remove(&(characteristic.get_uuid(), central.identifier().to_string())));
++            let generation = old.map_or(0, |(generation, _)| generation);
+             self.send_event(PeripheralEvent::CharacteristicSubscriptionUpdate {
+                request: PeripheralRequest {
+                     client: central.identifier().to_string(),
++                    generation,
+                     service: characteristic.service().unwrap().get_uuid(),
+                     characteristic: characteristic.get_uuid(),
+                 },
+@@ -144,6 +155,7 @@
+                 self.send_read_request(
+                     PeripheralRequest{
+                         client: central.identifier().to_string(),
++                        generation: 0,
+                         service: characteristic.service().unwrap().get_uuid(),
+                         characteristic: characteristic.get_uuid(),
+                     },
+@@ -159,6 +171,14 @@
+             manager: &CBPeripheralManager,
+             requests: &NSArray<CBATTRequest>,
+         ){
++            // The shared transport accepts one complete short message at a time.
++            // Reject a batch atomically and respond once to its first request.
++            if requests.len() > 1 {
++                if let Some(first) = requests.first() {
++                    unsafe { manager.respondToRequest_withResult(first, CBATTError::RequestNotSupported); }
++                }
++                return;
++            }
+             for request in requests {
+                 unsafe{
+                     let service = request.characteristic().service();
+@@ -175,6 +195,7 @@
+                     self.send_write_request(
+                         PeripheralRequest{
+                              client: central.identifier().to_string(),
++                            generation: 0,
+                             service: characteristic.service().unwrap().get_uuid(),
+                             characteristic: characteristic.get_uuid(),
+                         },
+@@ -192,6 +213,8 @@
+     pub fn new(sender: Sender<PeripheralEvent>) -> Retained<PeripheralDelegate> {
+         let this = PeripheralDelegate::alloc().set_ivars(IVars {
+             sender,
++            subscribers: Mutex::new(HashMap::new()),
++            generation: std::sync::atomic::AtomicU64::new(1),
+             services_resolver: Arc::new(Mutex::new(HashMap::new())),
+             advertisement_resolver: Arc::new(Mutex::new(None)),
+         });
+@@ -205,23 +228,31 @@
+         return false;
+     }
+ 
+-    /// Wait for delegate to ensure advertisement started successfully
+-    pub async fn ensure_advertisement_started(&self) -> Result<(), Error> {
+-        let (sender, receiver) = oneshot::channel::<Option<String>>();
+-        {
+-            if let Ok(mut resolver) = self.ivars().advertisement_resolver.lock() {
+-                *resolver = Some(sender);
+-            }
+-        }
+-
++    pub fn clear_subscribers(&self) {
++        if let Ok(mut peers) = self.ivars().subscribers.lock() {
++            peers.clear();
++        }
++    }
++
++    pub fn prepare_advertisement(&self) -> Result<oneshot::Receiver<Option<String>>, Error> {
++        let (sender, receiver) = oneshot::channel();
++        let mut resolver = self
++            .ivars()
++            .advertisement_resolver
++            .lock()
++            .map_err(|_| Error::from_type(ErrorType::ChannelError))?;
++        *resolver = Some(sender);
++        Ok(receiver)
++    }
++    pub async fn finish_advertisement(
++        &self,
++        receiver: oneshot::Receiver<Option<String>>,
++    ) -> Result<(), Error> {
+         let event = timeout(Duration::from_secs(5), receiver).await;
+-
+-        {
+-            if let Ok(mut resolver) = self.ivars().advertisement_resolver.lock() {
+-                *resolver = None;
+-            }
+-        }
+-        return self.resolve_event(event);
++        if let Ok(mut resolver) = self.ivars().advertisement_resolver.lock() {
++            *resolver = None;
++        }
++        self.resolve_event(event)
+     }
+ 
+     pub fn is_waiting_for_service_result(&self, service: Uuid) -> bool {
+@@ -231,24 +262,28 @@
+         return false;
+     }
+ 
+-    // Wait for event from delegate if service added successfully
+-    pub async fn ensure_service_added(&self, service: Uuid) -> Result<(), Error> {
+-        let (sender, receiver) = oneshot::channel::<Option<String>>();
+-        {
+-            if let Ok(mut resolver) = self.ivars().services_resolver.lock() {
+-                resolver.insert(service, sender);
+-            }
+-        }
+-
++    pub fn prepare_service(
++        &self,
++        service: Uuid,
++    ) -> Result<oneshot::Receiver<Option<String>>, Error> {
++        let (sender, receiver) = oneshot::channel();
++        self.ivars()
++            .services_resolver
++            .lock()
++            .map_err(|_| Error::from_type(ErrorType::ChannelError))?
++            .insert(service, sender);
++        Ok(receiver)
++    }
++    pub async fn finish_service(
++        &self,
++        service: Uuid,
++        receiver: oneshot::Receiver<Option<String>>,
++    ) -> Result<(), Error> {
+         let event = timeout(Duration::from_secs(5), receiver).await;
+-
+-        {
+-            if let Ok(mut resolver) = self.ivars().services_resolver.lock() {
+-                resolver.remove(&service);
+-            }
+-        }
+-
+-        return self.resolve_event(event);
++        if let Ok(mut resolver) = self.ivars().services_resolver.lock() {
++            resolver.remove(&service);
++        }
++        self.resolve_event(event)
+     }
+ 
+     fn resolve_event(
+@@ -265,13 +300,13 @@
+                     format!("Channel error while waiting: {}", e),
+                     ErrorType::CoreBluetooth,
+                 ));
+-            }
++            },
+             Err(_) => {
+                 return Err(Error::from_string(
+                     "Timeout waiting for event".to_string(),
+                     ErrorType::CoreBluetooth,
+                 ));
+-            }
++            },
+         };
+ 
+         if let Some(error) = event {
+@@ -285,12 +320,9 @@
+ /// Event handler
+ impl PeripheralDelegate {
+     fn send_event(&self, event: PeripheralEvent) {
+-        let sender = self.ivars().sender.clone();
+-        futures::executor::block_on(async {
+-            if let Err(e) = sender.send(event).await {
+-                log::error!("Error sending delegate event: {}", e);
+-            }
+-        });
++        if let Err(error) = self.ivars().sender.try_send(event) {
++            log::error!("Peripheral event could not be queued: {error}");
++        }
+     }
+ 
+     fn send_read_request(
+@@ -304,20 +336,17 @@
+             futures::executor::block_on(async {
+                 let (resp_tx, resp_rx) = oneshot::channel::<ReadRequestResponse>();
+ 
+-                if let Err(e) = sender
+-                    .send(PeripheralEvent::ReadRequest {
+-                        request: peripheral_request,
+-                        offset: request.offset() as u64,
+-                        responder: resp_tx,
+-                    })
+-                    .await
+-                {
++                if let Err(e) = sender.try_send(PeripheralEvent::ReadRequest {
++                    request: peripheral_request,
++                    offset: request.offset() as u64,
++                    responder: resp_tx,
++                }) {
+                     log::error!("Error sending delegate event: {}", e);
+                     return;
+                 }
+ 
+                 let mut cb_att_error = CBATTError::InvalidHandle;
+-                if let Ok(result) = resp_rx.await {
++                if let Some(result) = bounded_response(resp_rx) {
+                     cb_att_error = result.response.to_cb_error();
+                     request.setValue(Some(&NSData::from_vec(result.value)));
+                 }
+@@ -338,27 +367,41 @@
+             futures::executor::block_on(async {
+                 let (resp_tx, resp_rx) = oneshot::channel::<WriteRequestResponse>();
+ 
+-                if let Err(e) = sender
+-                    .send(PeripheralEvent::WriteRequest {
+-                        request: peripheral_request,
+-                        value,
+-                        offset: request.offset() as u64,
+-                        responder: resp_tx,
+-                    })
+-                    .await
+-                {
++                if let Err(e) = sender.try_send(PeripheralEvent::WriteRequest {
++                    request: peripheral_request,
++                    value,
++                    offset: request.offset() as u64,
++                    responder: resp_tx,
++                }) {
+                     log::error!("Error sending delegate event: {}", e);
+                     return;
+                 }
+ 
+                 let mut cb_att_error = CBATTError::InvalidHandle;
+-                if let Ok(result) = resp_rx.await {
++                if let Some(result) = bounded_response(resp_rx) {
+                     cb_att_error = result.response.to_cb_error();
+                 }
+ 
+                 manager.respondToRequest_withResult(request, cb_att_error);
+             });
+         };
++    }
++}
++
++// Callback threads have no Tokio timer context. Keep the wait bounded while
++// the async owner validates ATT requests; never block its serial queue forever.
++fn bounded_response<T>(mut receiver: oneshot::Receiver<T>) -> Option<T> {
++    let deadline = std::time::Instant::now() + std::time::Duration::from_millis(200);
++    loop {
++        match receiver.try_recv() {
++            Ok(value) => return Some(value),
++            Err(oneshot::error::TryRecvError::Closed) => return None,
++            Err(oneshot::error::TryRecvError::Empty) => {},
++        }
++        if std::time::Instant::now() >= deadline {
++            return None;
++        }
++        std::thread::sleep(std::time::Duration::from_millis(1));
+     }
+ }
+ 
+--- upstream/src/peripheral/corebluetooth/peripheral_manager.rs
++++ maintained/src/peripheral/corebluetooth/peripheral_manager.rs
+@@ -5,14 +5,13 @@
+ use crate::gatt::peripheral_event::PeripheralEvent;
+ use crate::gatt::service::Service;
+ use objc2::msg_send_id;
+-use objc2::{rc::Retained, runtime::AnyObject, ClassType};
++use objc2::{ClassType, DeclaredClass, rc::Retained, runtime::AnyObject};
+ use objc2_core_bluetooth::{
+     CBAdvertisementDataLocalNameKey, CBAdvertisementDataServiceUUIDsKey, CBCharacteristic,
+     CBManager, CBManagerAuthorization, CBManagerState, CBMutableCharacteristic, CBMutableService,
+     CBPeripheralManager,
+ };
+ use objc2_foundation::{NSArray, NSData, NSDictionary, NSString};
+-use once_cell::sync::OnceCell;
+ use std::collections::HashMap;
+ use std::ffi::CString;
+ use std::thread;
+@@ -22,6 +21,9 @@
+ use uuid::Uuid;
+ 
+ pub(crate) enum ManagerEvent {
++    Shutdown {
++        responder: oneshot::Sender<Result<(), Error>>,
++    },
+     IsPowered {
+         responder: oneshot::Sender<Result<bool, Error>>,
+     },
+@@ -42,30 +44,40 @@
+     },
+     UpdateCharacteristic {
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+         responder: oneshot::Sender<Result<(), Error>>,
+     },
+ }
+ 
+-static PERIPHERAL_THREAD: OnceCell<()> = OnceCell::new();
+-
+-// Handle Peripheral Manager and all communication in a separate thread
++// Each instance owns its worker; closing the channel releases this manager.
+ pub fn run_peripheral_thread(sender: Sender<PeripheralEvent>, listener: Receiver<ManagerEvent>) {
+-    PERIPHERAL_THREAD.get_or_init(|| {
+-        thread::spawn(move || {
+-            let runtime = runtime::Builder::new_current_thread().enable_time().build();
+-            if runtime.is_err() {
+-                log::error!("Failed to create runtime");
++    thread::spawn(move || {
++        let runtime = match runtime::Builder::new_current_thread().enable_time().build() {
++            Ok(runtime) => runtime,
++            Err(error) => {
++                log::error!("Peripheral runtime: {error}");
+                 return;
+-            }
+-            runtime.unwrap().block_on(async move {
+-                let mut peripheral_manager = PeripheralManager::new(sender, listener);
+-                loop {
+-                    peripheral_manager.handle_event().await;
+-                }
+-            })
++            },
++        };
++        runtime.block_on(async move {
++            let mut manager = PeripheralManager::new(sender, listener);
++            while manager.handle_event().await {}
+         });
+     });
++}
++
++#[derive(Debug)]
++struct DispatchQueue(*mut std::ffi::c_void);
++impl Drop for DispatchQueue {
++    fn drop(&mut self) {
++        // SAFETY: this owns the create reference and outlives the manager fields.
++        unsafe {
++            mac_utils::dispatch_release(self.0);
++        }
++    }
+ }
+ 
+ #[derive(Debug)]
+@@ -74,6 +86,7 @@
+     cb_peripheral_manager: Retained<CBPeripheralManager>,
+     peripheral_delegate: Retained<PeripheralDelegate>,
+     cached_characteristics: HashMap<Uuid, Retained<CBMutableCharacteristic>>,
++    _queue: DispatchQueue,
+ }
+ 
+ impl PeripheralManager {
+@@ -93,40 +106,77 @@
+             cb_peripheral_manager: peripheral_manager,
+             peripheral_delegate: delegate,
+             cached_characteristics: HashMap::new(),
+-        }
+-    }
+-
+-    async fn handle_event(&mut self) {
++            _queue: DispatchQueue(queue.cast()),
++        }
++    }
++
++    async fn handle_event(&mut self) -> bool {
+         if let Some(event) = self.manager_event.recv().await {
+             let _ = match event {
++                ManagerEvent::Shutdown { responder } => {
++                    self.cleanup();
++                    let _ = responder.send(Ok(()));
++                    return false;
++                },
+                 ManagerEvent::IsPowered { responder } => {
+                     let _ = responder.send(Ok(self.is_powered()));
+-                }
++                },
+                 ManagerEvent::IsAdvertising { responder } => {
+                     let _ = responder.send(Ok(self.is_advertising()));
+-                }
++                },
+                 ManagerEvent::StartAdvertising {
+                     name,
+                     uuids,
+                     responder,
+                 } => {
+                     let _ = responder.send(self.start_advertising(&name, &uuids).await);
+-                }
++                },
+                 ManagerEvent::StopAdvertising { responder } => {
+                     let _ = responder.send(Ok(self.stop_advertising()));
+-                }
++                },
+                 ManagerEvent::AddService { service, responder } => {
+                     let _ = responder.send(self.add_service(&service).await);
+-                }
++                },
+                 ManagerEvent::UpdateCharacteristic {
+                     characteristic,
++                    client,
++                    generation,
++                    deadline,
+                     value,
+                     responder,
+                 } => {
+-                    let _ = responder.send(self.update_characteristic(characteristic, value).await);
+-                }
++                    // A timed-out caller drops the reply receiver. Never run
++                    // a not-yet-started send from its abandoned command.
++                    if !responder.is_closed() {
++                        let result = self
++                            .update_characteristic(
++                                characteristic,
++                                client,
++                                generation,
++                                deadline,
++                                value,
++                            )
++                            .await;
++                        let _ = responder.send(result);
++                    }
++                },
+             };
+-        }
++            true
++        } else {
++            false
++        }
++    }
++
++    fn cleanup(&mut self) {
++        // SAFETY: retained manager is owned by this worker. Native callbacks
++        // synchronize subscription state through the delegate's mutex.
++        unsafe {
++            self.cb_peripheral_manager.stopAdvertising();
++            self.cb_peripheral_manager.removeAllServices();
++            self.cb_peripheral_manager.setDelegate(None);
++        }
++        self.cached_characteristics.clear();
++        self.peripheral_delegate.clear_subscribers();
+     }
+ 
+     fn is_powered(self: &Self) -> bool {
+@@ -163,15 +213,14 @@
+         let advertising_data: Retained<NSDictionary<NSString, AnyObject>> =
+             NSDictionary::from_vec(&keys, objects);
+ 
++        let receiver = self.peripheral_delegate.prepare_advertisement()?;
+         unsafe {
+             self.cb_peripheral_manager
+                 .startAdvertising(Some(&advertising_data));
+         }
+-
+-        return self
+-            .peripheral_delegate
+-            .ensure_advertisement_started()
+-            .await;
++        self.peripheral_delegate
++            .finish_advertisement(receiver)
++            .await
+     }
+ 
+     fn stop_advertising(self: &Self) {
+@@ -187,19 +236,51 @@
+     async fn update_characteristic(
+         &mut self,
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+     ) -> Result<(), Error> {
+-        if let Some(char) = self.cached_characteristics.get(&characteristic) {
+-            unsafe {
+-                self.cb_peripheral_manager
+-                    .updateValue_forCharacteristic_onSubscribedCentrals(
+-                        &NSData::from_vec(value.clone()),
+-                        char,
+-                        None,
+-                    );
++        if std::time::Instant::now() > deadline {
++            return Err(Error::from_type(ErrorType::Expired));
++        }
++        let char = self
++            .cached_characteristics
++            .get(&characteristic)
++            .ok_or_else(|| Error::from_type(ErrorType::NotSubscribed))?;
++        let subscribers = self
++            .peripheral_delegate
++            .ivars()
++            .subscribers
++            .lock()
++            .map_err(|_| Error::from_type(ErrorType::ChannelError))?;
++        let (current, central) = subscribers
++            .get(&(characteristic, client))
++            .ok_or_else(|| Error::from_type(ErrorType::NotSubscribed))?;
++        if *current != generation {
++            return Err(Error::from_type(ErrorType::NotSubscribed));
++        }
++        // SAFETY: retained central/characteristic/manager remain alive under
++        // this subscription guard; CoreBluetooth performs the radio operation.
++        let accepted = unsafe {
++            if value.len() > central.maximumUpdateValueLength() {
++                return Err(Error::from_string(
++                    "Notification exceeds negotiated size".into(),
++                    ErrorType::CoreBluetooth,
++                ));
+             }
+-        }
+-        return Ok(());
++            self.cb_peripheral_manager
++                .updateValue_forCharacteristic_onSubscribedCentrals(
++                    &NSData::from_vec(value),
++                    char,
++                    Some(&NSArray::from_vec(vec![central.clone()])),
++                )
++        };
++        if accepted {
++            Ok(())
++        } else {
++            Err(Error::from_type(ErrorType::WouldBlock))
++        }
+     }
+ 
+     // Peripheral with cache value must only have Read permission, else it will crash
+@@ -236,11 +317,11 @@
+                 mutable_service.setCharacteristics(Some(&chars));
+             }
+ 
++            let receiver = self.peripheral_delegate.prepare_service(service.uuid)?;
+             self.cb_peripheral_manager.addService(&mutable_service);
+-
+             return self
+                 .peripheral_delegate
+-                .ensure_service_added(service.uuid)
++                .finish_service(service.uuid, receiver)
+                 .await;
+         }
+     }
+@@ -251,3 +332,9 @@
+     return authorization != CBManagerAuthorization::Restricted
+         && authorization != CBManagerAuthorization::Denied;
+ }
++
++impl Drop for PeripheralManager {
++    fn drop(&mut self) {
++        self.cleanup();
++    }
++}
+--- upstream/src/peripheral/mod.rs
++++ maintained/src/peripheral/mod.rs
+@@ -35,11 +35,17 @@
+ 
+     async fn stop_advertising(&mut self) -> Result<(), Error>;
+ 
++    /// Stop advertising, remove services and release platform event handlers.
++    async fn shutdown(&mut self) -> Result<(), Error>;
++
+     async fn add_service(&mut self, service: &Service) -> Result<(), Error>;
+ 
+     async fn update_characteristic(
+         &mut self,
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+     ) -> Result<(), Error>;
+ }
+--- upstream/src/peripheral/winrt/characteristic_utils.rs
++++ maintained/src/peripheral/winrt/characteristic_utils.rs
+@@ -10,6 +10,21 @@
+ pub fn get_gatt_characteristic_properties(
+     characteristic: &Characteristic,
+ ) -> windows::core::Result<GattCharacteristicProperties> {
++    // WinRT exposes read/write protection but no documented notification
++    // protection setter. Do not silently translate an encryption requirement
++    // into an ordinary Notify bit. Compatibility must be explicitly selected.
++    if characteristic.properties.iter().any(|property| {
++        matches!(
++            property,
++            CharacteristicProperty::NotifyEncryptionRequired
++                | CharacteristicProperty::IndicateEncryptionRequired
++        )
++    }) {
++        return Err(windows::core::Error::new(
++            windows::core::HRESULT(0x80004001u32 as i32),
++            "This WinRT supplier cannot enforce notification encryption; explicitly choose unencrypted compatibility",
++        ));
++    }
+     return Ok(characteristic
+         .properties
+         .iter()
+@@ -42,7 +57,7 @@
+             CharacteristicProperty::Read => GattCharacteristicProperties::Read,
+             CharacteristicProperty::WriteWithoutResponse => {
+                 GattCharacteristicProperties::WriteWithoutResponse
+-            }
++            },
+             CharacteristicProperty::Write => GattCharacteristicProperties::Write,
+             CharacteristicProperty::Notify => GattCharacteristicProperties::Notify,
+ 
+@@ -50,16 +65,16 @@
+ 
+             CharacteristicProperty::AuthenticatedSignedWrites => {
+                 GattCharacteristicProperties::AuthenticatedSignedWrites
+-            }
++            },
+             CharacteristicProperty::ExtendedProperties => {
+                 GattCharacteristicProperties::ExtendedProperties
+-            }
++            },
+             CharacteristicProperty::IndicateEncryptionRequired => {
+                 GattCharacteristicProperties::Indicate // Alternative not available
+-            }
++            },
+             CharacteristicProperty::NotifyEncryptionRequired => {
+                 GattCharacteristicProperties::Notify // Alternative not available
+-            }
++            },
+         };
+     }
+ }
+--- upstream/src/peripheral/winrt/mod.rs
++++ maintained/src/peripheral/winrt/mod.rs
+@@ -23,8 +23,13 @@
+ 
+     async fn new(sender_tx: Sender<PeripheralEvent>) -> Result<Self, Error> {
+         Ok(Self {
+-            peripheral_manager: PeripheralManager::new(sender_tx).await,
++            peripheral_manager: PeripheralManager::new(sender_tx).await?,
+         })
++    }
++
++    async fn shutdown(&mut self) -> Result<(), Error> {
++        self.peripheral_manager.shutdown().await?;
++        Ok(())
+     }
+ 
+     async fn is_powered(&mut self) -> Result<bool, Error> {
+@@ -59,11 +64,14 @@
+     async fn update_characteristic(
+         &mut self,
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+     ) -> Result<(), Error> {
+         if let Err(err) = self
+             .peripheral_manager
+-            .update_characteristic(characteristic, value)
++            .update_characteristic(characteristic, client, generation, deadline, value)
+             .await
+         {
+             return Err(Error::from(err));
+--- upstream/src/peripheral/winrt/peripheral_manager.rs
++++ maintained/src/peripheral/winrt/peripheral_manager.rs
+@@ -1,45 +1,52 @@
+ use super::characteristic_utils::{get_gatt_characteristic_properties, get_protection_level};
+ use super::win_event_handler::WinEventHandler;
+ use super::win_utils::{
+-    to_guid, vec_to_buffer, GattCharacteristicObject, GattServiceProviderObject,
++    GattCharacteristicObject, GattServiceProviderObject, to_guid, vec_to_buffer,
+ };
+ use crate::gatt::peripheral_event::PeripheralEvent;
+ use crate::gatt::service::Service;
+ use std::collections::HashMap;
+ use tokio::sync::mpsc::Sender;
+ use uuid::Uuid;
+-use windows::core::{Error, HRESULT};
+ use windows::Devices::Bluetooth::GenericAttributeProfile::{
+     GattLocalCharacteristicParameters, GattLocalDescriptorParameters, GattServiceProvider,
+     GattServiceProviderAdvertisementStatus, GattServiceProviderAdvertisingParameters,
+-    GattSubscribedClient,
+ };
+ use windows::Devices::Bluetooth::{BluetoothAdapter, BluetoothError};
+ use windows::Devices::Radios::{Radio, RadioKind};
+ use windows::Foundation::EventRegistrationToken;
++use windows::core::{Error, HRESULT};
+ 
+ pub(crate) struct PeripheralManager {
+     event_handler: WinEventHandler,
++    radios: Vec<(Radio, EventRegistrationToken)>,
+     services: HashMap<Uuid, GattServiceProviderObject>,
+ }
+ 
+ impl PeripheralManager {
+-    pub(crate) async fn new(sender_tx: Sender<PeripheralEvent>) -> Self {
+-        let manager = Self {
++    pub(crate) async fn new(sender_tx: Sender<PeripheralEvent>) -> windows::core::Result<Self> {
++        let adapter = BluetoothAdapter::GetDefaultAsync()?.await?;
++        if !adapter.IsPeripheralRoleSupported()? {
++            return Err(Error::new(
++                HRESULT(0x80004001u32 as i32),
++                "Bluetooth adapter does not support the peripheral role",
++            ));
++        }
++        let mut manager = Self {
+             event_handler: WinEventHandler::new(sender_tx.clone()),
+             services: HashMap::new(),
++            radios: Vec::new(),
+         };
+-        if let Err(err) = manager.set_radio_listener().await {
+-            log::error!("Error setting radio listener: {}", err);
+-        }
+-        return manager;
+-    }
+-
+-    async fn set_radio_listener(&self) -> windows::core::Result<()> {
++        manager.set_radio_listener().await?;
++        Ok(manager)
++    }
++
++    async fn set_radio_listener(&mut self) -> windows::core::Result<()> {
+         let radios = Radio::GetRadiosAsync()?.await?;
+         for radio in radios {
+             if radio.Kind()? == RadioKind::Bluetooth {
+-                radio.StateChanged(&self.event_handler.create_radio_listener())?;
++                let token = radio.StateChanged(&self.event_handler.create_radio_listener())?;
++                self.radios.push((radio, token));
+             }
+         }
+         return Ok(());
+@@ -63,7 +70,8 @@
+         advertisement_parameter.SetIsDiscoverable(true)?;
+         advertisement_parameter.SetIsConnectable(true)?;
+ 
+-        // TODO: add name and uuid in advertisement or change adapter name
++        // WinRT owns the advertised local name; never mutate the system adapter
++        // name. The registered service provider supplies its service UUID.
+         for gatt_object in self.services.values().into_iter() {
+             if gatt_object.obj.AdvertisementStatus()?
+                 == GattServiceProviderAdvertisementStatus::Started
+@@ -76,7 +84,28 @@
+                 .StartAdvertisingWithParameters(&advertisement_parameter)?;
+         }
+ 
+-        Ok(())
++        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
++        loop {
++            if self.are_all_services_started()? {
++                return Ok(());
++            }
++            if self.services.values().any(|service| {
++                service.obj.AdvertisementStatus().ok()
++                    == Some(GattServiceProviderAdvertisementStatus::Aborted)
++            }) {
++                return Err(Error::new(
++                    HRESULT(0x80004005u32 as i32),
++                    "GATT advertising aborted",
++                ));
++            }
++            if std::time::Instant::now() >= deadline {
++                return Err(Error::new(
++                    HRESULT(0x800705b4u32 as i32),
++                    "GATT advertising did not start",
++                ));
++            }
++            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
++        }
+     }
+ 
+     pub(crate) async fn stop_advertising(&self) -> windows::core::Result<()> {
+@@ -116,7 +145,7 @@
+             parameters.SetWriteProtectionLevel(write_protection_level)?;
+             parameters.SetReadProtectionLevel(read_protection_level)?;
+             if let Some(value) = &characteristic.value {
+-                parameters.SetStaticValue(&vec_to_buffer(value.clone()))?;
++                parameters.SetStaticValue(&vec_to_buffer(value.clone())?)?;
+             }
+ 
+             // Add characteristic to Service provider
+@@ -142,7 +171,7 @@
+                 parameters.SetReadProtectionLevel(read_protection_level)?;
+ 
+                 if let Some(value) = &descriptor.value {
+-                    parameters.SetStaticValue(&vec_to_buffer(value.clone()))?;
++                    parameters.SetStaticValue(&vec_to_buffer(value.clone())?)?;
+                 }
+ 
+                 let descriptor_result = win_characteristic
+@@ -164,15 +193,8 @@
+                 &self.event_handler.create_subscribe_handler(service.uuid),
+             );
+ 
+-            let current_subscribed_clients: Vec<GattSubscribedClient> = win_characteristic
+-                .SubscribedClients()?
+-                .into_iter()
+-                .map(|x| x)
+-                .collect();
+-
+             let gatt_characteristic_object = GattCharacteristicObject {
+                 obj: win_characteristic.clone(),
+-                subscribed_clients: current_subscribed_clients,
+                 subscribed_clients_token: subscribed_clients_token?,
+                 read_requested_token: read_token?,
+                 write_requested_token: write_token?,
+@@ -199,16 +221,79 @@
+     pub async fn update_characteristic(
+         &mut self,
+         characteristic: Uuid,
++        client: String,
++        generation: u64,
++        deadline: std::time::Instant,
+         value: Vec<u8>,
+-    ) -> Result<(), Error> {
+-        let char = self
++    ) -> Result<(), crate::error::Error> {
++        if std::time::Instant::now() > deadline {
++            return Err(crate::error::Error::from_type(
++                crate::error::ErrorType::Expired,
++            ));
++        }
++        use crate::error::{Error as PeripheralError, ErrorType};
++        use windows::Devices::Bluetooth::GenericAttributeProfile::GattCommunicationStatus;
++        let (service, char) = self
+             .services
+-            .values()
+-            .find_map(|service| service.characteristics.get(&characteristic).map(|c| &c.obj))
+-            .expect("Characteristic not found");
+-        let notify_async = char.NotifyValueAsync(&vec_to_buffer(value))?;
+-        notify_async.await?;
+-        return Ok(());
++            .iter()
++            .find_map(|(service, data)| {
++                data.characteristics
++                    .get(&characteristic)
++                    .map(|c| (*service, &c.obj))
++            })
++            .ok_or_else(|| PeripheralError::from_type(ErrorType::NotSubscribed))?;
++        // Capture the original subscribed-client object with its lease, not
++        // a fresh OS lookup by device ID that could select a new connection.
++        let target = self
++            .event_handler
++            .current_target(service, characteristic, &client, generation)
++            .ok_or_else(|| PeripheralError::from_type(ErrorType::NotSubscribed))?;
++        // IBuffer is apartment-bound; release the temporary before awaiting
++        // the agile WinRT operation rather than asserting an unsafe Send impl.
++        let operation = {
++            let buffer = vec_to_buffer(value)?;
++            if std::time::Instant::now() > deadline {
++                return Err(PeripheralError::from_type(ErrorType::Expired));
++            }
++            char.NotifyValueForSubscribedClientAsync(&buffer, &target)?
++        };
++        let result = operation.await?;
++        if result.Status()? != GattCommunicationStatus::Success {
++            return Err(PeripheralError::from_string(
++                "Notification not accepted".into(),
++                ErrorType::Windows,
++            ));
++        }
++        Ok(())
++    }
++
++    pub async fn shutdown(&mut self) -> windows::core::Result<()> {
++        let result = self.stop_advertising().await;
++        self.cleanup();
++        result
++    }
++
++    fn cleanup(&mut self) {
++        for (_, service) in self.services.drain() {
++            let _ = service.obj.StopAdvertising();
++            let _ = service
++                .obj
++                .RemoveAdvertisementStatusChanged(service.advertisement_status_changed_token);
++            for (_, characteristic) in service.characteristics {
++                let _ = characteristic
++                    .obj
++                    .RemoveReadRequested(characteristic.read_requested_token);
++                let _ = characteristic
++                    .obj
++                    .RemoveWriteRequested(characteristic.write_requested_token);
++                let _ = characteristic
++                    .obj
++                    .RemoveSubscribedClientsChanged(characteristic.subscribed_clients_token);
++            }
++        }
++        for (radio, token) in self.radios.drain(..) {
++            let _ = radio.RemoveStateChanged(token);
++        }
+     }
+ 
+     fn are_all_services_started(&self) -> windows::core::Result<bool> {
+@@ -221,3 +306,9 @@
+         return Ok(true);
+     }
+ }
++
++impl Drop for PeripheralManager {
++    fn drop(&mut self) {
++        self.cleanup();
++    }
++}
+--- upstream/src/peripheral/winrt/win_event_handler.rs
++++ maintained/src/peripheral/winrt/win_event_handler.rs
+@@ -10,12 +10,11 @@
+ use tokio::sync::mpsc::Sender;
+ use tokio::sync::oneshot;
+ use uuid::Uuid;
++use windows::Devices::Bluetooth::GenericAttributeProfile::{
++    GattProtocolError, GattServiceProviderAdvertisementStatus,
++};
++use windows::Devices::Radios::{Radio, RadioState};
+ use windows::core::IInspectable;
+-use windows::Devices::Bluetooth::GenericAttributeProfile::{
+-    GattProtocolError, GattServiceProviderAdvertisementStatus, GattSubscribedClient,
+-};
+-use windows::Devices::Radios::{Radio, RadioState};
+-use windows::Foundation::Collections::IVectorView;
+ use windows::{
+     Devices::Bluetooth::GenericAttributeProfile::{
+         GattLocalCharacteristic, GattReadRequestedEventArgs, GattServiceProvider,
+@@ -26,14 +25,29 @@
+ 
+ pub struct WinEventHandler {
+     sender_tx: Sender<PeripheralEvent>,
+-    connected_clients: Arc<RwLock<HashMap<(Uuid, Uuid), Vec<String>>>>,
++    connected_clients: Arc<
++        RwLock<
++            HashMap<
++                (Uuid, Uuid),
++                Vec<(
++                    String,
++                    u64,
++                    windows::Devices::Bluetooth::GenericAttributeProfile::GattSubscribedClient,
++                )>,
++            >,
++        >,
++    >,
++    generation: Arc<std::sync::atomic::AtomicU64>,
++    runtime: tokio::runtime::Handle,
+ }
+ 
+ impl WinEventHandler {
+     pub fn new(sender_tx: Sender<PeripheralEvent>) -> Self {
+         Self {
+             sender_tx,
++            runtime: tokio::runtime::Handle::current(),
+             connected_clients: Arc::new(RwLock::new(HashMap::new())),
++            generation: Arc::new(std::sync::atomic::AtomicU64::new(1)),
+         }
+     }
+ 
+@@ -42,16 +56,13 @@
+ 
+         return TypedEventHandler::new(
+             move |originator: &Option<Radio>, _: &Option<IInspectable>| {
+-                let radio = originator.as_ref().unwrap();
+-                let is_on = radio.State().unwrap() == RadioState::On;
+-                futures::executor::block_on(async {
+-                    if let Err(err) = sender_tx
+-                        .send(PeripheralEvent::StateUpdate { is_powered: is_on })
+-                        .await
+-                    {
+-                        log::error!("Error sending delegate event: {}", err);
+-                    }
+-                });
++                let radio = originator
++                    .as_ref()
++                    .ok_or_else(windows::core::Error::empty)?;
++                let is_on = radio.State()? == RadioState::On;
++                sender_tx
++                    .try_send(PeripheralEvent::StateUpdate { is_powered: is_on })
++                    .map_err(|_| windows::core::Error::empty())?;
+                 Ok(())
+             },
+         );
+@@ -64,93 +75,144 @@
+         GattServiceProviderAdvertisementStatusChangedEventArgs,
+     > {
+         TypedEventHandler::new(move |originator: &Option<GattServiceProvider>, args: &Option<GattServiceProviderAdvertisementStatusChangedEventArgs>| {
+-            let service = originator.as_ref().unwrap();
+-            let event_args = args.as_ref().unwrap();
++            let service = originator.as_ref().ok_or_else(windows::core::Error::empty)?;
++            let event_args = args.as_ref().ok_or_else(windows::core::Error::empty)?;
+             let status = event_args.Status()?;
+             log::debug!("Advertisement Status: {:?}: Started: {:?}", 
+-                to_uuid(&service.Service().unwrap().Uuid().unwrap()),
++                to_uuid(&service.Service()?.Uuid()?),
+                 status == GattServiceProviderAdvertisementStatus::Started);
+             Ok(())
+         })
+     }
+ 
++    pub fn current_target(
++        &self,
++        service: Uuid,
++        characteristic: Uuid,
++        client: &str,
++        generation: u64,
++    ) -> Option<windows::Devices::Bluetooth::GenericAttributeProfile::GattSubscribedClient> {
++        self.connected_clients.read().ok().and_then(|peers| {
++            peers.get(&(service, characteristic)).and_then(|list| {
++                list.iter()
++                    .find(|(id, current, _)| id == client && *current == generation)
++                    .map(|(_, _, target)| target.clone())
++            })
++        })
++    }
++
+     pub fn create_subscribe_handler(
+         &self,
+         service_uuid: Uuid,
+     ) -> TypedEventHandler<GattLocalCharacteristic, IInspectable> {
+-        let connected_clients = Arc::clone(&self.connected_clients);
+-        let sender_tx: Sender<PeripheralEvent> = self.sender_tx.clone();
+-
++        let peers = self.connected_clients.clone();
++        let generation = self.generation.clone();
++        let sender = self.sender_tx.clone();
++        TypedEventHandler::new(move |originator: &Option<GattLocalCharacteristic>, _| {
++            let characteristic = originator
++                .as_ref()
++                .ok_or_else(windows::core::Error::empty)?;
++            let characteristic_uuid = to_uuid(&characteristic.Uuid()?);
++            let mut current = Vec::new();
++            for client in characteristic.SubscribedClients()? {
++                current.push((
++                    device_id_from_session(client.Session()?)?,
++                    generation.fetch_add(1, std::sync::atomic::Ordering::Relaxed),
++                    client,
++                ));
++            }
++            let previous = {
++                let mut guard = peers.write().map_err(|_| windows::core::Error::empty())?;
++                guard
++                    .insert((service_uuid, characteristic_uuid), current.clone())
++                    .unwrap_or_default()
++            };
++            // Rotate leases on every OS change; queued commands cannot target a
++            // replacement connection merely because the device ID is unchanged.
++            for (clients, subscribed) in [(previous, false), (current, true)] {
++                for (client, generation, _) in clients {
++                    if sender
++                        .try_send(PeripheralEvent::CharacteristicSubscriptionUpdate {
++                            request: PeripheralRequest {
++                                client,
++                                generation,
++                                service: service_uuid,
++                                characteristic: characteristic_uuid,
++                            },
++                            subscribed,
++                        })
++                        .is_err()
++                    {
++                        // Invalidate leases if event delivery overflows; a stale
++                        // application snapshot must never authorize a send.
++                        if let Ok(mut guard) = peers.write() {
++                            guard.remove(&(service_uuid, characteristic_uuid));
++                        }
++                        return Err(windows::core::Error::empty());
++                    }
++                }
++            }
++            Ok(())
++        })
++    }
++
++    pub fn create_read_handler(
++        &self,
++        service: Uuid,
++    ) -> TypedEventHandler<GattLocalCharacteristic, GattReadRequestedEventArgs> {
++        let sender = self.sender_tx.clone();
++        let runtime = self.runtime.clone();
+         TypedEventHandler::new(
+-            move |originator: &Option<GattLocalCharacteristic>, _: &Option<IInspectable>| {
+-                let characteristic: &GattLocalCharacteristic = originator.as_ref().unwrap();
+-                let characteristic_uuid = to_uuid(&characteristic.Uuid().unwrap());
+-
+-                let subscribed_clients: IVectorView<GattSubscribedClient> =
+-                    characteristic.SubscribedClients().unwrap();
+-                    
+-                let new_clients: Vec<String> = subscribed_clients
+-                    .into_iter()
+-                    .map(|client| device_id_from_session(client.Session().unwrap()))
+-                    .collect();
+-
+-                let mut old_clients_store = connected_clients.write().unwrap();
+-                let mut added_clients: Vec<String> = Vec::new();
+-                let mut removed_clients: Vec<String> = Vec::new();
+-
+-                if let Some(old_clients) = old_clients_store
+-                    .get_mut(&(service_uuid, to_uuid(&characteristic.Uuid().unwrap())))
+-                {
+-                    for client in &new_clients {
+-                        if !old_clients.contains(client) {
+-                            added_clients.push(client.clone());
++            move |origin: &Option<GattLocalCharacteristic>,
++                  args: &Option<GattReadRequestedEventArgs>| {
++                let characteristic = origin
++                    .as_ref()
++                    .ok_or_else(windows::core::Error::empty)?
++                    .clone();
++                let args = args
++                    .as_ref()
++                    .ok_or_else(windows::core::Error::empty)?
++                    .clone();
++                let deferral = args.GetDeferral()?;
++                let sender = sender.clone();
++                runtime.spawn(async move {
++                    let result: windows::core::Result<()> = async {
++                        let request = args.GetRequestAsync()?.await?;
++                        let (reply, response) = oneshot::channel::<ReadRequestResponse>();
++                        let event = PeripheralEvent::ReadRequest {
++                            request: PeripheralRequest {
++                                client: device_id_from_session(args.Session()?)?,
++                                generation: 0,
++                                service,
++                                characteristic: to_uuid(&characteristic.Uuid()?),
++                            },
++                            offset: request.Offset()? as u64,
++                            responder: reply,
++                        };
++                        let response = if sender.try_send(event).is_ok() {
++                            tokio::time::timeout(std::time::Duration::from_millis(200), response)
++                                .await
++                                .ok()
++                                .and_then(Result::ok)
++                        } else {
++                            None
++                        };
++                        match response {
++                            Some(result) if result.response == RequestResponse::Success => {
++                                request.RespondWithValue(&vec_to_buffer(result.value)?)
++                            },
++                            Some(result) => request
++                                .RespondWithProtocolError(result.response.to_gatt_protocol_error()),
++                            None => request
++                                .RespondWithProtocolError(GattProtocolError::UnlikelyError()?),
+                         }
+                     }
+-                    for client in old_clients.clone() {
+-                        if !new_clients.contains(&client) {
+-                            removed_clients.push(client.clone());
+-                        }
+-                    }
+-
+-                    *old_clients = new_clients;
+-                } else {
+-                    old_clients_store
+-                        .insert((service_uuid, characteristic_uuid), new_clients.clone());
+-                    added_clients.extend(new_clients.clone());
+-                }
+-
+-                // Update Newly added/removed clients
+-                futures::executor::block_on(async {
+-                    for client in added_clients {
+-                        if let Err(err) = sender_tx
+-                            .send(PeripheralEvent::CharacteristicSubscriptionUpdate {
+-                                request: PeripheralRequest {
+-                                    client,
+-                                    service: service_uuid,
+-                                    characteristic: characteristic_uuid,
+-                                },
+-                                subscribed: true,
+-                            })
+-                            .await
+-                        {
+-                            log::error!("Error sending delegate event: {}", err);
+-                        }
+-                    }
+-
+-                    for client in removed_clients {
+-                        if let Err(err) = sender_tx
+-                            .send(PeripheralEvent::CharacteristicSubscriptionUpdate {
+-                                request: PeripheralRequest {
+-                                    client,
+-                                    service: service_uuid,
+-                                    characteristic: characteristic_uuid,
+-                                },
+-                                subscribed: false,
+-                            })
+-                            .await
+-                        {
+-                            log::error!("Error sending delegate event: {}", err);
+-                        }
++                    .await;
++                    if let Err(error) = result {
++                        log::error!("GATT read failed: {error}");
++                    }
++                    if let Err(error) = deferral.Complete() {
++                        log::error!("GATT read deferral failed: {error}");
+                     }
+                 });
+                 Ok(())
+@@ -158,115 +220,48 @@
+         )
+     }
+ 
+-    pub fn create_read_handler(
+-        &mut self,
+-        service_uuid: Uuid,
+-    ) -> TypedEventHandler<GattLocalCharacteristic, GattReadRequestedEventArgs> {
+-        let sender_tx: Sender<PeripheralEvent> = self.sender_tx.clone();
+-
++    pub fn create_write_handler(
++        &self,
++        service: Uuid,
++    ) -> TypedEventHandler<GattLocalCharacteristic, GattWriteRequestedEventArgs> {
++        let sender = self.sender_tx.clone();
++        let runtime = self.runtime.clone();
+         TypedEventHandler::new(
+-            move |originator: &Option<GattLocalCharacteristic>,
+-                  args: &Option<GattReadRequestedEventArgs>| {
+-                let event_args: &GattReadRequestedEventArgs = args.as_ref().unwrap();
+-                let characteristic = originator.as_ref().unwrap();
+-
+-                futures::executor::block_on(async {
+-                    let request = event_args.GetRequestAsync().unwrap().await;
+-                    if let Ok(request) = request {
+-                        // let mtu = event_args.Session().unwrap().MaxPduSize().unwrap();
+-                        let (resp_tx, resp_rx) = oneshot::channel::<ReadRequestResponse>();
+-                        if let Err(e) = sender_tx
+-                            .send(PeripheralEvent::ReadRequest {
+-                                request: PeripheralRequest {
+-                                    client: device_id_from_session(event_args.Session().unwrap()),
+-                                    service: service_uuid,
+-                                    characteristic: to_uuid(&characteristic.Uuid().unwrap()),
+-                                },
+-                                offset: request.Offset().unwrap() as u64,
+-                                responder: resp_tx,
+-                            })
+-                            .await
+-                        {
+-                            log::error!("Error sending delegate event: {}", e);
+-                            return;
+-                        }
+-
+-                        if let Ok(result) = resp_rx.await {
+-                            if result.response == RequestResponse::Success {
+-                                request
+-                                    .RespondWithValue(&vec_to_buffer(result.value))
+-                                    .unwrap();
+-                                return;
+-                            }
+-                            request
+-                                .RespondWithProtocolError(result.response.to_gatt_protocol_error())
+-                                .unwrap();
+-                            return;
+-                        }
+-
+-                        request
+-                            .RespondWithProtocolError(GattProtocolError::UnlikelyError().unwrap())
+-                            .unwrap();
+-                    }
+-                });
+-
+-                return Ok(());
+-            },
+-        )
+-    }
+-
+-    pub fn create_write_handler(
+-        &self,
+-        service_uuid: Uuid,
+-    ) -> TypedEventHandler<GattLocalCharacteristic, GattWriteRequestedEventArgs> {
+-        let sender_tx = self.sender_tx.clone();
+-
+-        TypedEventHandler::new(
+-            move |originator: &Option<GattLocalCharacteristic>,
++            move |origin: &Option<GattLocalCharacteristic>,
+                   args: &Option<GattWriteRequestedEventArgs>| {
+-                let event_args = args.as_ref().unwrap();
+-                let characteristic = originator.as_ref().unwrap();
+-                futures::executor::block_on(async {
+-                    if let Ok(request) = event_args.GetRequestAsync().unwrap().await {
+-                        // let offset = request.Offset().unwrap();
+-                        // let mtu = event_args.Session().unwrap().MaxPduSize().unwrap();
+-                        let (resp_tx, resp_rx) = oneshot::channel::<WriteRequestResponse>();
+-                        let char_uuid = to_uuid(&characteristic.Uuid().unwrap());
+-                        if let Err(e) = sender_tx
+-                            .send(PeripheralEvent::WriteRequest {
+-                                request: PeripheralRequest {
+-                                    client: device_id_from_session(event_args.Session().unwrap()),
+-                                    service: service_uuid,
+-                                    characteristic: char_uuid,
+-                                },
+-                                value: buffer_to_vec(&request.Value().unwrap()),
+-                                offset: request.Offset().unwrap() as u64,
+-                                responder: resp_tx,
+-                            })
+-                            .await
+-                        {
+-                            log::error!("Error sending delegate event: {}", e);
+-                            return;
+-                        }
+-
+-                        if let Ok(result) = resp_rx.await {
+-                            if result.response == RequestResponse::Success {
+-                                request.Respond().unwrap();
+-                                return;
+-                            }
+-                            request
+-                                .RespondWithProtocolError(result.response.to_gatt_protocol_error())
+-                                .unwrap();
+-                            return;
+-                        }
+-
+-                        request
+-                            .RespondWithProtocolError(GattProtocolError::UnlikelyError().unwrap())
+-                            .unwrap();
+-                    }
+-                });
+-
+-                return Ok(());
++                let characteristic = origin
++                    .as_ref()
++                    .ok_or_else(windows::core::Error::empty)?
++                    .clone();
++                let args = args
++                    .as_ref()
++                    .ok_or_else(windows::core::Error::empty)?
++                    .clone();
++                let deferral = args.GetDeferral()?;
++                let sender = sender.clone();
++                runtime.spawn(async move {
++                let result: windows::core::Result<()> = async {
++                    let request = args.GetRequestAsync()?.await?;
++                    let (reply, response) = oneshot::channel::<WriteRequestResponse>();
++                    let event = PeripheralEvent::WriteRequest {
++                        request: PeripheralRequest { client: device_id_from_session(args.Session()?)?, generation: 0, service, characteristic: to_uuid(&characteristic.Uuid()?) },
++                        value: buffer_to_vec(&request.Value()?)?, offset: request.Offset()? as u64, responder: reply,
++                    };
++                    let response = if sender.try_send(event).is_ok() {
++                        tokio::time::timeout(std::time::Duration::from_millis(200), response).await.ok().and_then(Result::ok)
++                    } else { None };
++                    // Write Without Response has no ATT response operation.
++                    if request.Option()? == windows::Devices::Bluetooth::GenericAttributeProfile::GattWriteOption::WriteWithoutResponse { return Ok(()); }
++                    match response {
++                        Some(result) if result.response == RequestResponse::Success => request.Respond(),
++                        Some(result) => request.RespondWithProtocolError(result.response.to_gatt_protocol_error()),
++                        None => request.RespondWithProtocolError(GattProtocolError::UnlikelyError()?),
++                    }
++                }.await;
++                if let Err(error) = result { log::error!("GATT write failed: {error}"); }
++                if let Err(error) = deferral.Complete() { log::error!("GATT write deferral failed: {error}"); }
++            });
++                Ok(())
+             },
+         )
+     }
+--- upstream/src/peripheral/winrt/win_utils.rs
++++ maintained/src/peripheral/winrt/win_utils.rs
+@@ -1,18 +1,17 @@
+-use std::{collections::HashMap, str::FromStr};
++use std::collections::HashMap;
+ 
+ use uuid::Uuid;
+ use windows::{
+-    core::{Error, GUID},
+     Devices::Bluetooth::GenericAttributeProfile::{
+-        GattLocalCharacteristic, GattServiceProvider, GattSession, GattSubscribedClient,
++        GattLocalCharacteristic, GattServiceProvider, GattSession,
+     },
+     Foundation::EventRegistrationToken,
+     Storage::Streams::{DataReader, DataWriter, IBuffer, InMemoryRandomAccessStream},
++    core::GUID,
+ };
+ 
+ pub struct GattCharacteristicObject {
+     pub obj: GattLocalCharacteristic,
+-    pub subscribed_clients: Vec<GattSubscribedClient>,
+     pub subscribed_clients_token: EventRegistrationToken,
+     pub read_requested_token: EventRegistrationToken,
+     pub write_requested_token: EventRegistrationToken,
+@@ -30,38 +29,27 @@
+ }
+ 
+ pub(crate) fn to_uuid(uuid: &GUID) -> Uuid {
+-    let guid_s = format!("{:?}", uuid);
+-    Uuid::from_str(&guid_s).unwrap()
++    Uuid::from_fields(uuid.data1, uuid.data2, uuid.data3, &uuid.data4)
+ }
+ 
+-pub(crate) fn buffer_to_vec(buffer: &IBuffer) -> Vec<u8> {
+-    let reader = DataReader::FromBuffer(buffer).unwrap();
+-    let len = reader.UnconsumedBufferLength().unwrap() as usize;
++pub(crate) fn buffer_to_vec(buffer: &IBuffer) -> windows::core::Result<Vec<u8>> {
++    let reader = DataReader::FromBuffer(buffer)?;
++    let len = reader.UnconsumedBufferLength()? as usize;
+     let mut data = vec![0u8; len];
+-    reader.ReadBytes(&mut data).unwrap();
+-    data
++    reader.ReadBytes(&mut data)?;
++    Ok(data)
+ }
+ 
+-pub(crate) fn vec_to_buffer(vector: Vec<u8>) -> IBuffer {
+-    let stream = InMemoryRandomAccessStream::new().unwrap();
+-    let data_writer = DataWriter::CreateDataWriter(&stream).unwrap();
+-    data_writer.WriteBytes(&vector).unwrap();
+-    data_writer.DetachBuffer().unwrap()
++pub(crate) fn vec_to_buffer(vector: Vec<u8>) -> windows::core::Result<IBuffer> {
++    let stream = InMemoryRandomAccessStream::new()?;
++    let data_writer = DataWriter::CreateDataWriter(&stream)?;
++    data_writer.WriteBytes(&vector)?;
++    data_writer.DetachBuffer()
+ }
+ 
+-pub(crate) fn device_id_from_session(session: GattSession) -> String {
+-    if let Ok(id) = get_complete_device_id(session) {
+-        if let Some(id) = id.split("-").last() {
+-            return id.to_string();
+-        }
+-        return id;
+-    }
+-    return "".to_string();
++pub(crate) fn device_id_from_session(session: GattSession) -> windows::core::Result<String> {
++    session
++        .DeviceId()
++        .and_then(|device| device.Id())
++        .map(|id| id.to_string())
+ }
+-
+-fn get_complete_device_id(session: GattSession) -> Result<String, Error> {
+-    if let Ok(id) = session.DeviceId()?.Id()?.to_os_string().into_string() {
+-        return Ok(id);
+-    }
+-    return Ok("".to_string());
+-}

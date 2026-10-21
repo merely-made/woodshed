@@ -1,0 +1,23 @@
+{
+  "binary_sha256": "b7b3473fdce79011b79f565e679b0f318f542b67dce09548e5b4a888083890d0",
+  "keeper_sha256": "8605534361a92f7b666a5681edfe38352f2f3d4ff538db57a78a293a174847a3",
+  "keeper_source": "prior Mere fold acceptance fixture, isolated synthetic no-wallet",
+  "environment": {
+    "HOCKET_WIDTH": "1180",
+    "HOCKET_HEIGHT": "980",
+    "HOCKET_PRESENTATION_TIMEOUT_SECS": "60",
+    "APPDATA": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/profile",
+    "XDG_DATA_HOME": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/data",
+    "XDG_CONFIG_HOME": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/config",
+    "XDG_CACHE_HOME": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/cache",
+    "MERE_ROOT": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/mere",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/ap3-56b0e355ce04.sock",
+    "TMPDIR": "/tmp",
+    "HOCKET_APPEARANCE": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/profile/appearance.json",
+    "HOCKET_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/profile/themes.json"
+  },
+  "results": [
+    0,
+    0
+  ]
+}

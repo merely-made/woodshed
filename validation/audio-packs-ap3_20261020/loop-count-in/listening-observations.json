@@ -1,0 +1,59 @@
+{
+  "recorded_utc": "2026-10-20T06:50:02.052931+00:00",
+  "observer": "Human owner listening to physical HYVIBE guitar",
+  "file": "12-Ringdown_Bars.mid",
+  "sha256": "a3a0de7aadb6dc745991874ea65c188b222d72a215e938c787c209bffb9325e1",
+  "observations": [
+    {
+      "checkpoint": "initial startup and repeated playback",
+      "question_id": "call_918247760f804efc988c67f44723f9a7",
+      "owner_report": "A B C D E once, then B C D E repeats"
+    },
+    {
+      "checkpoint": "stop completely, wait a couple of seconds, start with same file/settings",
+      "question_id": "call_5524ddedf3924e6dac72551ab8849c69",
+      "owner_report": "A returns once, then B C D E repeats"
+    },
+    {
+      "checkpoint": "panel inspection and any extra sounds before A",
+      "question_id": "call_9b2e80239af84282a1364fc9b2cd8a10",
+      "owner_report": "No count-in setting found; playback begins directly with A"
+    }
+  ],
+  "confirmed": {
+    "first_bar_plays_once_on_start": true,
+    "remaining_four_bars_repeat_in_order": true,
+    "stop_start_replays_first_bar_once": true,
+    "playback_begins_directly_with_authored_first_bar": true,
+    "separate_count_in_setting_found_by_owner": false
+  },
+  "regions_derived_from_known_file_and_heard_bar_order": {
+    "intro": {
+      "bars": [
+        1
+      ],
+      "start_tick": 0,
+      "end_tick_exclusive": 1920
+    },
+    "repeat": {
+      "bars": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "start_tick": 1920,
+      "end_tick_exclusive": 9600
+    },
+    "timing_scope": "Derived from exact MIDI contents and auditory bar identities; no hardware clock or sample-accurate boundary measurement."
+  },
+  "interpretation": "On this guitar/settings, the first authored 4/4 bar is a one-time lead-in on each fresh start, followed by repeating bars 2-5. No extra generated click count-in was reported. Owner found no separate count-in setting.",
+  "export_direction": "Keep generic shared MIDI export unchanged. Ringdown guitar-specific export should explicitly supply a first-bar lead-in and a separate intended loop body; broader profile implementation requires its own scope.",
+  "limits": [
+    "Tested only this five-bar 4/4 SMF0/PPQ480 file on this instrument/current settings.",
+    "Other lengths/meters, firmware versions, tempo changes and mid-bar stop timing are not qualified.",
+    "60 BPM was requested; panel tempo and firmware were not read back independently.",
+    "No separate count-in setting found is an owner menu observation, not proof that all firmware/menu contexts lack one.",
+    "Additional post-copy directory entry remains unidentified; existing file hashes were unchanged and safe ejection succeeded."
+  ]
+}

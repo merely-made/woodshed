@@ -1,0 +1,9 @@
+{
+  "os_accepted": 131,
+  "received": 131,
+  "disconnects": 1,
+  "start": 2,
+  "stop": 1,
+  "reconnect_replayed": 0,
+  "failure_history_retained": true
+}

@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "native_received_messages": 6,
+  "status_export_equal": true,
+  "stopped_history_unchanged_during_send": true,
+  "restart_appends": true,
+  "retained_events": 20,
+  "overwritten": 0,
+  "truncated_events": 0,
+  "export_sha256": "70b84652d23dd5489d969fe50d1ea54c2c437d857748e75da36304d66ec29ca2",
+  "same_profile_reopen_default_off": true
+}

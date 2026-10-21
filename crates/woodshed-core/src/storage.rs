@@ -373,6 +373,9 @@ impl AppSection {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct PersistedSession {
+    /// Exact kit assets and the editable sequencer pattern, not an installation path.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub audio_pack: Option<audio_packs::PackSelection>,
     #[serde(alias = "tab")]
     pub section: AppSection,
     pub lens: Lens,
@@ -465,6 +468,7 @@ impl PersistedSession {
             musical_context: crate::musical_context::MusicalContext::default(),
             active_exploration: None,
             song: song.clone(),
+            audio_pack: None,
             looper: crate::loop_plan::LooperConfig::default(),
             loop_captures: LoopCaptureManifest::default(),
             practice_history: practice_history.clone(),
@@ -524,6 +528,9 @@ pub struct SessionLoad {
 pub fn decode_session(contents: &str) -> Result<SessionLoad, serde_json::Error> {
     let value: serde_json::Value = serde_json::from_str(contents)?;
     let mut session: PersistedSession = serde_json::from_value(value.clone())?;
+    if let Some(pack) = &session.audio_pack {
+        pack.validate().map_err(|e| <serde_json::Error as serde::de::Error>::custom(e.to_string()))?;
+    }
     // Identity is local to each Set: retained snapshots may intentionally
     // share IDs with their source. Within one Set, ambiguity is a decode error
     // so the host retains/quarantines the original instead of adopting it.
@@ -572,6 +579,23 @@ mod tests {
     use super::*;
     use crate::loop_capture::decode_pcm;
     const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
+
+    #[test]
+    fn edited_pack_roundtrip_and_invalid_asset_refusal() {
+        let mut session = decode_session("{}").unwrap().session;
+        assert!(session.audio_pack.is_none());
+        let pack = audio_packs::files::load(std::path::Path::new("bundled"), None).unwrap();
+        let pack = pack.edit(&pack.revision(), audio_packs::PackEdit::CycleStep {track:0, step:1}).unwrap();
+        let midi = pack.midi().unwrap().bytes;
+        session.audio_pack = Some(pack);
+        let json = serde_json::to_string(&session).unwrap();
+        let reopened = decode_session(&json).unwrap().session;
+        assert!(session.audio_pack == reopened.audio_pack);
+        assert_eq!(midi, reopened.audio_pack.unwrap().midi().unwrap().bytes);
+        let mut invalid: serde_json::Value = serde_json::from_str(&json).unwrap();
+        invalid["audio_pack"]["snapshot"]["assets"]["samples/kick.wav"][0] = serde_json::json!(0);
+        assert!(decode_session(&invalid.to_string()).is_err());
+    }
 
     #[test]
     fn missing_session_initializes_but_unreadable_slot_quarantines_every_clone() {

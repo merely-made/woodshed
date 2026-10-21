@@ -37,6 +37,7 @@ use std::rc::Rc;
 use cambium_genet_winit_host::HostPointer;
 use taproot::{Automatable, AutomatableExt, ProbeSnapshot, ProbeSurface, Selector};
 use woodshed_core::Lens;
+use woodshed_core::midi::MidiBackend as _;
 use woodshed_views::stage::canvas_camera::{self, CanvasSurface};
 use woodshed_views::stage::{
     UiState, set_graph_relation_choices, set_graph_snapshot, set_graph_swatch_from_snapshot,
@@ -45,10 +46,11 @@ use woodshed_views::stage::{
 use crate::shared::Shared;
 use crate::sync::Ctx;
 
-mod practice_clock;
 mod guided_rehearsal;
 mod mixed_looper;
+mod pedal_inputs;
 mod physical_audio;
+mod practice_clock;
 
 /// Explicit synthetic acceptance PCM, unrelated to the historical quiet seeds.
 /// Every value is an exact multiple of 1/64: no gain normalization, noise,
@@ -63,7 +65,9 @@ fn envelope_sample(frame: usize, frames: usize) -> f32 {
 }
 
 fn envelope_capture(frames: usize) -> Vec<f32> {
-    (0..frames).map(|frame| envelope_sample(frame, frames)).collect()
+    (0..frames)
+        .map(|frame| envelope_sample(frame, frames))
+        .collect()
 }
 
 fn envelope_mismatch(samples: &[f32]) -> Option<usize> {
@@ -85,9 +89,15 @@ fn verify_selected_envelope(ui: &UiState, shared: &Shared) -> Result<String, Str
         return Err("actual output backing differs from the UI admission".into());
     }
     let takes = backend.capture_snapshot();
-    let take = takes.iter().find(|take| take.id == id).ok_or("no hydrated envelope take")?;
-    if take.bpm != segment.bpm || take.beats != segment.beats || take.bars != segment.bars
-        || take.seconds != segment.seconds || take.legacy_clock
+    let take = takes
+        .iter()
+        .find(|take| take.id == id)
+        .ok_or("no hydrated envelope take")?;
+    if take.bpm != segment.bpm
+        || take.beats != segment.beats
+        || take.bars != segment.bars
+        || take.seconds != segment.seconds
+        || take.legacy_clock
     {
         return Err("hydrated envelope take clock differs from the admitted Card".into());
     }
@@ -95,34 +105,70 @@ fn verify_selected_envelope(ui: &UiState, shared: &Shared) -> Result<String, Str
         duration_seconds: segment.seconds,
         bpm: segment.bpm,
         time_signature: woodshed_audio::TimeSignature::new(segment.beats, 4),
-        length: if segment.seconds.is_some() { 1 } else { segment.bars },
+        length: if segment.seconds.is_some() {
+            1
+        } else {
+            segment.bars
+        },
         ..Default::default()
-    }.checked_duration_frames(take.buffer.sample_rate_hz).map_err(str::to_owned)?;
-    let frames = usize::try_from(frames).map_err(|_| "envelope frame count is not representable")?;
+    }
+    .checked_duration_frames(take.buffer.sample_rate_hz)
+    .map_err(str::to_owned)?;
+    let frames =
+        usize::try_from(frames).map_err(|_| "envelope frame count is not representable")?;
     if frames < 128 || take.buffer.len() != frames {
         return Err("hydrated envelope take has the wrong frame count".into());
     }
     if let Some(frame) = envelope_mismatch(&take.buffer.data) {
-        return Err(format!("hydrated envelope fixture differs at frame {frame}"));
+        return Err(format!(
+            "hydrated envelope fixture differs at frame {frame}"
+        ));
     }
-    let displayed = observation.buffers.get(index).and_then(Option::as_ref)
+    let displayed = observation
+        .buffers
+        .get(index)
+        .and_then(Option::as_ref)
         .ok_or("selected output waveform has no PCM")?;
-    if displayed.sample_rate != take.buffer.sample_rate_hz || displayed.samples.len() != frames
-        || displayed.samples.iter().zip(take.buffer.data.iter()).any(|(a,b)| a.to_bits() != b.to_bits())
+    if displayed.sample_rate != take.buffer.sample_rate_hz
+        || displayed.samples.len() != frames
+        || displayed
+            .samples
+            .iter()
+            .zip(take.buffer.data.iter())
+            .any(|(a, b)| a.to_bits() != b.to_bits())
     {
         return Err("selected output waveform differs from the hydrated envelope take".into());
     }
-    let visible = ui.recorder_observation.buffers.get(index).and_then(Option::as_ref)
+    let visible = ui
+        .recorder_observation
+        .buffers
+        .get(index)
+        .and_then(Option::as_ref)
         .ok_or("selected recorder view has no envelope PCM")?;
     if ui.recorder_observation.plan.as_ref() != Some(plan)
-        || visible.sample_rate != take.buffer.sample_rate_hz || visible.samples.len() != frames
-        || visible.samples.iter().zip(take.buffer.data.iter()).any(|(a,b)| a.to_bits() != b.to_bits())
+        || visible.sample_rate != take.buffer.sample_rate_hz
+        || visible.samples.len() != frames
+        || visible
+            .samples
+            .iter()
+            .zip(take.buffer.data.iter())
+            .any(|(a, b)| a.to_bits() != b.to_bits())
     {
         return Err("recorder view observation differs from the admitted envelope PCM".into());
     }
-    let bytes: Vec<u8> = take.buffer.data.iter().flat_map(|sample| sample.to_bits().to_le_bytes()).collect();
-    Ok(format!("envelope-fixture-exact {ENVELOPE_FIXTURE} set={} card={} frames={frames} rate={} pcm-bits-digest={}",
-        id.set.0, id.card.0, take.buffer.sample_rate_hz, woodshed_core::loop_capture::pcm_digest(&bytes)))
+    let bytes: Vec<u8> = take
+        .buffer
+        .data
+        .iter()
+        .flat_map(|sample| sample.to_bits().to_le_bytes())
+        .collect();
+    Ok(format!(
+        "envelope-fixture-exact {ENVELOPE_FIXTURE} set={} card={} frames={frames} rate={} pcm-bits-digest={}",
+        id.set.0,
+        id.card.0,
+        take.buffer.sample_rate_hz,
+        woodshed_core::loop_capture::pcm_digest(&bytes)
+    ))
 }
 
 #[cfg(test)]
@@ -143,33 +189,60 @@ mod envelope_fixture_tests {
     #[test]
     fn envelope_is_exact_nonquiet_and_has_distinct_visible_amplitude_bands() {
         let samples = envelope_capture(128);
-        assert_eq!(&samples[16..32], &[
-            0.0, 0.03125, 0.0625, 0.09375, 0.125, 0.09375, 0.0625, 0.03125,
-            0.0, -0.03125, -0.0625, -0.09375, -0.125, -0.09375, -0.0625, -0.03125,
-        ]);
+        assert_eq!(
+            &samples[16..32],
+            &[
+                0.0, 0.03125, 0.0625, 0.09375, 0.125, 0.09375, 0.0625, 0.03125, 0.0, -0.03125,
+                -0.0625, -0.09375, -0.125, -0.09375, -0.0625, -0.03125,
+            ]
+        );
         assert_eq!(samples[52].to_bits(), 0.875_f32.to_bits());
         assert_eq!(samples[60].to_bits(), (-0.875_f32).to_bits());
         for frames in [128, 500, 54_000, 54_001] {
             let samples = envelope_capture(frames);
             assert_eq!(samples.len(), frames);
-            assert!(samples.iter().all(|sample| sample.is_finite() && sample.abs() <= 0.875));
+            assert!(
+                samples
+                    .iter()
+                    .all(|sample| sample.is_finite() && sample.abs() <= 0.875)
+            );
             // Inspect the middle 128-column bin of each eighth, away from
             // fractional band boundaries. Every bin includes a whole carrier.
-            let extrema: Vec<_> = (0..8).map(|band| {
-                let column = band * 16 + 8;
-                let start = column * frames / 128;
-                let end = (column + 1) * frames / 128;
-                samples[start..end].iter().fold((f32::INFINITY, f32::NEG_INFINITY),
-                    |(min,max), &sample| (min.min(sample),max.max(sample)))
-            }).collect();
+            let extrema: Vec<_> = (0..8)
+                .map(|band| {
+                    let column = band * 16 + 8;
+                    let start = column * frames / 128;
+                    let end = (column + 1) * frames / 128;
+                    samples[start..end]
+                        .iter()
+                        .fold((f32::INFINITY, f32::NEG_INFINITY), |(min, max), &sample| {
+                            (min.min(sample), max.max(sample))
+                        })
+                })
+                .collect();
             if frames >= 16 * 128 {
-                assert_eq!(extrema, vec![
-                    (0.0, 0.0), (-0.125, 0.125), (-0.5, 0.5), (-0.875, 0.875),
-                    (-0.25, 0.25), (-0.625, 0.625), (-0.125, 0.125), (0.0, 0.0),
-                ]);
+                assert_eq!(
+                    extrema,
+                    vec![
+                        (0.0, 0.0),
+                        (-0.125, 0.125),
+                        (-0.5, 0.5),
+                        (-0.875, 0.875),
+                        (-0.25, 0.25),
+                        (-0.625, 0.625),
+                        (-0.125, 0.125),
+                        (0.0, 0.0),
+                    ]
+                );
             }
-            let bytes: Vec<_> = samples.iter().flat_map(|s| s.to_bits().to_le_bytes()).collect();
-            let repeated: Vec<_> = envelope_capture(frames).iter().flat_map(|s| s.to_bits().to_le_bytes()).collect();
+            let bytes: Vec<_> = samples
+                .iter()
+                .flat_map(|s| s.to_bits().to_le_bytes())
+                .collect();
+            let repeated: Vec<_> = envelope_capture(frames)
+                .iter()
+                .flat_map(|s| s.to_bits().to_le_bytes())
+                .collect();
             assert_eq!(bytes, repeated);
         }
     }
@@ -184,6 +257,10 @@ pub struct Product {
     scenario_cursor_wait: RefCell<Option<ScenarioCursorWait>>,
     practice_clock_wait: RefCell<Option<practice_clock::Wait>>,
     physical_dwell: RefCell<Option<physical_audio::Dwell>>,
+    midi_wait: RefCell<Option<(&'static str, bool, std::time::Instant)>>,
+    diagnostic_gate: RefCell<Option<(std::path::PathBuf, std::time::Instant)>>,
+    midi_count: std::cell::Cell<u64>,
+    midi_dwell_until: std::cell::Cell<Option<std::time::Instant>>,
 }
 
 #[derive(Clone, Copy)]
@@ -207,6 +284,10 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
                 scenario_cursor_wait: RefCell::new(None),
                 practice_clock_wait: RefCell::new(None),
                 physical_dwell: RefCell::new(None),
+                midi_wait: RefCell::new(None),
+                diagnostic_gate: RefCell::new(None),
+                midi_count: std::cell::Cell::new(0),
+                midi_dwell_until: std::cell::Cell::new(None),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -237,8 +318,50 @@ impl mesquite::Product for Product {
             shared: &self.shared.borrow(),
         }
         .snapshot()
-        .with_field("take-playback-observed", self.take_playback_wait.as_ref()
-            .is_some_and(|(_, _, observed)| observed.get()).to_string());
+        .with_field(
+            "take-playback-observed",
+            self.take_playback_wait
+                .as_ref()
+                .is_some_and(|(_, _, observed)| observed.get())
+                .to_string(),
+        );
+        let mut snapshot = snapshot;
+        let fields = serde_json::to_value(self.shared.borrow().midi.output_snapshot())
+            .expect("MIDI observations");
+        for (key, value) in fields.as_object().expect("MIDI object") {
+            snapshot = snapshot.with_field(
+                format!("midi-{key}"),
+                value
+                    .as_str()
+                    .map(str::to_string)
+                    .unwrap_or_else(|| value.to_string()),
+            );
+        }
+        if let Some(report) = self.shared.borrow().midi.pedal_report() {
+            let fields = serde_json::to_value(report).expect("pedal observation");
+            for (key, value) in fields.as_object().unwrap() {
+                snapshot = snapshot.with_field(
+                    format!("pedal-{key}"),
+                    value
+                        .as_str()
+                        .map(str::to_owned)
+                        .unwrap_or_else(|| value.to_string()),
+                );
+            }
+        }
+        snapshot = snapshot.with_field(
+            "midi-clock-enabled",
+            ctx.runner.state().midi.clock_out.to_string(),
+        );
+        snapshot = snapshot.with_field(
+            "diagnostic-gate-released",
+            self.diagnostic_gate
+                .borrow()
+                .as_ref()
+                .is_none_or(|(path, _)| path.exists())
+                .to_string(),
+        );
+        snapshot = pedal_inputs::snapshot(snapshot, ctx.runner.state());
         guided_rehearsal::extend_snapshot(
             practice_clock::extend_snapshot(snapshot, ctx.runner.state(), &self.shared.borrow()),
             ctx.runner.state(),
@@ -248,7 +371,10 @@ impl mesquite::Product for Product {
         std::mem::take(&mut self.shared.borrow_mut().events)
     }
     fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
-        let physical_wait = self.physical_dwell.borrow_mut().as_mut()
+        let physical_wait = self
+            .physical_dwell
+            .borrow_mut()
+            .as_mut()
             .is_some_and(|dwell| dwell.poll(ctx.runner.state(), &self.shared.borrow()));
         let export_wait = self
             .export_wait
@@ -291,11 +417,11 @@ impl mesquite::Product for Product {
                         || wait.started.elapsed() < wait.minimum =>
                 {
                     true
-                }
+                },
                 Some(_) => {
                     *wait = None;
                     false
-                }
+                },
                 None => false,
             }
         };
@@ -312,16 +438,51 @@ impl mesquite::Product for Product {
                     ) && wait.started.elapsed() < std::time::Duration::from_secs(45) =>
                 {
                     true
-                }
+                },
                 Some(_) => {
                     *wait = None;
                     false
-                }
+                },
                 None => false,
             }
         };
+        let midi_wait =
+            self.midi_wait
+                .borrow()
+                .as_ref()
+                .is_some_and(|(field, expected, started)| {
+                    let observed =
+                        serde_json::to_value(self.shared.borrow().midi.output_snapshot())
+                            .expect("MIDI observations");
+                    let actual = if *field == "ready" {
+                        observed["ready"].as_bool() == Some(true)
+                    } else if *field == "accepted" {
+                        observed["accepted"]
+                            .as_u64()
+                            .is_some_and(|n| n >= self.midi_count.get())
+                    } else {
+                        !observed["connected"].is_null() || !observed["error"].is_null()
+                    };
+                    actual != *expected && started.elapsed().as_secs() < 300
+                });
         Some(
-            physical_wait || take_wait || scenario_cursor_wait || practice_clock_wait || export_wait
+            self.midi_dwell_until
+                .get()
+                .is_some_and(|until| std::time::Instant::now() < until)
+                || self
+                    .diagnostic_gate
+                    .borrow()
+                    .as_ref()
+                    .is_some_and(|(path, started)| {
+                        !path.exists() && started.elapsed().as_secs() < 180
+                    })
+                || midi_wait
+                || physical_wait
+                || take_wait
+                || scenario_cursor_wait
+                || practice_clock_wait
+                || export_wait
+                || ctx.runner.state().pack_busy
                 || ctx.runner.state().loop_export_busy
                 || capture_pending
                 || self
@@ -333,6 +494,97 @@ impl mesquite::Product for Product {
         )
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
+        if let Some(result) = pedal_inputs::act(ctx, &self.shared, label) {
+            return result;
+        }
+        if let Some(count) = label
+            .strip_prefix("midi-await-count ")
+            .and_then(|value| value.parse::<u64>().ok())
+            .filter(|n| *n <= 128)
+        {
+            // Read-only barrier for an owner-operated keyboard/controller trial.
+            // This never synthesizes a request to reach its expected count.
+            self.midi_count.set(count);
+            self.midi_wait
+                .replace(Some(("accepted", true, std::time::Instant::now())));
+            return true;
+        }
+        if let Some(millis) = label
+            .strip_prefix("midi-dwell ")
+            .and_then(|s| s.parse::<u64>().ok())
+            .filter(|n| *n <= 10_000)
+        {
+            self.midi_dwell_until.set(Some(
+                std::time::Instant::now() + std::time::Duration::from_millis(millis),
+            ));
+            return true;
+        }
+        if matches!(
+            label,
+            "midi-await-ready" | "midi-await-disconnected" | "midi-await-open"
+        ) {
+            self.midi_wait.replace(Some((
+                if label == "midi-await-open" {
+                    "connected"
+                } else {
+                    "ready"
+                },
+                label != "midi-await-disconnected",
+                std::time::Instant::now(),
+            )));
+            return true;
+        }
+        if label == "diagnostic-request-close" {
+            ctx.window_commands.close();
+            return true;
+        }
+        // External acceptance driver may observe real native dialogs before
+        // releasing the next scenario step. This gate cannot alter app state.
+        if let Some(name) = label.strip_prefix("diagnostic-await ") {
+            if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+                return false;
+            }
+            let Some(dir) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
+                return false;
+            };
+            self.diagnostic_gate.replace(Some((
+                std::path::PathBuf::from(dir).join(format!("gate-{name}")),
+                std::time::Instant::now(),
+            )));
+            return true;
+        }
+        if let Some(name) = label.strip_prefix("midi-checkpoint ") {
+            if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+                return false;
+            }
+            let Some(dir) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
+                return false;
+            };
+            let observation = serde_json::json!({"output": self.shared.borrow().midi.output_snapshot(),
+                "selected_index":ctx.runner.state().midi.output_dd.selected,
+                "ui_notice":ctx.runner.state().midi.output_notice,"clock_enabled":ctx.runner.state().midi.clock_out,"playing":ctx.runner.state().transport.playing,
+                "bindings":ctx.runner.state().app_settings.audio_midi.midi_pedal,
+                "pedal":self.shared.borrow().midi.pedal_report(),
+                "ui_pedal":ctx.runner.state().midi.pedal_report,
+                "diagnostics": {"recording":ctx.runner.state().midi.diagnostics.recording,
+                    "available":ctx.runner.state().midi.diagnostics.available,
+                    "history_available":ctx.runner.state().midi.diagnostics.history_available,
+                    "retained_events":ctx.runner.state().midi.diagnostics.retained_events,
+                    "capacity":ctx.runner.state().midi.diagnostics.capacity,
+                    "overwritten":ctx.runner.state().midi.diagnostics.overwritten,
+                    "truncated_events":ctx.runner.state().midi.diagnostics.truncated_events,
+                    "recent_events":ctx.runner.state().midi.diagnostics.recent_events,
+                    "busy":ctx.runner.state().midi.diagnostics_export_busy,
+                    "notice":ctx.runner.state().midi.diagnostics_notice,
+                    "show_history":ctx.runner.state().midi.diagnostics_show_history},
+                "input":pedal_inputs::observation(ctx.runner.state()),
+                "saved_settings":self.shared.borrow().storage.as_ref().and_then(|store|store.load_settings()).and_then(|raw|serde_json::from_str::<serde_json::Value>(&raw).ok())});
+            return std::fs::write(
+                std::path::PathBuf::from(dir).join(format!("midi-{name}.json")),
+                serde_json::to_vec_pretty(&observation).unwrap(),
+            )
+            .is_ok();
+        }
         if let Some(result) = physical_audio::act(self, ctx, label) {
             return result;
         }
@@ -362,9 +614,14 @@ impl mesquite::Product for Product {
         self.scenario_cursor_wait.replace(None);
         if label == "await-selected-take-playback" {
             let ui = ctx.runner.state();
-            let Some(bar) = ui.loop_selected.and_then(|id| ui.loop_admitted.as_ref()?.index_of(id))
-            else { return false; };
-            self.take_playback_wait = Some((bar, std::time::Instant::now(), std::cell::Cell::new(false)));
+            let Some(bar) = ui
+                .loop_selected
+                .and_then(|id| ui.loop_admitted.as_ref()?.index_of(id))
+            else {
+                return false;
+            };
+            self.take_playback_wait =
+                Some((bar, std::time::Instant::now(), std::cell::Cell::new(false)));
             return true;
         }
         if let Some(expected) = match label {
@@ -378,6 +635,49 @@ impl mesquite::Product for Product {
             self.export_wait = Some((expected.into(), std::time::Instant::now()));
             return true;
         }
+        if let Some(stem) = label.strip_prefix("checkpoint-pack ") {
+            let result = (|| -> Result<(), String> {
+                if stem.is_empty() || !stem.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+                    return Err("simple checkpoint name required".into());
+                }
+                let directory =
+                    std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no capture directory")?;
+                let ui = ctx.runner.state();
+                let shared = self.shared.borrow();
+                if !matches!(
+                    shared.seal,
+                    Some(woodshed_views::persona::PracticeSeal::Sealed { .. })
+                ) {
+                    return Err("pack checkpoint requires sealed custody".into());
+                }
+                let json = shared
+                    .storage
+                    .as_ref()
+                    .ok_or("no store")?
+                    .load()
+                    .ok_or("no saved session")?;
+                let saved = woodshed_core::storage::decode_session(&json)
+                    .map_err(|e| e.to_string())?
+                    .session;
+                if saved.audio_pack != ui.audio_pack {
+                    return Err("saved kit differs from the live kit".into());
+                }
+                let report = serde_json::json!({"selection": ui.audio_pack, "saved_selection": saved.audio_pack,
+                    "bpm": ui.transport.bpm, "practice_saved": ui.practice_saved});
+                use std::io::Write;
+                let mut file = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .open(std::path::PathBuf::from(directory).join(format!("{stem}.json")))
+                    .map_err(|e| e.to_string())?;
+                file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes())
+                    .map_err(|e| e.to_string())
+            })();
+            if let Err(e) = &result {
+                eprintln!("Pack checkpoint refused: {e}");
+            }
+            return result.is_ok();
+        }
         if let Some(stem) = label.strip_prefix("fold-checkpoint-") {
             return crate::fold_receipt::write(ctx.runner.state(), &self.shared.borrow(), stem);
         }
@@ -385,25 +685,48 @@ impl mesquite::Product for Product {
             // Receipt-only observation of an explicitly isolated scenario profile.
             let verify = || -> Result<(), String> {
                 let shared = self.shared.borrow();
-                if !matches!(shared.seal, Some(woodshed_views::persona::PracticeSeal::Sealed { .. })) {
+                if !matches!(
+                    shared.seal,
+                    Some(woodshed_views::persona::PracticeSeal::Sealed { .. })
+                ) {
                     return Err("take receipt requires real sealed custody".into());
                 }
-                let json = shared.storage.as_ref().ok_or("no store")?
-                    .load().ok_or("sealed session unreadable")?;
+                let json = shared
+                    .storage
+                    .as_ref()
+                    .ok_or("no store")?
+                    .load()
+                    .ok_or("sealed session unreadable")?;
                 let persisted = woodshed_core::storage::decode_session(&json)
-                    .map_err(|e| e.to_string())?.session;
+                    .map_err(|e| e.to_string())?
+                    .session;
                 let presentation: woodshed_views::stage::OverviewPresentation =
-                    serde_json::from_str(persisted.overview_presentation_json.as_deref().ok_or("no presentation")?)
+                    serde_json::from_str(
+                        persisted
+                            .overview_presentation_json
+                            .as_deref()
+                            .ok_or("no presentation")?,
+                    )
                     .map_err(|e| e.to_string())?;
                 let ui = ctx.runner.state();
-                if presentation.version != 2 || persisted.loop_captures != ui.loop_captures
-                    || presentation.focus != ui.overview_focus {
-                    return Err("sealed presentation or take manifest differs from the live view".into());
+                if presentation.version != 2
+                    || persisted.loop_captures != ui.loop_captures
+                    || presentation.focus != ui.overview_focus
+                {
+                    return Err(
+                        "sealed presentation or take manifest differs from the live view".into(),
+                    );
                 }
-                let positions: std::collections::BTreeMap<_, _> = presentation.positions.iter().cloned().collect();
-                let Some(id @ woodshed_core::session_overview::OverviewNodeId::Artifact(
-                    woodshed_core::session_overview::SessionArtifactId::LoopTake(_))) = ui.overview_focus.as_ref()
-                else { return Err("focus is not a retained take".into()); };
+                let positions: std::collections::BTreeMap<_, _> =
+                    presentation.positions.iter().cloned().collect();
+                let Some(
+                    id @ woodshed_core::session_overview::OverviewNodeId::Artifact(
+                        woodshed_core::session_overview::SessionArtifactId::LoopTake(_),
+                    ),
+                ) = ui.overview_focus.as_ref()
+                else {
+                    return Err("focus is not a retained take".into());
+                };
                 let live_positions = ui.overview_dynamics.positions();
                 let live = live_positions
                     .get(id)
@@ -413,24 +736,48 @@ impl mesquite::Product for Product {
                 }) {
                     return Err("take placement did not round-trip".into());
                 }
-                let captures = shared.backend.as_ref().ok_or("no output backend")?.capture_snapshot();
-                if captures.is_empty() { return Err("no hydrated PCM".into()); }
+                let captures = shared
+                    .backend
+                    .as_ref()
+                    .ok_or("no output backend")?
+                    .capture_snapshot();
+                if captures.is_empty() {
+                    return Err("no hydrated PCM".into());
+                }
                 for take in &captures {
-                    let reference = persisted.loop_captures.takes.iter().find(|r| r.id == take.id)
+                    let reference = persisted
+                        .loop_captures
+                        .takes
+                        .iter()
+                        .find(|r| r.id == take.id)
                         .ok_or("hydrated take has no persisted reference")?;
                     let stored = shared.storage.as_ref().unwrap().try_read_capture(
-                        persisted.loop_captures.namespace.as_deref().ok_or("no capture namespace")?, reference)?;
-                    if stored.len() != take.buffer.len() || !stored.iter().zip(take.buffer.data.iter())
-                        .all(|(stored, live)| stored.to_bits() == live.to_bits()) {
+                        persisted
+                            .loop_captures
+                            .namespace
+                            .as_deref()
+                            .ok_or("no capture namespace")?,
+                        reference,
+                    )?;
+                    if stored.len() != take.buffer.len()
+                        || !stored
+                            .iter()
+                            .zip(take.buffer.data.iter())
+                            .all(|(stored, live)| stored.to_bits() == live.to_bits())
+                    {
                         return Err("sealed PCM differs from hydrated PCM".into());
                     }
                     for (index, sample) in take.buffer.data.iter().enumerate() {
-                        if sample.to_bits() != [0.000125f32, -0.00025, -0.0, 0.0005][index % 4].to_bits() {
+                        if sample.to_bits()
+                            != [0.000125f32, -0.00025, -0.0, 0.0005][index % 4].to_bits()
+                        {
                             return Err("deterministic PCM bits changed".into());
                         }
                     }
                 }
-                let directory = std::path::PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?);
+                let directory = std::path::PathBuf::from(
+                    std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?,
+                );
                 let report = serde_json::json!({
                     "sealed": true, "presentation": presentation,
                     "manifest": persisted.loop_captures,
@@ -442,12 +789,22 @@ impl mesquite::Product for Product {
                     })).collect::<Vec<_>>(),
                 });
                 use std::io::Write;
-                let mut file = std::fs::OpenOptions::new().write(true).create_new(true)
-                    .open(directory.join("take-retention.json")).map_err(|e| e.to_string())?;
-                file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes()).map_err(|e| e.to_string())?;
+                let mut file = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .open(directory.join("take-retention.json"))
+                    .map_err(|e| e.to_string())?;
+                file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes())
+                    .map_err(|e| e.to_string())?;
                 Ok(())
             };
-            return match verify() { Ok(()) => true, Err(error) => { eprintln!("Mere take receipt: {error}"); false } };
+            return match verify() {
+                Ok(()) => true,
+                Err(error) => {
+                    eprintln!("Mere take receipt: {error}");
+                    false
+                },
+            };
         }
         if let Some(stem) = label.strip_prefix("p5a-save-") {
             return p5a_write_card_receipt(ctx, &self.shared, stem, false);
@@ -459,13 +816,21 @@ impl mesquite::Product for Product {
             return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::Baseline);
         }
         if label == "catalog-audition-check-one" {
-            return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::OneAccepted);
+            return catalog_audition_receipt(
+                ctx,
+                &self.shared,
+                CatalogAuditionReceipt::OneAccepted,
+            );
         }
         if label == "catalog-audition-save-final" {
             return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::SaveFinal);
         }
         if label == "catalog-audition-verify-final" {
-            return catalog_audition_receipt(ctx, &self.shared, CatalogAuditionReceipt::VerifyFinal);
+            return catalog_audition_receipt(
+                ctx,
+                &self.shared,
+                CatalogAuditionReceipt::VerifyFinal,
+            );
         }
         if label == "wav-export-fixture" || label == "wav-export-backing-fixture" {
             let Some(directory) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
@@ -558,7 +923,7 @@ fn p5a_write_card_receipt(
         Err(error) => {
             eprintln!("P5a receipt refused: session decode failed: {error}");
             return false;
-        }
+        },
     };
     let ui = ctx.runner.state();
     let current_cards = match serde_json::to_value(&ui.set.cards) {
@@ -566,14 +931,14 @@ fn p5a_write_card_receipt(
         Err(error) => {
             eprintln!("P5a receipt refused: live Card encoding failed: {error}");
             return false;
-        }
+        },
     };
     let persisted_cards = match serde_json::to_value(&persisted.set.cards) {
         Ok(value) => value,
         Err(error) => {
             eprintln!("P5a receipt refused: persisted Card encoding failed: {error}");
             return false;
-        }
+        },
     };
     if current_cards != persisted_cards {
         eprintln!("P5a receipt refused: live and sealed Card payloads differ");
@@ -606,7 +971,7 @@ fn p5a_write_card_receipt(
             None => {
                 eprintln!("P5a receipt refused: expected checkpoint is missing or invalid");
                 return false;
-            }
+            },
         };
         if expected.get("cards") != Some(&current_cards)
             || expected.get("owner") != Some(&serde_json::json!(active_owner))
@@ -644,7 +1009,7 @@ fn p5a_write_card_receipt(
         Err(error) => {
             eprintln!("P5a receipt refused: could not create checkpoint: {error}");
             return false;
-        }
+        },
     };
     match serde_json::to_vec_pretty(&report)
         .map_err(|error| error.to_string())
@@ -654,7 +1019,7 @@ fn p5a_write_card_receipt(
         Err(error) => {
             eprintln!("P5a receipt refused: checkpoint write failed: {error}");
             false
-        }
+        },
     }
 }
 
@@ -705,7 +1070,12 @@ fn catalog_audition_receipt(
         return fail("no isolated receipt directory");
     };
     let path = std::path::PathBuf::from(directory);
-    let Some(shared_storage) = shared.borrow().storage.as_ref().and_then(|storage| storage.load()) else {
+    let Some(shared_storage) = shared
+        .borrow()
+        .storage
+        .as_ref()
+        .and_then(|storage| storage.load())
+    else {
         return fail("sealed session is unreadable");
     };
     let persisted = match woodshed_core::storage::decode_session(&shared_storage) {
@@ -742,10 +1112,10 @@ fn catalog_audition_receipt(
             else {
                 return fail("baseline checkpoint is missing or invalid");
             };
-            let Some(baseline_events) = baseline
-                .get("events")
-                .and_then(|value| serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value.clone()).ok())
-            else {
+            let Some(baseline_events) = baseline.get("events").and_then(|value| {
+                serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value.clone())
+                    .ok()
+            }) else {
                 return fail("baseline event history is invalid");
             };
             let Some(baseline_cards) = baseline.get("cards") else {
@@ -756,10 +1126,17 @@ fn catalog_audition_receipt(
                 || events.len() != baseline_events.len() + 1
                 || events.get(1..) != Some(baseline_events.as_slice())
                 || !events.first().is_some_and(|event| {
-                    valid_pattern_audition(event, "exercise:scale-thirds/v1:Major", "scale:Major", owner)
+                    valid_pattern_audition(
+                        event,
+                        "exercise:scale-thirds/v1:Major",
+                        "scale:Major",
+                        owner,
+                    )
                 })
             {
-                return fail("refused audition changed authored Cards or history, or accepted event attribution differs");
+                return fail(
+                    "refused audition changed authored Cards or history, or accepted event attribution differs",
+                );
             }
             true
         },
@@ -778,14 +1155,21 @@ fn catalog_audition_receipt(
                 None
             };
             let baseline_events = if let Some(expected) = &expected {
-                expected.get("baseline_events")
-                    .and_then(|value| serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value.clone()).ok())
+                expected.get("baseline_events").and_then(|value| {
+                    serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(
+                        value.clone(),
+                    )
+                    .ok()
+                })
             } else {
                 std::fs::read(&baseline_path)
                     .ok()
                     .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
                     .and_then(|baseline| baseline.get("events").cloned())
-                    .and_then(|value| serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value).ok())
+                    .and_then(|value| {
+                        serde_json::from_value::<Vec<woodshed_core::history::PracticeEvent>>(value)
+                            .ok()
+                    })
             };
             let Some(baseline_events) = baseline_events else {
                 return fail("baseline event history is missing or invalid");
@@ -793,10 +1177,20 @@ fn catalog_audition_receipt(
             if events.len() != baseline_events.len() + 2
                 || events.get(2..) != Some(baseline_events.as_slice())
                 || !events.first().is_some_and(|event| {
-                    valid_pattern_audition(event, "exercise:scale-thirds/v1:Minor", "scale:Minor", owner)
+                    valid_pattern_audition(
+                        event,
+                        "exercise:scale-thirds/v1:Minor",
+                        "scale:Minor",
+                        owner,
+                    )
                 })
                 || !events.get(1).is_some_and(|event| {
-                    valid_pattern_audition(event, "exercise:scale-thirds/v1:Major", "scale:Major", owner)
+                    valid_pattern_audition(
+                        event,
+                        "exercise:scale-thirds/v1:Major",
+                        "scale:Major",
+                        owner,
+                    )
                 })
             {
                 return fail("accepted-only pattern history or exact source attribution differs");
@@ -966,15 +1360,23 @@ impl Snapshot<'_, '_> {
         let nodes = {
             let dom = self.ctx.runner.dom();
             let dom = dom.borrow();
-            self.ctx.a11y_projection().map_or_else(Vec::new, |projection| {
-                taproot::matching_with_projection(&dom, selector, &projection)
-            })
+            self.ctx
+                .a11y_projection()
+                .map_or_else(Vec::new, |projection| {
+                    taproot::matching_with_projection(&dom, selector, &projection)
+                })
         };
         nodes.into_iter().any(|node| {
-            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
-            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
-            width > 0.0 && height > 0.0
-                && visible_width + 0.5 >= width && visible_height + 0.5 >= height
+            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else {
+                return false;
+            };
+            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else {
+                return false;
+            };
+            width > 0.0
+                && height > 0.0
+                && visible_width + 0.5 >= width
+                && visible_height + 0.5 >= height
         })
     }
 
@@ -985,26 +1387,41 @@ impl Snapshot<'_, '_> {
             let dom = dom.borrow();
             let label = format!("Select Card {card}");
             let select = Selector::role("switch").with_attr("aria-label", label.as_str());
-            self.ctx.a11y_projection().map_or_else(Vec::new, |projection| {
-                taproot::matching_with_projection(&dom, &select, &projection)
-            }).into_iter().find_map(|node| {
-                let mut ancestor = dom.parent(node);
-                while let Some(parent) = ancestor {
-                    if dom.attribute(parent, &Namespace::default(), &LocalName::from("class"))
-                        .is_some_and(|classes| classes.split_whitespace().any(|class| class == "hocket-recorder-lane"))
-                    {
-                        return dom.all_with_class(parent, class).into_iter().next();
+            self.ctx
+                .a11y_projection()
+                .map_or_else(Vec::new, |projection| {
+                    taproot::matching_with_projection(&dom, &select, &projection)
+                })
+                .into_iter()
+                .find_map(|node| {
+                    let mut ancestor = dom.parent(node);
+                    while let Some(parent) = ancestor {
+                        if dom
+                            .attribute(parent, &Namespace::default(), &LocalName::from("class"))
+                            .is_some_and(|classes| {
+                                classes
+                                    .split_whitespace()
+                                    .any(|class| class == "hocket-recorder-lane")
+                            })
+                        {
+                            return dom.all_with_class(parent, class).into_iter().next();
+                        }
+                        ancestor = dom.parent(parent);
                     }
-                    ancestor = dom.parent(parent);
-                }
-                None
-            })
+                    None
+                })
         };
         part.is_some_and(|node| {
-            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else { return false; };
-            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else { return false; };
-            width > 0.0 && height > 0.0
-                && visible_width + 0.5 >= width && visible_height + 0.5 >= height
+            let Some((_, _, width, height)) = self.ctx.painted_rect(node) else {
+                return false;
+            };
+            let Some((_, _, visible_width, visible_height)) = self.ctx.visible_rect(node) else {
+                return false;
+            };
+            width > 0.0
+                && height > 0.0
+                && visible_width + 0.5 >= width
+                && visible_height + 0.5 >= height
         })
     }
 
@@ -1063,17 +1480,33 @@ impl Snapshot<'_, '_> {
         let dom = self.ctx.runner.dom();
         let dom = dom.borrow();
         let roots = dom.all_with_class(dom.document(), "graph-canvas-swatch");
-        if roots.len() != 1 { return None; }
+        if roots.len() != 1 {
+            return None;
+        }
         let (x, y, width, height) = self.ctx.painted_rect(roots[0])?;
         let labels = dom.all_with_class(dom.document(), "graph-canvas-swatch-label");
-        let boxes: Option<Vec<_>> = labels.iter().map(|&node| self.ctx.painted_rect(node)).collect();
+        let boxes: Option<Vec<_>> = labels
+            .iter()
+            .map(|&node| self.ctx.painted_rect(node))
+            .collect();
         let boxes = boxes?;
-        let outside = boxes.iter().filter(|&&(lx, ly, w, h)| w <= 0.0 || h <= 0.0
-            || lx < x - 0.5 || ly < y - 0.5 || lx + w > x + width + 0.5 || ly + h > y + height + 0.5).count();
+        let outside = boxes
+            .iter()
+            .filter(|&&(lx, ly, w, h)| {
+                w <= 0.0
+                    || h <= 0.0
+                    || lx < x - 0.5
+                    || ly < y - 0.5
+                    || lx + w > x + width + 0.5
+                    || ly + h > y + height + 0.5
+            })
+            .count();
         let mut collisions = 0;
         for (i, &(ax, ay, aw, ah)) in boxes.iter().enumerate() {
             for &(bx, by, bw, bh) in &boxes[i + 1..] {
-                if ax < bx + bw && bx < ax + aw && ay < by + bh && by < ay + ah { collisions += 1; }
+                if ax < bx + bw && bx < ax + aw && ay < by + bh && by < ay + ah {
+                    collisions += 1;
+                }
             }
         }
         Some((boxes.len(), collisions, outside))
@@ -1163,9 +1596,14 @@ impl Snapshot<'_, '_> {
             woodshed_core::resolve_card_timing(&card.timing, ui.transport.bpm).ok()
         });
         let selected_preview = selected_card.and_then(|card| {
-            ui.stage.card_sounding_pitches_at_tempo(card, ui.transport.bpm).ok()
+            ui.stage
+                .card_sounding_pitches_at_tempo(card, ui.transport.bpm)
+                .ok()
         });
-        let output_sample_rate = self.shared.backend.as_ref()
+        let output_sample_rate = self
+            .shared
+            .backend
+            .as_ref()
             .and_then(|backend| backend.output_sample_rate());
         let reading = ui.relationship_reading().ok().flatten();
         let appearance = ui.appearance.resolve(&ui.app_settings.appearance);
@@ -1178,22 +1616,99 @@ impl Snapshot<'_, '_> {
                 .is_some_and(|family| family.name() == name)
         };
         let mut snap = ProbeSnapshot::default()
-            .with_field("document-scroll-available", self.document_scroll().is_some().to_string())
-            .with_field("document-scroll-x", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.0.to_string()))
-            .with_field("document-scroll-y", self.document_scroll().map_or_else(|| "unavailable".into(), |offset| offset.1.to_string()))
-            .with_field("recorder-card3-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 3")).to_string())
-            .with_field("recorder-card3-clear-visible", self.card_part_fully_visible(3, "hocket-recorder-clear").to_string())
-            .with_field("recorder-card2-select-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Select Card 2")).to_string())
-            .with_field("recorder-card2-waveform-visible", self.card_part_fully_visible(2, "hocket-recorder-wave-leaf").to_string())
-            .with_field("recorder-transport-visible", self.fully_visible(&Selector::class("hocket-recorder-transport")).to_string())
-            .with_field("recorder-record-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Record")).to_string())
-            .with_field("recorder-play-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Play backing")).to_string())
-            .with_field("recorder-stop-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Stop all loops")).to_string())
-            .with_field("recorder-rewind-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Rewind")).to_string())
-            .with_field("recorder-click-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Click")).to_string())
-            .with_field("recorder-replace-visible", self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Replace capture")).to_string())
-            .with_field("recorder-tempo-down-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Decrease tempo")).to_string())
-            .with_field("recorder-tempo-up-visible", self.fully_visible(&Selector::role("button").with_attr("aria-label", "Increase tempo")).to_string())
+            .with_field(
+                "document-scroll-available",
+                self.document_scroll().is_some().to_string(),
+            )
+            .with_field(
+                "document-scroll-x",
+                self.document_scroll()
+                    .map_or_else(|| "unavailable".into(), |offset| offset.0.to_string()),
+            )
+            .with_field(
+                "document-scroll-y",
+                self.document_scroll()
+                    .map_or_else(|| "unavailable".into(), |offset| offset.1.to_string()),
+            )
+            .with_field(
+                "recorder-card3-select-visible",
+                self.fully_visible(
+                    &Selector::role("switch").with_attr("aria-label", "Select Card 3"),
+                )
+                .to_string(),
+            )
+            .with_field(
+                "recorder-card3-clear-visible",
+                self.card_part_fully_visible(3, "hocket-recorder-clear")
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-card2-select-visible",
+                self.fully_visible(
+                    &Selector::role("switch").with_attr("aria-label", "Select Card 2"),
+                )
+                .to_string(),
+            )
+            .with_field(
+                "recorder-card2-waveform-visible",
+                self.card_part_fully_visible(2, "hocket-recorder-wave-leaf")
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-transport-visible",
+                self.fully_visible(&Selector::class("hocket-recorder-transport"))
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-record-visible",
+                self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Record"))
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-play-visible",
+                self.fully_visible(
+                    &Selector::role("button").with_attr("aria-label", "Play backing"),
+                )
+                .to_string(),
+            )
+            .with_field(
+                "recorder-stop-visible",
+                self.fully_visible(
+                    &Selector::role("button").with_attr("aria-label", "Stop all loops"),
+                )
+                .to_string(),
+            )
+            .with_field(
+                "recorder-rewind-visible",
+                self.fully_visible(&Selector::role("button").with_attr("aria-label", "Rewind"))
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-click-visible",
+                self.fully_visible(&Selector::role("switch").with_attr("aria-label", "Click"))
+                    .to_string(),
+            )
+            .with_field(
+                "recorder-replace-visible",
+                self.fully_visible(
+                    &Selector::role("switch").with_attr("aria-label", "Replace capture"),
+                )
+                .to_string(),
+            )
+            .with_field(
+                "recorder-tempo-down-visible",
+                self.fully_visible(
+                    &Selector::role("button").with_attr("aria-label", "Decrease tempo"),
+                )
+                .to_string(),
+            )
+            .with_field(
+                "recorder-tempo-up-visible",
+                self.fully_visible(
+                    &Selector::role("button").with_attr("aria-label", "Increase tempo"),
+                )
+                .to_string(),
+            )
             .with_field(
                 "appearance-device-free",
                 (crate::appearance::device_free_receipt()
@@ -1306,7 +1821,7 @@ impl Snapshot<'_, '_> {
                         woodshedding::rehearsal::Material::ScalePattern { .. }
                     )
                 }) && ui.preview_voicing().is_ok_and(|preview| preview.2 > 0.0))
-                    .to_string(),
+                .to_string(),
             )
             .with_field(
                 "approach-cards",
@@ -1349,9 +1864,22 @@ impl Snapshot<'_, '_> {
                 "runner-foreground",
                 ui.is_current_set_rehearsing().to_string(),
             )
-            .with_field("overview-folds", ui.overview_folds.records.len().to_string())
-            .with_field("overview-fold-selection", ui.overview_folds.selected.len().to_string())
-            .with_field("overview-visible-nodes", woodshed_views::stage::overview_swatch(ui).graph.nodes.len().to_string())
+            .with_field(
+                "overview-folds",
+                ui.overview_folds.records.len().to_string(),
+            )
+            .with_field(
+                "overview-fold-selection",
+                ui.overview_folds.selected.len().to_string(),
+            )
+            .with_field(
+                "overview-visible-nodes",
+                woodshed_views::stage::overview_swatch(ui)
+                    .graph
+                    .nodes
+                    .len()
+                    .to_string(),
+            )
             .with_field("overview-zoom", format!("{:.2}", ui.overview_viewport.zoom))
             .with_field(
                 "overview-background",
@@ -1730,7 +2258,7 @@ impl Snapshot<'_, '_> {
                         woodshedding::rehearsal::Material::ChordApproach { .. }
                     )
                 }) && ui.preview_voicing().is_ok_and(|preview| preview.2 > 0.0))
-                    .to_string(),
+                .to_string(),
             )
             .with_field(
                 "approach-descends",
@@ -1795,14 +2323,17 @@ impl Snapshot<'_, '_> {
                         matches!(
                             card.material,
                             woodshedding::rehearsal::Material::ScalePattern { .. }
-                        ) && ui
-                            .preview_voicing()
-                            .is_ok_and(|preview| preview.0.windows(2).any(|notes| notes[1] < notes[0]))
+                        ) && ui.preview_voicing().is_ok_and(|preview| {
+                            preview.0.windows(2).any(|notes| notes[1] < notes[0])
+                        })
                     })
                     .to_string(),
             )
             .with_field("pattern-repeats", {
-                let pitches = ui.preview_voicing().map(|preview| preview.0).unwrap_or_default();
+                let pitches = ui
+                    .preview_voicing()
+                    .map(|preview| preview.0)
+                    .unwrap_or_default();
                 let unique = pitches
                     .iter()
                     .map(|pitch| pitch.to_bits())
@@ -1816,6 +2347,15 @@ impl Snapshot<'_, '_> {
                 .to_string()
             })
             .with_field("set-cards", observed.cards.to_string())
+            .with_field("pack-loaded", ui.audio_pack.is_some().to_string())
+            .with_field("pack-busy", ui.pack_busy.to_string())
+            .with_field("pack-notice", ui.pack_notice.clone())
+            .with_field(
+                "pack-revision",
+                ui.audio_pack
+                    .as_ref()
+                    .map_or("none".into(), audio_packs::PackSelection::revision),
+            )
             .with_field("practice-saved", ui.practice_saved.to_string())
             .with_field(
                 "preview-starts",
@@ -1832,8 +2372,14 @@ impl Snapshot<'_, '_> {
             )
             .with_field("rehearsal-running", ui.rehearsal_running.to_string())
             .with_field("rehearsal-pending", ui.rehearsal_pending.to_string())
-            .with_field("card-preview-error", ui.preview_voicing().is_err().to_string())
-            .with_field("card-timing-notice", ui.card_timing_notice.clone().unwrap_or_default())
+            .with_field(
+                "card-preview-error",
+                ui.preview_voicing().is_err().to_string(),
+            )
+            .with_field(
+                "card-timing-notice",
+                ui.card_timing_notice.clone().unwrap_or_default(),
+            )
             .with_field(
                 "p5a-card-label",
                 selected_card.map_or("".into(), |card| card.label.clone()),
@@ -1851,7 +2397,7 @@ impl Snapshot<'_, '_> {
                     woodshedding::rehearsal::Hold::Bars(n) => format!("bars:{n}"),
                     woodshedding::rehearsal::Hold::Seconds(seconds) => {
                         format!("seconds:{}", seconds.to_bits())
-                    }
+                    },
                     woodshedding::rehearsal::Hold::Reps(n) => format!("reps:{n}"),
                 }),
             )
@@ -1870,15 +2416,19 @@ impl Snapshot<'_, '_> {
             )
             .with_field(
                 "p5a-ordered-duration-ms",
-                selected_preview.as_ref().map_or("unavailable".into(), |preview| {
-                    (preview.1 * 1000.0).round().to_string()
-                }),
+                selected_preview
+                    .as_ref()
+                    .map_or("unavailable".into(), |preview| {
+                        (preview.1 * 1000.0).round().to_string()
+                    }),
             )
             .with_field(
                 "p5a-ordered-spacing-ms",
                 selected_preview
                     .as_ref()
-                    .map_or("unavailable".into(), |preview| preview.2.round().to_string()),
+                    .map_or("unavailable".into(), |preview| {
+                        preview.2.round().to_string()
+                    }),
             )
             .with_field(
                 "p5a-card-timing-notice-empty",
@@ -1889,8 +2439,14 @@ impl Snapshot<'_, '_> {
                 output_sample_rate.map_or("none".into(), |rate| rate.to_string()),
             )
             .with_field("history-events", ui.practice_history.len().to_string())
-            .with_field("audition-notice", ui.audition_notice.clone().unwrap_or_default())
-            .with_field("audition-notice-empty", ui.audition_notice.is_none().to_string())
+            .with_field(
+                "audition-notice",
+                ui.audition_notice.clone().unwrap_or_default(),
+            )
+            .with_field(
+                "audition-notice-empty",
+                ui.audition_notice.is_none().to_string(),
+            )
             .with_field("catalog-audition-previewed", {
                 ui.practice_history
                     .recent(ui.practice_history.len())
@@ -2232,15 +2788,70 @@ impl Snapshot<'_, '_> {
             // `data-key` — rather than from a UiState field that would report
             // "none" forever.
             .with_field("graph-focus", self.graph_focus_key())
-            .with_field("arrangement-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::PRIMARY_KEY).to_string())
-            .with_field("arrangement-related-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::RELATED_KEY).to_string())
-            .with_field("arrangement-preview",ui.arrangement_editor.preview_active().to_string())
-            .with_field("arrangement-saved",ui.set.progression_arrangement.is_some().to_string())
-            .with_field("arrangement-dirty",ui.arrangement_editor.dirty().to_string())
-            .with_field("arrangement-primary",ui.arrangement_editor.surfaces.borrow().primary.is_some().to_string())
-            .with_field("arrangement-related",ui.arrangement_editor.surfaces.borrow().related.is_some().to_string())
-            .with_field("arrangement-selection",ui.arrangement_editor.surfaces.borrow().primary.as_ref().and_then(|s|s.selected()).unwrap_or("").to_string())
-            .with_field("arrangement-error",ui.arrangement_editor.surfaces.borrow().error.clone().unwrap_or_default())
+            .with_field(
+                "arrangement-producer",
+                self.ctx
+                    .producers
+                    .contains(woodshed_views::stage::arrangement_editor::PRIMARY_KEY)
+                    .to_string(),
+            )
+            .with_field(
+                "arrangement-related-producer",
+                self.ctx
+                    .producers
+                    .contains(woodshed_views::stage::arrangement_editor::RELATED_KEY)
+                    .to_string(),
+            )
+            .with_field(
+                "arrangement-preview",
+                ui.arrangement_editor.preview_active().to_string(),
+            )
+            .with_field(
+                "arrangement-saved",
+                ui.set.progression_arrangement.is_some().to_string(),
+            )
+            .with_field(
+                "arrangement-dirty",
+                ui.arrangement_editor.dirty().to_string(),
+            )
+            .with_field(
+                "arrangement-primary",
+                ui.arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .primary
+                    .is_some()
+                    .to_string(),
+            )
+            .with_field(
+                "arrangement-related",
+                ui.arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .related
+                    .is_some()
+                    .to_string(),
+            )
+            .with_field(
+                "arrangement-selection",
+                ui.arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .primary
+                    .as_ref()
+                    .and_then(|s| s.selected())
+                    .unwrap_or("")
+                    .to_string(),
+            )
+            .with_field(
+                "arrangement-error",
+                ui.arrangement_editor
+                    .surfaces
+                    .borrow()
+                    .error
+                    .clone()
+                    .unwrap_or_default(),
+            )
             .with_field("section", ui.section.label().to_string())
             .with_field(
                 "shape-index",
@@ -2431,9 +3042,13 @@ impl Snapshot<'_, '_> {
                 );
         }
         let label_geometry = self.related_label_geometry();
-        snap = snap.with_field("related-label-geometry-available", label_geometry.is_some().to_string());
+        snap = snap.with_field(
+            "related-label-geometry-available",
+            label_geometry.is_some().to_string(),
+        );
         if let Some((count, collisions, outside)) = label_geometry {
-            snap = snap.with_field("related-label-count", count.to_string())
+            snap = snap
+                .with_field("related-label-count", count.to_string())
                 .with_field("related-label-collisions", collisions.to_string())
                 .with_field("related-label-outside", outside.to_string());
         }
@@ -2511,7 +3126,9 @@ impl Probe<'_, '_> {
             let dom = dom.borrow();
             taproot::matching_classes(&dom, &Selector::class("arrangement-scene"))
         };
-        nodes.into_iter().find_map(|node| self.ctx.painted_rect(node))
+        nodes
+            .into_iter()
+            .find_map(|node| self.ctx.painted_rect(node))
             .ok_or("arrangement scene has no native layout".into())
     }
 
@@ -2536,9 +3153,11 @@ impl Automatable for Probe<'_, '_> {
         let candidates = {
             let dom = self.ctx.runner.dom();
             let dom = dom.borrow();
-            self.ctx.a11y_projection().map_or_else(Vec::new, |projection| {
-                taproot::matching_with_projection(&dom, selector, &projection)
-            })
+            self.ctx
+                .a11y_projection()
+                .map_or_else(Vec::new, |projection| {
+                    taproot::matching_with_projection(&dom, selector, &projection)
+                })
         };
         let (width, height) = self.ctx.logical_size;
         for node in candidates {
@@ -2657,22 +3276,36 @@ impl Automatable for Probe<'_, '_> {
         }
         if label == "verify-selected-envelope-capture" {
             return match verify_selected_envelope(self.ctx.runner.state(), self.shared) {
-                Ok(receipt) => { self.shared.events.push(receipt); true },
-                Err(error) => { eprintln!("envelope fixture verification refused: {error}"); false },
+                Ok(receipt) => {
+                    self.shared.events.push(receipt);
+                    true
+                },
+                Err(error) => {
+                    eprintln!("envelope fixture verification refused: {error}");
+                    false
+                },
             };
         }
-        if matches!(label, "seed-loop-capture" | "seed-selected-loop-capture" | "seed-selected-envelope-capture") {
+        if matches!(
+            label,
+            "seed-loop-capture" | "seed-selected-loop-capture" | "seed-selected-envelope-capture"
+        ) {
             use woodshed_core::audio::AudioBackend;
             let Some(plan) = self.ctx.runner.state().loop_admitted.clone() else {
                 return false;
             };
             let selected = self.ctx.runner.state().loop_selected;
-            let segment = if matches!(label, "seed-selected-loop-capture" | "seed-selected-envelope-capture") {
+            let segment = if matches!(
+                label,
+                "seed-selected-loop-capture" | "seed-selected-envelope-capture"
+            ) {
                 selected.and_then(|id| plan.segments.iter().find(|segment| segment.id == id))
             } else {
                 plan.segments.first()
             };
-            let Some(segment) = segment else { return false; };
+            let Some(segment) = segment else {
+                return false;
+            };
             let Some(backend) = self.shared.backend.as_mut() else {
                 return false;
             };
@@ -2693,7 +3326,9 @@ impl Automatable for Probe<'_, '_> {
             }
             .duration_samples(rate as f32) as usize;
             let samples = if label == "seed-selected-envelope-capture" {
-                if frames < 128 { return false; }
+                if frames < 128 {
+                    return false;
+                }
                 envelope_capture(frames)
             } else {
                 (0..frames)
@@ -3019,7 +3654,10 @@ impl Automatable for Probe<'_, '_> {
                     card.touch = Touch::Walk;
                     // These cards model an imported catalog fixture. Subsequent
                     // timing changes in the scenario are made through the UI.
-                    card.timing = Timing { bpm: Some(bpm), hold };
+                    card.timing = Timing {
+                        bpm: Some(bpm),
+                        hold,
+                    };
                     ui.set.push(card);
                 }
                 ui.set.cursor = 0;
@@ -3279,13 +3917,22 @@ impl Probe<'_, '_> {
                 let directory = std::env::var_os("WOODSHED_CAPTURE_DIR")
                     .ok_or("isolated capture directory required")?;
                 let ui = self.ctx.runner.state();
-                if !matches!(self.shared.seal, Some(woodshed_views::persona::PracticeSeal::Sealed { .. })) {
+                if !matches!(
+                    self.shared.seal,
+                    Some(woodshed_views::persona::PracticeSeal::Sealed { .. })
+                ) {
                     return Err("arrangement checkpoint requires sealed custody".into());
                 }
-                let stored = self.shared.storage.as_ref().ok_or("no store")?
-                    .load().ok_or("unreadable sealed session")?;
+                let stored = self
+                    .shared
+                    .storage
+                    .as_ref()
+                    .ok_or("no store")?
+                    .load()
+                    .ok_or("unreadable sealed session")?;
                 let persisted = woodshed_core::storage::decode_session(&stored)
-                    .map_err(|e| e.to_string())?.session;
+                    .map_err(|e| e.to_string())?
+                    .session;
                 let surfaces = ui.arrangement_editor.surfaces.borrow();
                 let value = serde_json::json!({
                     "live": ui.to_persisted(),
@@ -3296,7 +3943,10 @@ impl Probe<'_, '_> {
                     "error": surfaces.error,
                 });
                 let path = std::path::PathBuf::from(directory).join(format!("{name}.json"));
-                std::fs::OpenOptions::new().write(true).create_new(true).open(path)
+                std::fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .open(path)
                     .map_err(|e| e.to_string())?
                     .write_all(&serde_json::to_vec_pretty(&value).map_err(|e| e.to_string())?)
                     .map_err(|e| e.to_string())
@@ -3338,7 +3988,7 @@ impl Probe<'_, '_> {
                     serde_json::to_vec_pretty(&value).map_err(|error| error.to_string())?,
                 )
                 .map_err(|error| error.to_string())
-            }
+            },
             Some("ui-zoom") => {
                 let zoom: f32 = parts
                     .next()

@@ -1,0 +1,12 @@
+[
+  {
+    "stage": "initial-effect",
+    "owner_observation": "current effect is off"
+  },
+  {
+    "stage": "permission",
+    "owner_observation": "Allowed and connected; effect is still off",
+    "live_output_observation": "closed; failed initial startup; attempted/accepted zero",
+    "at_utc": "2026-10-21T05:27:54.828255+00:00"
+  }
+]

@@ -1,0 +1,10 @@
+RESULT ok
+waited 0 frames
+captured 01_reopened_without_kit
+waited 0 frames
+waited 0 frames
+captured 02_exported_without_kit
+capture 01_reopened_without_kit 2360x1960 digest=de7eb76174be53f4 file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/run-2/01_reopened_without_kit.png
+capture 02_exported_without_kit 2360x1960 digest=f316b11a0ebf4b43 file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/run-2/02_exported_without_kit.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 32 frames, 35 redraws, 3 unpresented redraws

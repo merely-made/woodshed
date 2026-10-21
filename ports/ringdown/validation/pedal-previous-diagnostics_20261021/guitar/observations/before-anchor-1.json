@@ -1,0 +1,109 @@
+{
+  "sampled_at_utc": "2026-10-21T05:28:41.799377+00:00",
+  "command": {
+    "command": "status",
+    "id": "before-anchor-1"
+  },
+  "response": {
+    "bindings": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "capacity": 512,
+      "events": [
+        {
+          "bytes": [],
+          "detail": "ready=false; previous_generation=None; previous_ready=false",
+          "elapsed_micros": 8,
+          "generation": 0,
+          "request_id": null,
+          "revision": 1,
+          "sequence": 1,
+          "stage": "writer-lifetime",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "subscribed_event=true; subscribers=1",
+          "elapsed_micros": 23004780,
+          "generation": 1,
+          "request_id": null,
+          "revision": null,
+          "sequence": 2,
+          "stage": "ble-subscription",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "ready=true; previous_generation=Some(0); previous_ready=false",
+          "elapsed_micros": 23014472,
+          "generation": 1,
+          "request_id": null,
+          "revision": 1,
+          "sequence": 3,
+          "stage": "writer-lifetime",
+          "truncated": false
+        }
+      ],
+      "overwritten": 0
+    },
+    "id": "before-anchor-1",
+    "output": {
+      "accepted": 0,
+      "attempted": 0,
+      "connected": "Bluetooth MIDI pedal (no encryption)",
+      "disconnects": 0,
+      "error": null,
+      "failed": 0,
+      "generation": 1,
+      "last_failure": null,
+      "pedal_failure": null,
+      "ready": true,
+      "rearm_required": false,
+      "revision": 1,
+      "status": "MIDI receiver subscribed (unencrypted compatibility) \u00b7 OS accepted 0; refused/uncertain 0"
+    },
+    "pedal": null
+  }
+}

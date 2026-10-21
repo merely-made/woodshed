@@ -1,0 +1,23 @@
+{
+  "screen_capture_available": true,
+  "windows": [
+    {
+      "kCGWindowAlpha": 1,
+      "kCGWindowBounds": {
+        "Height": 1150,
+        "Width": 1400,
+        "X": 580,
+        "Y": 145
+      },
+      "kCGWindowIsOnscreen": true,
+      "kCGWindowLayer": 0,
+      "kCGWindowMemoryUsage": 2288,
+      "kCGWindowName": "Woodshed",
+      "kCGWindowNumber": 12056,
+      "kCGWindowOwnerName": "Mesquite Native Acceptance",
+      "kCGWindowOwnerPID": 52778,
+      "kCGWindowSharingState": 1,
+      "kCGWindowStoreType": 1
+    }
+  ]
+}

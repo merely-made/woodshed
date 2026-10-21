@@ -1,0 +1,133 @@
+{
+  "scope": "All 16 Ringdown Rust files inventoried; provenance headers and selected implementation/fixture sites inspected. Not a 9,919-line authorship comparison. Original Android artifact was not located in bounded paths.",
+  "files": [
+    {
+      "path": "ports/ringdown/apps/probe/src/main.rs",
+      "lines": 1428,
+      "sha256": "bbbbfb9cdbf9ee4c49277b76d0daec4dd3b8e60a1bf8f0b8f0293cfbe6257827",
+      "classification": "Diagnostic app combining RPC, PacketLogger and offline shared pack export",
+      "observed_evidence": "--audio-pack returns before discovery, but Cargo dependencies on ringdown and ringdown-ble are unconditional.",
+      "remaining_action": "Offline execution is not an artifact exclusion boundary. Verify a future standards-only package dependency closure."
+    },
+    {
+      "path": "ports/ringdown/apps/probe/src/pklg.rs",
+      "lines": 470,
+      "sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+      "classification": "Original Rust diagnostic using external PacketLogger format research",
+      "observed_evidence": "Header explicitly credits Wireshark packetlogger.c for facts; public upstream source has GPL-2.0-or-later header. Selected record-reading code compared structurally.",
+      "remaining_action": "No GPL Cargo dependency was found; this does not clear expression provenance. Resolve whether any protectable code was adapted before distributing this diagnostic."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/compress.rs",
+      "lines": 900,
+      "sha256": "6723cd04e61fd91fb16a54df6841a057a6dbb51d068ffeb857c66bbac4c8e8d5",
+      "classification": "HyVibe-specific codec and exact 163-entry wire vocabulary",
+      "observed_evidence": "Static Android class inspection recorded; Rust encoder/decoder sampled; original APK/decompiled source not located for expression comparison.",
+      "remaining_action": "Open: exact necessity/provenance review of dictionary and codec; no clean-room attestation."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/crc32.rs",
+      "lines": 153,
+      "sha256": "cbe0856c7d89d7e1dca3bb2c28f890f8f2f028bb6461950c9f13cc59db968039",
+      "classification": "Public CRC-32/MPEG-2 algorithm selected by instrument-specific observation",
+      "observed_evidence": "Polynomial and compile-time table generation inspected; vendor table is described, generated table is used.",
+      "remaining_action": "Algorithm implementation can be grounded in public CRC sources; this does not standardize other file commands."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/effects.rs",
+      "lines": 652,
+      "sha256": "474c59386beafd140dbb0a442bc5bd426bf7ea8eb2c9acd929962ddaa5057684",
+      "classification": "HyVibe-specific effect names, parameter keys and test settings",
+      "observed_evidence": "Own Rust data model; comments cite owner app UI and hardware findings; one factory-named setting appears in a fixture.",
+      "remaining_action": "Review fixture necessity and avoid publishing factory preset/sample catalogs without rights."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/handshake.rs",
+      "lines": 336,
+      "sha256": "8ddaa4039b5a2a85d4f816fe1a308d79872e810984520892e64211cbd74e52dd",
+      "classification": "HyVibe-specific banner/version rules",
+      "observed_evidence": "Comments attribute rules to static analysis; contains inherited old-version assumption.",
+      "remaining_action": "Document as vendor profile, not standard BLE handshake; provenance/authenticity gap remains."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/lib.rs",
+      "lines": 130,
+      "sha256": "63fb45e0239a18a5d24a52812b0cb7121aab293e0191afaeb33407a5eb7f619f",
+      "classification": "Standard GATT substrate plus vendor service/characteristic identifiers",
+      "observed_evidence": "Custom eb65... UUIDs and transport exports inspected.",
+      "remaining_action": "UUIDs do not make the service a standard MIDI profile; independent rights review of vendor application layer remains."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/link.rs",
+      "lines": 98,
+      "sha256": "98118b762fd4ea4dc043c493f72daeaf9d010a1d9068936c412bb4949f7cb8c8",
+      "classification": "Original host I/O abstraction",
+      "observed_evidence": "Rust Link trait separates OS callbacks from protocol.",
+      "remaining_action": "No vendor SDK dependency declared; full authorship attestation not performed."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/llt.rs",
+      "lines": 489,
+      "sha256": "bbf6f7302c6555278ad0c2ca84eb41e2beb1f96cf5aa89c43df85af3ca1337cb",
+      "classification": "HyVibe-specific JSON chunking",
+      "observed_evidence": "Wire keys, sequence/ack rules and static-analysis attribution inspected.",
+      "remaining_action": "JSON syntax is public; chunk semantics remain vendor-specific."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/llt2.rs",
+      "lines": 476,
+      "sha256": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+      "classification": "HyVibe-specific binary framing",
+      "observed_evidence": "Header fields and attribution to fallback decompiler/instruction inspection read.",
+      "remaining_action": "Wire facts and implementation expression need separate review; compression is not evidence of access-control circumvention."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/loopfile.rs",
+      "lines": 737,
+      "sha256": "1f2663495af60f09508754d5c75e07f1ebe4811b290f63b725501fdde2e0d94f",
+      "classification": "Public RIFF/WAVE with HyVibe JUNK metadata",
+      "observed_evidence": "Parser comments and 92-byte captured header fixture inspected; no audio payload in that fixture.",
+      "remaining_action": "Vendor metadata is not part of generic WAVE; use minimum necessary factual test vectors."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/plan.rs",
+      "lines": 541,
+      "sha256": "1dd51afce7e1fb87d1ae7ec5a16dfb5a59304ce177959cb4e7772e50a6ba05bb",
+      "classification": "Original typed planners over HyVibe methods",
+      "observed_evidence": "Rust request/validation shape and receipt references inspected.",
+      "remaining_action": "Planners inherit vendor-method provenance and cannot be labeled standard MIDI."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/profile.rs",
+      "lines": 436,
+      "sha256": "cef5ce39ccf95b2c59ac93f56dfd2cf2a9223ae06e4737f8a2137582b3aca0ef",
+      "classification": "Original client shadow-state model",
+      "observed_evidence": "Rust retained client state and no-readback rationale inspected.",
+      "remaining_action": "Keep own persistence separate from vendor factory content; no broader provenance certification."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown/src/rpc.rs",
+      "lines": 1280,
+      "sha256": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+      "classification": "Public JSON-RPC envelope with HyVibe methods and permissive version behavior",
+      "observed_evidence": "32-method vocabulary, numeric outgoing version, string-version acceptance note and captured status fixture inspected.",
+      "remaining_action": "Current output is not strict JSON-RPC 2.0 conformance; review device identifiers in captured fixture before republication."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-ble/src/lib.rs",
+      "lines": 384,
+      "sha256": "423b09de03bb983143ecb88025c65ef7de9bfccc00e2352b27ce52e1621f39cb",
+      "classification": "Standard OS/btleplug I/O connected to vendor GATT profile",
+      "observed_evidence": "Discovery and custom UUID selection inspected; btleplug, not a vendor SDK.",
+      "remaining_action": "OS/API/standards licensing scope and platform qualification remain release-specific."
+    },
+    {
+      "path": "ports/ringdown/crates/ringdown-client/src/lib.rs",
+      "lines": 1409,
+      "sha256": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+      "classification": "Original async session over vendor protocol",
+      "observed_evidence": "Guitar<Link> session, request/ACK handling and imports sampled.",
+      "remaining_action": "Contains HyVibe transports; not a standards-only MIDI driver."
+    }
+  ]
+}

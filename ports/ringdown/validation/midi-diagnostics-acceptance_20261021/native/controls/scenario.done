@@ -1,0 +1,25 @@
+RESULT ok
+captured 01_default_off
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 02_retained_history
+waited 0 frames
+waited 5 frames
+captured 03_cancelled
+waited 0 frames
+waited 15 frames
+captured 04_exported
+waited 0 frames
+captured 05_recording_before_exit
+capture 01_default_off 2800x2300 digest=219affb2faed66aa file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r3/run/01_default_off.png
+capture 02_retained_history 2800x2300 digest=23211af9a11bea76 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r3/run/02_retained_history.png
+capture 03_cancelled 2800x2300 digest=81edd7235a718ba0 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r3/run/03_cancelled.png
+capture 04_exported 2800x2300 digest=f1beddeaf34b0bb7 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r3/run/04_exported.png
+capture 05_recording_before_exit 2800x2300 digest=ad8f7003648ee419 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r3/run/05_recording_before_exit.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 92 frames, 95 redraws, 3 unpresented redraws

@@ -1,0 +1,215 @@
+{
+  "recorded_utc": "2026-10-20T05:40:09.407246+00:00",
+  "baseline_head": "0452bcea1ff227924631ac190744e2bd9282fba5",
+  "host": {
+    "machine": "Q-PC",
+    "arch": "x86_64",
+    "os": "macOS 15.8.1 (24H32)",
+    "rust": "1.99.1"
+  },
+  "status": "Bounded macOS native/project and owner-observed guitar playback acceptance; target-desktop matrix remains open",
+  "tests": [
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 35,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 160,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "shared-audio-final-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 38,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 28,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 293,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "project-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "hocket-deadline-final-tests.log",
+      "passed": 39,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "hocket-deadline-final-tests.log",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "log": "hocket-deadline-final-tests.log",
+      "passed": 90,
+      "failed": 0,
+      "ignored": 2
+    },
+    {
+      "log": "hocket-deadline-final-tests.log",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "totals": {
+    "passed": 701,
+    "failed": 0,
+    "ignored": 2
+  },
+  "lockfiles_unchanged_from_ap2": true,
+  "artifacts": {
+    "hocket-final-after.mid": {
+      "bytes": 138,
+      "sha256": "131c8514f48a46fc6618a79330350de9f1bca60137be0fa393f7d20b993e6135",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-after.mid"
+    },
+    "hocket-final-after.wav": {
+      "bytes": 3021764,
+      "sha256": "02a1f9b9593e33235d1c89ce56ae3ef89c6cf80162bcf628a40c857bb116db89",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-after.wav"
+    },
+    "hocket-final-before.mid": {
+      "bytes": 138,
+      "sha256": "131c8514f48a46fc6618a79330350de9f1bca60137be0fa393f7d20b993e6135",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-before.mid"
+    },
+    "hocket-final-before.wav": {
+      "bytes": 3021764,
+      "sha256": "02a1f9b9593e33235d1c89ce56ae3ef89c6cf80162bcf628a40c857bb116db89",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-before.wav"
+    },
+    "hocket-final.hock": {
+      "bytes": 584459,
+      "sha256": "681017838375495fae200ae7c30b70627b04f519225398aec9e1ba74d95df309",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final.hock"
+    },
+    "woodshed-final-after.mid": {
+      "bytes": 138,
+      "sha256": "8a4fd9c1279f6ddb4e4e5e2714587f753fbb38439c7bee563e7b551ac1e7ace9",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final-after.mid"
+    },
+    "woodshed-final-before.mid": {
+      "bytes": 138,
+      "sha256": "8a4fd9c1279f6ddb4e4e5e2714587f753fbb38439c7bee563e7b551ac1e7ace9",
+      "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final-before.mid"
+    }
+  },
+  "native_scope": "Real retained control clicks, native dialogs, presented captures, two processes per app, installed-kit directory moved before reopen; private synthetic Keeper/profile. No handoff transport trial.",
+  "output_scope": "Woodshed real stream transport plus offline production-processor nonzero/allocation checks; Hocket actual graph nonzero meter with click muted and queued-to-assigned transition; physical guitar playback reported by owner. Desktop speakers not independently heard.",
+  "limits": [
+    "Windows/Linux GUI execution and browser audio not run.",
+    "Slow debug UI frames mean performance latency and sample-accurate starts are not qualified.",
+    "Guitar five identical bars do not identify precise loop/count-in semantics.",
+    "No complete MIDI note/velocity map or remote Beats control qualification."
+  ],
+  "scratch_root": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020",
+  "no_commit_or_push": true,
+  "guitar_reboot_follow_up": {
+    "recorded_utc": "2026-10-20T05:54:43.105429+00:00",
+    "evidence": "guitar-playback-observation.json",
+    "owner_report": "It still appears and plays after restarting",
+    "reboot_persistence_confirmed": true,
+    "documentation_sha256": {
+      "validation/audio-packs-ap3_20261020/README.md": "15be40507f23ad8695c14dcb28d229b250a62da5d141dc451af51175fcb3ddf4",
+      "design_docs/2026-09-09_audio_ports_rehome_plan.md": "1a953ca3afb735a2e257d604aa3a302583d9ea348bbce67b5b5ec84c7342651e",
+      "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md": "d49880af8f54f21c442ace3db066b03a6c347acc1aee998b06e19c2b3db40345",
+      "ports/ringdown/design_docs/DOC_README.md": "fc007df5571f056e570ea7df6daa8334902d11078ef7cf2b06420f8fccf2ffcc",
+      "design_docs/DOC_README.md": "bc7aaca97d7e603f27c265d0e8cc4076cd26a8a12150f009c0b3ee6c70081748"
+    },
+    "scope": "Owner-observed follow-up only; frozen native binaries, software source hashes and test results retain their original qualification inputs."
+  },
+  "guitar_loop_count_in_follow_up": {
+    "recorded_utc": "2026-10-20T06:47:06.298014+00:00",
+    "trial": "loop-count-in/trial.json",
+    "write_receipt": "loop-count-in/write-receipt.json",
+    "status": "Owner-confirmed authored first-bar intro followed by bars 2-5 repeating; stop/start replays intro; no separate count-in setting found and no extra clicks before A reported.",
+    "qualification_limit": "Additional new directory entry not identified before ejection; inspect at next normal USB connection.",
+    "scope": "Append-only qualification follow-up; original software tests and frozen source hashes retain their original inputs.",
+    "observations": "loop-count-in/listening-observations.json",
+    "observation_recorded_utc": "2026-10-20T06:50:02.052931+00:00",
+    "documentation_sha256": {
+      "design_docs/2026-09-09_audio_ports_rehome_plan.md": "fbf481624fba93a9f5e2480006c745d916063f4204dbd8e2fe151b3516a5d1f8",
+      "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md": "a712dd209605416e91a381a4046c8a7c89c23a4b01ea11481cef51b99d86407b",
+      "ports/ringdown/design_docs/DOC_README.md": "36af83d83d318a98b7aab5a5a86303b63208992d28f192868a2061c24a0220d4"
+    }
+  }
+}

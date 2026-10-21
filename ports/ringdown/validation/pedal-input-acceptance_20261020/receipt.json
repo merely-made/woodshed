@@ -1,0 +1,99 @@
+{
+  "status": "bounded qualification complete; one unresolved guitar observation retained",
+  "run_dates": [
+    "2026-10-20",
+    "2026-10-21"
+  ],
+  "final_native_cohort": "native-r4",
+  "binary_sha256": "47c741623ff705f01edad848465d23adb74b95fcb99d39dae218ac4b844393be",
+  "focused_cases": {
+    "desktop_midi": 30,
+    "retained_inputs": 5,
+    "retained_button_repeat": 1,
+    "instrument": 10,
+    "settings": 1,
+    "supplier_focus_gate": 1,
+    "total": 48,
+    "new_regressions": 6
+  },
+  "native": {
+    "processes": 3,
+    "presented_captures": 13,
+    "independent_received_messages": 35,
+    "configuration_messages": 25,
+    "reopen_messages": 10,
+    "reopen_cleared_messages": 0,
+    "one_message_partial": true,
+    "partial_outcome": {
+      "accepted_messages": 1,
+      "action": "effect-next",
+      "detail": "Receiver changed/disconnected; remaining messages cancelled, no replay",
+      "id": 9,
+      "outcome": "uncertain"
+    },
+    "saved_clear_reassign": true,
+    "busy_refusal_visible": true,
+    "no_deferred_send_or_reconnect_replay": true
+  },
+  "guitar": {
+    "software_assertions_pass": true,
+    "physical_observation_status": "five single changes confirmed; one earlier Note-mapped Previous reported no change remains unresolved",
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": true,
+      "elapsed_seconds": 597.431,
+      "binary_sha256": "47c741623ff705f01edad848465d23adb74b95fcb99d39dae218ac4b844393be",
+      "scenario_sha256": "acb9ae08674831737c103847e28517dc0cd01eb76694267789d9286ba3dfc78e",
+      "receipt": "scenario.done",
+      "captures": 11
+    },
+    "accepted_messages": 12,
+    "attempted_messages": 12,
+    "gesture_count": 6,
+    "device_changes_confirmed": 5,
+    "device_no_change_reports": 1,
+    "held_n_os_key_events": 13,
+    "p_os_key_events": 1,
+    "controller_input": "qualification virtual source through selected midir input; not a physical controller device",
+    "controller_positive_repeats_per_gesture": 32,
+    "positive_only_repeats_offline": 32,
+    "positive_only_repeats_after_rearm": 32,
+    "disconnect_count": 1,
+    "generation_before": 1,
+    "generation_after": 2,
+    "quiet_count": 8,
+    "closed_input_output": true,
+    "independent_raw_ble_capture": false,
+    "device_acknowledgement_protocol": false,
+    "guitar_file_writes": false,
+    "private_rpc": false,
+    "cohort": "guitar-r4",
+    "owner_observations": "guitar/owner-observations.json",
+    "qualification": "Real keyboard on Mac, virtual controller input through production parser/mapping, actual compatibility BLE output and owner-observed guitar actions"
+  },
+  "builds": {
+    "macos_app_fixtures": "pass",
+    "windows_gnu_shared_instrument_ble": "pass",
+    "linux_gnu_shared_instrument_ble": "pass",
+    "instrument_no_default_features": "pass",
+    "full_workspace_suite": "not run"
+  },
+  "qualification_limits": [
+    "Native scenario key injection enters the production app interceptor; it is not OS key delivery.",
+    "No native Windows/Linux app runtime or Windows/X11 focus-switching qualification.",
+    "No encrypted guitar interoperability, physical partial radio-fault qualification, or timing guarantee.",
+    "OS acceptance is not a guitar acknowledgement.",
+    "The first Note-mapped Previous in the physical cohort was OS-accepted but the owner reported no change. Cause unresolved; later success does not erase this observation.",
+    "No physical external MIDI controller device was used; the selected input was driven by a qualification-only virtual source."
+  ],
+  "preservation": "preservation.json",
+  "desktop_released_to_coordinated_chat": true,
+  "evidence_captures": {
+    "native_virtual_port": 13,
+    "guitar": 11,
+    "total": 24,
+    "visual_review": "selected captures listed in visual-review.json"
+  }
+}

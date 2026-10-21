@@ -1,0 +1,6 @@
+BLE-MIDI Some(Status { phase: Advertising, security: UnencryptedCompatibility, subscribers: 0, generation: 0, accepted_messages: 0, received_messages: 0, last_error: None }); commands: status | reopen | send <channel> <type> <number> [value] | quit
+reopen
+status
+quit
+BLE-MIDI reopened Some(Status { phase: Advertising, security: UnencryptedCompatibility, subscribers: 0, generation: 0, accepted_messages: 0, received_messages: 0, last_error: None }); no MIDI replayed
+BLE-MIDI Some(Status { phase: Advertising, security: UnencryptedCompatibility, subscribers: 0, generation: 0, accepted_messages: 0, received_messages: 0, last_error: None })

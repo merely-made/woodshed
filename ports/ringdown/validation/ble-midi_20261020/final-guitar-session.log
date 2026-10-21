@@ -1,0 +1,10 @@
+BLE-MIDI Some(Status { phase: Advertising, security: UnencryptedCompatibility, subscribers: 0, generation: 0, accepted_messages: 0, received_messages: 0, last_error: None }); commands: status | send <channel> <type> <number> [value] | quit
+status
+BLE-MIDI Some(Status { phase: Subscribed, security: UnencryptedCompatibility, subscribers: 1, generation: 2, accepted_messages: 0, received_messages: 0, last_error: None })
+send 1 cc 67 127
+MIDI accepted by OS; musical result unobserved
+send 1 cc 67 0
+status
+MIDI accepted by OS; musical result unobserved
+BLE-MIDI Some(Status { phase: Subscribed, security: UnencryptedCompatibility, subscribers: 1, generation: 2, accepted_messages: 2, received_messages: 0, last_error: None })
+quit

@@ -1,0 +1,51 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI input
+click role:option INPUT_SOURCE
+click role:combobox @aria-label=MIDI output
+click role:option Bluetooth MIDI pedal (no encryption)
+act midi-await-ready
+wait 100000
+assert snap midi-ready == true
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act midi-checkpoint armed
+capture 01_armed
+act midi-await-count 2
+wait 100000
+assert snap midi-accepted == 2
+act midi-checkpoint count-2
+act midi-await-count 4
+wait 100000
+assert snap midi-accepted == 4
+act midi-checkpoint count-4
+capture 02_keyboard_previous
+act midi-await-count 6
+wait 100000
+assert snap midi-accepted == 6
+act midi-checkpoint count-6
+act midi-await-count 8
+wait 100000
+assert snap midi-accepted == 8
+act midi-checkpoint count-8
+capture 03_sparse_note_previous
+act midi-await-count 10
+wait 100000
+assert snap midi-accepted == 10
+act midi-checkpoint count-10
+act midi-await-count 12
+wait 100000
+assert snap midi-accepted == 12
+act midi-checkpoint count-12
+capture 04_held_note_previous
+act midi-dwell 10000
+wait 100000
+click role:combobox @aria-label=MIDI input
+click role:option None
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint final
+capture 05_closed

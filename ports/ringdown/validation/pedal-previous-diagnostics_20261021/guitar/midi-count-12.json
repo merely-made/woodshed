@@ -1,0 +1,177 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "clock_enabled": false,
+  "input": {
+    "armed": true,
+    "connected": "Previous input 8234259b",
+    "learn_controller": null,
+    "learn_key": null,
+    "notice": "Pedal inputs armed. Release a learned controller once before its first trigger.",
+    "pending": null,
+    "pending_target": null,
+    "selected_index": 1,
+    "target": {
+      "generation": 1,
+      "revision": 1
+    }
+  },
+  "output": {
+    "accepted": 12,
+    "attempted": 12,
+    "connected": "Bluetooth MIDI pedal (no encryption)",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": 1,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "revision": 1,
+    "status": "MIDI receiver subscribed (unencrypted compatibility) · OS accepted 12; refused/uncertain 0"
+  },
+  "pedal": {
+    "accepted_messages": 2,
+    "action": "effect-previous",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 6,
+    "outcome": "accepted"
+  },
+  "playing": false,
+  "saved_settings": {
+    "board_layout": "Two pane",
+    "bpm": 120.0,
+    "context": {
+      "enabled": true,
+      "node_limit": 24
+    },
+    "distinguish_root": false,
+    "marker_style": "Sharp",
+    "midi_pedal": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "neck_end": null,
+    "neck_start": 0,
+    "orientation": "Horizontal",
+    "reduce_motion": false,
+    "related": {
+      "arrangement": "Radial",
+      "dismissed_ids": [],
+      "graph_scope": "Selection",
+      "relation_depth": 1,
+      "show_neighborhood": true,
+      "use_history": true
+    },
+    "set_arrangement": "Snake",
+    "set_graph_height": 260,
+    "set_graph_reading": "Set",
+    "set_graph_width": 520,
+    "settings_page": "AudioMidi",
+    "text_scale": "Normal",
+    "theme": "Slate",
+    "tuning_idx": 0,
+    "visible_set_relations": [
+      "Next"
+    ],
+    "window": {
+      "height": 1050.0,
+      "maximized": false,
+      "width": 1180.0,
+      "x": 690.0,
+      "y": 195.0
+    }
+  },
+  "selected_index": 2,
+  "ui_notice": "MIDI receiver subscribed (unencrypted compatibility) · OS accepted 12; refused/uncertain 0",
+  "ui_pedal": {
+    "accepted_messages": 2,
+    "action": "effect-previous",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 6,
+    "outcome": "accepted"
+  }
+}

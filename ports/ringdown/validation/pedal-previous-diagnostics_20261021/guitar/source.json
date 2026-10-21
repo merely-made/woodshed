@@ -1,0 +1,12 @@
+{
+  "crates/woodshed-genet/src/midi.rs": "d2f83764692d0c5c79e7f27ef82f4228ef593504f3ea9b4e12d35d5f9c76822f",
+  "crates/woodshed-genet/src/midi/controller.rs": "d5ba42c6750451b6334827f9f143f2299765db1f40a522ec7582700c0a740396",
+  "crates/woodshed-genet/src/midi/pedal.rs": "9c79b46777b0e3ddbc2fbc92c2c9ff7a297ab9c53dcf633b02bf12e5c5499b0e",
+  "crates/woodshed-genet/src/midi/worker.rs": "b52c4176632adf1f747d27587699cdd397b189844e11d8eab71bfa17b8a32039",
+  "crates/woodshed-genet/src/midi/stdio.rs": "d4c2ae785fa43e12825dc8e4212751e01568e2576f294f4e8e3fb7e0ecf6d3ca",
+  "crates/woodshed-genet/src/pedal_inputs.rs": "9f803e1c5e90b058a520f4cf494f54f97b193047abd209727bd4b783dea7a537",
+  "crates/woodshed-instrument/src/midi/diagnostics.rs": "5b1156309a3514f6f05d2b8c2a7acc33ac6d886d7ebf1207c457fb0283e4058e",
+  "crates/woodshed-instrument/src/midi/ble.rs": "1b41b7bc8e4d0eb4acd6dfa44094980a8a47ded91767cad6a8289a8b96439adf",
+  "Cargo.toml": "136629ddcd234285af088f83bdbc8870474a90aab2e5e7fedee54565d0b45e8f",
+  "Cargo.lock": "9356b2a935152fe0271bebaf0410e20425e0cdbb3a0b339cb9591c568d0b4af4"
+}

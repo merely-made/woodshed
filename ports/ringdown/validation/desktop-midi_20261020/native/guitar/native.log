@@ -1,0 +1,15 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+woodshed-genet: waited 28 frames
+woodshed-genet: captured 01_advertising
+woodshed-genet: waited 95 frames
+woodshed-genet: captured 02_first_connection
+woodshed-genet: waited 695 frames
+woodshed-genet: captured 03_receiver_disconnected
+woodshed-genet: waited 478 frames
+woodshed-genet: captured 04_receiver_reconnected
+woodshed-genet: captured 05_desktop_closed
+woodshed-genet: waited 709 frames
+woodshed-genet: captured 06_desktop_reconnected
+woodshed-genet: captured 07_closed
+woodshed-genet: RESULT ok (2080 frames, 7 captures)

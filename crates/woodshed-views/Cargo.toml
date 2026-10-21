@@ -9,6 +9,8 @@ repository.workspace = true
 description = "Woodshed's Cambium view layer: view fns + CSS sheets for the Genet host (desktop and web). Genet-host plan S0+."
 
 [dependencies]
+audio-packs.workspace = true
+audio-pack-views.workspace = true
 woodshed-notation.workspace = true
 curation.workspace = true
 hocket-views.workspace = true

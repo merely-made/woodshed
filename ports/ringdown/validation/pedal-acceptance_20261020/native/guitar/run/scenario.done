@@ -1,0 +1,16 @@
+RESULT ok
+waited 43 frames
+captured 01_advertising
+waited 187 frames
+captured 02_subscribed
+waited 2054 frames
+captured 04_disconnected
+waited 288 frames
+waited 7 frames
+captured 05_reconnected_no_replay
+capture 01_advertising 2360x2100 digest=95aaa18968e0474c file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/guitar-r2/run/01_advertising.png
+capture 02_subscribed 2360x2100 digest=ea0d2f3b9479fa1c file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/guitar-r2/run/02_subscribed.png
+capture 04_disconnected 2360x2100 digest=3516f858bf8cb03e file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/guitar-r2/run/04_disconnected.png
+capture 05_reconnected_no_replay 2360x2100 digest=71e578ef0b1d6ec7 file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/guitar-r2/run/05_reconnected_no_replay.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 2621 frames, 2624 redraws, 3 unpresented redraws

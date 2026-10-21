@@ -31,6 +31,8 @@ fn metronome(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Metronome")).attr("class", "settings-heading"),
+                audio_pack_views::panel(ui.audio_pack.as_ref(), &ui.pack_notice, ui.pack_busy, false,
+                    |ui: &mut UiState, action| ui.pack_actions.push(action)),
                 el(
                     "div",
                     (

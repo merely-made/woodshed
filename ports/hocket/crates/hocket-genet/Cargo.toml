@@ -47,6 +47,8 @@ before-packaging-command = "cargo clean -p hocket-genet --release && cargo build
 signing-identity = "Developer ID Application: Mark Boykim (HWVZ5S7ACJ)"
 
 [dependencies]
+audio-packs = { path = "../../../../crates/audio-packs" }
+audio-pack-views = { path = "../../../../crates/audio-pack-views" }
 hocket-model = { workspace = true }
 hocket-engine = { workspace = true }
 hocket-project = { workspace = true }

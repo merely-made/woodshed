@@ -1,0 +1,91 @@
+[
+  {
+    "cwd": "/tmp",
+    "environment": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc",
+      "RUSTDOC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustdoc",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "4",
+      "INSTRUMENT_MIDI_DIAGNOSTICS": "0"
+    },
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "woodshed-genet",
+      "midi"
+    ],
+    "log": "checks/desktop-final.log"
+  },
+  {
+    "cwd": "/tmp",
+    "environment": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc",
+      "RUSTDOC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustdoc",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "4",
+      "INSTRUMENT_MIDI_DIAGNOSTICS": "0"
+    },
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "woodshed-instrument",
+      "--lib",
+      "midi::diagnostics::tests"
+    ],
+    "log": "checks/journal-final.log"
+  },
+  {
+    "cwd": "/tmp",
+    "environment": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc",
+      "RUSTDOC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustdoc",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "4",
+      "INSTRUMENT_MIDI_DIAGNOSTICS": "0"
+    },
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "woodshed-instrument",
+      "--test",
+      "diagnostics"
+    ],
+    "log": "checks/lifecycle-isolated.log"
+  },
+  {
+    "cwd": "/tmp",
+    "environment": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc",
+      "RUSTDOC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustdoc",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_BUILD_JOBS": "4",
+      "INSTRUMENT_MIDI_DIAGNOSTICS": "0"
+    },
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "build",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/Cargo.toml",
+      "--locked",
+      "--offline",
+      "-p",
+      "woodshed-genet"
+    ],
+    "log": "checks/build-post-test-isolation.log"
+  }
+]

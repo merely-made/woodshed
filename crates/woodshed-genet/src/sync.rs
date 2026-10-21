@@ -34,6 +34,7 @@ fn midi_port_at(ports: &[String], selected: usize) -> Option<String> {
 
 /// Everything woodshed does after an input dispatch.
 pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
+    crate::pedal_inputs::after_dispatch(shared, ctx);
     // First, so that everything below sees the session the chosen persona's
     // key opened rather than the empty one that stood in for it.
     crate::persona::after_dispatch(shared, ctx);
@@ -49,12 +50,14 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         return;
     }
     shared.full_dispatch_syncs = shared.full_dispatch_syncs.saturating_add(1);
+    crate::pack_io::after_dispatch(shared, ctx);
     push_backend(shared, ctx);
     crate::wav_export::after_dispatch(shared, ctx);
     // Window verbs used to be drained here from four `UiState` flags. The
     // host owns them now: the caption buttons call `WindowCommands` directly
     // and the title bar drags from its `--app-region` declaration.
     midi_devices(shared, ctx);
+    crate::midi_diagnostics::after_dispatch(shared, ctx);
 }
 
 /// Sync dropdown state into the core, push the audio state through the backend
@@ -110,6 +113,9 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             backend.sync_practice_clock(ui);
             // Calibration owns the shared runtime's click lane during a run.
             if !ui.calib_active {
+                if let Err(error) = backend.sync_pack(ui.audio_pack.as_ref(), ui.transport) {
+                    ui.pack_notice = error;
+                }
                 backend.set_metronome(ui.transport);
             }
             backend.set_tuner_enabled(ui.tuner.enabled);
@@ -145,15 +151,13 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                     },
                     AudioRequest::SongRewind => backend.song_rewind(),
                     AudioRequest::CancelPreview => backend.cancel_preview(),
-                    AudioRequest::PreviewVoicing => {
-                        match ui.preview_voicing() {
-                            Ok(preview) => {
-                                if let Err(error) = backend.admit_card_preview(&preview) {
-                                    ui.card_timing_notice = Some(format!("Queued preview: {error}"));
-                                }
-                            },
-                            Err(error) => ui.card_timing_notice = Some(error.to_string()),
-                        }
+                    AudioRequest::PreviewVoicing => match ui.preview_voicing() {
+                        Ok(preview) => {
+                            if let Err(error) = backend.admit_card_preview(&preview) {
+                                ui.card_timing_notice = Some(format!("Queued preview: {error}"));
+                            }
+                        },
+                        Err(error) => ui.card_timing_notice = Some(error.to_string()),
                     },
                     AudioRequest::PreviewPitches {
                         pitches,
@@ -161,7 +165,9 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
                         strum_s,
                     } => {
                         if !pitches.is_empty() {
-                            if let Err(error) = backend.admit_card_preview(&(pitches, duration_s, strum_s)) {
+                            if let Err(error) =
+                                backend.admit_card_preview(&(pitches, duration_s, strum_s))
+                            {
                                 ui.card_timing_notice = Some(format!("Queued preview: {error}"));
                             }
                         }
@@ -300,7 +306,10 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {
                     AudioRequest::Audition(request) => {
-                        ui.finish_audition_admission(&request, Err("Audio output is unavailable.".into()));
+                        ui.finish_audition_admission(
+                            &request,
+                            Err("Audio output is unavailable.".into()),
+                        );
                     },
                     AudioRequest::LoopClear(id)
                         if ui.loop_captures.takes.iter().any(|take| take.id == id) =>
@@ -564,20 +573,74 @@ fn midi_devices(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let midi = &mut shared.midi;
     ctx.runner.update(|ui| {
         if std::mem::take(&mut ui.midi.refresh_requested) {
+            // Preserve names through reordering. A vanished output becomes
+            // None, rather than silently selecting a different indexed port.
+            let input = midi_port_at(&ui.midi.input_ports, ui.midi.input_dd.selected);
+            let output = midi_port_at(&ui.midi.output_ports, ui.midi.output_dd.selected);
             ui.midi.input_ports = midi.input_ports();
             ui.midi.output_ports = midi.output_ports();
+            ui.midi.input_dd.selected = refreshed_selection(&ui.midi.input_ports, input.as_deref());
+            ui.midi.output_dd.selected =
+                refreshed_selection(&ui.midi.output_ports, output.as_deref());
         }
         let in_target = midi_port_at(&ui.midi.input_ports, ui.midi.input_dd.selected);
-        if midi.connected_input() != in_target.as_deref() {
-            midi.connect_input(in_target.as_deref());
-        }
+        // Requested intent also matters after endpoint loss: explicit None
+        // must retire the old request even when no input is connected now.
+        midi.connect_input(in_target.as_deref());
         let out_target = midi_port_at(&ui.midi.output_ports, ui.midi.output_dd.selected);
-        if midi.connected_output() != out_target.as_deref() {
-            midi.connect_output(out_target.as_deref());
+        // The host deduplicates requested intent. Comparing only confirmed
+        // connections would miss None while a previous open is still pending.
+        midi.connect_output(out_target.as_deref());
+        midi.set_pedal_bindings(&ui.app_settings.audio_midi.midi_pedal);
+        if let Some(action) = ui.midi.pedal_request.take() {
+            let binding = ui.app_settings.audio_midi.midi_pedal.get(action).clone();
+            ui.midi.pedal_report =
+                Some(if let Some(target) = ui.midi.pedal_request_target.take() {
+                    midi.trigger_pedal_for_target(action, binding, target)
+                } else {
+                    midi.trigger_pedal(action, binding)
+                });
         }
-        ui.midi.connected_in = midi.connected_input().map(str::to_string);
-        ui.midi.connected_out = midi.connected_output().map(str::to_string);
     });
+    poll_midi_state(shared, ctx);
+}
+fn refreshed_selection(ports: &[String], previous: Option<&str>) -> usize {
+    previous
+        .and_then(|name| ports.iter().position(|port| port == name))
+        .map_or(0, |i| i + 1)
+}
+/// Publish asynchronous MIDI changes during ordinary frames, without another
+/// click and without opening/connecting devices in this read-only projection.
+pub(crate) fn poll_midi_state(shared: &mut Shared, ctx: &mut Ctx<'_>) {
+    let input = shared.midi.connected_input().map(str::to_string);
+    let output = shared.midi.connected_output().map(str::to_string);
+    let notice = shared.midi.output_status().map(str::to_string);
+    let ready = shared.midi.output_ready();
+    let target = shared.midi.pedal_target();
+    let pedal = shared.midi.pedal_report();
+    let current = &ctx.runner.state().midi;
+    if current.connected_in != input
+        || current.connected_out != output
+        || current.output_notice != notice
+        || current.output_ready != ready
+        || current.pedal_target != target
+        || current.pedal_report != pedal
+    {
+        ctx.runner.update(|ui| {
+            ui.midi.connected_in = input;
+            ui.midi.connected_out = output;
+            ui.midi.output_notice = notice;
+            ui.midi.output_ready = ready;
+            if ui.midi.pedal_target != target {
+                ui.midi.disarm_inputs();
+                ui.midi.input_notice =
+                    Some("Output connection changed; pedal inputs disarmed".into());
+            }
+            ui.midi.pedal_target = target;
+            ui.midi.pedal_report = pedal;
+        });
+    }
+    crate::pedal_inputs::sync(shared, ctx.runner.state());
 }
 
 /// Publish the admitted snapshot to the view. A refused edit must not make the
@@ -1250,7 +1313,8 @@ mod tests {
             assert!(
                 !taproot::matching_classes(
                     &dom,
-                    &Selector::class("t-readout").containing("Choose positive Bars or finite Seconds")
+                    &Selector::class("t-readout")
+                        .containing("Choose positive Bars or finite Seconds")
                 )
                 .is_empty()
             );
@@ -1358,5 +1422,22 @@ mod tests {
         assert_eq!(h.state().looper.source, LooperSource::SavedSong);
         assert!(h.state().song_recording && h.state().song_playing);
         assert!(h.state().loop_notice.as_deref().unwrap().contains("armed"));
+    }
+}
+
+#[cfg(test)]
+mod midi_selection_tests {
+    use super::refreshed_selection;
+    #[test]
+    fn refresh_preserves_output_name_across_reordering() {
+        assert_eq!(
+            refreshed_selection(&["new".into(), "wanted".into()], Some("wanted")),
+            2
+        );
+    }
+    #[test]
+    fn disappeared_output_becomes_none_instead_of_another_port() {
+        assert_eq!(refreshed_selection(&["other".into()], Some("gone")), 0);
+        assert_eq!(refreshed_selection(&["other".into()], None), 0);
     }
 }

@@ -1,0 +1,12 @@
+RESULT ok
+captured 01_configured_no_sends
+waited 1 frames
+waited 2 frames
+waited 1 frames
+captured 02_ui_triggers
+captured 03_closed_saved
+capture 01_configured_no_sends 2360x2100 digest=063760353cf484d4 file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/configure/run/01_configured_no_sends.png
+capture 02_ui_triggers 2360x2100 digest=5b1b720bbfa79ded file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/configure/run/02_ui_triggers.png
+capture 03_closed_saved 2360x2100 digest=c3154b64689215a8 file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/configure/run/03_closed_saved.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 207 frames, 210 redraws, 3 unpresented redraws

@@ -19,6 +19,9 @@ type Ctx<'a> = AppCtx<'a, AppState, Logic, Child>;
 pub type Run = mesquite::Lane<Product>;
 pub struct Product {
     sheet: String,
+    drum_output_observed: bool,
+    output_wait: Option<std::time::Instant>,
+    output_trace: Vec<serde_json::Value>,
 }
 
 pub fn load() -> Option<Run> {
@@ -28,6 +31,9 @@ pub fn load() -> Option<Run> {
             config,
             Product {
                 sheet: crate::theme::sheet(),
+                drum_output_observed: false,
+                output_wait: None,
+                output_trace: Vec::new(),
             },
             cambium_genet_winit_host::read_file,
         )
@@ -44,6 +50,15 @@ pub fn load() -> Option<Run> {
 
 pub fn drive(lane: &mut Run, ctx: &mut Ctx<'_>) {
     lane.product_mut().sheet = ctx.runner.state().appearance.stylesheet();
+    let state = ctx.runner.state();
+    if state.accepted_voice_count() > 0 && !state.click && state.meter_db(0).is_finite() {
+        lane.product_mut().drum_output_observed = true;
+    }
+    if let Some(started) = lane.product_mut().output_wait {
+        if lane.product_mut().output_trace.len() < 64 {
+            lane.product_mut().output_trace.push(serde_json::json!({"elapsed_ms":started.elapsed().as_millis(), "engine":state.audio_probe(), "click":state.click, "controller_meter":state.meter_db(0).is_finite()}));
+        }
+    }
     lane.after_frame(ctx);
 }
 
@@ -61,14 +76,39 @@ impl mesquite::Product for Product {
         let state = ctx.runner.state();
         let appearance = &state.appearance;
         taproot::ProbeSnapshot::default()
+            .with_field(
+                "drum-output-observed",
+                self.drum_output_observed.to_string(),
+            )
+            .with_field("click-enabled", state.click.to_string())
+            .with_field("playing-voices", state.accepted_voice_count().to_string())
+            .with_field(
+                "output-meter-active",
+                state.meter_db(0).is_finite().to_string(),
+            )
+            .with_field("pack-loaded", state.audio_pack.is_some().to_string())
+            .with_field("pack-notice", state.pack_notice.clone())
+            .with_field(
+                "pack-revision",
+                state
+                    .audio_pack
+                    .as_ref()
+                    .map_or("none".into(), audio_packs::PackSelection::revision),
+            )
             .with_field("status", state.project_status_label())
             .with_field("project-label", state.project_label())
             .with_field("project-dirty", state.is_dirty().to_string())
             .with_field("has-incoming", state.has_incoming().to_string())
             .with_field("history-nodes", state.history.nodes.len().to_string())
             .with_field("phrases", state.session.phrases.len().to_string())
-            .with_field("media", { use hocket_project::media::MediaStore; state.store.len().to_string() })
-            .with_field("identity-ready", state.contact_token().is_some().to_string())
+            .with_field("media", {
+                use hocket_project::media::MediaStore;
+                state.store.len().to_string()
+            })
+            .with_field(
+                "identity-ready",
+                state.contact_token().is_some().to_string(),
+            )
             .with_field(
                 "appearance-device-free",
                 crate::appearance::device_free_receipt().to_string(),
@@ -123,25 +163,41 @@ impl mesquite::Product for Product {
             .with_field("history-head", format!("{:?}", state.history.head))
     }
     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
-        let Some(name) = label.strip_prefix("checkpoint-project ") else { return false; };
+        if label == "await-drum-output" {
+            self.drum_output_observed = false;
+            self.output_wait = Some(std::time::Instant::now());
+            return true;
+        }
+        let Some(name) = label.strip_prefix("checkpoint-project ") else {
+            return false;
+        };
         if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
             return false;
         }
-        let Some(directory) = std::env::var_os("HOCKET_CAPTURE_DIR") else { return false; };
+        let Some(directory) = std::env::var_os("HOCKET_CAPTURE_DIR") else {
+            return false;
+        };
         use hocket_project::media::MediaStore;
         let state = ctx.runner.state();
-        let media: Vec<_> = state.session.phrases.values().map(|phrase| {
-            let buffer = state.store.get(&phrase.media);
-            serde_json::json!({
-                "phrase": phrase.id, "reference": phrase.media,
-                "frames": buffer.map(|b| b.samples.len()),
-                "sample_rate": buffer.map(|b| b.sample_rate),
-                "fixture_bits_exact": buffer.is_some_and(|b| b.samples.iter().enumerate()
-                    .all(|(i,s)| s.to_bits() == [0.25f32, -0.5, 0.75][i % 3].to_bits())),
+        let media: Vec<_> = state
+            .session
+            .phrases
+            .values()
+            .map(|phrase| {
+                let buffer = state.store.get(&phrase.media);
+                serde_json::json!({
+                    "phrase": phrase.id, "reference": phrase.media,
+                    "frames": buffer.map(|b| b.samples.len()),
+                    "sample_rate": buffer.map(|b| b.sample_rate),
+                    "fixture_bits_exact": buffer.is_some_and(|b| b.samples.iter().enumerate()
+                        .all(|(i,s)| s.to_bits() == [0.25f32, -0.5, 0.75][i % 3].to_bits())),
+                })
             })
-        }).collect();
+            .collect();
         let report = serde_json::json!({
-            "bundle": hocket_model::ProjectBundle::new(state.session.clone(), state.history.clone()),
+            "bundle": state.project_bundle(),
+            "engine":state.audio_probe(), "output_trace":self.output_trace,
+            "audio": {"drum_output_observed": self.drum_output_observed, "click_enabled": state.click, "playing_voices": state.accepted_voice_count()},
             "media": media, "missing_media": state.missing_media,
             "project_label": state.project_label(), "dirty": state.is_dirty(),
             "busy": state.is_project_io_active(), "identity": state.identity_status_label(),
@@ -151,12 +207,17 @@ impl mesquite::Product for Product {
         });
         let result = (|| -> Result<(), String> {
             use std::io::Write;
-            let mut file = std::fs::OpenOptions::new().write(true).create_new(true)
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
                 .open(std::path::PathBuf::from(directory).join(format!("{name}.json")))
                 .map_err(|e| e.to_string())?;
-            file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes()).map_err(|e| e.to_string())
+            file.write_all(serde_json::to_string_pretty(&report).unwrap().as_bytes())
+                .map_err(|e| e.to_string())
         })();
-        if let Err(error) = &result { eprintln!("Hocket native checkpoint: {error}"); }
+        if let Err(error) = &result {
+            eprintln!("Hocket native checkpoint: {error}");
+        }
         result.is_ok()
     }
     fn viewport(&self, ctx: &Ctx<'_>) -> Option<mesquite::Viewport> {
@@ -165,15 +226,22 @@ impl mesquite::Product for Product {
         if ctx.runner.state().appearance.editor_open {
             return None;
         }
-        let node = taproot::matching_classes(&ctx.runner.dom().borrow(), &taproot::Selector::class("app"))
-            .into_iter()
-            .next()?;
+        let node =
+            taproot::matching_classes(&ctx.runner.dom().borrow(), &taproot::Selector::class("app"))
+                .into_iter()
+                .next()?;
         let (x, y, width, height) = ctx.painted_rect(node)?;
         let scale = ctx.window?.scale_factor() as f32 * ctx.ui_zoom;
         Some(mesquite::Viewport::new([x, y, width, height], scale, 1.0))
     }
     fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
-        Some(capture_pending || ctx.runner.state().is_project_io_active())
+        Some(
+            capture_pending
+                || ctx.runner.state().is_project_io_active()
+                || self.output_wait.is_some_and(|started| {
+                    !self.drum_output_observed && started.elapsed().as_secs() < 15
+                }),
+        )
     }
 }
 
@@ -199,6 +267,9 @@ mod tests {
         let lane = mesquite::Lane::new(
             Product {
                 sheet: crate::theme::sheet(),
+                drum_output_observed: false,
+                output_wait: None,
+                output_trace: Vec::new(),
             },
             Some(taproot::Scenario::parse(body).unwrap()),
             Some(dir.path().join("receipt.json")),

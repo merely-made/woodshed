@@ -1,0 +1,20 @@
+{
+  "observed_utc": "2026-10-20T05:20:15.033687+00:00",
+  "read_only": true,
+  "device": {
+    "DeviceIdentifier": "disk2s1",
+    "PartOfWhole": null,
+    "VolumeName": "HYVIBE",
+    "FilesystemName": "MS-DOS FAT32",
+    "TotalSize": 7817166848,
+    "MountPoint": "/Volumes/HYVIBE"
+  },
+  "stored_metronome": {
+    "drums_loop": true,
+    "dl_filename": "4-Shuffle_Groove.mid",
+    "bpm": 80,
+    "num": 4,
+    "den": 4,
+    "nbbars": 12
+  }
+}

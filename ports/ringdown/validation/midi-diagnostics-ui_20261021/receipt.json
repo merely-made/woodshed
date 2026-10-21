@@ -1,0 +1,36 @@
+{
+  "status": "implemented; compile-qualified only",
+  "behavior": {
+    "normal_launch_recording": false,
+    "preference_persisted": false,
+    "stop_retains_history": true,
+    "capture_boundaries_recorded": true,
+    "retained_capacity": 512,
+    "recent_ui_entries": 12,
+    "export_schema": {
+      "format": "woodshed-midi-diagnostics",
+      "version": 1,
+      "status": "same Dispatcher::status body as scripting"
+    },
+    "new_file_only": true,
+    "background_dialog_and_file_job": true,
+    "close_waits_for_export": true
+  },
+  "checks": {
+    "macos_application_build": "pass",
+    "portable_core_compile": "pass",
+    "windows_gnu_instrument_ble_compile": "pass",
+    "linux_gnu_instrument_ble_compile": "pass",
+    "rustfmt": "pass",
+    "git_diff_check": "pass"
+  },
+  "tests_run": false,
+  "native_ui_or_file_dialog_runtime": "not exercised",
+  "guitar_used": false,
+  "new_dependencies": false,
+  "scope_limits": [
+    "No native UI/default-off/reopen/export/cancel/close runtime qualification in this pass.",
+    "Shared instrument cross-compilation does not qualify native Windows/Linux desktop UI."
+  ],
+  "binary_sha256": "c9a3b9218f6ef35234069beb55b612110890d16b532bed83683b4bf10a163bbf"
+}

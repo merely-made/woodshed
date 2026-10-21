@@ -1,0 +1,22 @@
+{
+  "written_utc": "2026-10-20T05:21:00.023331+00:00",
+  "authorization": "User explicitly approved adding this trial MIDI file; one additive file only.",
+  "destination": "/Volumes/HYVIBE/Drums/11-Ringdown_AP3.mid",
+  "bytes": 519,
+  "sha256": "bb81218e90b12fc757ccd6d02f4aab85cf187cd3bf8a0021156f668cce7618db",
+  "readback_exact": true,
+  "factory_files_unchanged": true,
+  "factory_hashes": {
+    "1-Rock.mid": "b494bf734d64116adacb74e7ee54094b8ecfeb68542e98a00a70cf48a96ffb10",
+    "10-Salsa.mid": "32193e10edbf28902b021a72ecdb8bb9a28296b6c8f0bab8f79b9d844fb969ea",
+    "2-Funky_16th.mid": "7ed267bd214f6f2d4cd3693bc6ba3e2c6aacfe357e10a286f1eeb21109a53d4a",
+    "3-Funky_8th.mid": "cb05434a06be680b879aa35c2709a9fc8e471b68c175b9faa3cbf7ec62b00cb0",
+    "4-Shuffle_Groove.mid": "36c863b8fa4a406163775219de73016069f2cd74603b116b651ae21b107edd31",
+    "5-Shuffle_Rock.mid": "8cd62ba117addb186b7506eaad499894db4053e72a5952ea38da49dced56fc9f",
+    "6-Blues.mid": "5dc7b121b915ef8501eeb17dd9cefd0cd6d978e04cbc9e633b5fa98870fdfc6e",
+    "7-Pure_Swing.mid": "b3021c67ae2c84b1794488c86edb352c68d5c4d3a0b65fe80f3049e0455b5aaf",
+    "8-Jazz_Waltz.mid": "bf18b97495a7b13daf062a8ec4604df9f4b28a8f312146af2d13e0c2c6715b0c",
+    "9-Bossa_Nova.mid": "e2893a0dabf59ed7b4435969f92a46a80e8200cc301fa8d347e087df9c1ec0c2"
+  },
+  "configurations_written": false
+}

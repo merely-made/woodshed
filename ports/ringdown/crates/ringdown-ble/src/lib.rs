@@ -14,6 +14,9 @@
 //! # }
 //! ```
 
+/// Product connection/session policy for the private app protocol.
+pub mod instrument;
+
 use std::time::Duration;
 
 use btleplug::api::{

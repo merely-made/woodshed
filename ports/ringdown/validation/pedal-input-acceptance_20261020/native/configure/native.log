@@ -1,0 +1,41 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+woodshed-genet: waited 2 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: captured 01_learned_no_sends
+woodshed-genet: waited 1 frames
+woodshed-genet: waited 0 frames
+woodshed-genet: waited 1 frames
+woodshed-genet: waited 0 frames
+woodshed-genet: captured 02_shortcuts_hold_once
+woodshed-genet: waited 4 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: waited 5 frames
+woodshed-genet: captured 03_controller_holds_once
+woodshed-genet: waited 3 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: waited 3 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: captured 04_input_disconnect
+woodshed-genet: waited 2 frames
+woodshed-genet: waited 0 frames
+woodshed-genet: waited 2 frames
+woodshed-genet: waited 3 frames
+woodshed-genet: waited 3 frames
+woodshed-genet: waited 4 frames
+woodshed-genet: captured 05_partial_release_retained
+woodshed-genet: waited 2 frames
+woodshed-genet: waited 2 frames
+woodshed-genet: waited 0 frames
+woodshed-genet: waited 0 frames
+woodshed-genet: captured 06_output_reconnect_no_replay
+woodshed-genet: waited 0 frames
+woodshed-genet: waited 0 frames
+woodshed-genet: waited 2 frames
+woodshed-genet: captured 07_fresh_actions
+woodshed-genet: waited 0 frames
+woodshed-genet: captured 08_closed_saved
+woodshed-genet: RESULT ok (460 frames, 8 captures)

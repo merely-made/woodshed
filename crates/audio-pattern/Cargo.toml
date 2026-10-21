@@ -1,0 +1,18 @@
+[package]
+name = "audio-pattern"
+version = "0.1.0"
+description = "Portable step patterns, sound definitions and MIDI-file export shared by the audio products."
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version = "1.97.1"
+publish = false
+
+[dependencies]
+audio-primitives.workspace = true
+serde.workspace = true
+midly.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

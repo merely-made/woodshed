@@ -1,0 +1,42 @@
+{
+  "native/hocket/run-1/01_rendered_layer.png": {
+    "reviewed": true,
+    "notes": "Recorder, retained waveform, kit panel and transport visible; rows and controls remain separated. Output meter visible with click off; numeric output evidence is separate. Kit panel scrolls; its lowest Add-loop row may require scrolling. Input-overflow status is visible under slow debug frames."
+  },
+  "native/hocket/run-1/02_saved.png": {
+    "reviewed": true,
+    "notes": "Recorder, retained waveform, kit panel and transport visible; rows and controls remain separated. Kit panel scrolls; its lowest Add-loop row may require scrolling. Input-overflow status is visible under slow debug frames."
+  },
+  "native/hocket/run-1/03_failed_replacement_retained.png": {
+    "reviewed": true,
+    "notes": "Recorder, retained waveform, kit panel and transport visible; rows and controls remain separated. Missing-kick error visible with the accepted project/kit preserved. Kit panel scrolls; its lowest Add-loop row may require scrolling. Input-overflow status is visible under slow debug frames."
+  },
+  "native/hocket/run-2/01_reopened_without_kit.png": {
+    "reviewed": true,
+    "notes": "Recorder, retained waveform, kit panel and transport visible; rows and controls remain separated. Kit panel scrolls; its lowest Add-loop row may require scrolling. Input-overflow status is visible under slow debug frames."
+  },
+  "native/hocket/run-2/02_exported_without_kit.png": {
+    "reviewed": true,
+    "notes": "Recorder, retained waveform, kit panel and transport visible; rows and controls remain separated. Kit panel scrolls; its lowest Add-loop row may require scrolling. Input-overflow status is visible under slow debug frames."
+  },
+  "native/woodshed/run-1/01_installed_edited.png": {
+    "reviewed": true,
+    "notes": "Kit rows, edited Kick at step 2, Snare level and Hat controls render distinctly; export/transport visible."
+  },
+  "native/woodshed/run-1/02_playing.png": {
+    "reviewed": true,
+    "notes": "Kit rows, edited Kick at step 2, Snare level and Hat controls render distinctly; export/transport visible."
+  },
+  "native/woodshed/run-1/03_failed_replacement_retained.png": {
+    "reviewed": true,
+    "notes": "Kit rows, edited Kick at step 2, Snare level and Hat controls render distinctly; export/transport visible. Missing-kick error is visible while the accepted kit remains rendered."
+  },
+  "native/woodshed/run-2/01_reopened_without_kit.png": {
+    "reviewed": true,
+    "notes": "Kit rows, edited Kick at step 2, Snare level and Hat controls render distinctly; export/transport visible. Reopen capture begins scrolled down: top navigation/title outside viewport; later export capture includes the full surface."
+  },
+  "native/woodshed/run-2/02_exported_without_kit.png": {
+    "reviewed": true,
+    "notes": "Kit rows, edited Kick at step 2, Snare level and Hat controls render distinctly; export/transport visible."
+  }
+}

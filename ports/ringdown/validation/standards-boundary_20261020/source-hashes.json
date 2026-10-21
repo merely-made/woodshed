@@ -1,0 +1,218 @@
+[
+  {
+    "path": "CLAUDE.md",
+    "sha256": "8deff702e18290570974669d771d6de3243a2a9b7274fd9a0e14a6523c94ef32"
+  },
+  {
+    "path": "Cargo.lock",
+    "sha256": "1f7a257f515e844ff3916ecf70b8b523b8396e2d5bb8ccfb40c07e69199641ea"
+  },
+  {
+    "path": "Cargo.toml",
+    "sha256": "79a9506e8953e04583b4d342d7c233578445bdef160395d1fb97ac8c2306db85"
+  },
+  {
+    "path": "assets/audio-packs/basic-drums/audio-pack.json",
+    "sha256": "496313babe160063ff43e8762a99307ef4381d7ac437fbc41cfcf42913cdb1b0"
+  },
+  {
+    "path": "assets/audio-packs/basic-drums/samples/hat.wav",
+    "sha256": "22d03f8430bbe5e3278b8cb03042deabcc9a3dfb78e0fe3e651901469a66b509"
+  },
+  {
+    "path": "assets/audio-packs/basic-drums/samples/kick.wav",
+    "sha256": "0aa2cbe4d93226cca7468d7db7897d13265c60cd8f6d81c15da7b6d6aa0f41d4"
+  },
+  {
+    "path": "assets/audio-packs/basic-drums/samples/snare.wav",
+    "sha256": "1f444bb4c90c09cf7d1fddeebd2fcfc669f2ee4483237fa6d0ba1daed710aebc"
+  },
+  {
+    "path": "crates/audio-packs/src/definition.rs",
+    "sha256": "e677f7376133cc4ddea32e895686fcad6bec24a78f25925b09c4b9554e42c678"
+  },
+  {
+    "path": "crates/audio-packs/src/files.rs",
+    "sha256": "14b3d671274d43dc4d93e446156d9ec27924b1c743eb1398b70d3ea988ba057a"
+  },
+  {
+    "path": "crates/audio-packs/src/lib.rs",
+    "sha256": "ece43738bfb53d5bb7d56225491ad7190cc6178b0adc18d120c7388fc1e5ae32"
+  },
+  {
+    "path": "crates/audio-packs/src/samples.rs",
+    "sha256": "e9b446bd7b2437e552968f01dfef327b3f92db67301b58c3a2ec3b11e7c754a8"
+  },
+  {
+    "path": "crates/audio-packs/src/selection.rs",
+    "sha256": "c5951e7ae6756e762cb7bf9d9ec5bfe141805f2bbfcbebe57fafb1e571166f9d"
+  },
+  {
+    "path": "crates/audio-packs/src/snapshot.rs",
+    "sha256": "4bb72b3e43cee7960742fed821d064e6124d406d660c0a3beb09bce6995471da"
+  },
+  {
+    "path": "crates/audio-pattern/src/lib.rs",
+    "sha256": "17dc85285cc3732654330ee76f84859e1238c550674bda4b394b099c22d05362"
+  },
+  {
+    "path": "crates/audio-pattern/src/midi.rs",
+    "sha256": "5a75ded34d9923aeff0715894a9bf8ef3f47d45e98da1c189c503118d3528f68"
+  },
+  {
+    "path": "crates/audio-pattern/src/render.rs",
+    "sha256": "f835b61b2cb9703ddbb6984f2a215d1062a26d5e8c73c37b7600f308d8ebc79d"
+  },
+  {
+    "path": "crates/audio-pattern/src/sequencer.rs",
+    "sha256": "97ed2f0cdf155c30313c9bd6bf67696343e6f67fdfd313ad49f45beb767e93b9"
+  },
+  {
+    "path": "crates/audio-pattern/src/sound.rs",
+    "sha256": "647f820871f1a7b29a0a02e53f16a38c167f12e13a44ed9736f90f366be34e9d"
+  },
+  {
+    "path": "crates/audio-pattern/src/validation.rs",
+    "sha256": "6399eed7bcb6a63bc91665be0daab030b949f3ccf029f9203bd506d24371ca64"
+  },
+  {
+    "path": "crates/audio-primitives/src/alignment.rs",
+    "sha256": "8d9c281416de783b0c7c87439de9f92d1230ff1c4a1623289c1c5b44be916eef"
+  },
+  {
+    "path": "crates/audio-primitives/src/buffer.rs",
+    "sha256": "a87e16d6c89907ffe461f70ea590b9679527be4b481fe92e6800e63756a60ace"
+  },
+  {
+    "path": "crates/audio-primitives/src/calibration.rs",
+    "sha256": "4c275fc7204eecb9f08b50f36e79de59d12a6e404d20e8ac98a9d233a641d971"
+  },
+  {
+    "path": "crates/audio-primitives/src/capture.rs",
+    "sha256": "a3b6976ba1b53942c6c14e59b4840d2a845fc16bc449a3a71e6b12208033bd90"
+  },
+  {
+    "path": "crates/audio-primitives/src/click.rs",
+    "sha256": "c1ffce6bb162b1f8b60c7c8e4d2a15f638effb74a4dc07e8f0fefa13ea19a608"
+  },
+  {
+    "path": "crates/audio-primitives/src/lib.rs",
+    "sha256": "5231698b01e72fa31062fd3cc0b44c7c10fdff4f820ec9db4f4990dc75844963"
+  },
+  {
+    "path": "crates/audio-primitives/src/meter.rs",
+    "sha256": "14c5211ff40e0f859e7ee2b7e04fc3ea5c59359c72a1d6431959c002b3775a04"
+  },
+  {
+    "path": "crates/audio-primitives/src/onset.rs",
+    "sha256": "cd40a8fa8f61b14dbce684a2b6bea40efb4b9636c1ec5d8670b2de8695dece18"
+  },
+  {
+    "path": "crates/audio-primitives/src/stretch.rs",
+    "sha256": "e57cb87d5759c2dc21ec6d0989963b8aba70073201144d42b1b2eeea1253dfc5"
+  },
+  {
+    "path": "crates/audio-primitives/src/timing.rs",
+    "sha256": "4aa045db03840caed6525216dea4cb45841b6b2b0f86f513ee6d1439cc4f6c69"
+  },
+  {
+    "path": "crates/audio-primitives/src/waveform.rs",
+    "sha256": "c6c9442a263588e5ac5db7e0a4016d821bada38c6c11a0b2ce059bc7a76a19d2"
+  },
+  {
+    "path": "crates/woodshed-audio/Cargo.toml",
+    "sha256": "469dd2efebd132b24eb929a7804c7a772bd0e403359a990cbb561b3dfaf78ad2"
+  },
+  {
+    "path": "crates/woodshed-audio/src/lib.rs",
+    "sha256": "7d130d7a1a4077b387f4fcdc4e5c53bd2e009102abe3e154f7c405cf49b47bcf"
+  },
+  {
+    "path": "crates/woodshed-instrument/Cargo.toml",
+    "sha256": "1d32165ae80b629010304ec0fe4df0cdc6c1b99ecd78e8635f16aef7ab1e8f48"
+  },
+  {
+    "path": "crates/woodshed-instrument/src/lib.rs",
+    "sha256": "47b4b129e2d43d395cd9405ae1c99cd7d0d94a098b6a7aadc1d4de1bc8a681f3"
+  },
+  {
+    "path": "crates/woodshed-instrument/src/midi.rs",
+    "sha256": "9f2474b8dd0cfa7ae24dc7b1f62ac7685168930113b4718322b1409a5143fee9"
+  },
+  {
+    "path": "design_docs/2026-05-15_midi_design.md",
+    "sha256": "0f85f8983dac6c37b46cfea11b8c664a0f009a6791dce5850fd3156370b53182"
+  },
+  {
+    "path": "design_docs/2026-08-27_smart_instrument_plan.md",
+    "sha256": "db24718cd82bfc882f08e8be1d04f82611220106183cad94ce020b9fd3226cf2"
+  },
+  {
+    "path": "design_docs/2026-09-09_audio_ports_rehome_plan.md",
+    "sha256": "500421956fdcb697a93a31062d050b49f8a66f054af4eb7d4c4c0c6e4a3b1433"
+  },
+  {
+    "path": "design_docs/DOC_README.md",
+    "sha256": "8ba9e6f87f10d37b24d0165a8ae70d921a140abb0e3c814ede266015f75c2777"
+  },
+  {
+    "path": "ports/ringdown/Cargo.lock",
+    "sha256": "641c755195b0d1ae7db5e435b75888517c3bfb1894cd3d9deeaf88ba084a3e99"
+  },
+  {
+    "path": "ports/ringdown/Cargo.toml",
+    "sha256": "154fc255632ec7cd56290ab7039d5ed2490ff167f1d38b4ecd0f8018754cba1c"
+  },
+  {
+    "path": "ports/ringdown/README.md",
+    "sha256": "be4f7226278913836e85a2817ec77629c198a8770c502f5dc98db8f216ef7dce"
+  },
+  {
+    "path": "ports/ringdown/apps/probe/Cargo.toml",
+    "sha256": "fbf26195c5e44c83dab2e6d8b1ae23f27fadef06cb51bad22fc2f5037d17e7b6"
+  },
+  {
+    "path": "ports/ringdown/apps/probe/src/main.rs",
+    "sha256": "a9180b5e4c55000817bc9ff05446fd0c7d298a1478c87543bd0d1a9fb28927db"
+  },
+  {
+    "path": "ports/ringdown/apps/probe/src/pklg.rs",
+    "sha256": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233"
+  },
+  {
+    "path": "ports/ringdown/apps/probe/src/rpc.rs",
+    "sha256": "89e3b0e6c48d3999bdb64900505954dc59ea8d5b05ba0b4db51ba47bfb94d454"
+  },
+  {
+    "path": "ports/ringdown/crates/ringdown-ble/Cargo.toml",
+    "sha256": "33a387f8bef7c8ff352b65bbe74d094355bb4f81f548dc2f6cb1c3af35853f2a"
+  },
+  {
+    "path": "ports/ringdown/crates/ringdown-ble/examples/metronome_link.rs",
+    "sha256": "7b16a8157e0042ee8cf9e7a1b15fd07228b0b46af016ff22e88c5e17c6e4f997"
+  },
+  {
+    "path": "ports/ringdown/crates/ringdown-ble/src/instrument.rs",
+    "sha256": "fc2971b854d78e0a74d9a0dae348d648d11c7c4a088cd2b31c0d0d00385f94d9"
+  },
+  {
+    "path": "ports/ringdown/crates/ringdown-ble/src/instrument/session.rs",
+    "sha256": "0b5a50bbb5223851605bd1f238f51360a9529c3eace9cbd012531440574239fa"
+  },
+  {
+    "path": "ports/ringdown/crates/ringdown-ble/src/lib.rs",
+    "sha256": "e26cb677ce00b35a0569a7ff049ad2641c4f6e23781cf13147f9dd0559807f09"
+  },
+  {
+    "path": "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+    "sha256": "8a209994ee1518caba8450ee3a22f1d0e259de8fcb9ae2d5373b176d99265584"
+  },
+  {
+    "path": "ports/ringdown/design_docs/DOC_README.md",
+    "sha256": "49c495724ed4c74d78bebef0a6d5a5ed748763f1322e1fe1084e3edd8b7b0663"
+  },
+  {
+    "path": "scripts/check-instrument-boundary.py",
+    "sha256": "1ac277e9983eddb61c914fd249641aca8d64de554a62f21e57c7563aeecc664f"
+  }
+]

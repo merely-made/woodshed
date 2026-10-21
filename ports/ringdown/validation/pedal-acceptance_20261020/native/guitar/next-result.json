@@ -1,0 +1,19 @@
+{
+  "request": {
+    "id": "g-next-1",
+    "command": "trigger",
+    "action": "effect-next",
+    "output_revision": 1,
+    "generation": 1
+  },
+  "response": {
+    "id": "g-next-1",
+    "pedal": {
+      "accepted_messages": 2,
+      "action": "effect-next",
+      "detail": "All messages accepted by OS; musical result unobserved",
+      "id": 1,
+      "outcome": "accepted"
+    }
+  }
+}

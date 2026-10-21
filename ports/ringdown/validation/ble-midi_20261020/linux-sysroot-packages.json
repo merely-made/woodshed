@@ -1,0 +1,36 @@
+[
+  {
+    "url": "https://deb.debian.org/debian/pool/main/d/dbus/libdbus-1-dev_1.16.2-2_amd64.deb",
+    "file": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/libdbus-1-dev_1.16.2-2_amd64.deb",
+    "bytes": 214548,
+    "sha256": "83767cf52f88de6d6f370cee30e717828c6fd22cb55d1fb84b38a3e911742887"
+  },
+  {
+    "url": "https://deb.debian.org/debian/pool/main/d/dbus/libdbus-1-3_1.16.2-2_amd64.deb",
+    "file": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/libdbus-1-3_1.16.2-2_amd64.deb",
+    "bytes": 177904,
+    "sha256": "bbcb711daff7e104b5f80f9b05475b6142674bfe65518a36a56e96a91068a3f5"
+  },
+  {
+    "url": "https://deb.debian.org/debian/pool/main/a/alsa-lib/libasound2-dev_1.2.14-1+deb13u1_amd64.deb",
+    "file": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/libasound2-dev_1.2.14-1+deb13u1_amd64.deb",
+    "bytes": 120152,
+    "sha256": "dfa8e8a133ef8704093d03464d86a3e86d26232baf1e3827aa030cb68c437e1c"
+  },
+  {
+    "url": "https://deb.debian.org/debian/pool/main/a/alsa-lib/libasound2t64_1.2.14-1+deb13u1_amd64.deb",
+    "file": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/libasound2t64_1.2.14-1+deb13u1_amd64.deb",
+    "bytes": 380896,
+    "sha256": "5495496142d57e5ad6d581ac5456ec3c87f872c109a2bfb815d154b673eebc67"
+  },
+  {
+    "url": "https://deb.debian.org/debian/pool/main/s/systemd/libsystemd-dev_257.13-1~deb13u1_amd64.deb",
+    "bytes": 1358540,
+    "sha256": "4db2d02ce32dfd9f2994a565a51c640b8e7a96a2e2b277484f9a2de7c0cd63e4"
+  },
+  {
+    "url": "https://deb.debian.org/debian/pool/main/s/systemd/libsystemd0_257.13-1~deb13u1_amd64.deb",
+    "bytes": 454648,
+    "sha256": "ab0d4127b5e46e6f8c015a1db15a62ba9ae274cdefa150083adf90ada0600ea1"
+  }
+]

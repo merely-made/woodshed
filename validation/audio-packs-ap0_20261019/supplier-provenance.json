@@ -1,0 +1,107 @@
+[
+  {
+    "name": "midly",
+    "version": "0.5.3",
+    "sha256": "207d755f4cb882d20c4da58d707ca9130a0c9bc5061f657a4f299b8e36362b7a",
+    "download": "https://static.crates.io/crates/midly/midly-0.5.3.crate",
+    "license": "Unlicense",
+    "features": {
+      "alloc": [],
+      "default": [
+        "alloc",
+        "std",
+        "parallel"
+      ],
+      "parallel": [
+        "std",
+        "rayon"
+      ],
+      "std": [
+        "alloc"
+      ],
+      "strict": []
+    },
+    "rust_version": null,
+    "package_vcs": {
+      "git": {
+        "sha1": "816cb2a585b4d5d1fd7aeb0cb35668f21dc00869"
+      },
+      "path_in_vcs": ""
+    }
+  },
+  {
+    "name": "rustysynth",
+    "version": "1.3.6",
+    "sha256": "e3ca93af923df5fc03beddbf464242620fd24daa9e10f9ecd56eb9571eb7ba38",
+    "download": "https://static.crates.io/crates/rustysynth/rustysynth-1.3.6.crate",
+    "license": "MIT",
+    "features": {},
+    "rust_version": null,
+    "package_vcs": {
+      "git": {
+        "sha1": "8cc11fc0b10422adb54107757f100d3d6ae0ef96"
+      },
+      "path_in_vcs": "rustysynth"
+    }
+  },
+  {
+    "name": "fundsp",
+    "version": "0.23.0",
+    "sha256": "6969e5c9d5c5c704723f547237494fde9b1addf16f718f65cd786b3b6e320a4f",
+    "download": "https://static.crates.io/crates/fundsp/fundsp-0.23.0.crate",
+    "license": "MIT OR Apache-2.0",
+    "features": {
+      "default": [
+        "std",
+        "files",
+        "fft"
+      ],
+      "fft": [
+        "dep:fft-convolver"
+      ],
+      "files": [
+        "dep:symphonia"
+      ],
+      "std": []
+    },
+    "rust_version": null,
+    "package_vcs": {
+      "git": {
+        "sha1": "8479a70d813d539c67a908f88e65f6b0b344122e"
+      },
+      "path_in_vcs": ""
+    }
+  },
+  {
+    "name": "phosphor-core",
+    "version": "0.3.97",
+    "sha256": "bc4e496124175c55e0ac561a4714f64031737bfe9319a5472a2567da10521151",
+    "download": "https://static.crates.io/crates/phosphor-core/phosphor-core-0.3.97.crate",
+    "license": "MIT",
+    "features": {
+      "test-introspection": []
+    },
+    "rust_version": null,
+    "package_vcs": {
+      "git": {
+        "sha1": "33b1073fa1b56315d0ca877b0210efec40f68f4d"
+      },
+      "path_in_vcs": "crates/phosphor-core"
+    }
+  },
+  {
+    "name": "rustysynth",
+    "version": "1.3.7",
+    "sha256": "e2fafc9b46be0b8ad0a15bb17406e34b4602987c90d12509ca71710ab545b40f",
+    "download": "https://static.crates.io/crates/rustysynth/rustysynth-1.3.7.crate",
+    "license": "MIT",
+    "features": {},
+    "rust_version": null,
+    "package_vcs": {
+      "git": {
+        "sha1": "4a778db849dfe0798c7afb1bd3c6882a5d2baa61"
+      },
+      "path_in_vcs": "rustysynth"
+    }
+  }
+]

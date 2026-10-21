@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/standards_cli.rs (target/build/debug/deps/standards_cli-2ba345c18bd9735a)
+
+running 7 tests
+test rpc_feature_controls_routing_without_scanning ... ok
+test default_entry_prints_help_without_starting_rpc ... ok
+test packetlogger_is_an_independent_feature ... ok
+test malformed_midi_is_rejected_before_opening_a_port ... ok
+test bundled_export_matches_shared_exporter_and_preserves_existing_output ... ok
+test installed_pack_exports_and_reopens_after_installation_is_removed ... ok
+test real_cli_delivers_exact_midi_to_a_virtual_input ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+

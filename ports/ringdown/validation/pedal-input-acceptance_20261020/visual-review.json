@@ -1,0 +1,17 @@
+{
+  "reviewed_selected_presented_captures": [
+    "native/configure/01_learned_no_sends.png",
+    "native/configure/03_controller_holds_once.png",
+    "native/configure/05_partial_release_retained.png",
+    "native/configure/06_output_reconnect_no_replay.png",
+    "native/reopen/01_reopened_preparation.png",
+    "native/reopen/03_busy_refusal_visible.png",
+    "native/reopen-cleared/01_reopened_cleared_mappings.png",
+    "guitar/02_armed.png",
+    "guitar/03_real_keyboard_next.png",
+    "guitar/08_reconnected_disarmed.png",
+    "guitar/10_fresh_after_reconnect.png",
+    "guitar/11_closed.png"
+  ],
+  "result": "controls, saved mappings, disarmed/armed state, retained partial/refusal and final closed status visible; no all-capture visual-review claim"
+}

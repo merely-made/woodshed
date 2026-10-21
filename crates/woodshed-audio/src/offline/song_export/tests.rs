@@ -566,3 +566,28 @@ fn buffered_sink_failure_is_reported_at_finalization() {
         Err(SongExportError::Wav(_))
     ));
 }
+
+#[test]
+fn retained_pack_backing_exports_exactly_and_obeys_song_click_switch() {
+    let selection = audio_packs::files::load(std::path::Path::new("bundled"), None).unwrap();
+    let selection = selection.edit(&selection.revision(), audio_packs::PackEdit::MoveHit {track:0,from:0,to:1}).unwrap();
+    let reopened: audio_packs::PackSelection = serde_json::from_slice(&serde_json::to_vec(&selection).unwrap()).unwrap();
+    let mut song = Song::new();
+    song.click_enabled = true;
+    song.bars = vec![Bar { bpm:90.0, time_signature:TimeSignature::new(4,4), ..Default::default() }];
+    let render = |song: &Song, selection: &audio_packs::PackSelection| {
+        let mut bytes=Cursor::new(Vec::new());
+        export_song_wav_with_pattern_to(song,48_000,Some(&selection.hydrated_pattern().unwrap()), &mut bytes).unwrap();
+        let bytes=bytes.into_inner();
+        let pcm=hound::WavReader::new(Cursor::new(&bytes)).unwrap().samples::<f32>().collect::<Result<Vec<_>,_>>().unwrap();
+        (bytes,pcm)
+    };
+    let (bytes,pcm) = render(&song,&selection);
+    assert_eq!(pcm.len(),128_000);
+    assert!(pcm.iter().all(|v|v.is_finite()));
+    assert!(pcm.iter().any(|v|v.abs()>0.05));
+    assert_eq!(bytes,render(&song,&reopened).0);
+    assert_ne!(bits(&pcm), bits(&export(&song,48_000).1));
+    song.click_enabled=false;
+    assert!(render(&song,&selection).1.iter().all(|v|*v==0.0));
+}

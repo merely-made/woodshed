@@ -1,0 +1,11 @@
+{
+  "launch_method": "LaunchServices temporary application bundle",
+  "launcher_exit": 0,
+  "timeout": false,
+  "success": true,
+  "elapsed_seconds": 127.705,
+  "binary_sha256": "47c741623ff705f01edad848465d23adb74b95fcb99d39dae218ac4b844393be",
+  "scenario_sha256": "4bd3b746bd7d42e378bd690d5796afb48a3c598342cdfa0cff2c55f4958470f1",
+  "receipt": "scenario.done",
+  "captures": 8
+}

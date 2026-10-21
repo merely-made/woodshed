@@ -1,0 +1,19 @@
+{
+  "clock_enabled": true,
+  "output": {
+    "accepted": 210,
+    "attempted": 210,
+    "connected": null,
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "ready": false,
+    "rearm_required": false,
+    "status": null
+  },
+  "playing": true,
+  "selected_index": 0,
+  "ui_notice": null
+}

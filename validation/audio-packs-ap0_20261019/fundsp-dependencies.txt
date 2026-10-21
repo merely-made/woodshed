@@ -1,0 +1,49 @@
+fundsp v0.23.0
+dyn-clone v1.0.20
+funutd v0.16.0
+dyn-clone v1.0.20
+glam v0.28.0
+libm v0.2.16
+hashbrown v0.14.5
+ahash v0.8.12
+cfg-if v1.0.5
+once_cell v1.21.4
+zerocopy v0.8.63
+allocator-api2 v0.2.21
+libm v0.2.16
+hashbrown v0.16.1
+allocator-api2 v0.2.21
+equivalent v1.0.3
+foldhash v0.2.0
+libm v0.2.16
+microfft v0.6.0
+cfg-if v1.0.5
+num-complex v0.4.6
+num-traits v0.2.19
+libm v0.2.16
+static_assertions v1.1.0
+num-complex v0.4.6 (*)
+numeric-array v0.6.1
+generic-array v1.4.5
+rustversion v1.0.23 (proc-macro)
+typenum v1.20.1
+num-traits v0.2.19 (*)
+once_cell v1.21.4
+resampler v0.4.1
+libm v0.2.16
+thingbuf v0.1.6
+pin-project v1.1.13
+pin-project-internal v1.1.13 (proc-macro)
+proc-macro2 v1.0.107
+unicode-ident v1.0.27
+quote v1.0.47
+proc-macro2 v1.0.107 (*)
+syn v2.0.119
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+unicode-ident v1.0.27
+tinyvec v1.13.3
+wide v1.7.1
+bytemuck v1.25.2
+safe_arch v1.2.0
+bytemuck v1.25.2

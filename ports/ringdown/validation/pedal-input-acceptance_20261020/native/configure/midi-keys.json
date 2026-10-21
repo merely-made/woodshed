@@ -1,0 +1,170 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "clock_enabled": false,
+  "input": {
+    "armed": true,
+    "connected": "Pedal input source 07102fbb",
+    "learn_controller": null,
+    "learn_key": null,
+    "notice": "Pedal inputs armed. Release a learned controller once before its first trigger.",
+    "pending": null,
+    "pending_target": null,
+    "selected_index": 1,
+    "target": {
+      "generation": null,
+      "revision": 1
+    }
+  },
+  "output": {
+    "accepted": 4,
+    "attempted": 4,
+    "connected": "Pedal input receiver 07102fbb",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "revision": 1,
+    "status": "OS MIDI output open · OS accepted 4; refused/uncertain 0"
+  },
+  "pedal": {
+    "accepted_messages": 2,
+    "action": "effect-previous",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 2,
+    "outcome": "accepted"
+  },
+  "playing": false,
+  "saved_settings": {
+    "board_layout": "Two pane",
+    "bpm": 120.0,
+    "context": {
+      "enabled": true,
+      "node_limit": 24
+    },
+    "distinguish_root": false,
+    "marker_style": "Sharp",
+    "midi_pedal": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "neck_end": null,
+    "neck_start": 0,
+    "orientation": "Horizontal",
+    "reduce_motion": false,
+    "related": {
+      "arrangement": "Radial",
+      "dismissed_ids": [],
+      "graph_scope": "Selection",
+      "relation_depth": 1,
+      "show_neighborhood": true,
+      "use_history": true
+    },
+    "set_arrangement": "Snake",
+    "set_graph_height": 260,
+    "set_graph_reading": "Set",
+    "set_graph_width": 520,
+    "settings_page": "AudioMidi",
+    "text_scale": "Normal",
+    "theme": "Slate",
+    "tuning_idx": 0,
+    "visible_set_relations": [
+      "Next"
+    ]
+  },
+  "selected_index": 1,
+  "ui_notice": "OS MIDI output open · OS accepted 4; refused/uncertain 0",
+  "ui_pedal": {
+    "accepted_messages": 2,
+    "action": "effect-previous",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 2,
+    "outcome": "accepted"
+  }
+}

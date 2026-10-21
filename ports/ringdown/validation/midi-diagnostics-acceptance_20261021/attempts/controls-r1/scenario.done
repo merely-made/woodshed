@@ -1,0 +1,26 @@
+RESULT fail
+captured 01_default_off
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 103 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 02_retained_history
+waited 86 frames
+waited 551 frames
+captured 03_cancelled
+waited 21 frames
+waited 378 frames
+captured 04_exported
+waited 757 frames
+FAIL: assert snap diagnostic-gate-released Eq 'true': got 'false'
+captured 05_recording_before_exit
+capture 01_default_off 2800x2300 digest=772bfc1ef8529033 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r1/run/01_default_off.png
+capture 02_retained_history 2800x2300 digest=7d24e12a8dfed311 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r1/run/02_retained_history.png
+capture 03_cancelled 2800x2300 digest=5c68effc3f5a6909 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r1/run/03_cancelled.png
+capture 04_exported 2800x2300 digest=f9e9adab129cc190 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r1/run/04_exported.png
+capture 05_recording_before_exit 2800x2300 digest=783d84693ff7ead3 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r1/run/05_recording_before_exit.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 1968 frames, 1971 redraws, 3 unpresented redraws

@@ -1,0 +1,54 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("n") text=Some("n") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+[cambium-host] key Character("p") text=Some("p") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept
+woodshed-genet: waited 8 frames
+woodshed-genet: captured 01_advertising
+woodshed-genet: waited 0 frames
+woodshed-genet: captured 02_armed
+woodshed-genet: waited 264 frames
+woodshed-genet: captured 03_real_keyboard_next
+woodshed-genet: waited 593 frames
+woodshed-genet: captured 04_real_keyboard_previous
+woodshed-genet: waited 141 frames
+woodshed-genet: captured 05_controller_next
+woodshed-genet: waited 225 frames
+woodshed-genet: captured 06_controller_previous
+woodshed-genet: waited 1076 frames
+woodshed-genet: captured 07_disconnected
+woodshed-genet: waited 304 frames
+woodshed-genet: waited 9 frames
+woodshed-genet: captured 08_reconnected_disarmed
+woodshed-genet: waited 20 frames
+woodshed-genet: captured 09_held_controller_no_replay
+woodshed-genet: waited 1156 frames
+woodshed-genet: waited 378 frames
+woodshed-genet: captured 10_fresh_after_reconnect
+woodshed-genet: captured 11_closed
+woodshed-genet: RESULT ok (4272 frames, 11 captures)

@@ -1,8 +1,9 @@
 # Smart-instrument control: Woodshed drives a HyVibe guitar
 
 **Date:** 2026-08-27
-**Status (2026-10-17):** in progress. **W1 and W2 landed and have historical
-hardware evidence; W3 is open.** `crates/woodshed-instrument` exists but is not
+**Status (2026-10-20):** in progress. **W1 and W2 landed and have historical
+hardware evidence; W3 is open.** Private connection/session code now lives in
+`ringdown-ble::instrument` and is not
 integrated into `woodshed-views`, so Woodshed has no product-facing instrument
 surface yet. Earlier build and device receipts are recorded below. Getting W1
 to resolve required repairing three stale Genet overrides; see Findings. The
@@ -73,29 +74,18 @@ Two constraints to design around rather than discover later:
 
 ## Where the code goes
 
-A new crate, **`woodshed-instrument`**: connection lifecycle, device state, and
-the mapping between Woodshed's concepts and the wire.
+**Current boundary (2026-10-20):** `woodshed-instrument` owns standard MIDI
+ports/messages/clock, moved from `woodshed-audio`; the audio crate re-exports it.
+It has no private protocol dependencies. The private connection/state mapping
+and `Session` now live in `ringdown-ble::instrument`, beside their transport;
+the metronome hardware example moved to that package. W1/W2 below retain the
+historical names and acceptance records, rather than claiming fresh hardware
+qualification after this source move.
 
-Named for what it does rather than for the vendor — the workspace's naming rule
-keeps a vendor's mark out of crate names, and a plain name also leaves room for
-a second instrument later without a rename. It sits beside `woodshed-audio` as
-a native, I/O-owning crate: `btleplug` and `tokio` make it no more portable than
-`cpal` does.
-
-It must not go in `woodshed-core`, which is explicitly portable state with no
-native I/O, nor in `woodshed-audio`, whose subject is the local audio path
-rather than a remote instrument.
-
-```
-crates/woodshed-instrument/     connection, device state, concept mapping
-crates/woodshed-views/          the practice-facing surface (later phase)
-```
-
-**Dependency form.** Since the 2026-09-09 audio-ports rehome, both Ringdown
-halves are relative path dependencies on `ports/ringdown`. Ringdown remains an
-independent nested workspace; the local paths keep its published core and
-unpublished BLE shell on the same revision. This supersedes the 2026-08-27 Git
-dependency while preserving the consumer boundary.
+Woodshed's future product-facing integration remains under this plan. The
+[Ringdown build boundary](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#standards-based-midi-and-beats-build-isolation-2026-10-20)
+owns independent standard MIDI/SMF versus private RPC artifact selection.
+No connection/session or MIDI implementation was duplicated.
 
 ## Phases
 
@@ -163,6 +153,32 @@ Done-conditions:
   project has already lost a session to exactly that.
 
 ### W3 — The surface Woodshed uniquely earns
+
+**Shared authoring follow-up (2026-10-20): AP3 bounded native/guitar acceptance.** The
+[audio-pack plan](2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+owns bundled and installed TOML/JSON definitions plus assets, existing sequencer
+reuse and the prerequisite Rust embedding assessment. Woodshed consumes that
+work for its existing Metronome, Rehearsal and Set-derived backing; instrument
+delivery uses Ringdown's validated actions/export. Keep the existing practice
+owner and `MetronomeLink` authority. Local pack audition, MIDI-file export and
+guitar-native Beats are separate capabilities; a new pack never grants device
+control or changes the link automatically. AP0's bounded assessment now supports
+sequencer/sampler reuse, midly export and FunDSP embedding within Firewheel;
+AP1's shared kit/file API now works through the production runtime example;
+AP2 wires shared kit controls into Metronome, retains edited patterns and exact
+assets in practice saves, and feeds the existing metronome/backing lanes.
+Mere's quantized span operation supports source-qualified hit moves.
+[AP3 evidence](../validation/audio-packs-ap3_20261020/README.md) now covers
+actual native controls and sealed fresh-process reopening without an installed
+kit, exact MIDI parity, and an approved guitar custom MIDI trial confirmed by
+the owner. Cross-desktop, performance timing and remote Beats qualification
+remain open; instrument integration W3 stays open.
+The [adapter provenance/terms audit](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
+now separates documented MIDI/SMF/audio compatibility from private app RPC.
+Its packaging and rights evidence frontier applies before offering a supported
+adapter release; the vendor outreach is a local unsent draft. Generic local
+adaptive accompaniment does not require implementing the private RPC profile.
+
 
 **Feature target:** the things a desktop can do that the phone app does not.
 
@@ -558,6 +574,10 @@ which are the copies most easily forgotten because they are not committed
 alongside the dependency that motivated them.
 
 ## Progress
+
+- **2026-10-19 — Shared data-defined audio packs linked.** Added the Woodshed
+  practice/instrument consumer boundary; shared AP0 assessment comes before
+  new authoring or DSP. No implementation or new hardware evidence.
 
 - **2026-08-27** — Plan written.
 - **2026-08-27 — W2 hardware-verified.** `Detached` changed nothing, `Follow`

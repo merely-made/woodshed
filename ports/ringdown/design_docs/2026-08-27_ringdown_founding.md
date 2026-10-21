@@ -507,12 +507,13 @@ straight out to listeners with **no buffering and no reassembly**. Consequences:
 - File-transfer / firmware-upload wire path (`sendFile`, `.part`) — unmapped,
   and deliberately out of scope for the client.
 
-**Provenance caveat.** The APK's signing certificate carries the generic
-placeholder subject `CN=Android, O=Google Inc.` rather than a HyVibe developer
-key, so the signature does not independently attest authorship. Nothing in the
-decompiled code looks tampered with and the 2019 validity start fits the app's
-era, but this build was only ever read, never run. The protocol is a hypothesis
-until Phase 1's control run.
+**Provenance caveat (qualified 2026-10-20).** The historical inspection
+reported the generic signing subject `CN=Android, O=Google Inc.`. A subject
+name and plausible date alone do not authenticate a signer or establish that
+a build was tampered with. The build was reportedly read rather than run;
+its APKPure origin, full digest and a trusted signing-identity comparison
+remain to be reconstructed. Hardware observations qualify interface behavior
+separately from this acquisition/authenticity/terms history.
 
 ---
 
@@ -2337,66 +2338,59 @@ that test should take.
 
 ## Findings — the vendor's licensing posture (2026-08-27)
 
-Checked because the project's footing depends on it. **Not legal advice**; this
-records what was actually found, so a future decision starts from facts rather
-than assumption. Anything commercial warrants a real lawyer.
+**2026-10-20 qualification:** L1–L4 below preserve the earlier inspection
+report. They are historical snapshot observations, not current legal clearance.
+The [bounded provenance/terms audit](2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
+owns the current assessment, source ledger, standards boundary and open items.
+The original APK/resource searches were not reproduced in that audit.
 
-**L1 — No EULA reaches the user.** The app's `terms_of_use` string resource is a
-bare twelve-character *label* ("terms of use"), not a document; registration
-shows an "I agree with the terms of use" checkbox with **no terms body and no
-URL bundled anywhere in the APK**. The only http(s) URLs in app resources are
-Google/Firebase policy links, the Firebase instance, and a Play Store link.
+**L1 — Historical report of a label-only terms resource.** The inspected build
+report describes a `terms_of_use` label, a registration acceptance checkbox,
+and no terms body/URL found in packaged app resources. That does not establish
+what a store, server, account flow or different build presented, or what a user
+accepted. Do not summarize this as proof that no EULA reached any user.
 
-**L2 — No anti-reverse-engineering clause exists to breach.** Zero occurrences
-of "reverse engineer", "decompile", or "disassemble" across the app's entire
-string resources.
+**L2 — Historical report of zero anti-RE search matches.** The earlier string
+search reported no matches for reverse-engineering/decompilation language.
+This is a resource-search result, not proof that no contractual restriction
+exists or could apply. Recover the artifact and applicable terms to verify it.
 
-**L3 — The bundled privacy policy is generator boilerplate with an unfilled
-placeholder.** Effective 2020-07-27; it refers to "our Terms and Conditions,
-which is accessible at HyVibe" — the site name was never substituted for a
-link. `hyvibeguitar.com/terms-and-conditions/` returns **404**.
+**L3 — Historical privacy-policy observation.** The report describes an
+unfilled Terms and Conditions reference in a bundled policy dated 2020-07-27
+and a 404 from a candidate website URL. The public policy inspected on
+2026-10-20 carries a different effective date and also refers to Terms and
+Conditions. The candidate URL was not accessible through the audit web tool;
+no fresh 404 or absence-of-terms conclusion was established.
 
-**L4 — The only site-wide legal document is a Terms of *Sale*.** It governs
-e-commerce (sales, shipping, returns), not software licensing. Its IP clause
-(Article 13) reserves rights in **website** elements only — not the purchased
-product, its software, or its firmware.
+**L4 — A public Terms of Sale was identified.** Its stated scope is website
+sales, and Article 13 reserves website elements. The 2026-10-20 audit read
+that page again. It supplies neither a private-app-protocol developer grant
+nor a complete account of all app/device/distribution terms.
 
-**Consequence for Phases 0–3 (the client).** The sharpest constraint on
-interoperability work — a contractual anti-RE clause in an accepted EULA — is
-simply **absent** here. What remains is copyright, where intermediate copying to
-extract interface facts for interoperability is long-settled fair use in the US
-(*Sega v. Accolade*, 9th Cir. 1992; *Sony v. Connectix*, 9th Cir. 2000), and
-where interfaces and functional facts are not protectable expression in the
-first place (17 U.S.C. §102(b); *Google v. Oracle*, 2021). DMCA §1201
-anti-circumvention does not engage: a standard APK is an ordinary ZIP with no
-technological protection measure to circumvent, and §1201(f) exempts
-interoperability reverse engineering regardless. Trade-secret law treats reverse
-engineering as a proper means of acquisition absent a confidential relationship;
-there is none. The operative discipline is therefore the **expression boundary**
-in `DOC_POLICY.md`, which this repo already keeps.
+**Consequence for Phases 0–3 (the client): further evidence is needed.**
+Public standards and functional interface observations support a narrower
+compatibility route. The current audit separately identifies HyVibe-specific
+codec, dictionary, method and framing provenance. It does not certify that
+all implementation expression is independent or that no contract applies.
+U.S. section 102(b) and section 1201(f) are conditional legal references in that
+audit, not a project clearance. The earlier blanket claims that an ordinary
+ZIP excludes every circumvention issue or that section 1201(f) applies
+regardless are withdrawn. A paid/free distinction does not replace a
+jurisdiction- and terms-specific publication review.
 
-**Consequence for Phase 4 (firmware) — materially different, and this is the
-real reason the phase stays gated.** Replacing firmware is not the same legal
-act as talking to a documented-by-inspection radio protocol:
+**Phase 4 (firmware) remains a separate assessment.** Firmware-signature and
+access-control facts are unknown here. Do not infer that they are absent
+from client interoperability, or that an exception necessarily applies.
+Vendor firmware remains outside repository distribution under the expression
+boundary policy. Technical, warranty and legal questions each need their own
+evidence before any separately authorized firmware work.
 
-- If the device *does* verify firmware signatures, that verification is
-  plausibly a technological protection measure, and defeating it engages DMCA
-  §1201 in a way the client work never does. §1201(f) may or may not cover it;
-  the exemption is narrower than it is usually assumed to be. Recall F7: signing
-  is **unknown, not absent**.
-- Vendor firmware images are the vendor's copyrighted work: they may be analysed
-  but never redistributed, patched-and-redistributed, or vendored into this repo.
-- Warranty consequences are real and separate from copyright.
-
-None of this blocks Phase 4; it defines what its assessment must actually
-answer, alongside the technical blockers already recorded.
-
-**Provenance-of-the-APK caveat (repeat of the teardown note, relevant here).**
-The analysed build came from a third-party mirror (APKPure), not Google Play,
-and its signing certificate carries a generic placeholder subject rather than a
-HyVibe developer key — so authorship is not independently attested. Phase 1's
-hardware control run is what makes this moot: whatever the real guitar answers
-is the truth, whatever the APK said.
+**APK provenance remains open.** The historical build was reportedly acquired
+from APKPure rather than an authorized distribution source. A generic signing
+subject was reported; a subject name alone neither proves nor disproves
+HyVibe authorship. The original artifact, full digest and trusted signer
+comparison were not re-established. Device behavior validates protocol facts
+and does not make acquisition, authenticity or contractual history moot.
 
 ## Decisions (Mark's — pending)
 
@@ -2442,10 +2436,10 @@ is the truth, whatever the APK said.
 - **2026-08-27** — Repo founded: `git init`, `.gitignore`, `DOC_POLICY.md`
   (canonical core + ringdown addendum), `DOC_README.md`, this plan. Protocol
   map recorded in Findings from the v1.1.2 APK teardown.
-- **2026-08-27** — Vendor licensing posture checked and recorded (Findings
-  L1–L4): no EULA reaches the user, no anti-reverse-engineering clause exists,
-  and the only site-wide legal document is a Terms of Sale governing
-  e-commerce. Consequences split by phase; Phase 4's are the ones that bite.
+- **2026-08-27** — Historical licensing inspection recorded in L1–L4.
+  Its resource-search observations are retained. The 2026-10-20 bounded audit
+  qualifies the former absence-of-contract and blanket legal conclusions;
+  the current assessment is linked above.
 - **2026-08-27** — Terminology corrected across all four docs: the work is
   **reverse engineering for interoperability**, not clean-room. The earlier
   "clean-room" wording was an overclaim — that term denotes a personnel split
@@ -2616,3 +2610,8 @@ is the truth, whatever the APK said.
   MIDI and Beats assessed together in the client surface plan. Reconciled the
   early read-only status, H47 bank creation and obsolete `ReadConfig` gates.
   This is documentation/source assessment, not a new guitar receipt.
+
+- **2026-10-20** — Bounded provenance/terms audit qualified the historical
+  L1–L4 findings and signing-subject inference. Hardware compatibility is
+  separate from artifact authenticity and publication rights. Current standards
+  options, evidence gaps and unsent outreach are owned by the client plan.

@@ -1,0 +1,125 @@
+[
+  {
+    "source": "real keyboard P",
+    "request_id": 2,
+    "raw_midi": [
+      [
+        176,
+        66,
+        127
+      ],
+      [
+        176,
+        66,
+        0
+      ]
+    ],
+    "writer_press_release_gap_micros": 50428,
+    "ble_packets": [
+      [
+        141,
+        136,
+        176,
+        66,
+        127
+      ],
+      [
+        141,
+        186,
+        176,
+        66,
+        0
+      ]
+    ],
+    "ble_timestamp_gap_millis": 50,
+    "ble_submission_durations_micros": [
+      220,
+      208
+    ],
+    "generation": 1,
+    "owner_effect_before": "Rev",
+    "owner_effect_after": "Off"
+  },
+  {
+    "source": "sparse Note",
+    "request_id": 4,
+    "raw_midi": [
+      [
+        176,
+        66,
+        127
+      ],
+      [
+        176,
+        66,
+        0
+      ]
+    ],
+    "writer_press_release_gap_micros": 50491,
+    "ble_packets": [
+      [
+        176,
+        212,
+        176,
+        66,
+        127
+      ],
+      [
+        177,
+        134,
+        176,
+        66,
+        0
+      ]
+    ],
+    "ble_timestamp_gap_millis": 50,
+    "ble_submission_durations_micros": [
+      219,
+      215
+    ],
+    "generation": 1,
+    "owner_effect_before": "Rev",
+    "owner_effect_after": "Off"
+  },
+  {
+    "source": "held Note plus 32 repeats",
+    "request_id": 6,
+    "raw_midi": [
+      [
+        176,
+        66,
+        127
+      ],
+      [
+        176,
+        66,
+        0
+      ]
+    ],
+    "writer_press_release_gap_micros": 50526,
+    "ble_packets": [
+      [
+        141,
+        212,
+        176,
+        66,
+        127
+      ],
+      [
+        142,
+        134,
+        176,
+        66,
+        0
+      ]
+    ],
+    "ble_timestamp_gap_millis": 50,
+    "ble_submission_durations_micros": [
+      195,
+      290
+    ],
+    "generation": 1,
+    "owner_effect_before": "Rev",
+    "owner_effect_after": "Off"
+  }
+]

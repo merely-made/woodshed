@@ -1,0 +1,15 @@
+RESULT ok
+waited 0 frames
+waited 3 frames
+captured 01_rendered_layer
+waited 0 frames
+captured 02_saved
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 03_failed_replacement_retained
+capture 01_rendered_layer 2360x1960 digest=9f07de77406035e0 file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/run-1/01_rendered_layer.png
+capture 02_saved 2360x1960 digest=cfe7a68bfd9b67e9 file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/run-1/02_saved.png
+capture 03_failed_replacement_retained 2360x1960 digest=0003e8c2b387d6b6 file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final/run-1/03_failed_replacement_retained.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 67 frames, 70 redraws, 3 unpresented redraws

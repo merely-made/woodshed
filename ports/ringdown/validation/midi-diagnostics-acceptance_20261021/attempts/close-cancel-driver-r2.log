@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 62, in <module>
+    assert time.monotonic()<end,'did not close after export completion';time.sleep(.1)
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: did not close after export completion

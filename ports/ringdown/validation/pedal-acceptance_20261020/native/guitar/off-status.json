@@ -1,0 +1,43 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    }
+  },
+  "id": "g-off-status",
+  "output": {
+    "accepted": 4,
+    "attempted": 4,
+    "connected": "Bluetooth MIDI pedal (no encryption)",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": 1,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "revision": 1,
+    "status": "MIDI receiver subscribed (unencrypted compatibility) \u00b7 OS accepted 4; refused/uncertain 0"
+  },
+  "pedal": {
+    "accepted_messages": 2,
+    "action": "effect-previous",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 2,
+    "outcome": "accepted"
+  }
+}

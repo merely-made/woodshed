@@ -1,0 +1,21 @@
+settle 2
+assert snap pack-loaded == true
+click .pill Tools
+click .lens Metronome
+settle 2
+act checkpoint-pack reopened-without-installation
+capture 01_reopened_without_kit
+click role:button alternate
+click role:button backbeat
+settle 2
+act checkpoint-pack switched-without-installation
+click .t-btn Play
+wait 2000
+assert snap output-click-playing == true
+act sample-output-clock
+click .t-btn Stop
+settle 2
+click role:button @data-action=pack-export-midi
+wait 6000
+settle 2
+capture 02_exported_without_kit

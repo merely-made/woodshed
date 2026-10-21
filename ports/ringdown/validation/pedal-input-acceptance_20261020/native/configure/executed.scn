@@ -1,0 +1,384 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .t-btn @aria-label=Effect Previous binding enabled
+click .t-btn @aria-label=Effect Previous release
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .t-btn @aria-label=Effect Next binding enabled
+click .t-btn @aria-label=Effect Next release
+click .t-btn @aria-label=Effect Next learn keyboard
+act pedal-input-key n
+click .t-btn @aria-label=Effect Previous learn keyboard
+act pedal-input-key n
+assert snap pedal-input-learn_key == effect-previous
+act pedal-input-key p
+assert snap pedal-input-armed == false
+click role:combobox @aria-label=MIDI input
+click role:option Pedal input source 07102fbb
+act midi-dwell 400
+wait 100000
+click .t-btn @aria-label=Effect Next learn MIDI
+act midi-checkpoint learn-cc
+act midi-dwell 700
+wait 100000
+assert snap pedal-input-learn_controller == null
+click .t-btn @aria-label=Effect Previous learn MIDI
+act midi-checkpoint learn-note
+act midi-dwell 1000
+wait 100000
+assert snap pedal-input-learn_controller == null
+assert snap midi-attempted == 0
+act midi-checkpoint configured
+capture 01_learned_no_sends
+click role:combobox @aria-label=MIDI output
+click role:option Pedal input receiver 07102fbb
+act midi-dwell 400
+wait 100000
+assert snap midi-ready == true
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act pedal-input-key n
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 2
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n shift
+act pedal-input-key n ctrl
+act pedal-input-key n meta
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 2
+act pedal-input-key p
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 4
+act midi-checkpoint keys
+capture 02_shortcuts_hold_once
+act midi-checkpoint cc-hold
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 6
+act midi-checkpoint note-hold
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 8
+act midi-checkpoint note-zero
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 10
+act midi-checkpoint note-off
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 12
+act midi-checkpoint wrong-input
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 12
+act midi-checkpoint controllers
+capture 03_controller_holds_once
+click .t-btn Disarm pedal inputs
+act pedal-input-key n
+act midi-checkpoint unarmed-held
+act midi-dwell 800
+wait 100000
+assert snap midi-accepted == 12
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act midi-checkpoint rearmed-held
+act midi-dwell 800
+wait 100000
+assert snap midi-accepted == 12
+act midi-checkpoint released-fresh
+act midi-dwell 800
+wait 100000
+assert snap midi-accepted == 14
+act midi-checkpoint input-drop
+act midi-dwell 800
+wait 100000
+assert snap pedal-input-armed == false
+assert snap pedal-input-connected == null
+act pedal-input-key n
+assert snap midi-accepted == 14
+act midi-checkpoint input-lost
+capture 04_input_disconnect
+act midi-checkpoint input-recreate
+act midi-dwell 500
+wait 100000
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI input
+click role:option None
+act midi-dwell 200
+wait 100000
+click role:combobox @aria-label=MIDI input
+click role:option Pedal input source 07102fbb
+act midi-dwell 400
+wait 100000
+assert snap pedal-input-armed == false
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act midi-checkpoint input-held
+act midi-dwell 800
+wait 100000
+assert snap midi-accepted == 14
+act midi-checkpoint input-fresh
+act midi-dwell 800
+wait 100000
+assert snap midi-accepted == 16
+act midi-checkpoint partial-ready
+act pedal-input-key n
+act midi-dwell 1100
+wait 100000
+assert snap midi-accepted == 17
+assert snap pedal-outcome == uncertain
+assert snap pedal-input-armed == false
+act midi-checkpoint partial
+capture 05_partial_release_retained
+act pedal-input-key n
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act pedal-input-key n repeat
+act midi-checkpoint offline-input
+act midi-dwell 500
+wait 100000
+assert snap midi-accepted == 17
+act midi-checkpoint output-recreate
+act midi-dwell 500
+wait 100000
+click role:combobox @aria-label=MIDI output
+click role:option None
+act midi-dwell 200
+wait 100000
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Pedal input receiver 07102fbb
+act midi-dwell 400
+wait 100000
+assert snap midi-ready == true
+assert snap pedal-input-armed == false
+assert snap midi-accepted == 17
+act midi-checkpoint reconnected
+capture 06_output_reconnect_no_replay
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act pedal-input-key n
+act midi-dwell 400
+wait 100000
+act pedal-input-key p
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 21
+act midi-checkpoint output-fresh-midi
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 25
+act midi-checkpoint final-actions
+capture 07_fresh_actions
+click role:combobox @aria-label=MIDI input
+click role:option None
+click role:combobox @aria-label=MIDI output
+click role:option None
+act midi-dwell 400
+wait 100000
+act midi-checkpoint closed
+capture 08_closed_saved

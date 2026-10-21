@@ -1,0 +1,18 @@
+{
+  "outside_task_tracked_deltas": [],
+  "drive_source_unchanged": true,
+  "unchanged_original_supplier_sources": [
+    "x11_frame.rs",
+    "harness.rs",
+    "files.rs",
+    "occlusion_tests.rs",
+    "windows.rs",
+    "scene_producer.rs",
+    "headed_tests.rs",
+    "caption_controls.rs",
+    "windows_snap.rs",
+    "decorations.rs"
+  ],
+  "root_lock_delta": "one host source identity substitution; no package/version/dependency-list delta",
+  "no_staging_commit_push": true
+}

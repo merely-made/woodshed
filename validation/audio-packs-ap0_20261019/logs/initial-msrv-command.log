@@ -1,0 +1,1 @@
+Homebrew cargo rejected +1.97.1 syntax; corrected by selecting explicit rustup cargo and RUSTC paths.

@@ -1,0 +1,382 @@
+{
+  "package": "ringdown-probe",
+  "target": "x86_64-apple-darwin",
+  "default_features": true,
+  "requested_features": null,
+  "scope": "Selected normal/build dependencies, excluding dev dependencies",
+  "packages": [
+    {
+      "name": "arrayvec",
+      "version": "0.7.8",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "audio-packs",
+      "version": "0.1.0",
+      "features": [],
+      "source": null
+    },
+    {
+      "name": "audio-pattern",
+      "version": "0.1.0",
+      "features": [],
+      "source": null
+    },
+    {
+      "name": "audio-primitives",
+      "version": "0.1.0",
+      "features": [],
+      "source": null
+    },
+    {
+      "name": "blake3",
+      "version": "1.8.7",
+      "features": [
+        "default",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "block2",
+      "version": "0.6.2",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "cc",
+      "version": "1.9.0",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.4",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "constant_time_eq",
+      "version": "0.4.2",
+      "features": [
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "core-foundation",
+      "version": "0.10.1",
+      "features": [
+        "default",
+        "link"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "core-foundation-sys",
+      "version": "0.8.7",
+      "features": [
+        "default",
+        "link"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "coremidi",
+      "version": "0.9.2",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "coremidi-sys",
+      "version": "3.2.1",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.3.1",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "equivalent",
+      "version": "1.0.2",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.15",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "hound",
+      "version": "3.5.1",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "indexmap",
+      "version": "2.14.0",
+      "features": [
+        "default",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.18",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "libc",
+      "version": "0.2.189",
+      "features": [
+        "default",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "log",
+      "version": "0.4.34",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.3",
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "midir",
+      "version": "0.11.1",
+      "features": [
+        "default"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "midly",
+      "version": "0.5.3",
+      "features": [
+        "alloc",
+        "std",
+        "strict"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "objc2",
+      "version": "0.6.5",
+      "features": [
+        "alloc",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "objc2-encode",
+      "version": "4.1.0",
+      "features": [
+        "alloc",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.107",
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "quote",
+      "version": "1.0.47",
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "ringdown-probe",
+      "version": "0.0.1",
+      "features": [
+        "default",
+        "midi"
+      ],
+      "source": null
+    },
+    {
+      "name": "serde",
+      "version": "1.0.229",
+      "features": [
+        "alloc",
+        "default",
+        "derive",
+        "rc",
+        "serde_derive",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.229",
+      "features": [
+        "alloc",
+        "rc",
+        "result",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "serde_derive",
+      "version": "1.0.229",
+      "features": [
+        "default"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.151",
+      "features": [
+        "alloc",
+        "default",
+        "indexmap",
+        "preserve_order",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "serde_spanned",
+      "version": "1.1.2",
+      "features": [
+        "alloc",
+        "serde",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "shlex",
+      "version": "2.0.1",
+      "features": [
+        "default",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "syn",
+      "version": "3.0.4",
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit-mut"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "toml",
+      "version": "1.1.8+spec-1.1.0",
+      "features": [
+        "default",
+        "display",
+        "parse",
+        "serde",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "toml_datetime",
+      "version": "1.1.2+spec-1.1.0",
+      "features": [
+        "alloc",
+        "serde",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "toml_parser",
+      "version": "1.1.5+spec-1.1.0",
+      "features": [
+        "alloc",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "toml_writer",
+      "version": "1.1.3+spec-1.1.0",
+      "features": [
+        "alloc",
+        "std"
+      ],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.24",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "winnow",
+      "version": "1.0.4",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    },
+    {
+      "name": "woodshed-instrument",
+      "version": "0.1.0",
+      "features": [
+        "midi"
+      ],
+      "source": null
+    },
+    {
+      "name": "zmij",
+      "version": "1.0.23",
+      "features": [],
+      "source": "registry+https://github.com/rust-lang/crates.io-index"
+    }
+  ],
+  "private_dependencies": [],
+  "passed": true,
+  "limits": "Dependency composition only; no license clearance, device or platform execution"
+}

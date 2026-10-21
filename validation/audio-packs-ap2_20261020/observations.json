@@ -1,0 +1,34 @@
+{
+  "original_installation_path_present": false,
+  "edited_pattern_switch_midi_equal": true,
+  "edited_pattern_switch_wav_equal": true,
+  "render": {
+    "channels": 1,
+    "sample_rate": 48000,
+    "frames": 128000,
+    "seconds": 2.6666666666666665,
+    "all_finite": true,
+    "peak": 0.6785686612129211
+  },
+  "sha256": {
+    "final-reopened.mid": "ea07887a6d351d1db94c2419e7dc95adb4b0272e247bbb0acf239c036bad5878",
+    "edited-roundtrip.rhythm.json": "adc01a5d62901429cec38ede58f5e969535fbd73c6a5ccf346704073e5305e65",
+    "edited.mid": "ea07887a6d351d1db94c2419e7dc95adb4b0272e247bbb0acf239c036bad5878",
+    "initial.rhythm.json": "faee592f50a90c464d7a4ba4d4a54c9a59982b9a5299c1951084cce2f181b2e9",
+    "variation.rhythm.json": "3503c557d478729e8c46deb128ac4b01564b1d91f8a57d62f7b3f2e165761ff6",
+    "final-switched.wav": "c21b64609799e44aaf09a0407ab5a681bc6552a7cee38543ba08eca9135ab4eb",
+    "edited.wav": "c21b64609799e44aaf09a0407ab5a681bc6552a7cee38543ba08eca9135ab4eb",
+    "bundled.mid": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+    "commands.json": "02f58f1ef21c1d2c81ba4c8b0f0d968291e5ff49a792a0a694f9665e2e95d992",
+    "final-edited.wav": "c21b64609799e44aaf09a0407ab5a681bc6552a7cee38543ba08eca9135ab4eb",
+    "edited.rhythm.json": "55cb7d1b95bc725053b1588ceed8af8ed77677b1905b57cf942a1f343a2e7e9c",
+    "back-to-edited.mid": "ea07887a6d351d1db94c2419e7dc95adb4b0272e247bbb0acf239c036bad5878",
+    "variation.mid": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+    "bundled.rhythm.json": "3a094366fceb83cdbaff2f6a5f3ded4c4287c6ecac36f258a26a250b5a8c7ef0",
+    "installed.mid": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+    "back-to-edited.rhythm.json": "54ea58895703283b78ad6b7262e72df27233d8f0be8ba3c43868b947fd958139",
+    "back-to-edited.wav": "c21b64609799e44aaf09a0407ab5a681bc6552a7cee38543ba08eca9135ab4eb"
+  },
+  "final_binary_midi_matches": true,
+  "final_binary_wavs_match": true
+}

@@ -1,0 +1,60 @@
+{
+  "recorded_utc": "2026-10-20T18:54:40.878524+00:00",
+  "baseline_head": "0452bcea1ff227924631ac190744e2bd9282fba5",
+  "request": "Bounded HyVibe adapter provenance/terms audit, standards comparison, plan updates and unsent outreach draft.",
+  "scope": {
+    "rust_files": 16,
+    "rust_lines_in_inventory": 9919,
+    "review": "Headers, selected implementations, wire values, fixtures, manifests, prior findings and hardware receipts. No original vendor-source comparison.",
+    "metadata_packages": 124,
+    "no_tests_or_builds_run": true,
+    "no_guitar_access": true,
+    "no_messages_sent": true,
+    "no_commit_push_or_publication": true
+  },
+  "prior_apk_report": {
+    "package": "audio.hyvibe.app",
+    "version": "1.1.2",
+    "version_code": 4022,
+    "tool": "jadx 1.5.6",
+    "reported_digest_abbreviation": "77fec6aa...2dc8c303",
+    "reported_origin": "APKPure third-party mirror",
+    "status": "Historical founding-plan report only; original artifact/full digest/trusted signing identity not re-established in this audit.",
+    "search_scope": [
+      "Ringdown port including hidden/non-ignored files, excluding target/.git",
+      "Known prior repos/ringdown and crates/ringdown locations",
+      "testing/ringdown",
+      "Top-level /tmp and Downloads names containing HyVibe or Ringdown"
+    ],
+    "not_reproduced": [
+      "Packaged resource phrase searches and registration terms display",
+      "Runtime-delivered terms and store/account acceptance history",
+      "Signature authenticity against authorized distribution"
+    ]
+  },
+  "artifact_scan": {
+    "apk_dex_java_smali_or_firmware_bundle_in_scoped_port": "No matching research/code artifact filenames found in scoped non-target inventory; not a forensic binary-content scan.",
+    "vendor_sdk_dependency": "No named vendor SDK in the inspected manifests or resolved package metadata.",
+    "metadata_caveat": "No missing declarations or GPL declarations in 124 packages. Full license text, notices, native/system libraries, platform SDKs and release feature/target variants are outside this metadata check."
+  },
+  "open_frontier": [
+    "A1: Establish authoritative app acquisition, full digest/signing identity, version-specific presented/remote/store terms and acceptance evidence.",
+    "A2: Review codec/dictionary necessity and implementation provenance; separate functional facts from protectable expression.",
+    "A3: Resolve PacketLogger GPL-format-reference derivation and notices before shipping diagnostic app.",
+    "A4: Confirm MIDI/BLE specification access/IP/logo terms and OS-only application Bluetooth qualification scope; no assumed fee or exemption.",
+    "A5: Verify actual standards-only artifact excludes vendor RPC/codec/PacketLogger; maintain generic audio/SMF paths.",
+    "A6: Review public fixtures for device identifiers and preset/content rights; use original/synthetic assets.",
+    "A7: Obtain vendor clarification/appropriate written grant for HyVibe-specific implementation and public docs with downstream open-source/commercial redistribution; legal review in publisher/distribution jurisdictions."
+  ],
+  "outcome": "Assessment complete with scoped evidence and explicit unresolved release questions; no non-infringement or legal-clearance verdict.",
+  "limitations": [
+    "No complete source-to-Android expression comparison; original APK/decompiled tree was not located.",
+    "No new APK acquisition, decompilation, vendor/server login, store acceptance reconstruction or guitar probe.",
+    "No exhaustive Git-history/credential/content scan, patent freedom-to-operate opinion, legal jurisdiction determination or release approval.",
+    "Package metadata declarations only; no blanket audit of license texts/notices, operating-system/system-library rights, SDKs or every release feature/target.",
+    "Public source text and current source inventory were inspected; no gated MIDI standard PDF was downloaded."
+  ],
+  "preparation_notes": [
+    "An initial relative audit-output mkdir was made from /tmp; the metadata redirection failed before Cargo ran. Absolute output paths were used for the successful run."
+  ]
+}

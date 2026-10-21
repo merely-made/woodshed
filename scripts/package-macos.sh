@@ -109,6 +109,8 @@ cat > "$app/Contents/Info.plist" <<EOF
     <string>public.app-category.education</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Woodshed advertises a Bluetooth MIDI pedal when you explicitly select that MIDI output.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Woodshed uses the microphone for recording, the tuner and latency calibration when you enable them.</string>
 </dict>
@@ -119,6 +121,9 @@ for file in README.md LICENSE Cargo.lock; do
     [[ -f $root/$file ]] || die "required release file is missing: $root/$file"
     install -m 644 "$root/$file" "$stage/$file"
 done
+
+mkdir -p "$stage/THIRD-PARTY"
+install -m 644 "$root/vendor/ble-peripheral-rust/LICENSE" "$stage/THIRD-PARTY/ble-peripheral-rust-MIT.txt"
 
 cat > "$stage/RELEASE-README.txt" <<EOF
 Woodshed $version — macOS $arch unsigned alpha

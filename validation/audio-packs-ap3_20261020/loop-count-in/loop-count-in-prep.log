@@ -1,0 +1,4 @@
+   Compiling ap3-loop-count-in-prep v0.0.0 (/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/loop-count-in-prep)
+    Finished `dev` profile [unoptimized] target(s) in 0.50s
+     Running `/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/ap3-loop-count-in-prep /Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/loop-count-in-artifacts`
+Prepared 5 distinguishable 4/4 bars, SMF0 / PPQ480 / channel10 / 15 balanced notes, no tempo meta; reference is 20 seconds at 60 BPM.

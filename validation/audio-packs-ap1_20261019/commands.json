@@ -1,0 +1,125 @@
+[
+  {
+    "name": "bundled-midi",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "bundled",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/bundled.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/bundled.pack.json"
+    ],
+    "exit_code": 0,
+    "stdout": "woodshed.basic-drums 1.0.0 [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "directory-midi",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/repos/woodshed/assets/audio-packs/basic-drums",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/directory.mid"
+    ],
+    "exit_code": 0,
+    "stdout": "woodshed.basic-drums 1.0.0 [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "user-midi",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user-installed",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.pack.json"
+    ],
+    "exit_code": 0,
+    "stdout": "user.quiet-drums 1.0.1 [5311a03def7ed0fc05d6d77596314401f11ef3b4cf8e940460d59cc664e25f7a]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "user-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user-installed",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from user.quiet-drums [5311a03def7ed0fc05d6d77596314401f11ef3b4cf8e940460d59cc664e25f7a]",
+    "stderr": ""
+  },
+  {
+    "name": "snapshot-midi",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.pack.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/snapshot.mid"
+    ],
+    "exit_code": 0,
+    "stdout": "user.quiet-drums 1.0.1 [5311a03def7ed0fc05d6d77596314401f11ef3b4cf8e940460d59cc664e25f7a]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "toml-midi",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/user-toml",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.pack.json"
+    ],
+    "exit_code": 0,
+    "stdout": "user.quiet-drums 1.0.1 [37f08847a1407a69933bf0c4c2658be690bd526a344374bfeae2692ac3e7adf1]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "bundled-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "bundled",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/bundled.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from woodshed.basic-drums [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]",
+    "stderr": ""
+  },
+  {
+    "name": "directory-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/repos/woodshed/assets/audio-packs/basic-drums",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/directory.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from woodshed.basic-drums [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]",
+    "stderr": ""
+  },
+  {
+    "name": "snapshot-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.pack.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/snapshot.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from user.quiet-drums [5311a03def7ed0fc05d6d77596314401f11ef3b4cf8e940460d59cc664e25f7a]",
+    "stderr": ""
+  },
+  {
+    "name": "toml-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.pack.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from user.quiet-drums [37f08847a1407a69933bf0c4c2658be690bd526a344374bfeae2692ac3e7adf1]",
+    "stderr": ""
+  }
+]

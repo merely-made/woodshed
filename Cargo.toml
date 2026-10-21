@@ -5,6 +5,9 @@ members = [
     "crates/woodshed-notation",
     "crates/woodshed-audio",
     "crates/audio-primitives",
+    "crates/audio-pattern",
+    "crates/audio-packs",
+    "crates/audio-pack-views",
     "crates/hocket-model",
     "crates/hocket-project",
     "crates/hocket-recorder",
@@ -17,11 +20,15 @@ members = [
     # The chartulary substrate's first real consumer (G3): woodshed's theory
     # catalog as a content graph. Folded in from its own repo 2026-07-08.
     "crates/woodshed-graph",
-    # Bluetooth control of a smart instrument; see
+    # Shared standard MIDI instrument I/O; private RPC stays under ports/ringdown.
+    # See
     # design_docs/2026-08-27_smart_instrument_plan.md
     "crates/woodshed-instrument",
 ]
 exclude = [
+    "vendor/cambium-genet-winit-host",
+    "vendor/ble-peripheral-rust",
+    "vendor/ble-peripheral-rust/vendor/bluer",
     "ports/hocket",
     "ports/redshank",
     "ports/ringdown",
@@ -59,6 +66,11 @@ workbench = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 # `audio-primitives` extraction. Pure std; consumed by woodshed-audio
 # here and cross-repo by strophe-engine via path-dep.
 audio-primitives = { path = "crates/audio-primitives", version = "0.1.0" }
+audio-pattern = { path = "crates/audio-pattern", version = "0.1.0" }
+audio-packs = { path = "crates/audio-packs", version = "0.1.0" }
+audio-pack-views = { path = "crates/audio-pack-views", version = "0.1.0" }
+midly = { version = "=0.5.3", default-features = false, features = ["std", "strict"] }
+toml = "1"
 # (pitch-detection is declared further down under "Audio".)
 
 # The mark-ik/xilem Masonry fork is fully retired (2026-07-08): its last
@@ -104,6 +116,8 @@ woodshed-web = { path = "crates/woodshed-web" }
 # crates use `4bc75583`, the Genet that Mere revision pins. Cargo keys a git
 # source by URL and reference, so the split is intentional and keeps one source
 # identity for each family.
+# A narrow supplier source patch below retains this same host and filters
+# synthesized focus key presses; see vendor/cambium-genet-winit-host/PATCHES.md.
 cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 sprigging = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
@@ -170,7 +184,8 @@ personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main
 persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", branch = "main" }
 
 # Future:
-#   fundsp          — DSP for fancier sounds (deferred — raw sin is enough for click)
+#   fundsp          — AP0-assessed supplier for later data-defined synth/effect packs;
+#                     the first AP1 kit reuses the existing sample runtime.
 #   symphonia       — FLAC / OGG / MP3 sample loading (deferred — WAV via hound is enough for now)
 
 # PDB symbol-length limit on Windows MSVC is handled by the
@@ -266,3 +281,6 @@ mere-transport = { git = "https://github.com/merely-made/murm.git", branch = "ma
 notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 mere-webrtc-carrier = { git = "https://github.com/merely-made/murm.git", branch = "main" }
+
+# One resolved shared host: reject synthesized focus presses until the owner pin incorporates it.
+cambium-genet-winit-host = { path = "vendor/cambium-genet-winit-host" }

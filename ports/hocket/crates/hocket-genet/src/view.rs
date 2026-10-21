@@ -55,6 +55,8 @@ pub fn root(state: &AppState) -> Child {
             (
                 top(state),
                 body(state),
+                audio_pack_views::panel(state.recorder.audio_pack.as_ref(), &state.pack_notice,
+                    state.is_project_io_active(), true, AppState::pack_action),
                 hocket_views::transport(
                     &state.recorder,
                     STANDALONE_MOUNT,

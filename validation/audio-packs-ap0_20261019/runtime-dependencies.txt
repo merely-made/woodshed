@@ -1,0 +1,247 @@
+ap0-runtime v0.0.0 (/Users/markik/Code/testing/woodshed/audio-packs-ap0_20261019/runtime)
+audioadapter-buffers v5.2.0
+audioadapter v5.0.0
+audioadapter-sample v5.2.0
+audio-codec-algorithms v0.8.1
+num-traits v0.2.19
+libm v0.2.16
+num-traits v0.2.19 (*)
+firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+arrayvec v0.7.8
+audioadapter v5.0.0
+audioadapter-buffers v5.2.0 (*)
+audioadapter-sample v5.2.0 (*)
+bevy_platform v0.19.1
+foldhash v0.2.0
+hashbrown v0.16.1
+allocator-api2 v0.2.21
+equivalent v1.0.3
+foldhash v0.2.0
+spin v0.10.1
+bitflags v2.13.2
+firewheel-macros v0.14.0 (proc-macro) (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+bevy_macro_utils v0.19.1
+proc-macro2 v1.0.107
+unicode-ident v1.0.27
+quote v1.0.47
+proc-macro2 v1.0.107 (*)
+syn v2.0.119
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+unicode-ident v1.0.27
+toml_edit v0.25.17+spec-1.1.0
+indexmap v2.14.2
+equivalent v1.0.3
+hashbrown v0.17.1
+toml_datetime v1.1.2+spec-1.1.0
+toml_parser v1.1.5+spec-1.1.0
+winnow v1.0.4
+winnow v1.0.4
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+syn v2.0.119 (*)
+toml_edit v0.23.10+spec-1.0.0
+indexmap v2.14.2 (*)
+toml_datetime v0.7.5+spec-1.1.0
+toml_parser v1.1.5+spec-1.1.0 (*)
+winnow v0.7.15
+num-traits v0.2.19 (*)
+portable-atomic v1.15.0
+ringbuf v0.5.3
+crossbeam-utils v0.8.23
+portable-atomic v1.15.0
+portable-atomic-util v0.2.8
+portable-atomic v1.15.0
+smallvec v1.16.3
+thiserror v2.0.21
+thiserror-impl v2.0.21 (proc-macro)
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+syn v3.0.9
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+unicode-ident v1.0.27
+thunderdome v0.6.1
+firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+audioadapter-buffers v5.2.0 (*)
+bevy_platform v0.19.1 (*)
+cpal v0.18.2
+coreaudio-rs v0.14.2
+bitflags v2.13.2
+libc v0.2.191
+objc2-audio-toolbox v0.3.2
+bitflags v2.13.2
+libc v0.2.191
+objc2 v0.6.5
+objc2-encode v4.1.0
+objc2-core-audio v0.3.2
+objc2 v0.6.5 (*)
+objc2-core-audio-types v0.3.2
+bitflags v2.13.2
+objc2 v0.6.5 (*)
+objc2-core-foundation v0.3.2
+bitflags v2.13.2
+block2 v0.6.2
+objc2 v0.6.5 (*)
+dispatch2 v0.3.1
+bitflags v2.13.2
+objc2 v0.6.5 (*)
+libc v0.2.191
+objc2 v0.6.5 (*)
+objc2-foundation v0.3.2
+bitflags v2.13.2
+objc2 v0.6.5 (*)
+objc2-core-audio-types v0.3.2 (*)
+objc2-core-foundation v0.3.2 (*)
+objc2-foundation v0.3.2 (*)
+objc2-core-audio v0.3.2 (*)
+objc2-core-audio-types v0.3.2 (*)
+objc2-core-foundation v0.3.2 (*)
+dasp_sample v0.11.0
+mach2 v0.6.0
+objc2 v0.6.5 (*)
+objc2-audio-toolbox v0.3.2 (*)
+objc2-core-audio v0.3.2 (*)
+objc2-core-audio-types v0.3.2 (*)
+objc2-core-foundation v0.3.2 (*)
+objc2-foundation v0.3.2 (*)
+firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+arrayvec v0.7.8
+audioadapter v5.0.0
+bevy_platform v0.19.1 (*)
+bitflags v2.13.2
+firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+num-traits v0.2.19 (*)
+ringbuf v0.5.3 (*)
+smallvec v1.16.3
+thiserror v2.0.21 (*)
+thunderdome v0.6.1
+triple_buffer v9.0.0
+crossbeam-utils v0.8.23
+fixed-resample v0.13.0
+audioadapter v5.0.0
+audioadapter-buffers v5.2.0 (*)
+ringbuf v0.5.3 (*)
+thiserror v2.0.21 (*)
+firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+bevy_platform v0.19.1 (*)
+firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+num-traits v0.2.19 (*)
+thiserror v2.0.21 (*)
+thiserror v2.0.21 (*)
+fundsp v0.23.0
+dyn-clone v1.0.20
+funutd v0.16.0
+dyn-clone v1.0.20
+glam v0.28.0
+libm v0.2.16
+hashbrown v0.14.5
+ahash v0.8.12
+cfg-if v1.0.5
+once_cell v1.21.4
+zerocopy v0.8.63
+allocator-api2 v0.2.21
+libm v0.2.16
+hashbrown v0.16.1 (*)
+libm v0.2.16
+microfft v0.6.0
+cfg-if v1.0.5
+num-complex v0.4.6
+num-traits v0.2.19 (*)
+static_assertions v1.1.0
+num-complex v0.4.6 (*)
+numeric-array v0.6.1
+generic-array v1.4.5
+rustversion v1.0.23 (proc-macro)
+typenum v1.20.1
+num-traits v0.2.19 (*)
+once_cell v1.21.4
+resampler v0.4.1
+libm v0.2.16
+thingbuf v0.1.6
+pin-project v1.1.13
+pin-project-internal v1.1.13 (proc-macro)
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+syn v2.0.119 (*)
+tinyvec v1.13.3
+wide v1.7.1
+bytemuck v1.25.2
+safe_arch v1.2.0
+bytemuck v1.25.2
+hound v3.5.1
+rustysynth v1.3.7
+serde_json v1.0.154
+itoa v1.0.18
+memchr v2.8.3
+serde_core v1.0.229
+zmij v1.0.23
+woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+audioadapter-buffers v5.2.0 (*)
+cpal v0.18.2 (*)
+firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d) (*)
+hound v3.5.1
+midir v0.11.1
+coremidi v0.9.2
+block2 v0.6.2 (*)
+core-foundation v0.10.1
+core-foundation-sys v0.8.7
+libc v0.2.191
+core-foundation-sys v0.8.7
+coremidi-sys v3.2.1
+core-foundation-sys v0.8.7
+log v0.4.34
+pitch-detection v0.3.0
+rustfft v6.4.1
+num-complex v0.4.6 (*)
+num-integer v0.1.47
+num-traits v0.2.19 (*)
+num-traits v0.2.19 (*)
+primal-check v0.3.4
+num-integer v0.1.47 (*)
+strength_reduce v0.2.4
+transpose v0.2.3
+num-integer v0.1.47 (*)
+strength_reduce v0.2.4
+pitch-detector v0.3.1
+anyhow v1.0.104
+apodize v1.0.0
+fitting v0.3.0
+approx v0.3.2
+num-traits v0.2.19 (*)
+ndarray v0.13.1
+approx v0.3.2 (*)
+matrixmultiply v0.2.4
+rawpointer v0.2.1
+num-complex v0.2.4
+num-traits v0.2.19 (*)
+num-integer v0.1.47 (*)
+num-traits v0.2.19 (*)
+rawpointer v0.2.1
+thiserror v1.0.69
+thiserror-impl v1.0.69 (proc-macro)
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+syn v2.0.119 (*)
+itertools v0.10.5
+either v1.19.0
+num-traits v0.2.19 (*)
+peak_finder v1.0.1
+csv v1.4.0
+csv-core v0.1.13
+memchr v2.8.3
+itoa v1.0.18
+ryu v1.0.23
+serde_core v1.0.229
+rustfft v6.4.1 (*)
+rtrb v0.3.5
+serde v1.0.229
+serde_core v1.0.229
+serde_derive v1.0.229 (proc-macro)
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+syn v3.0.9 (*)

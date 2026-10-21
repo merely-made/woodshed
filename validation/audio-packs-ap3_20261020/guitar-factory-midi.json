@@ -1,0 +1,1102 @@
+{
+  "read_only": true,
+  "source": "HYVIBE/Drums",
+  "files": [
+    {
+      "file": "1-Rock.mid",
+      "sha256": "b494bf734d64116adacb74e7ee54094b8ecfeb68542e98a00a70cf48a96ffb10",
+      "bytes": 537,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 15,
+          "off": 15
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 9,
+          "off": 9
+        },
+        {
+          "channel": 10,
+          "note": 44,
+          "on": 34,
+          "off": 34
+        },
+        {
+          "channel": 10,
+          "note": 46,
+          "on": 1,
+          "off": 1
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 9360,
+      "last_note_off_tick": 9449,
+      "note_bar_counts": {
+        "36": {
+          "0": 2,
+          "1": 3,
+          "2": 3,
+          "3": 3,
+          "4": 4
+        },
+        "38": {
+          "0": 1,
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2
+        },
+        "44": {
+          "0": 3,
+          "1": 8,
+          "2": 7,
+          "3": 8,
+          "4": 8
+        },
+        "46": {
+          "2": 1
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 60,
+        "0x8": 60,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 60,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        73,
+        164
+      ]
+    },
+    {
+      "file": "10-Salsa.mid",
+      "sha256": "32193e10edbf28902b021a72ecdb8bb9a28296b6c8f0bab8f79b9d844fb969ea",
+      "bytes": 650,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 32,
+          "off": 32
+        },
+        {
+          "channel": 10,
+          "note": 42,
+          "on": 16,
+          "off": 16
+        },
+        {
+          "channel": 10,
+          "note": 50,
+          "on": 1,
+          "off": 1
+        },
+        {
+          "channel": 10,
+          "note": 56,
+          "on": 25,
+          "off": 25
+        }
+      ],
+      "first_note_tick": 240,
+      "last_note_on_tick": 9480,
+      "last_note_off_tick": 9560,
+      "note_bar_counts": {
+        "36": {
+          "1": 8,
+          "2": 8,
+          "3": 8,
+          "4": 8
+        },
+        "42": {
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 4
+        },
+        "50": {
+          "1": 1
+        },
+        "56": {
+          "0": 5,
+          "1": 5,
+          "2": 5,
+          "3": 5,
+          "4": 5
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 74,
+        "0x8": 74,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 74,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        58,
+        80
+      ]
+    },
+    {
+      "file": "2-Funky_16th.mid",
+      "sha256": "7ed267bd214f6f2d4cd3693bc6ba3e2c6aacfe357e10a286f1eeb21109a53d4a",
+      "bytes": 763,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 21,
+          "off": 21
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 12,
+          "off": 12
+        },
+        {
+          "channel": 10,
+          "note": 44,
+          "on": 58,
+          "off": 58
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 9480,
+      "last_note_off_tick": 9600,
+      "note_bar_counts": {
+        "36": {
+          "0": 1,
+          "1": 5,
+          "2": 5,
+          "3": 5,
+          "4": 5
+        },
+        "38": {
+          "0": 3,
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 3
+        },
+        "44": {
+          "0": 2,
+          "1": 14,
+          "2": 14,
+          "3": 14,
+          "4": 14
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 92,
+        "0x8": 92,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 92,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        88,
+        164
+      ]
+    },
+    {
+      "file": "3-Funky_8th.mid",
+      "sha256": "cb05434a06be680b879aa35c2709a9fc8e471b68c175b9faa3cbf7ec62b00cb0",
+      "bytes": 570,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 13,
+          "off": 13
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 20,
+          "off": 20
+        },
+        {
+          "channel": 10,
+          "note": 44,
+          "on": 31,
+          "off": 31
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 9480,
+      "last_note_off_tick": 9600,
+      "note_bar_counts": {
+        "36": {
+          "0": 1,
+          "1": 3,
+          "2": 3,
+          "3": 3,
+          "4": 3
+        },
+        "38": {
+          "0": 5,
+          "1": 4,
+          "2": 3,
+          "3": 4,
+          "4": 4
+        },
+        "44": {
+          "1": 8,
+          "2": 8,
+          "3": 8,
+          "4": 7
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 65,
+        "0x8": 65,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 65,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        88,
+        480
+      ]
+    },
+    {
+      "file": "4-Shuffle_Groove.mid",
+      "sha256": "36c863b8fa4a406163775219de73016069f2cd74603b116b651ae21b107edd31",
+      "bytes": 597,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 16,
+          "off": 16
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 19,
+          "off": 19
+        },
+        {
+          "channel": 10,
+          "note": 44,
+          "on": 32,
+          "off": 32
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 9520,
+      "last_note_off_tick": 9600,
+      "note_bar_counts": {
+        "36": {
+          "0": 1,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 5
+        },
+        "38": {
+          "0": 5,
+          "1": 3,
+          "2": 4,
+          "3": 3,
+          "4": 4
+        },
+        "44": {
+          "1": 8,
+          "2": 8,
+          "3": 8,
+          "4": 8
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 90,
+        "0x8": 46,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 68,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        53,
+        171
+      ]
+    },
+    {
+      "file": "5-Shuffle_Rock.mid",
+      "sha256": "8cd62ba117addb186b7506eaad499894db4053e72a5952ea38da49dced56fc9f",
+      "bytes": 529,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 35,
+          "on": 1,
+          "off": 1
+        },
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 12,
+          "off": 12
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 12,
+          "off": 12
+        },
+        {
+          "channel": 10,
+          "note": 51,
+          "on": 36,
+          "off": 36
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 9440,
+      "last_note_off_tick": 9600,
+      "note_bar_counts": {
+        "35": {
+          "2": 1
+        },
+        "36": {
+          "0": 1,
+          "1": 3,
+          "2": 2,
+          "3": 3,
+          "4": 3
+        },
+        "38": {
+          "0": 2,
+          "1": 2,
+          "2": 3,
+          "3": 2,
+          "4": 3
+        },
+        "51": {
+          "0": 4,
+          "1": 8,
+          "2": 8,
+          "3": 8,
+          "4": 8
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 114,
+        "0x8": 10,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 62,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        120,
+        171
+      ]
+    },
+    {
+      "file": "6-Blues.mid",
+      "sha256": "5dc7b121b915ef8501eeb17dd9cefd0cd6d978e04cbc9e633b5fa98870fdfc6e",
+      "bytes": 1354,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        24960
+      ],
+      "end_quarters": [
+        52.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 48,
+          "off": 48
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 29,
+          "off": 29
+        },
+        {
+          "channel": 10,
+          "note": 51,
+          "on": 99,
+          "off": 99
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 24800,
+      "last_note_off_tick": 24960,
+      "note_bar_counts": {
+        "36": {
+          "0": 1,
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 4,
+          "5": 4,
+          "6": 4,
+          "7": 4,
+          "8": 4,
+          "9": 4,
+          "10": 4,
+          "11": 4,
+          "12": 3
+        },
+        "38": {
+          "0": 2,
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2,
+          "5": 2,
+          "6": 2,
+          "7": 2,
+          "8": 2,
+          "9": 2,
+          "10": 2,
+          "11": 2,
+          "12": 5
+        },
+        "51": {
+          "0": 3,
+          "1": 8,
+          "2": 8,
+          "3": 8,
+          "4": 8,
+          "5": 8,
+          "6": 8,
+          "7": 8,
+          "8": 8,
+          "9": 8,
+          "10": 8,
+          "11": 8,
+          "12": 8
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 24960,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 325,
+        "0x8": 29,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 177,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        120,
+        171
+      ]
+    },
+    {
+      "file": "7-Pure_Swing.mid",
+      "sha256": "b3021c67ae2c84b1794488c86edb352c68d5c4d3a0b65fe80f3049e0455b5aaf",
+      "bytes": 839,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        17280
+      ],
+      "end_quarters": [
+        36.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 32,
+          "off": 32
+        },
+        {
+          "channel": 10,
+          "note": 42,
+          "on": 20,
+          "off": 20
+        },
+        {
+          "channel": 10,
+          "note": 51,
+          "on": 47,
+          "off": 47
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 17120,
+      "last_note_off_tick": 17280,
+      "note_bar_counts": {
+        "36": {
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 4,
+          "5": 4,
+          "6": 4,
+          "7": 4,
+          "8": 4
+        },
+        "42": {
+          "0": 4,
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2,
+          "5": 2,
+          "6": 2,
+          "7": 2,
+          "8": 2
+        },
+        "51": {
+          "1": 5,
+          "2": 6,
+          "3": 6,
+          "4": 6,
+          "5": 6,
+          "6": 6,
+          "7": 6,
+          "8": 6
+        },
+        "52": {
+          "1": 1
+        }
+      },
+      "controllers": [
+        {
+          "tick": 17280,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 100,
+        "0x8": 100,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 100,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        109,
+        240
+      ]
+    },
+    {
+      "file": "8-Jazz_Waltz.mid",
+      "sha256": "bf18b97495a7b13daf062a8ec4604df9f4b28a8f312146af2d13e0c2c6715b0c",
+      "bytes": 343,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        7200
+      ],
+      "end_quarters": [
+        15.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 3,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 4,
+          "off": 4
+        },
+        {
+          "channel": 10,
+          "note": 42,
+          "on": 11,
+          "off": 11
+        },
+        {
+          "channel": 10,
+          "note": 49,
+          "on": 1,
+          "off": 1
+        },
+        {
+          "channel": 10,
+          "note": 51,
+          "on": 15,
+          "off": 15
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 6720,
+      "last_note_off_tick": 6880,
+      "note_bar_counts": {
+        "36": {
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1
+        },
+        "42": {
+          "0": 3,
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2
+        },
+        "49": {
+          "1": 1
+        },
+        "51": {
+          "1": 3,
+          "2": 4,
+          "3": 4,
+          "4": 4
+        }
+      },
+      "controllers": [
+        {
+          "tick": 7200,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 31,
+        "0x8": 31,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 31,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        155,
+        240
+      ]
+    },
+    {
+      "file": "9-Bossa_Nova.mid",
+      "sha256": "e2893a0dabf59ed7b4435969f92a46a80e8200cc301fa8d347e087df9c1ec0c2",
+      "bytes": 612,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        9600
+      ],
+      "end_quarters": [
+        20.0
+      ],
+      "tempos": [],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 16,
+          "off": 16
+        },
+        {
+          "channel": 10,
+          "note": 37,
+          "on": 15,
+          "off": 15
+        },
+        {
+          "channel": 10,
+          "note": 44,
+          "on": 8,
+          "off": 8
+        },
+        {
+          "channel": 10,
+          "note": 52,
+          "on": 1,
+          "off": 1
+        },
+        {
+          "channel": 10,
+          "note": 78,
+          "on": 31,
+          "off": 31
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 9360,
+      "last_note_off_tick": 9515,
+      "note_bar_counts": {
+        "36": {
+          "1": 4,
+          "2": 4,
+          "3": 4,
+          "4": 4
+        },
+        "37": {
+          "0": 5,
+          "1": 2,
+          "2": 3,
+          "3": 2,
+          "4": 3
+        },
+        "44": {
+          "1": 2,
+          "2": 2,
+          "3": 2,
+          "4": 2
+        },
+        "52": {
+          "1": 1
+        },
+        "78": {
+          "1": 7,
+          "2": 8,
+          "3": 8,
+          "4": 8
+        }
+      },
+      "controllers": [
+        {
+          "tick": 9600,
+          "channel": 1,
+          "number": 123,
+          "value": 0
+        }
+      ],
+      "message_kinds": {
+        "0x9": 71,
+        "0x8": 71,
+        "0xb": 1
+      },
+      "meta_types": {
+        "0x58": 1,
+        "0x3": 1,
+        "0x4": 1,
+        "0x59": 1,
+        "0x2f": 1
+      },
+      "notes_on": 71,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        155,
+        160
+      ]
+    }
+  ]
+}

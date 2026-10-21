@@ -1,0 +1,1195 @@
+--- a/design_docs/2026-05-15_midi_design.md
++++ b/design_docs/2026-05-15_midi_design.md
+@@ -68,16 +68,24 @@
+ ## Keyboard and incoming-controller mappings (2026-10-20)
+ 
+ The existing pedal panel adds saved per-action Learn/Clear keyboard and Note/CC
+-mappings, plus transient arming. Shared-host key interception and the current
+-midir input/history feed the same target-bound dispatcher/writer as buttons
+-and stdio. Ordinary keyboard autorepeat and held controller values are
++mappings, plus transient arming. Shared-host key interception and the current midir parser/callback feed the
++same target-bound dispatcher/writer as buttons and stdio. Native qualification
++found frame rendering could exceed the previous history cutoff: the sole live
++controller edge gate now runs on that callback, while sequence-consumed history
++serves learning/display only. Learning establishes its cursor at the click, and
++explicit input None retires requested intent even after confirmed disconnection. Ordinary keyboard autorepeat and held controller values are
+ suppressed; learning sends nothing, input history is consumed once, and lifetime
+ changes disarm. See the [canonical input contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
+ and [focused input evidence](../ports/ringdown/validation/pedal-inputs_20261020/README.md).
+ A narrow source patch at the existing shared host rejects synthesized focus
+ presses before dispatch; metadata confirms one resolved host. This implementation
+-has focused retained-control/gate/build evidence, not new native controller,
+-Windows/X11 focus or guitar acceptance.
++has focused retained-control/gate/build evidence; the [input acceptance packet](../ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
++adds 48 focused cases and a three-process/35-message native controller/fault
++cohort. The separate physical cohort confirms real held N/P and fresh CC/Note
++actions after reconnect, with 12 OS-accepted messages and five single guitar
++changes; one earlier Note-triggered no-change remains unresolved. Reconnect
++disarms and does not replay held input. Windows/X11 focus and native runtime on
++other platforms remain unqualified; OS acceptance is not device acknowledgement.
+ 
+ ---
+ 
+--- a/design_docs/DOC_README.md
++++ b/design_docs/DOC_README.md
+@@ -349,6 +349,11 @@
+   mappings now feed that same dispatcher with focused input checks; the
+   [input contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
+   records the shared-host synthesized-press correction and native input limits.
++  [Input acceptance](../ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
++  records render-independent callback admission, explicit input reconnect repair
++  and 48 focused cases/35 exact native messages across saved/Clear/reassign
++  reopenings. Separate real-key/guitar checks finish with quiet reconnect/holds,
++  five observed single changes and one unresolved Note-triggered no-change.
+ - [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — Current visual
+   reference; its product/navigation framing is superseded by Stage/Set/Tools.
+ - [2026-05-21_arpeggio_lens_plan.md](2026-05-21_arpeggio_lens_plan.md) — Partial
+--- a/scripts/run-macos-scenario.py
++++ b/scripts/run-macos-scenario.py
+@@ -44,6 +44,7 @@
+     parser.add_argument("--output", type=Path, required=True, help="New receipt directory")
+     parser.add_argument("--env", action="append", default=[], metavar="KEY=VALUE")
+     parser.add_argument("--stdin", type=Path, help="Optional product stdin file/FIFO")
++    parser.add_argument("--bundle-identifier", help="Explicit test bundle identity to retain a granted OS permission across reruns")
+     parser.add_argument("--stdout", type=Path, help="Optional separate product stdout for JSONL")
+     parser.add_argument("--timeout", type=float, default=60)
+     parser.add_argument("args", nargs=argparse.REMAINDER, help="Product arguments after --")
+@@ -81,7 +82,7 @@
+         binary_hash = hashlib.sha256(executable.read_bytes()).hexdigest()
+         with (app / "Contents/Info.plist").open("wb") as file:
+             plistlib.dump({
+-                "CFBundleIdentifier": "made.merely.mesquite.acceptance." + uuid.uuid4().hex,
++                "CFBundleIdentifier": options.bundle_identifier or "made.merely.mesquite.acceptance." + uuid.uuid4().hex,
+                 "CFBundleName": "Mesquite Native Acceptance",
+                 "CFBundleExecutable": executable_name,
+                 "CFBundlePackageType": "APPL",
+--- a/ports/ringdown/design_docs/2026-09-02_client_surface_plan.md
++++ b/ports/ringdown/design_docs/2026-09-02_client_surface_plan.md
+@@ -452,8 +452,10 @@
+ ### Keyboard and incoming-controller mappings (2026-10-20)
+ 
+ **Implemented with focused checks, including the shared focus-snapshot gate.**
+-The [input receipt](../validation/pedal-inputs_20261020/README.md) records the
+-new source and checks separately from the earlier native/guitar acceptance.
++The [initial input receipt](../validation/pedal-inputs_20261020/README.md) records
++the predecessor implementation. The subsequent [input acceptance packet](../validation/pedal-input-acceptance_20261020/README.md)
++records the native probes and callback/reconnect repairs below; it does not
++relabel the earlier source or its evidence.
+ 
+ Settings → Audio and MIDI reuses the existing pedal panel for each action's
+ **Learn key / Clear key** and **Learn MIDI / Clear MIDI** controls. Keyboard
+@@ -468,18 +470,31 @@
+ `AppSettings.audio_midi.midi_pedal.inputs` stores only mappings. Old settings
+ without `inputs` reopen with unassigned mappings. Keyboard events enter the
+ existing shared-host key interceptor; ordinary OS autorepeat is consumed
+-without another request. Incoming controllers reuse the selected midir input,
+-parser and bounded event history. A monotonic sequence cursor consumes each
+-event once, including events sharing a timestamp. No new input driver, output
+-worker, dispatcher, host loop or MIDI-thru path is introduced.
++without another request. Incoming controllers reuse the selected midir input and parser. One callback-side
++`ControllerEdges` owner feeds the existing dispatcher independently of rendering;
++the frame-polled history serves learning/display only. A monotonic sequence
++cursor consumes that history once, including events sharing a timestamp. No
++new input driver, output worker, dispatcher, host loop or MIDI-thru path is
++introduced. Arming, source epoch, prepared bindings and expected receiver are
++published to that owner before slow persistence/rendering. Callback refusals
++retain a bounded notice until the UI polls, even if a later worker completion
++advances the ordinary last report.
+ 
+ Controller mappings match channel 1–16, Note or CC and number 0–127. Notes
+ release on Note Off or Note On velocity zero; CC releases at 0–63 and presses
+ at 64–127. A release must be observed before the first press after learning,
+ a mapping change or an input-history gap; repeated positive values cannot
+-retrigger. Disarmed polling still consumes releases. Removed input endpoints,
+-history overflow/reset or events older than 100 ms discard that batch and
+-disarm rather than replay. Reopening an input is explicit. Relative encoders,
++retrigger. The callback observes releases even while disarmed. Removed input
++endpoints and history overflow/reset disarm. Retired source callbacks and
++changed receiver lifetimes cannot inherit armed authority; the view must
++acknowledge disarmed before a fresh Arm. Reopening an input is explicit. The
++UI forwards None even if the confirmed input is already absent, retiring the
++previous requested name before reselection. The predecessor 100 ms cutoff
++on frame-polled input was removed: normal native rendering exceeded it and
++discarded learning events. Learning starts its history cursor at the click;
++history can never replay an action. Live callback admission retains the
++existing dispatcher/worker deadlines (100 ms to start, bounded release),
++without a second scheduler. Relative encoders,
+ Program Change input, SysEx and continuous expression are outside this slice.
+ 
+ Accepted keyboard/controller presses capture the output revision/subscriber
+@@ -506,6 +521,44 @@
+ patch are replaced together. Focus-snapshot admission has a focused test and
+ Windows/Linux gate compilation; native Windows/X11 focus interaction remains
+ runtime qualification, not established by Mac software checks.
++
++### Input acceptance follow-through (2026-10-21)
++
++**Software/native acceptance passes; physical keyboard/controller/reconnect
++checks are complete with one unresolved guitar observation in the
++[acceptance packet](../validation/pedal-input-acceptance_20261020/README.md).**
++This run spans October 20–21 and keeps its start-date artifact directory.
++
++The initial native run found a render-coupling defect: correctly received
++controller events appeared in display history but expired before learning or
++live frame dispatch. Live admission now runs at the existing parsed-input
++callback into the same dispatcher; the old UI-owned edge state was removed.
++A subsequent native run confirmed learning/holds and exposed skipped explicit
++None intent after input loss. Forwarding selection through the deduplicating
++input owner fixes reopening. The repaired configuration cohort records exactly
++25 OS-accepted/independently received messages, including an actual one-message
++partial press/release, source and receiver replacement, quiet rearm of held
++controls and fresh actions. Two fresh processes prove saved mappings and
++Clear/reassign edits survive reopening while live arming, ports, learning and
++pending intent do not. They add ten exact received messages (35 total) and
++visibly retain busy refusal without deferred replay. All 48 distinct focused
++cases and the final Mac app/shared Windows/Linux instrument checks pass.
++No guitar action is implied by those fixtures.
++
++Scenario key injection calls the production application interceptor and its
++consumed-event tail. It is not OS keyboard/focus input. Physical keyboard and
++guitar checks form a distinct, owner-gated cohort. The native virtual source
++uses the existing midir API only as a test fixture; it is not a product driver.
++The physical cohort records 13 real N key events yielding one Next gesture,
++one P yielding Previous, and selected-input CC/Note mapping. Its six gestures
++produce 12 OS-accepted messages; the owner observes five single changes and
++reports no change for the first Note-triggered Previous. That observation
++remains unresolved: fresh Next/Previous after reconnect both work, without
++proving the earlier guitar result. OFF/ON changes subscriber generation,
++disarms and leaves count eight unchanged through explicit rearm/held values;
++fresh release/press then works. Connections close after the final observation.
++The shared synthesized-focus gate remains source/focused-test-qualified, with
++Windows/X11 native focus interaction and other-platform runtime still open.
+ 
+ ### Pedal acceptance (2026-10-20)
+ 
+@@ -1375,6 +1428,18 @@
+   refused rather than exposed. The guard is a comment; Phase B makes it code.
+ 
+ ## Progress
++
++- **2026-10-21 — Input desktop and bounded guitar qualification.** Native learning exposed
++  render-delayed events; moved the sole live controller edge gate to the existing
++  MIDI callback and dispatcher, leaving frame history for preparation only.
++  Corrected explicit input None forwarding after endpoint loss, and retained
++  callback refusals for the UI. The final three-process native cohort records
++  35 exact messages, saved/Clear/reassign reopening and quiet held-input/reconnect
++  behavior; 48 focused cases pass. Physical N/P and selected-input CC/Note checks
++  finish at 12 OS-accepted messages with five owner-confirmed single changes;
++  one earlier Note-triggered no-change remains unresolved. Reconnect disarms,
++  held inputs stay quiet, fresh actions work, and both ports close. The packet
++  preserves the negative observation separately from later successful actions.
+ 
+ - **2026-10-20 — Keyboard/controller input implementation.** Added saved
+   per-action Learn/Clear mappings and live arming in the existing controls;
+--- a/ports/ringdown/design_docs/DOC_README.md
++++ b/ports/ringdown/design_docs/DOC_README.md
+@@ -81,7 +81,12 @@
+ reuse that panel, input and dispatcher. Sixteen focused cases/build checks are
+ recorded separately from device acceptance. Ordinary repeats are suppressed;
+ a narrow source patch rejects synthesized focus presses at the existing host
+-owner. Native controller and Windows/X11 focus interaction remain unqualified.
++owner. The [input acceptance packet](../validation/pedal-input-acceptance_20261020/README.md)
++records callback/None-intent repairs, 48 focused cases and three fresh native
++processes with 35 independently received messages. Separate real-key/guitar
++checks finish with 12 OS-accepted messages, quiet reconnect/holds, five observed
++single changes and one unresolved Note-triggered no-change. Windows/X11 focus
++interaction remains unqualified.
+ 
+ Earlier device session: [Q-PC MIDI pedal experiment](../validation/midi-pedal_20261017/README.md)
+ records the first successful software-pedal trigger: a direct CoreBluetooth
+--- a/crates/woodshed-views/src/stage.rs
++++ b/crates/woodshed-views/src/stage.rs
+@@ -960,7 +960,6 @@
+     pub learn_controller: Option<woodshed_core::midi::PedalAction>,
+     pub learn_controller_flush: bool,
+     pub input_notice: Option<String>,
+-    pub controller_edges: woodshed_core::midi::ControllerEdges,
+     pub pedal_report: Option<woodshed_core::midi::PedalReport>,
+     /// Host-polled recent-events readout (newest last).
+     pub events: Vec<String>,
+@@ -1013,7 +1012,6 @@
+             learn_controller: None,
+             learn_controller_flush: false,
+             input_notice: None,
+-            controller_edges: Default::default(),
+             pedal_report: None,
+             events: Vec::new(),
+             refresh_requested: false,
+--- a/crates/woodshed-genet/src/midi.rs
++++ b/crates/woodshed-genet/src/midi.rs
+@@ -16,10 +16,11 @@
+ 
+ use woodshed_audio::{MidiEvent, MidiIn, list_midi_input_ports, list_midi_output_ports};
+ use woodshed_core::midi::{
+-    ControllerBatch, ControllerBinding, ControllerEvent, ControllerKind, MidiBackend, PedalAction,
+-    PedalBinding, PedalBindings, PedalOutcome, PedalReport, PedalTarget,
++    ControllerBatch, MidiBackend, PedalAction, PedalBinding, PedalBindings, PedalOutcome,
++    PedalReport, PedalTarget,
+ };
+ 
++mod controller;
+ mod pedal;
+ mod stdio;
+ /// Commands to the existing MIDI output thread. The thread owns the output
+@@ -89,6 +90,7 @@
+     requested_in: Option<String>,
+     input_cursor: u64,
+     input_invalidated: bool,
++    controller: Arc<Mutex<controller::Controller>>,
+     connected_in: Option<String>,
+     connected_out: Option<String>,
+     requested_out: Option<String>,
+@@ -127,6 +129,7 @@
+             requested_in: None,
+             input_cursor: 0,
+             input_invalidated: false,
++            controller: Default::default(),
+             connected_in: None,
+             connected_out: None,
+             requested_out: None,
+@@ -177,6 +180,11 @@
+         self.requested_in = port.map(str::to_owned);
+         self.input_cursor = 0;
+         self.input_invalidated = true;
++        let epoch = self
++            .controller
++            .lock()
++            .unwrap()
++            .replace_source(port.is_some());
+         match port {
+             None => {
+                 self.input = None;
+@@ -186,12 +194,20 @@
+                 if self.connected_in.as_deref() == Some(name) {
+                     return;
+                 }
+-                match MidiIn::connect_by_name(name) {
++                let controller = self.controller.clone();
++                let dispatcher = self.pedal.clone();
++                match MidiIn::connect_with_handler(name, move |event| {
++                    controller
++                        .lock()
++                        .unwrap()
++                        .receive(epoch, event, &dispatcher);
++                }) {
+                     Ok(m) => {
+                         self.input = Some(m);
+                         self.connected_in = Some(name.to_string());
+                     },
+                     Err(e) => {
++                        self.controller.lock().unwrap().replace_source(false);
+                         self.input = None;
+                         self.connected_in = None;
+                         self.error = Some(format!("midi in: {e}"));
+@@ -206,6 +222,7 @@
+             return;
+         }
+         self.requested_out = port.map(str::to_string);
++        self.controller.lock().unwrap().invalidate();
+         self.output_notice = port.map(|_| "Opening MIDI output…".into());
+         let revision = self.selection_revision.fetch_add(1, Ordering::AcqRel) + 1;
+         if self
+@@ -287,12 +304,24 @@
+     fn trigger_pedal(&mut self, action: PedalAction, binding: PedalBinding) -> PedalReport {
+         self.pedal.submit(action, binding).0
+     }
++    fn configure_pedal_inputs(
++        &mut self,
++        bindings: &PedalBindings,
++        armed: bool,
++        target: Option<PedalTarget>,
++    ) {
++        self.controller
++            .lock()
++            .unwrap()
++            .configure(bindings, armed, target);
++    }
+     fn pedal_input_events(&mut self) -> ControllerBatch {
+         let mut batch = ControllerBatch {
+             invalidated: std::mem::take(&mut self.input_invalidated),
+             ..Default::default()
+         };
+         if self.input.as_ref().is_some_and(|input| !input.is_ready()) {
++            self.controller.lock().unwrap().replace_source(false);
+             self.input = None;
+             self.connected_in = None;
+             batch.invalidated = true;
+@@ -306,49 +335,28 @@
+             let events = snapshot.events_since(self.input_cursor);
+             self.input_cursor = snapshot.received_events;
+             if let Some(events) = events {
+-                for (at, event) in events {
+-                    if at.elapsed() > std::time::Duration::from_millis(100) {
+-                        batch.invalidated = true;
+-                        batch.events.clear();
+-                        batch.notice =
+-                            Some("Stale MIDI controller input discarded; inputs disarmed".into());
+-                        break;
++                for (_, event) in events {
++                    // This history is preparation/display only. Live events
++                    // already visited the single callback-side edge gate.
++                    if let Some(event) = controller::event(event) {
++                        batch.events.push(event);
+                     }
+-                    let (kind, channel, number, value) = match event {
+-                        MidiEvent::NoteOn {
+-                            channel,
+-                            note,
+-                            velocity,
+-                        } => (ControllerKind::Note, channel + 1, note, velocity),
+-                        MidiEvent::NoteOff { channel, note, .. } => {
+-                            (ControllerKind::Note, channel + 1, note, 0)
+-                        },
+-                        MidiEvent::ControlChange {
+-                            channel,
+-                            controller,
+-                            value,
+-                        } => (
+-                            ControllerKind::ControlChange,
+-                            channel + 1,
+-                            controller,
+-                            value,
+-                        ),
+-                        _ => continue,
+-                    };
+-                    batch.events.push(ControllerEvent {
+-                        binding: ControllerBinding {
+-                            channel,
+-                            kind,
+-                            number,
+-                        },
+-                        value,
+-                    });
+                 }
+             } else {
++                self.controller.lock().unwrap().invalidate();
+                 batch.invalidated = true;
+                 batch.notice =
+                     Some("MIDI controller history overflow/reset; inputs disarmed".into());
+             }
++        }
++        if self.controller.lock().unwrap().take_invalidation() {
++            batch.invalidated = true;
++            batch.notice.get_or_insert_with(|| {
++                "Controller/receiver lifetime changed; inputs disarmed".into()
++            });
++        }
++        if let Some(notice) = self.controller.lock().unwrap().take_notice() {
++            batch.notice.get_or_insert(notice);
+         }
+         batch
+     }
+@@ -390,6 +398,7 @@
+ 
+ impl Drop for MidiHost {
+     fn drop(&mut self) {
++        self.controller.lock().unwrap().replace_source(false);
+         let _ = self.clock_tx.send(ClockCmd::Stop);
+         if let Some(thread) = self.clock_thread.take() {
+             let _ = thread.join();
+--- a/crates/woodshed-genet/src/sync.rs
++++ b/crates/woodshed-genet/src/sync.rs
+@@ -34,6 +34,7 @@
+ 
+ /// Everything woodshed does after an input dispatch.
+ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
++    crate::pedal_inputs::after_dispatch(shared, ctx);
+     // First, so that everything below sees the session the chosen persona's
+     // key opened rather than the empty one that stood in for it.
+     crate::persona::after_dispatch(shared, ctx);
+@@ -582,9 +583,9 @@
+                 refreshed_selection(&ui.midi.output_ports, output.as_deref());
+         }
+         let in_target = midi_port_at(&ui.midi.input_ports, ui.midi.input_dd.selected);
+-        if midi.connected_input() != in_target.as_deref() {
+-            midi.connect_input(in_target.as_deref());
+-        }
++        // Requested intent also matters after endpoint loss: explicit None
++        // must retire the old request even when no input is connected now.
++        midi.connect_input(in_target.as_deref());
+         let out_target = midi_port_at(&ui.midi.output_ports, ui.midi.output_dd.selected);
+         // The host deduplicates requested intent. Comparing only confirmed
+         // connections would miss None while a previous open is still pending.
+@@ -631,7 +632,6 @@
+             ui.midi.output_ready = ready;
+             if ui.midi.pedal_target != target {
+                 ui.midi.disarm_inputs();
+-                ui.midi.controller_edges.reset();
+                 ui.midi.input_notice =
+                     Some("Output connection changed; pedal inputs disarmed".into());
+             }
+@@ -639,6 +639,7 @@
+             ui.midi.pedal_report = pedal;
+         });
+     }
++    crate::pedal_inputs::sync(shared, ctx.runner.state());
+ }
+ 
+ /// Publish the admitted snapshot to the view. A refused edit must not make the
+--- a/crates/woodshed-genet/src/pedal_inputs.rs
++++ b/crates/woodshed-genet/src/pedal_inputs.rs
+@@ -162,25 +162,65 @@
+     }
+ }
+ 
+-/// Always drain live input, including while unarmed. Learning/arming cannot
+-/// revive a held control or a history snapshot. No output connection opens here.
++/// Publish arming/configuration before persistence or rendering can block the
++/// UI. Only the existing callback-side input owner interprets live MIDI edges.
++pub(crate) fn sync(shared: &mut Shared, ui: &UiState) {
++    let selected = |ports: &[String], index: usize| {
++        index
++            .checked_sub(1)
++            .and_then(|index| ports.get(index))
++            .cloned()
++    };
++    let armed = ui.midi.inputs_armed
++        && ui.persona.is_none()
++        && !ui.practice_close_pending
++        && selected(&ui.midi.input_ports, ui.midi.input_dd.selected) == ui.midi.connected_in
++        && selected(&ui.midi.output_ports, ui.midi.output_dd.selected) == ui.midi.connected_out;
++    shared.midi.configure_pedal_inputs(
++        &ui.app_settings.audio_midi.midi_pedal,
++        armed,
++        ui.midi.pedal_target,
++    );
++}
++
++/// Establish the learning cursor at the click, before persistence/rendering.
++/// Flushing on the next frame would also discard the user's first new press.
++pub(crate) fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
++    sync(shared, ctx.runner.state());
++    if ctx.runner.state().midi.learn_controller_flush {
++        let batch = shared.midi.pedal_input_events();
++        ctx.runner.update(|ui| {
++            ui.midi.learn_controller_flush = false;
++            if batch.invalidated {
++                ui.midi.disarm_inputs();
++                ui.midi.input_notice = Some(batch.notice.unwrap_or_else(|| {
++                    "Controller connection changed; start learning again".into()
++                }));
++            }
++        });
++        sync(shared, ctx.runner.state());
++    }
++}
++
++/// Drain preparation/display history, including while unarmed. Only the
++/// callback owns live controller actions; this path can never replay history.
+ pub(crate) fn poll(shared: &mut Shared, ctx: &mut Ctx<'_>) -> bool {
++    sync(shared, ctx.runner.state());
+     let batch = shared.midi.pedal_input_events();
+     // Keep consuming releases while disarmed too. Otherwise the host can go
+     // idle after Learn and leave a controller's release in old display history.
+     let active = shared.midi.connected_input().is_some();
+     if batch.events.is_empty()
+         && !batch.invalidated
++        && batch.notice.is_none()
+         && !ctx.runner.state().midi.learn_controller_flush
+     {
+         return active;
+     }
+     let mut changed = false;
+-    let mut actions = Vec::new();
+     ctx.runner.update(|ui| {
+         if batch.invalidated {
+             ui.midi.disarm_inputs();
+-            ui.midi.controller_edges.reset();
+             ui.midi.input_notice = Some(
+                 batch
+                     .notice
+@@ -191,15 +231,14 @@
+         if std::mem::take(&mut ui.midi.learn_controller_flush) {
+             return;
+         }
++        if let Some(notice) = batch.notice {
++            ui.midi.input_notice = Some(notice);
++        }
+         if ui.persona.is_some() || ui.practice_close_pending {
+             ui.midi.disarm_inputs();
+             return;
+         }
+         for event in batch.events {
+-            let observed = ui
+-                .midi
+-                .controller_edges
+-                .observe(&ui.app_settings.audio_midi.midi_pedal.inputs, event);
+             if let Some(action) = ui.midi.learn_controller {
+                 if event.pressed() {
+                     if PedalAction::ALL.into_iter().any(|other| {
+@@ -225,7 +264,6 @@
+                         .get_mut(action)
+                         .controller = Some(event.binding);
+                     ui.midi.disarm_inputs();
+-                    ui.midi.controller_edges.reset();
+                     ui.midi.input_notice = Some(format!(
+                         "{} controller: {}. Release it, then arm inputs.",
+                         action.label(),
+@@ -235,22 +273,6 @@
+                 }
+                 continue;
+             }
+-            match observed {
+-                Ok(Some(action)) if ui.midi.inputs_armed => {
+-                    if let Some(target) = ui.midi.pedal_target {
+-                        actions.push((
+-                            action,
+-                            ui.app_settings.audio_midi.midi_pedal.get(action).clone(),
+-                            target,
+-                        ));
+-                    }
+-                },
+-                Err(error) => {
+-                    ui.midi.disarm_inputs();
+-                    ui.midi.input_notice = Some(error.into());
+-                },
+-                _ => {},
+-            }
+         }
+     });
+     // The existing dispatch tail owns settings persistence. A controller-learn
+@@ -258,12 +280,7 @@
+     if changed {
+         crate::sync::after_dispatch(shared, ctx);
+     }
+-    for (action, binding, target) in actions {
+-        let report = shared
+-            .midi
+-            .trigger_pedal_for_target(action, binding, target);
+-        ctx.runner.update(|ui| ui.midi.pedal_report = Some(report));
+-    }
++    sync(shared, ctx.runner.state());
+     active
+ }
+ 
+@@ -389,6 +406,35 @@
+     }
+ 
+     #[test]
++    fn actual_search_focus_prevents_shortcuts_and_cancels_learning() {
++        let mut host = host();
++        assert!(host.click_on(&taproot::Selector::role("textbox")));
++        assert!(host.focus().is_some());
++        host.key_char("n");
++        assert!(host.state().midi.pedal_request.is_none());
++        host.update(|ui| {
++            ui.midi.disarm_inputs();
++            ui.midi.learn_key = Some(PedalAction::EffectNext);
++        });
++        host.key_char("p");
++        assert!(host.state().midi.learn_key.is_none());
++        assert!(host.state().midi.pedal_request.is_none());
++        assert_eq!(
++            host.state()
++                .app_settings
++                .audio_midi
++                .midi_pedal
++                .inputs
++                .effect_next
++                .keyboard
++                .as_ref()
++                .unwrap()
++                .key,
++            "n"
++        );
++    }
++
++    #[test]
+     fn actual_mapping_controls_learn_arm_clear_and_binding_edits_disarm() {
+         use taproot::Selector;
+         let mut host = host();
+--- a/crates/woodshed-genet/src/scenario.rs
++++ b/crates/woodshed-genet/src/scenario.rs
+@@ -48,6 +48,7 @@
+ 
+ mod guided_rehearsal;
+ mod mixed_looper;
++mod pedal_inputs;
+ mod physical_audio;
+ mod practice_clock;
+ 
+@@ -257,6 +258,7 @@
+     practice_clock_wait: RefCell<Option<practice_clock::Wait>>,
+     physical_dwell: RefCell<Option<physical_audio::Dwell>>,
+     midi_wait: RefCell<Option<(&'static str, bool, std::time::Instant)>>,
++    midi_count: std::cell::Cell<u64>,
+     midi_dwell_until: std::cell::Cell<Option<std::time::Instant>>,
+ }
+ 
+@@ -282,6 +284,7 @@
+                 practice_clock_wait: RefCell::new(None),
+                 physical_dwell: RefCell::new(None),
+                 midi_wait: RefCell::new(None),
++                midi_count: std::cell::Cell::new(0),
+                 midi_dwell_until: std::cell::Cell::new(None),
+             },
+             cambium_genet_winit_host::read_file,
+@@ -348,6 +351,7 @@
+             "midi-clock-enabled",
+             ctx.runner.state().midi.clock_out.to_string(),
+         );
++        snapshot = pedal_inputs::snapshot(snapshot, ctx.runner.state());
+         guided_rehearsal::extend_snapshot(
+             practice_clock::extend_snapshot(snapshot, ctx.runner.state(), &self.shared.borrow()),
+             ctx.runner.state(),
+@@ -442,6 +446,10 @@
+                             .expect("MIDI observations");
+                     let actual = if *field == "ready" {
+                         observed["ready"].as_bool() == Some(true)
++                    } else if *field == "accepted" {
++                        observed["accepted"]
++                            .as_u64()
++                            .is_some_and(|n| n >= self.midi_count.get())
+                     } else {
+                         !observed["connected"].is_null() || !observed["error"].is_null()
+                     };
+@@ -469,6 +477,21 @@
+         )
+     }
+     fn act(&mut self, ctx: &mut Ctx<'_>, label: &str) -> bool {
++        if let Some(result) = pedal_inputs::act(ctx, &self.shared, label) {
++            return result;
++        }
++        if let Some(count) = label
++            .strip_prefix("midi-await-count ")
++            .and_then(|value| value.parse::<u64>().ok())
++            .filter(|n| *n <= 128)
++        {
++            // Read-only barrier for an owner-operated keyboard/controller trial.
++            // This never synthesizes a request to reach its expected count.
++            self.midi_count.set(count);
++            self.midi_wait
++                .replace(Some(("accepted", true, std::time::Instant::now())));
++            return true;
++        }
+         if let Some(millis) = label
+             .strip_prefix("midi-dwell ")
+             .and_then(|s| s.parse::<u64>().ok())
+@@ -507,6 +530,7 @@
+                 "bindings":ctx.runner.state().app_settings.audio_midi.midi_pedal,
+                 "pedal":self.shared.borrow().midi.pedal_report(),
+                 "ui_pedal":ctx.runner.state().midi.pedal_report,
++                "input":pedal_inputs::observation(ctx.runner.state()),
+                 "saved_settings":self.shared.borrow().storage.as_ref().and_then(|store|store.load_settings()).and_then(|raw|serde_json::from_str::<serde_json::Value>(&raw).ok())});
+             return std::fs::write(
+                 std::path::PathBuf::from(dir).join(format!("midi-{name}.json")),
+--- a/crates/woodshed-core/src/midi.rs
++++ b/crates/woodshed-core/src/midi.rs
+@@ -31,6 +31,8 @@
+     /// Connect the named input port; `None` disconnects. Once connected,
+     /// incoming MIDI clock feeds [`clock_bpm`](Self::clock_bpm) and other
+     /// events feed [`recent_events`](Self::recent_events).
++    /// Deduplicate requested intent; explicit None must retire an old request
++    /// even after the confirmed endpoint has disappeared. Reopen is explicit.
+     fn connect_input(&mut self, port: Option<&str>);
+     /// Connect the named output port; `None` disconnects. Clock and explicit
+     /// pedal gestures share this output owner.
+@@ -64,6 +66,15 @@
+     fn pedal_input_events(&mut self) -> ControllerBatch {
+         ControllerBatch::default()
+     }
++    /// Prepare the existing input owner's live mapping gate. Learning/history
++    /// polling does not authorize actions. Arming and target identity are live.
++    fn configure_pedal_inputs(
++        &mut self,
++        _bindings: &PedalBindings,
++        _armed: bool,
++        _target: Option<PedalTarget>,
++    ) {
++    }
+     /// Actual receiver identity, independent of the pending-action slot.
+     fn pedal_target(&self) -> Option<PedalTarget> {
+         None
+--- a/crates/woodshed-instrument/src/midi.rs
++++ b/crates/woodshed-instrument/src/midi.rs
+@@ -658,6 +658,15 @@
+ 
+ impl MidiIn {
+     pub fn connect_by_name(port_name: &str) -> Result<Self, MidiError> {
++        Self::connect_with_handler(port_name, |_| {})
++    }
++
++    /// Observe parsed input on the existing reader callback, independently of
++    /// UI/display polling. Keep handlers bounded; do not call a UI from here.
++    pub fn connect_with_handler(
++        port_name: &str,
++        mut handler: impl FnMut(MidiEvent) + Send + 'static,
++    ) -> Result<Self, MidiError> {
+         let mut input = MidiInput::new("woodshed-in")?;
+         input.ignore(Ignore::None);
+         let port = find_input_port(&input, port_name)?;
+@@ -671,8 +680,11 @@
+                 "woodshed-in",
+                 move |_timestamp_us, bytes, _| {
+                     if let Some(event) = parse_message(bytes) {
+-                        let mut s = state_for_callback.lock().unwrap();
+-                        s.push(Instant::now(), event);
++                        state_for_callback
++                            .lock()
++                            .unwrap()
++                            .push(Instant::now(), event);
++                        handler(event);
+                     }
+                 },
+                 (),
+--- a/crates/woodshed-instrument/src/pedal/input.rs
++++ b/crates/woodshed-instrument/src/pedal/input.rs
+@@ -186,7 +186,7 @@
+ #[derive(Default)]
+ pub struct ControllerBatch {
+     pub events: Vec<ControllerEvent>,
+-    /// Input disappearance, overflow, expiry or a fresh source lifetime.
++    /// Input disappearance, history overflow/reset or a fresh source lifetime.
+     pub invalidated: bool,
+     pub notice: Option<String>,
+ }
+--- /dev/null
++++ b/crates/woodshed-genet/src/midi/controller.rs
+@@ -0,0 +1,312 @@
++//! Live input admission on the existing midir callback; no renderer or writer.
++use super::{Dispatcher, MidiEvent, PedalBindings, PedalTarget};
++use woodshed_core::midi::{ControllerBinding, ControllerEdges, ControllerEvent, ControllerKind};
++
++pub(super) fn event(event: MidiEvent) -> Option<ControllerEvent> {
++    let (kind, channel, number, value) = match event {
++        MidiEvent::NoteOn {
++            channel,
++            note,
++            velocity,
++        } => (ControllerKind::Note, channel + 1, note, velocity),
++        MidiEvent::NoteOff { channel, note, .. } => (ControllerKind::Note, channel + 1, note, 0),
++        MidiEvent::ControlChange {
++            channel,
++            controller,
++            value,
++        } => (
++            ControllerKind::ControlChange,
++            channel + 1,
++            controller,
++            value,
++        ),
++        _ => return None,
++    };
++    Some(ControllerEvent {
++        binding: ControllerBinding {
++            channel,
++            kind,
++            number,
++        },
++        value,
++    })
++}
++
++#[derive(Default)]
++pub(super) struct Controller {
++    epoch: u64,
++    active: bool,
++    bindings: PedalBindings,
++    armed: bool,
++    target: Option<PedalTarget>,
++    edges: ControllerEdges,
++    invalidated: bool,
++    /// A stale UI frame cannot rearm a callback which observed a lifetime loss.
++    needs_disarm: bool,
++    /// A worker completion must not hide a callback refusal before the UI polls.
++    notice: Option<String>,
++}
++impl Controller {
++    pub fn invalidate(&mut self) {
++        self.armed = false;
++        self.needs_disarm = true;
++        self.invalidated = true;
++        self.edges.reset();
++    }
++    pub fn replace_source(&mut self, active: bool) -> u64 {
++        self.invalidate();
++        self.epoch = self.epoch.saturating_add(1);
++        self.active = active;
++        self.epoch
++    }
++    pub fn take_invalidation(&mut self) -> bool {
++        std::mem::take(&mut self.invalidated)
++    }
++    pub fn take_notice(&mut self) -> Option<String> {
++        self.notice.take()
++    }
++    pub fn configure(
++        &mut self,
++        bindings: &PedalBindings,
++        armed: bool,
++        target: Option<PedalTarget>,
++    ) {
++        if self.bindings != *bindings || self.target != target {
++            self.edges.reset();
++            if self.armed {
++                self.invalidate();
++            }
++            self.bindings = bindings.clone();
++            self.target = target;
++        }
++        // The view must acknowledge disarmed before a fresh explicit Arm.
++        if !armed {
++            self.needs_disarm = false;
++        }
++        self.armed = armed && self.active && target.is_some() && !self.needs_disarm;
++    }
++    pub fn receive(&mut self, epoch: u64, midi: MidiEvent, dispatcher: &Dispatcher) {
++        if !self.active || epoch != self.epoch {
++            return;
++        }
++        let Some(event) = event(midi) else { return };
++        if self.armed {
++            let current = {
++                let state = dispatcher.state.lock().unwrap();
++                (state.ready
++                    && state.revision
++                        == dispatcher
++                            .selection
++                            .load(std::sync::atomic::Ordering::Acquire))
++                .then_some(PedalTarget {
++                    revision: state.revision,
++                    generation: state.generation,
++                })
++            };
++            if current != self.target {
++                self.invalidate();
++                return;
++            }
++        }
++        match self.edges.observe(&self.bindings.inputs, event) {
++            Ok(Some(action)) if self.armed => {
++                let target = self.target.unwrap();
++                // Same slot, deadlines, expected receiver and partial-outcome
++                // owner as buttons, keyboard and stdio. No callback I/O writer.
++                let (report, _) = dispatcher.submit_expected(
++                    action,
++                    self.bindings.get(action).clone(),
++                    Some((target.revision, target.generation)),
++                );
++                if report.outcome == super::PedalOutcome::Refused {
++                    self.notice = Some(format!("Controller input: {}", report.summary()));
++                }
++            },
++            Err(_) => self.invalidate(),
++            _ => {},
++        }
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::midi::{ClockCmd, OutputState, PedalOutcome};
++    use std::sync::{
++        Arc, Mutex,
++        atomic::{AtomicBool, AtomicU64},
++        mpsc::{Receiver, channel},
++    };
++    fn fixture() -> (
++        Controller,
++        Dispatcher,
++        Receiver<ClockCmd>,
++        PedalBindings,
++        u64,
++        PedalTarget,
++    ) {
++        let (tx, rx) = channel();
++        let state = OutputState {
++            ready: true,
++            revision: 1,
++            generation: Some(7),
++            ..Default::default()
++        };
++        let dispatcher = Dispatcher {
++            tx,
++            state: Arc::new(Mutex::new(state)),
++            selection: Arc::new(AtomicU64::new(1)),
++            busy: Arc::new(AtomicBool::new(false)),
++            sequence: Arc::new(AtomicU64::new(0)),
++            last: Default::default(),
++            bindings: Default::default(),
++        };
++        let mut bindings = PedalBindings::default();
++        bindings.effect_next.enabled = true;
++        bindings.effect_next.number = 67;
++        bindings.inputs.effect_next.controller = Some(ControllerBinding {
++            channel: 2,
++            kind: ControllerKind::ControlChange,
++            number: 20,
++        });
++        let mut controller = Controller::default();
++        let epoch = controller.replace_source(true);
++        let target = PedalTarget {
++            revision: 1,
++            generation: Some(7),
++        };
++        controller.configure(&bindings, false, Some(target));
++        controller.configure(&bindings, true, Some(target));
++        (controller, dispatcher, rx, bindings, epoch, target)
++    }
++    fn cc(value: u8) -> MidiEvent {
++        MidiEvent::ControlChange {
++            channel: 1,
++            controller: 20,
++            value,
++        }
++    }
++    fn complete(rx: &Receiver<ClockCmd>) {
++        let ClockCmd::Pedal(mut request) = rx.try_recv().unwrap() else {
++            panic!("not pedal")
++        };
++        assert_eq!(request.messages[0], [176, 67, 127]);
++        request.finish(PedalOutcome::Accepted, "admission fixture; no native send");
++    }
++    #[test]
++    fn callback_admits_without_frame_poll_and_holds_cannot_retrigger() {
++        let (mut c, d, rx, _, epoch, _) = fixture();
++        c.receive(epoch, cc(127), &d); // unknown initial hold
++        assert!(rx.try_recv().is_err());
++        c.receive(epoch, cc(0), &d);
++        c.receive(epoch, cc(127), &d);
++        complete(&rx);
++        for _ in 0..64 {
++            c.receive(epoch, cc(100), &d);
++        }
++        assert!(rx.try_recv().is_err());
++        c.receive(epoch, cc(0), &d);
++        c.receive(epoch, cc(127), &d);
++        complete(&rx);
++    }
++    #[test]
++    fn unarmed_history_is_observed_without_replaying_on_arm() {
++        let (mut c, d, rx, bindings, epoch, target) = fixture();
++        c.configure(&bindings, false, Some(target));
++        c.receive(epoch, cc(0), &d);
++        c.receive(epoch, cc(127), &d);
++        c.configure(&bindings, true, Some(target));
++        c.receive(epoch, cc(127), &d);
++        assert!(rx.try_recv().is_err());
++        c.receive(epoch, cc(0), &d);
++        c.receive(epoch, cc(127), &d);
++        complete(&rx);
++    }
++    #[test]
++    fn source_and_receiver_changes_need_disarm_ack_and_fresh_release() {
++        let (mut c, d, rx, bindings, epoch, target) = fixture();
++        c.receive(epoch, cc(0), &d);
++        let next = c.replace_source(true);
++        c.take_invalidation();
++        c.configure(&bindings, true, Some(target)); // stale armed view
++        c.receive(epoch, cc(127), &d); // retired callback
++        c.receive(next, cc(127), &d);
++        assert!(rx.try_recv().is_err());
++        c.configure(&bindings, false, Some(target));
++        c.configure(&bindings, true, Some(target));
++        c.receive(next, cc(0), &d);
++        d.state.lock().unwrap().generation = Some(8);
++        c.receive(next, cc(127), &d);
++        assert!(c.take_invalidation());
++        assert!(rx.try_recv().is_err());
++        let fresh = PedalTarget {
++            generation: Some(8),
++            ..target
++        };
++        c.configure(&bindings, false, Some(fresh));
++        c.configure(&bindings, true, Some(fresh));
++        c.receive(next, cc(127), &d);
++        assert!(rx.try_recv().is_err());
++        c.receive(next, cc(0), &d);
++        c.receive(next, cc(127), &d);
++        complete(&rx);
++    }
++    #[test]
++    fn callback_busy_refuses_instead_of_retaining_a_later_action() {
++        let (mut c, d, rx, _, epoch, _) = fixture();
++        d.busy.store(true, std::sync::atomic::Ordering::Release);
++        c.receive(epoch, cc(0), &d);
++        c.receive(epoch, cc(127), &d);
++        assert!(rx.try_recv().is_err());
++        assert_eq!(
++            d.last.lock().unwrap().as_ref().unwrap().outcome,
++            PedalOutcome::Refused
++        );
++        // Independent status/completion updates may advance the shared report.
++        *d.last.lock().unwrap() = None;
++        assert!(c.take_notice().unwrap().contains("still pending"));
++        assert!(c.take_notice().is_none());
++        d.busy.store(false, std::sync::atomic::Ordering::Release);
++        c.receive(epoch, cc(127), &d);
++        assert!(rx.try_recv().is_err());
++        c.receive(epoch, cc(0), &d);
++        c.receive(epoch, cc(127), &d);
++        complete(&rx);
++    }
++
++    #[test]
++    fn editing_a_mapping_cannot_keep_the_old_armed_authority() {
++        let (mut c, d, rx, mut bindings, epoch, target) = fixture();
++        c.receive(epoch, cc(0), &d);
++        bindings.effect_next.number = 68;
++        bindings
++            .inputs
++            .effect_next
++            .controller
++            .as_mut()
++            .unwrap()
++            .number = 21;
++        c.configure(&bindings, true, Some(target));
++        assert!(c.take_invalidation());
++        let event = |value| MidiEvent::ControlChange {
++            channel: 1,
++            controller: 21,
++            value,
++        };
++        c.receive(epoch, cc(127), &d);
++        c.receive(epoch, event(0), &d);
++        c.receive(epoch, event(127), &d);
++        assert!(rx.try_recv().is_err());
++        c.configure(&bindings, false, Some(target));
++        c.configure(&bindings, true, Some(target));
++        c.receive(epoch, event(127), &d);
++        assert!(rx.try_recv().is_err());
++        c.receive(epoch, event(0), &d);
++        c.receive(epoch, event(127), &d);
++        let ClockCmd::Pedal(mut request) = rx.try_recv().unwrap() else {
++            panic!("not pedal")
++        };
++        assert_eq!(request.messages[0], [176, 68, 127]);
++        request.finish(PedalOutcome::Accepted, "admission fixture; no native send");
++    }
++}
+--- /dev/null
++++ b/crates/woodshed-genet/src/scenario/pedal_inputs.rs
+@@ -0,0 +1,62 @@
++//! Acceptance-only observations and KeyPress injection at the production hook.
++//! This does not claim OS keyboard delivery or synthesize pedal/writer requests.
++use crate::{shared::Shared, sync::Ctx};
++use cambium_genet_winit_host::KeyPress;
++use std::{cell::RefCell, rc::Rc};
++use taproot::ProbeSnapshot;
++use woodshed_views::stage::UiState;
++
++pub(super) fn observation(ui: &UiState) -> serde_json::Value {
++    serde_json::json!({
++        "connected":ui.midi.connected_in,
++        "selected_index":ui.midi.input_dd.selected,
++        "armed":ui.midi.inputs_armed,
++        "learn_key":ui.midi.learn_key,
++        "learn_controller":ui.midi.learn_controller,
++        "notice":ui.midi.input_notice,
++        "target":ui.midi.pedal_target,
++        "pending":ui.midi.pedal_request,
++        "pending_target":ui.midi.pedal_request_target,
++    })
++}
++
++pub(super) fn snapshot(mut snapshot: ProbeSnapshot, ui: &UiState) -> ProbeSnapshot {
++    for (key, value) in observation(ui).as_object().unwrap() {
++        snapshot = snapshot.with_field(
++            format!("pedal-input-{key}"),
++            value
++                .as_str()
++                .map(str::to_owned)
++                .unwrap_or_else(|| value.to_string()),
++        );
++    }
++    snapshot
++}
++
++pub(super) fn act(ctx: &mut Ctx<'_>, shared: &Rc<RefCell<Shared>>, label: &str) -> Option<bool> {
++    let rest = label.strip_prefix("pedal-input-key ")?;
++    // Small explicit vocabulary; the production interceptor interprets keys,
++    // modifiers and repeat state. No action/binding lookup is repeated here.
++    let mut parts = rest.split_whitespace();
++    let text = parts.next()?;
++    if text.len() != 1 || !text.bytes().all(|b| b.is_ascii_alphanumeric()) {
++        return Some(false);
++    }
++    let mut press = KeyPress::character(text);
++    for option in parts {
++        match option {
++            "repeat" => press.repeat = true,
++            "shift" => press.modifiers.shift = true,
++            "alt" => press.modifiers.alt = true,
++            "ctrl" => press.modifiers.ctrl = true,
++            "meta" => press.modifiers.meta = true,
++            _ => return Some(false),
++        }
++    }
++    if crate::escape_policy(ctx.runner, &press) {
++        // This is the same consumed-key tail the native host invokes. Mesquite
++        // text injection bypasses that hook and would not test shortcuts.
++        crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
++    }
++    Some(true)
++}
+--- /dev/null
++++ b/crates/woodshed-instrument/examples/midi_controller.rs
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: MPL-2.0
++//! Explicit virtual controller fixture for native input qualification, not a driver.
++#[cfg(any(target_os = "macos", target_os = "linux"))]
++fn main() -> Result<(), Box<dyn std::error::Error>> {
++    use midir::{MidiOutput, MidiOutputConnection, os::unix::VirtualOutput};
++    use std::io::{BufRead, Write};
++    let args: Vec<_> = std::env::args().skip(1).collect();
++    if args.len() != 2 {
++        return Err("usage: midi_controller <unique source name> <new.jsonl>".into());
++    }
++    let mut log = std::fs::OpenOptions::new()
++        .create_new(true)
++        .write(true)
++        .open(&args[1])?;
++    let start = std::time::Instant::now();
++    let mut epoch = 0_u64;
++    let mut source: Option<MidiOutputConnection> = None;
++    for command in std::iter::once(Ok("open".into())).chain(std::io::stdin().lock().lines()) {
++        let command = command?;
++        let mut parts = command.split_whitespace();
++        match parts.next().unwrap_or("") {
++            "open" if source.is_none() => {
++                epoch += 1;
++                source = Some(
++                    MidiOutput::new("Pedal input qualification source")?
++                        .create_virtual(&args[0])?,
++                );
++                writeln!(log, "{{\"event\":\"open\",\"epoch\":{epoch}}}")?;
++                println!("ready epoch {epoch}");
++            },
++            "drop" => {
++                source.take();
++                writeln!(log, "{{\"event\":\"drop\",\"epoch\":{epoch}}}")?;
++                println!("dropped epoch {epoch}");
++            },
++            mode @ ("send" | "sequence") => {
++                let bytes: Vec<u8> = parts.map(str::parse).collect::<Result<_, _>>()?;
++                if bytes.is_empty()
++                    || (mode == "send" && bytes.len() > 3)
++                    || (mode == "sequence" && (bytes.len() > 192 || bytes.len() % 3 != 0))
++                {
++                    return Err("send: 1–3 bytes; sequence: at most 64 three-byte messages".into());
++                }
++                for message in bytes.chunks(3) {
++                    source.as_mut().ok_or("source is closed")?.send(message)?;
++                    writeln!(
++                        log,
++                        "{{\"event\":\"send\",\"epoch\":{epoch},\"micros\":{},\"bytes\":{:?}}}",
++                        start.elapsed().as_micros(),
++                        message
++                    )?;
++                }
++                println!("sent");
++            },
++            "quit" => break,
++            "" => {},
++            _ => return Err("commands: open | drop | send/sequence <decimal bytes> | quit".into()),
++        }
++        log.flush()?;
++        std::io::stdout().flush()?;
++    }
++    Ok(())
++}
++#[cfg(not(any(target_os = "macos", target_os = "linux")))]
++fn main() {
++    eprintln!("This virtual controller qualification fixture requires CoreMIDI or ALSA.");
++}

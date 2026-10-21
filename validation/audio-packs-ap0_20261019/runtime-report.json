@@ -1,0 +1,105 @@
+[
+  {
+    "graph": {
+      "callback_allocations": 0,
+      "callback_deallocations": 0,
+      "final_block_peak": 0.20000000298023224,
+      "frames": 65536,
+      "peak": 0.20000000298023224,
+      "prepare_us": 301,
+      "render_us_instrumented_debug": 41462,
+      "sample_rate": 48000
+    },
+    "supplier": "fundsp"
+  },
+  {
+    "graph": {
+      "callback_allocations": 0,
+      "callback_deallocations": 0,
+      "final_block_peak": 0.0,
+      "frames": 65536,
+      "peak": 0.797197699546814,
+      "prepare_us": 174,
+      "render_us_instrumented_debug": 7862,
+      "sample_rate": 48000
+    },
+    "supplier": "rustysynth"
+  },
+  {
+    "graph": {
+      "callback_allocations": 0,
+      "callback_deallocations": 0,
+      "final_block_peak": 0.19999998807907104,
+      "frames": 65536,
+      "peak": 0.20000000298023224,
+      "prepare_us": 109,
+      "render_us_instrumented_debug": 41220,
+      "sample_rate": 44100
+    },
+    "supplier": "fundsp"
+  },
+  {
+    "graph": {
+      "callback_allocations": 0,
+      "callback_deallocations": 0,
+      "final_block_peak": 0.0,
+      "frames": 65536,
+      "peak": 0.744800865650177,
+      "prepare_us": 83,
+      "render_us_instrumented_debug": 7797,
+      "sample_rate": 44100
+    },
+    "supplier": "rustysynth"
+  },
+  {
+    "callback_allocations": 0,
+    "callback_deallocations": 0,
+    "float32_wav_loaded": true,
+    "frames": 96000,
+    "midi_onset_frames": [
+      0,
+      6000,
+      12000,
+      18000,
+      24000,
+      30000,
+      36000,
+      42000,
+      48000,
+      54000,
+      60000,
+      66000,
+      72000,
+      78000,
+      84000,
+      90000
+    ],
+    "peak": 0.3795755207538605,
+    "sample_onset_frames": [
+      1,
+      6001,
+      12001,
+      18001,
+      24001,
+      30001,
+      36001,
+      42001,
+      48001,
+      54001,
+      60001,
+      66001,
+      72001,
+      78001,
+      84001,
+      90001
+    ],
+    "stop_then_restart": true,
+    "supplier": "existing_sample_pattern_production_OutputRuntime",
+    "synthetic_sample_first_nonzero_offset": 1
+  },
+  {
+    "missing_sample_current_behavior": "no rendered voice; admission must report missing asset",
+    "nan_bpm_refused": true,
+    "zero_divisions_refused": true
+  }
+]

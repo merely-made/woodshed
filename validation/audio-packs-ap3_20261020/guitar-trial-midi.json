@@ -1,0 +1,86 @@
+[
+  {
+    "file": "11-Ringdown_AP3.mid",
+    "sha256": "bb81218e90b12fc757ccd6d02f4aab85cf187cd3bf8a0021156f668cce7618db",
+    "bytes": 519,
+    "format": 0,
+    "tracks": 1,
+    "ppq": 480,
+    "end_ticks": [
+      9600
+    ],
+    "end_quarters": [
+      20.0
+    ],
+    "tempos": [],
+    "meters": [
+      {
+        "tick": 0,
+        "numerator": 4,
+        "denominator": 4
+      }
+    ],
+    "notes": [
+      {
+        "channel": 10,
+        "note": 36,
+        "on": 10,
+        "off": 10
+      },
+      {
+        "channel": 10,
+        "note": 38,
+        "on": 10,
+        "off": 10
+      },
+      {
+        "channel": 10,
+        "note": 42,
+        "on": 40,
+        "off": 40
+      }
+    ],
+    "first_note_tick": 0,
+    "last_note_on_tick": 9360,
+    "last_note_off_tick": 9420,
+    "note_bar_counts": {
+      "36": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2
+      },
+      "38": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2
+      },
+      "42": {
+        "0": 8,
+        "1": 8,
+        "2": 8,
+        "3": 8,
+        "4": 8
+      }
+    },
+    "controllers": [],
+    "message_kinds": {
+      "0x9": 60,
+      "0x8": 60
+    },
+    "meta_types": {
+      "0x58": 1,
+      "0x2f": 1
+    },
+    "notes_on": 60,
+    "unmatched_offs": 0,
+    "unterminated_notes": 0,
+    "gate_ticks_range": [
+      60,
+      60
+    ]
+  }
+]

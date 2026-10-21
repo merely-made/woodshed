@@ -1,0 +1,26 @@
+   Compiling ringdown-probe v0.0.1 (/Users/markik/Code/repos/woodshed/ports/ringdown/apps/probe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running unittests src/main.rs (target/build/debug/deps/ringdown_probe-95064ab9899ab0e0)
+
+running 6 tests
+test pklg::tests::uuids_render_canonically ... ok
+test pklg::tests::records_parse_in_either_byte_order ... ok
+test pklg::tests::acl_fragments_reassemble_into_one_att_pdu ... ok
+test pklg::tests::an_llt2_ack_is_not_mistaken_for_a_message ... ok
+test pklg::tests::a_compressed_write_decodes_through_the_codec ... ok
+test pklg::tests::a_plain_json_write_is_reported_as_a_message ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/standards_cli.rs (target/build/debug/deps/standards_cli-27ba2f85357393cb)
+
+running 6 tests
+test rpc_feature_controls_routing_without_scanning ... ok
+test default_entry_prints_help_without_starting_rpc ... ok
+test packetlogger_is_an_independent_feature ... ok
+test offline_profile_refuses_midi_io ... ok
+test bundled_export_matches_shared_exporter_and_preserves_existing_output ... ok
+test installed_pack_exports_and_reopens_after_installation_is_removed ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+

@@ -1,0 +1,81 @@
+[
+  {
+    "stage": "real-keyboard-next-held",
+    "owner_observation": "Advanced exactly once",
+    "instruction": "Check Arm/Disarm state, hold N two seconds, release; P untouched",
+    "accepted_messages": 2,
+    "attempted_messages": 2,
+    "pedal_id": 1,
+    "captured_at": "2026-10-21T04:55:57.108850+00:00"
+  },
+  {
+    "stage": "real-keyboard-previous",
+    "owner_observation": "Moved back exactly once",
+    "accepted_messages": 4,
+    "attempted_messages": 4,
+    "pedal_id": 2,
+    "captured_at": "2026-10-21T04:57:08.102410+00:00"
+  },
+  {
+    "stage": "controller-next-held-cc",
+    "owner_observation": "Advanced exactly once",
+    "accepted_messages": 6,
+    "attempted_messages": 6,
+    "pedal_id": 3,
+    "held_repeats": 32,
+    "captured_at": "2026-10-21T04:57:46.462564+00:00"
+  },
+  {
+    "stage": "controller-previous-held-note",
+    "owner_observation": "no change, midi pedal is on",
+    "accepted_messages_at_action": 8,
+    "attempted_messages_at_action": 8,
+    "pedal_id": 4,
+    "held_repeats": 32,
+    "result": "OS accepted; guitar action not confirmed; do not retry automatically",
+    "captured_at": "2026-10-21T05:00:13.625340+00:00"
+  },
+  {
+    "stage": "guitar-midi-off",
+    "owner_observation": "turned off now",
+    "accepted_messages": 8,
+    "attempted_messages": 8,
+    "inputs_armed": false,
+    "captured_at": "2026-10-21T05:00:44.075947+00:00"
+  },
+  {
+    "stage": "reconnect-and-held-positive-only",
+    "owner_observation": "MIDI Pedal is ON",
+    "generation_before": 1,
+    "generation_after": 2,
+    "reconnected_armed": false,
+    "after_explicit_rearm_accepted": 8,
+    "after_explicit_rearm_attempted": 8,
+    "positive_only_repeats_after_rearm": 32,
+    "fresh_next_checkpoint_absent_after_repeat": true,
+    "captured_at": "2026-10-21T05:01:31.336807+00:00"
+  },
+  {
+    "stage": "ready-for-fresh-pair",
+    "owner_observation": "On Effects; ready for the fresh pair",
+    "captured_at": "2026-10-21T05:03:41.622038+00:00"
+  },
+  {
+    "stage": "fresh-controller-next-after-reconnect",
+    "owner_observation": "Advanced exactly once",
+    "accepted_messages": 10,
+    "attempted_messages": 10,
+    "pedal_id": 5,
+    "held_repeats": 32,
+    "captured_at": "2026-10-21T05:04:33.501763+00:00"
+  },
+  {
+    "stage": "fresh-controller-previous-after-reconnect",
+    "owner_observation": "Moved back exactly once",
+    "accepted_messages": 12,
+    "attempted_messages": 12,
+    "pedal_id": 6,
+    "held_repeats": 32,
+    "captured_at": "2026-10-21T05:06:07.408947+00:00"
+  }
+]

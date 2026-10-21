@@ -1,0 +1,2725 @@
+{
+  "success": true,
+  "received_packets": 35,
+  "expected_bytes": [
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      66,
+      127
+    ],
+    [
+      176,
+      66,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ]
+  ],
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "cleared_bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": null,
+        "keyboard": {
+          "alt": false,
+          "key": "q",
+          "shift": false
+        }
+      }
+    }
+  },
+  "partial": {
+    "bindings": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "clock_enabled": false,
+    "input": {
+      "armed": false,
+      "connected": "Pedal input source 07102fbb",
+      "learn_controller": null,
+      "learn_key": null,
+      "notice": "Controller/receiver lifetime changed; inputs disarmed",
+      "pending": null,
+      "pending_target": null,
+      "selected_index": 1,
+      "target": null
+    },
+    "output": {
+      "accepted": 17,
+      "attempted": 17,
+      "connected": "Pedal input receiver 07102fbb",
+      "disconnects": 1,
+      "error": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+      "failed": 0,
+      "generation": null,
+      "last_failure": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+      "pedal_failure": {
+        "accepted_messages": 1,
+        "action": "effect-next",
+        "detail": "Receiver changed/disconnected; remaining messages cancelled, no replay",
+        "id": 9,
+        "outcome": "uncertain"
+      },
+      "ready": false,
+      "rearm_required": false,
+      "revision": 1,
+      "status": "MIDI destination is unavailable; reconnect explicitly \u00b7 OS accepted 17; refused/uncertain 0 \u00b7 Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement \u00b7 Last uncertain pedal: Effect Next #9: Uncertain \u00b7 1 message(s) accepted by OS \u00b7 Receiver changed/disconnected; remaining messages cancelled, no replay"
+    },
+    "pedal": {
+      "accepted_messages": 1,
+      "action": "effect-next",
+      "detail": "Receiver changed/disconnected; remaining messages cancelled, no replay",
+      "id": 9,
+      "outcome": "uncertain"
+    },
+    "playing": false,
+    "saved_settings": {
+      "board_layout": "Two pane",
+      "bpm": 120.0,
+      "context": {
+        "enabled": true,
+        "node_limit": 24
+      },
+      "distinguish_root": false,
+      "marker_style": "Sharp",
+      "midi_pedal": {
+        "effect_next": {
+          "channel": 1,
+          "enabled": true,
+          "kind": "control-change",
+          "number": 67,
+          "release": 0,
+          "value": 127
+        },
+        "effect_previous": {
+          "channel": 1,
+          "enabled": true,
+          "kind": "control-change",
+          "number": 66,
+          "release": 0,
+          "value": 127
+        },
+        "inputs": {
+          "effect_next": {
+            "controller": {
+              "channel": 2,
+              "kind": "control-change",
+              "number": 20
+            },
+            "keyboard": {
+              "alt": false,
+              "key": "n",
+              "shift": false
+            }
+          },
+          "effect_previous": {
+            "controller": {
+              "channel": 3,
+              "kind": "note",
+              "number": 36
+            },
+            "keyboard": {
+              "alt": false,
+              "key": "p",
+              "shift": false
+            }
+          }
+        }
+      },
+      "neck_end": null,
+      "neck_start": 0,
+      "orientation": "Horizontal",
+      "reduce_motion": false,
+      "related": {
+        "arrangement": "Radial",
+        "dismissed_ids": [],
+        "graph_scope": "Selection",
+        "relation_depth": 1,
+        "show_neighborhood": true,
+        "use_history": true
+      },
+      "set_arrangement": "Snake",
+      "set_graph_height": 260,
+      "set_graph_reading": "Set",
+      "set_graph_width": 520,
+      "settings_page": "AudioMidi",
+      "text_scale": "Normal",
+      "theme": "Slate",
+      "tuning_idx": 0,
+      "visible_set_relations": [
+        "Next"
+      ]
+    },
+    "selected_index": 1,
+    "ui_notice": "MIDI destination is unavailable; reconnect explicitly \u00b7 OS accepted 17; refused/uncertain 0 \u00b7 Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement \u00b7 Last uncertain pedal: Effect Next #9: Uncertain \u00b7 1 message(s) accepted by OS \u00b7 Receiver changed/disconnected; remaining messages cancelled, no replay",
+    "ui_pedal": {
+      "accepted_messages": 1,
+      "action": "effect-next",
+      "detail": "Receiver changed/disconnected; remaining messages cancelled, no replay",
+      "id": 9,
+      "outcome": "uncertain"
+    }
+  },
+  "transcript": [
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588826.609352925
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588826.69453911
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588828.265974308
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588828.420260729
+    },
+    {
+      "command": "send 130 36 64",
+      "response": "sent",
+      "at": 1588828.5027313
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588851.692791751
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588851.693138905
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.693455381
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.699943777
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.7059215
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.711986964
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.717757684
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.724333786
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.73027507
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.735646097
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.7411329
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.747654964
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.754212617
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.760188385
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.766159187
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.772718462
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.778787502
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.785292747
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.791059508
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.796308087
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.80174886
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.807041222
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.812652233
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.818210585
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.824691143
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.830076633
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.836558851
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.842839749
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.849413827
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.855899375
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.861708584
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.867038932
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.872631129
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588851.878246842
+    },
+    {
+      "command": "send 130 36 64",
+      "response": "sent",
+      "at": 1588853.057666965
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588853.057864171
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.058059875
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.063409647
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.068763933
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.075266284
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.081848913
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.088518712
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.094008899
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.099814433
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.105382774
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.111213654
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.117663599
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.122960689
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.128311838
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.13490104
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.14140625
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.147953823
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.153198243
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.159104432
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.165707099
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.171067203
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.177681457
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.184173585
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.189758554
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.195243785
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.201066243
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.206830971
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.21335544
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.219622304
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.226200722
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.232702016
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.238321272
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588853.244750998
+    },
+    {
+      "command": "send 146 36 0",
+      "response": "sent",
+      "at": 1588854.416482836
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588854.416668125
+    },
+    {
+      "command": "send 130 36 64",
+      "response": "sent",
+      "at": 1588855.802700393
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588855.802777166
+    },
+    {
+      "command": "send 176 20 127",
+      "response": "sent",
+      "at": 1588857.141426383
+    },
+    {
+      "command": "send 177 21 127",
+      "response": "sent",
+      "at": 1588857.141582437
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588860.159803777
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588860.159905204
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.160017769
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.165545156
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.170814561
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.177353814
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.183874315
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.190218227
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.195866686
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.201189521
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.207446077
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.21279836
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.219269484
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.2256471
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.231013721
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.237508424
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.242883688
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.249393823
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.255231909
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.260514391
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.26593614
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.271397979
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.277428468
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.283954402
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.290525558
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.296009103
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.302542568
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.309113404
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.315672236
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.321989072
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.32763576
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.333674738
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.338914102
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588860.344281659
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588862.125508145
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.125591882
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.130852771
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.137370581
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.14266135
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.149158317
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.15470373
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.160642118
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.166167416
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.17141481
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.177447323
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.18399836
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.189369694
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.195879262
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.201126584
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.206385759
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.2118752
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.218345736
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.224485046
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.230190572
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.236649613
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.242070832
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.247673053
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.254135282
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.26070423
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.267239036
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.273075553
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.27893675
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.285473902
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.291090573
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.297337177
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.303802884
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588862.309128197
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588863.324532252
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588863.324635891
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.324727249
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.330736066
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.337400197
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.343965784
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.349369847
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.35468851
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.361177943
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.367781016
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.373413012
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.378748969
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.385248254
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.391142859
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.397879176
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.403197582
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.408907756
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.414231637
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.419814868
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.425310107
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.431307474
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.436801905
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.442324175
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.447652081
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.45330608
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.45928453
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.464755238
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.471366124
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.476930548
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.483506827
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.489725172
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.495892661
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.501497909
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588863.507140795
+    },
+    {
+      "command": "drop",
+      "response": "dropped epoch 1",
+      "at": 1588864.516750855
+    },
+    {
+      "command": "open",
+      "response": "ready epoch 2",
+      "at": 1588867.469532938
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588871.41741474
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.417560901
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.424001618
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.430509661
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.437025233
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.442488535
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.448952512
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.455443027
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.461911151
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.467206367
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.473772757
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.480278582
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.485646996
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.491171373
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.49638627
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.501644781
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.508083935
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.513736123
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.519923992
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.525873681
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.531432175
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.537750816
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.543198921
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.549906568
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.556406284
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.562856025
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.568914896
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.574849168
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.581160244
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.587076894
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.592540823
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.599192984
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588871.605643678
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588872.631329835
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588872.631430499
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.631522848
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.636894635
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.642572912
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.647912238
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.654484099
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.660195055
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.666707832
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.67249082
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.678934018
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.684336274
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.68964169
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.694968363
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.700284746
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.705483465
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.710704708
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.71741616
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.723835875
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.729668778
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.736140988
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.742283456
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.748763559
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.755308663
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.760654378
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.765927146
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.772024503
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.777306507
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.783987612
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.790451193
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.796892359
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.802206496
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.808185784
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588872.814544903
+    },
+    {
+      "command": "drop",
+      "response": "dropped epoch 1",
+      "at": 1588874.076889335
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588878.769291817
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588878.769476277
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.769568439
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.776009713
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.782455315
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.78858226
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.79418039
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.800808123
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.807289154
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.813297207
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.819492778
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.824766956
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.830010518
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.836182503
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.84148826
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.846712924
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.852095471
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.857857663
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.86438306
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.869730997
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.87573492
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.882250423
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.887631411
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.892969
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.898394199
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.904849277
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.91011903
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.916011003
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.922191227
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.927875626
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.933572337
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.939798787
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.945080982
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588878.950523207
+    },
+    {
+      "command": "open",
+      "response": "ready epoch 2",
+      "at": 1588879.78670492
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588887.822305786
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588887.82254116
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.822749889
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.829238303
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.834725797
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.84117343
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.847920993
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.854420222
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.860939633
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.866504483
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.871954301
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.878484671
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.88504841
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.891349204
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.897839596
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.903337058
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.908585138
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.913846327
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.919113181
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.925616989
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.931127095
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.936908482
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.942237462
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.947544305
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.954064197
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.960508387
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.966344673
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.971973229
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.978533495
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.984993063
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.991359395
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588887.996884358
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588888.002729069
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588888.009176349
+    },
+    {
+      "command": "send 130 36 64",
+      "response": "sent",
+      "at": 1588888.198568208
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588888.198743014
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.198886306
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.204519357
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.210439609
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.216948615
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.222346865
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.228803658
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.234196141
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.239617054
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.245027317
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.250356233
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.255702013
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.26126148
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.266747202
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.272483521
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.278387212
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.284911662
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.291065558
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.29654958
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.30298996
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.308899368
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.314675914
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.32064708
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.32697363
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.332630764
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.338708311
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.344208269
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.349531488
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.355802263
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.362266546
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.368727028
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.374038882
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588888.379425454
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588914.448472861
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.448617311
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.454170161
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.460697813
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.467221656
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.472535683
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.478598316
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.484955198
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.490496894
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.4971523
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.503620721
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.510155211
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.515997625
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.522487874
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.529011431
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.534412856
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.540743863
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.545952758
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.551310228
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.557905642
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.563400891
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.569965455
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.576512439
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.583052694
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.589182232
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.594630198
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.600363388
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.605738019
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.612253953
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.617570467
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.623651434
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.630258689
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588914.636800504
+    },
+    {
+      "command": "send 177 20 0",
+      "response": "sent",
+      "at": 1588915.622851645
+    },
+    {
+      "command": "send 177 20 127",
+      "response": "sent",
+      "at": 1588915.622958354
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.623040714
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.629577758
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.636094205
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.641427795
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.647447385
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.653940669
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.660370167
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.665948233
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.672405155
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.678614569
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.685178044
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.69163808
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.69720821
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.703569993
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.709142282
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.714541049
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.720748236
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.727199195
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.732686911
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.738369691
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.74393495
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.750389523
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.755868706
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.761743325
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.768268066
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.774842652
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.780925253
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.787189626
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.79290301
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.798436532
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.804899328
+    },
+    {
+      "command": "send 177 20 100",
+      "response": "sent",
+      "at": 1588915.810350228
+    },
+    {
+      "command": "send 130 36 64",
+      "response": "sent",
+      "at": 1588915.997548922
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588915.997783245
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588915.997972018
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.00441506
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.009622335
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.016061281
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.022130526
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.028680146
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.033982407
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.039437713
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.045906093
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.051170215
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.057628599
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.063412794
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.069939719
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.076464539
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.082919659
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.088262508
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.093847594
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.100308202
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.105936663
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.111361391
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.117855309
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.12321102
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.129722337
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.134964864
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.14029562
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.146761557
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.152008928
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.157675721
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.163684274
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.170184035
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.17673355
+    },
+    {
+      "command": "send 146 36 100",
+      "response": "sent",
+      "at": 1588916.182061554
+    },
+    {
+      "command": "sequence 177 20 0 177 20 127 177 20 0 177 20 127",
+      "response": "sent",
+      "at": 1588917.978462408
+    },
+    {
+      "command": "send 130 36 64",
+      "response": "sent",
+      "at": 1588922.125960248
+    },
+    {
+      "command": "send 146 36 110",
+      "response": "sent",
+      "at": 1588922.126057519
+    }
+  ]
+}

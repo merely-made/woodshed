@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "independent_received_messages": 8,
+  "writer_matches_receiver": true,
+  "keyboard_requests": [
+    1,
+    3
+  ],
+  "note_requests": [
+    2,
+    4
+  ],
+  "release_gaps_micros": [
+    50510,
+    50321,
+    51100,
+    50679
+  ],
+  "journal_events": 107,
+  "overwritten": 0,
+  "guitar_used": false
+}

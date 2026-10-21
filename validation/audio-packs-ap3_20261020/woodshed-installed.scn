@@ -1,0 +1,49 @@
+settle 2
+click .pill Tools
+click .lens Metronome
+click role:button @data-action=pack-bundled
+settle 2
+click role:button @data-action=pack-import
+wait 6000
+settle 2
+assert snap pack-loaded == true
+assert text AP3 local drums
+click role:button backbeat
+click role:button @aria-label=Mute Hat
+click role:button @aria-label=Unmute Hat
+click role:button @aria-label=Sample level − Snare
+click role:button @data-action=pack-step-0-1
+settle 1
+click role:button @aria-label=Move Kick step 1 →
+settle 1
+assert snap pack-notice == Move needs an existing hit and an empty destination
+click role:button @data-action=pack-step-0-1
+click role:button @data-action=pack-step-0-1
+settle 1
+click role:button @aria-label=Move Kick step 1 →
+settle 1
+click role:button alternate
+click role:button backbeat
+settle 1
+click .t-btn +5
+settle 1
+act checkpoint-pack edited-installed
+capture 01_installed_edited
+click .t-btn Play
+wait 2500
+assert snap output-click-playing == true
+assert snap output-streams == 1
+act sample-output-clock
+capture 02_playing
+click .t-btn Stop
+settle 2
+assert snap output-click-playing == false
+click role:button @data-action=pack-export-midi
+wait 6000
+settle 2
+click role:button @data-action=pack-import
+wait 6000
+settle 2
+assert text samples/kick.wav
+act checkpoint-pack failed-replacement-retained
+capture 03_failed_replacement_retained

@@ -1,0 +1,33 @@
+[
+  {
+    "observation": "close-dialog",
+    "exit": 0
+  },
+  {
+    "observation": "close-held",
+    "exit": 0
+  },
+  {
+    "host_window_command_close_deferred": true,
+    "ui_notice": "Finish or cancel diagnostic export before closing."
+  },
+  {
+    "action": "native-save-navigate",
+    "script": "tell application \"System Events\" to tell process \"product-d179410bac8e\"\nset frontmost to true\nkeystroke \"g\" using {command down, shift down}\ndelay 0.4\nkeystroke \"/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/close-save-r1\"\ndelay 0.2\nkey code 36\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "native-save-confirm",
+    "script": "tell application \"System Events\" to tell process \"product-d179410bac8e\"\nset frontmost to true\nkey code 36\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "closed_after_export": true,
+    "process": 52778,
+    "phase": "close-save"
+  }
+]

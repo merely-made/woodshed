@@ -1,0 +1,127 @@
+[
+  {
+    "name": "bundled",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "bundled",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/bundled.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/bundled.rhythm.json"
+    ],
+    "exit_code": 0,
+    "stdout": "woodshed.basic-drums 1.0.0 [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "installed",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/installed-kit",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/installed.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/initial.rhythm.json"
+    ],
+    "exit_code": 0,
+    "stdout": "ap2.local-drums 1.0.0 [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "edited-reopen",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited-roundtrip.rhythm.json"
+    ],
+    "exit_code": 0,
+    "stdout": "ap2.local-drums 1.0.0 [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "variation",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited-roundtrip.rhythm.json",
+      "variation",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/variation.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/variation.rhythm.json"
+    ],
+    "exit_code": 0,
+    "stdout": "ap2.local-drums 1.0.0 [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]: variation, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "back-to-edited",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/variation.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/back-to-edited.mid",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/back-to-edited.rhythm.json"
+    ],
+    "exit_code": 0,
+    "stdout": "ap2.local-drums 1.0.0 [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "render-edited",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited-roundtrip.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from ap2.local-drums [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]",
+    "stderr": ""
+  },
+  {
+    "name": "render-back-to-edited",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/back-to-edited.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/back-to-edited.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from ap2.local-drums [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]",
+    "stderr": ""
+  },
+  {
+    "name": "final-midi",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/back-to-edited.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/final-reopened.mid"
+    ],
+    "exit_code": 0,
+    "stdout": "ap2.local-drums 1.0.0 [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]: backbeat, 12 notes, PPQ 480, 1920 ticks",
+    "stderr": ""
+  },
+  {
+    "name": "final-edited-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/edited-roundtrip.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/final-edited.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from ap2.local-drums [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]",
+    "stderr": ""
+  },
+  {
+    "name": "final-switched-wav",
+    "args": [
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/back-to-edited.rhythm.json",
+      "backbeat",
+      "/Users/markik/Code/testing/woodshed/audio-packs-ap2_20261020/artifacts/final-switched.wav"
+    ],
+    "exit_code": 0,
+    "stdout": "Rendered backbeat from ap2.local-drums [c650e93a540c0211724851f99c957602a28a751ac8c4399f0805e8584b4418e7]",
+    "stderr": ""
+  }
+]

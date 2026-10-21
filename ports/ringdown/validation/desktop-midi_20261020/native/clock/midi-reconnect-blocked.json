@@ -1,0 +1,19 @@
+{
+  "clock_enabled": true,
+  "output": {
+    "accepted": 210,
+    "attempted": 210,
+    "connected": "Desktop MIDI qualification",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "ready": true,
+    "rearm_required": true,
+    "status": "OS MIDI output open · Clock paused; stop/start or disable/re-enable to rearm · OS accepted 210; refused/uncertain 0"
+  },
+  "playing": true,
+  "selected_index": 1,
+  "ui_notice": "OS MIDI output open · Clock paused; stop/start or disable/re-enable to rearm · OS accepted 210; refused/uncertain 0"
+}

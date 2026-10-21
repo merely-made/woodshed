@@ -1,0 +1,37 @@
+RESULT ok
+waited 8 frames
+captured 01_advertising
+waited 0 frames
+captured 02_armed
+waited 264 frames
+captured 03_real_keyboard_next
+waited 593 frames
+captured 04_real_keyboard_previous
+waited 141 frames
+captured 05_controller_next
+waited 225 frames
+captured 06_controller_previous
+waited 1076 frames
+captured 07_disconnected
+waited 304 frames
+waited 9 frames
+captured 08_reconnected_disarmed
+waited 20 frames
+captured 09_held_controller_no_replay
+waited 1156 frames
+waited 378 frames
+captured 10_fresh_after_reconnect
+captured 11_closed
+capture 01_advertising 2360x2100 digest=9d0cbc9155381e98 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/01_advertising.png
+capture 02_armed 2360x2100 digest=eda3ec97e714568f file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/02_armed.png
+capture 03_real_keyboard_next 2360x2100 digest=b068cc95e9c69d78 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/03_real_keyboard_next.png
+capture 04_real_keyboard_previous 2360x2100 digest=c435be3943b2936d file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/04_real_keyboard_previous.png
+capture 05_controller_next 2360x2100 digest=389454059a87c8b6 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/05_controller_next.png
+capture 06_controller_previous 2360x2100 digest=6cbb657c36a023d6 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/06_controller_previous.png
+capture 07_disconnected 2360x2100 digest=266dc87477d4e329 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/07_disconnected.png
+capture 08_reconnected_disarmed 2360x2100 digest=6910089117027ab6 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/08_reconnected_disarmed.png
+capture 09_held_controller_no_replay 2360x2100 digest=4f5c034cba771dae file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/09_held_controller_no_replay.png
+capture 10_fresh_after_reconnect 2360x2100 digest=9394e6b5dad7132a file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/10_fresh_after_reconnect.png
+capture 11_closed 2360x2100 digest=eccb38fb798b870e file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r4/run/11_closed.png
+frames: 11 captured, 0 blank, 11 distinct digests
+presentation: 4272 frames, 4275 redraws, 3 unpresented redraws

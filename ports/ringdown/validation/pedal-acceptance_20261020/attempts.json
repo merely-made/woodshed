@@ -1,0 +1,29 @@
+[
+  {
+    "attempt": "host-tests-repeat-fixture-failure",
+    "result": "26 passed, 1 failed",
+    "cause": "Test fixture retained Next one-shot before clicking Previous; corrected test to model the host consuming the first request. Production was unchanged for this fixture correction.",
+    "log": "/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/host-tests-repeat-fixture-failure.log"
+  },
+  {
+    "attempt": "native-r1",
+    "result": "13/13 bytes and exact bindings pass",
+    "limit": "Original UI summary did not include accepted-message count; offline-request race replaced the displayed partial result before screenshot."
+  },
+  {
+    "attempt": "native-r2",
+    "result": "Expanded real type/channel/value controls, 13/13 bytes and reopen pass",
+    "limit": "Precedes retained incomplete-gesture/readout repair; final repaired native cohort will be recorded separately."
+  },
+  {
+    "attempt": "guitar-r1",
+    "result": "fixture initialization refused, app not launched, zero sends",
+    "cause": "Private synthetic Keeper requires a new root. Reused only settings.json under a fresh Keeper root in guitar-r2."
+  },
+  {
+    "attempt": "native-r3",
+    "result": "All 13 expected bytes, save/reopen and scripted/partial/reconnect checks pass; final closed-readout assertion fails",
+    "cause": "Connect(None) overwrote the retained close status after retiring the writer. Final repair uses one closed-status formatter and adds a production-loop regression.",
+    "log": "/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r3.log"
+  }
+]

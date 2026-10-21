@@ -1,0 +1,4 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+[cambium-host] key Character("p") text=Some("p") mods=Modifiers { shift: false, ctrl: false, alt: false, meta: false } focus=None
+[cambium-host]   consumed by key_intercept

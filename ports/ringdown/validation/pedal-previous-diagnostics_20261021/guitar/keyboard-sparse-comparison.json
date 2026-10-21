@@ -1,0 +1,70 @@
+[
+  {
+    "source": "keyboard P",
+    "request_id": 2,
+    "raw_midi": [
+      [
+        176,
+        66,
+        127
+      ],
+      [
+        176,
+        66,
+        0
+      ]
+    ],
+    "release_gap_micros": 50428,
+    "ble_packets": [
+      [
+        141,
+        136,
+        176,
+        66,
+        127
+      ],
+      [
+        141,
+        186,
+        176,
+        66,
+        0
+      ]
+    ],
+    "generation": 1
+  },
+  {
+    "source": "sparse Note",
+    "request_id": 4,
+    "raw_midi": [
+      [
+        176,
+        66,
+        127
+      ],
+      [
+        176,
+        66,
+        0
+      ]
+    ],
+    "release_gap_micros": 50491,
+    "ble_packets": [
+      [
+        176,
+        212,
+        176,
+        66,
+        127
+      ],
+      [
+        177,
+        134,
+        176,
+        66,
+        0
+      ]
+    ],
+    "generation": 1
+  }
+]

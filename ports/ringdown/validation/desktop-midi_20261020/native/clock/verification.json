@@ -1,0 +1,11 @@
+{
+  "os_accepted": 293,
+  "received": 293,
+  "start": 3,
+  "stop": 3,
+  "clock": 287,
+  "idle_reopen_replayed": 0,
+  "playing_reopen_replayed": 0,
+  "explicit_wall_clock_dwells": true,
+  "native_result": "ok"
+}

@@ -1,0 +1,185 @@
+warning: skipping duplicate package `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/proofs/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/proofs/Cargo.toml
+
+warning: skipping duplicate package `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/muniment/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/eidetic/muniment/Cargo.toml
+
+warning: skipping duplicate package `sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/sprigging/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/sprigging/Cargo.toml
+
+warning: skipping duplicate package `cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/cambium/Cargo.toml
+
+warning: skipping duplicate package `chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/chartulary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/eidetic/chartulary/Cargo.toml
+
+warning: skipping duplicate package `mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/surface-api/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/surface-api/Cargo.toml
+
+warning: skipping duplicate package `workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/workbench/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/workbench/Cargo.toml
+
+warning: skipping duplicate package `meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/meristem/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/meristem/Cargo.toml
+
+warning: skipping duplicate package `cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium-winit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/cambium-winit/Cargo.toml
+
+warning: skipping duplicate package `mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/domain/apparatus/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/domain/apparatus/Cargo.toml
+
+warning: skipping duplicate package `armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/armillary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/armillary/Cargo.toml
+
+warning: skipping duplicate package `mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/graph/graph-kernel/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/graph/graph-kernel/Cargo.toml
+
+warning: skipping duplicate package `numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/conatus/numen/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/conatus/numen/Cargo.toml
+
+warning: skipping duplicate package `document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/document-canvas/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/inker/document-canvas/Cargo.toml
+
+warning: skipping duplicate package `inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/inker/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/inker/inker/Cargo.toml
+
+warning: skipping duplicate package `mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/document-lanes/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/document-lanes/Cargo.toml
+
+warning: skipping duplicate package `pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/pandect/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/pandect/Cargo.toml
+
+warning: skipping duplicate package `illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/nematic/illume/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/nematic/illume/Cargo.toml
+
+warning: skipping duplicate package `mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/distillery/alembic/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/distillery/alembic/Cargo.toml
+
+warning: skipping duplicate package `eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/eidetic-core/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/eidetic/eidetic-core/Cargo.toml
+
+warning: skipping duplicate package `incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/incipit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/incipit/Cargo.toml
+
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling serde_core v1.0.229
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling zmij v1.0.23
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling memchr v2.8.3
+   Compiling winnow v1.0.4
+   Compiling itoa v1.0.18
+   Compiling midly v0.5.3
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling cpufeatures v0.3.1
+   Compiling constant_time_eq v0.4.2
+   Compiling cfg-if v1.0.5
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling arrayvec v0.7.8
+   Compiling hound v3.5.1
+   Compiling cc v1.6.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling blake3 v1.8.7
+   Compiling syn v3.0.6
+   Compiling serde_derive v1.0.229
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling audio-pattern v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-pattern)
+   Compiling audio-packs v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-packs)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.47s
+     Running unittests src/lib.rs (target/build/debug/deps/audio_packs-82098077668d1104)
+
+running 13 tests
+test samples::tests::bank_insert_and_get_round_trip ... ok
+test samples::tests::bank_build_sound_leaves_empty_when_absent ... ok
+test samples::tests::bank_build_sound_attaches_when_present ... ok
+test samples::tests::rehydrate_pattern_skips_click_tracks ... ok
+test samples::tests::rehydrate_pattern_attaches_buffers_for_known_ids ... ok
+test samples::tests::load_wav_round_trip ... ok
+test samples::tests::load_wav_downmixes_stereo_to_mono ... ok
+test tests::exports_refuse_existing_destination_without_modification ... ok
+test tests::positional_edits_refuse_stale_occupied_or_invalid_targets ... ok
+test tests::corrupted_assets_and_missing_files_are_refused ... ok
+test tests::invalid_retained_drafts_tempo_gain_and_render_bounds_are_refused ... ok
+test tests::installed_edited_rhythm_survives_uninstallation_bit_exact ... ok
+test tests::inactive_edits_survive_switch_and_serialization ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running unittests src/lib.rs (target/build/debug/deps/audio_pattern-0ce35db4ad849fb1)
+
+running 35 tests
+test render::mixer_tests::process_buffer_silent_when_stopped ... ok
+test sequencer::tests::metronome_dense_fires_every_step ... ok
+test sequencer::tests::metronome_downbeat_is_accented ... ok
+test sequencer::tests::metronome_only_beats_fire ... ok
+test sequencer::tests::step_duration_120_bpm_quarter_is_500ms ... ok
+test sequencer::tests::step_duration_60_bpm_eighth_is_500ms ... ok
+test sequencer::tests::steps_per_bar_3_4_thirty_second_is_24 ... ok
+test sequencer::tests::steps_per_bar_4_4_quarter_is_4 ... ok
+test sequencer::tests::steps_per_bar_4_4_sixteenth_is_16 ... ok
+test sequencer::tests::pattern_round_trips_through_serde_json ... ok
+test sequencer::tests::steps_per_bar_6_8_eighth_triplet_is_18 ... ok
+test sequencer::tests::subdivision_constants_are_correct ... ok
+test sequencer::tests::time_signature_defaults_to_4_4 ... ok
+test render::mixer_tests::process_buffer_voices_decay_to_silence ... ok
+test sound::tests::accent_uses_different_frequency ... ok
+test sound::tests::click_envelope_decays ... ok
+test sound::tests::click_amplitude_is_bounded ... ok
+test sound::tests::click_render_returns_none_past_duration ... ok
+test sound::tests::click_render_starts_nonzero ... ok
+test sound::tests::gain_scales_and_clamps ... ok
+test sound::tests::normalize_brings_peak_to_target ... ok
+test sound::tests::normalize_silent_is_noop ... ok
+test sound::tests::reverse_flips_order ... ok
+test sound::tests::sample_accent_boosts_gain ... ok
+test sound::tests::sample_pitch_up_consumes_buffer_faster ... ok
+test sound::tests::sample_returns_none_past_end ... ok
+test sound::tests::sample_round_trip_via_serde_preserves_id_and_drops_buffer ... ok
+test sound::tests::sample_with_buffer_renders_value_at_start ... ok
+test sound::tests::sample_without_buffer_renders_none ... ok
+test render::mixer_tests::process_buffer_produces_audio_when_playing ... ok
+test render::mixer_tests::bpm_change_does_not_pause_playback ... ok
+test render::mixer_tests::process_buffer_step_count_scales_with_bpm ... ok
+test render::mixer_tests::process_buffer_subdivision_scales_step_count ... ok
+test render::mixer_tests::bpm_increase_speeds_up_without_glitch ... ok
+test render::mixer_tests::process_buffer_advances_step_at_predicted_time ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

@@ -1,0 +1,19 @@
+{
+  "clock_enabled": true,
+  "output": {
+    "accepted": 108,
+    "attempted": 108,
+    "connected": "Desktop MIDI qualification",
+    "disconnects": 1,
+    "error": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+    "failed": 0,
+    "generation": null,
+    "last_failure": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+    "ready": true,
+    "rearm_required": false,
+    "status": "OS MIDI output open · OS accepted 108; refused/uncertain 0 · Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement"
+  },
+  "playing": true,
+  "selected_index": 1,
+  "ui_notice": "OS MIDI output open · OS accepted 102; refused/uncertain 0 · Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement"
+}

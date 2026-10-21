@@ -1,0 +1,10 @@
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -1181,7 +1181,6 @@
+ [[package]]
+ name = "cambium-genet-winit-host"
+ version = "0.1.0"
+-source = "git+https://github.com/merely-made/mere.git?branch=main#d1a200b1877223f5b6ced7f5fbaca3671c10f5dd"
+ dependencies = [
+  "accesskit",
+  "cambium",

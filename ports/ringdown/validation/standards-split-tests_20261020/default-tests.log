@@ -1,0 +1,21 @@
+   Compiling ringdown-probe v0.0.1 (/Users/markik/Code/repos/woodshed/ports/ringdown/apps/probe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.97s
+     Running unittests src/main.rs (target/build/debug/deps/ringdown_probe-f4b2693026bd012d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/standards_cli.rs (target/build/debug/deps/standards_cli-2ba345c18bd9735a)
+
+running 7 tests
+test default_entry_prints_help_without_starting_rpc ... ok
+test rpc_feature_controls_routing_without_scanning ... ok
+test packetlogger_is_an_independent_feature ... ok
+test bundled_export_matches_shared_exporter_and_preserves_existing_output ... ok
+test installed_pack_exports_and_reopens_after_installation_is_removed ... ok
+test malformed_midi_is_rejected_before_opening_a_port ... ok
+test real_cli_delivers_exact_midi_to_a_virtual_input ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.77s
+

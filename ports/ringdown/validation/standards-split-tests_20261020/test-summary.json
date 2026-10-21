@@ -1,0 +1,174 @@
+{
+  "runs": [
+    {
+      "log": "combined-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 16
+    },
+    {
+      "log": "default-release-cli-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 7
+    },
+    {
+      "log": "default-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 7
+    },
+    {
+      "log": "instrument-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 11
+    },
+    {
+      "log": "offline-release-cli-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "log": "offline-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "log": "pack-library-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 35,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 48
+    },
+    {
+      "log": "packetlogger-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 12
+    },
+    {
+      "log": "private-library-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 131,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 162
+    },
+    {
+      "log": "rpc-tests.log",
+      "suites": [
+        {
+          "status": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        }
+      ],
+      "passed": 9
+    }
+  ],
+  "passed_executions": 284,
+  "note": "Counts include repeated CLI cases across feature profiles and preserved release executables."
+}

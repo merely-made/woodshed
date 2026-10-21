@@ -71,6 +71,17 @@ pub fn export_song_wav_to<W: Write + Seek>(
     sample_rate: u32,
     writer: W,
 ) -> Result<SongExportReport, SongExportError> {
+    export_song_wav_with_pattern_to(song, sample_rate, None, writer)
+}
+
+/// The same export with a frozen admitted kit pattern for the backing click.
+/// The independent metronome stays stopped; the backing owns its own tempo.
+pub fn export_song_wav_with_pattern_to<W: Write + Seek>(
+    song: &Song,
+    sample_rate: u32,
+    pattern: Option<&crate::SequencerPattern>,
+    writer: W,
+) -> Result<SongExportReport, SongExportError> {
     let frames = validate(song, sample_rate)?;
     let mut frozen = song.clone();
     frozen.playing = true;
@@ -78,6 +89,10 @@ pub fn export_song_wav_to<W: Write + Seek>(
     frozen.cursor = Default::default();
     frozen.pending.clear();
     let mut runtime = OutputRuntime::offline(sample_rate)?;
+    if let Some(pattern) = pattern {
+        pattern.validate().map_err(|e| invalid(e.to_string()))?;
+        runtime.set_pack_pattern_playing(pattern.clone(), false)?;
+    }
     runtime.set_song(frozen)?;
     // Rewind is processed after backing admission. It retains Playing(true),
     // clears its normal count-in, and starts the first bar on the first frame.

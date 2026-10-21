@@ -1,0 +1,112 @@
+{
+  "crates/audio-pack-views/src/lib.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "2e4c0acb7103b02facaccb61a6549b0e267103fdc2a6aa3240acbbeb7f787bb0",
+    "ap3": "b2c92b32237b3bf3c27ea2f105e190b2c32072e9070785727b7a41a987c91451"
+  },
+  "crates/audio-packs/src/lib.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "81b241e871f543910549223c258b5f3fd7ea5ade2def340f5ef6047ffd7a7f47",
+    "ap3": "ece43738bfb53d5bb7d56225491ad7190cc6178b0adc18d120c7388fc1e5ae32"
+  },
+  "crates/audio-packs/src/tests.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "3af7cd1a518077574410f2cf00368444bb6a83f2336f51012d1020ee231d8ae2"
+  },
+  "crates/hocket-recorder/src/lib.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "86b9f3ad654c736c88118a33a7c3141dc82b9cff5ef3f8c232d8be93d613a75d",
+    "ap3": "6407d5b06cf985d39f44b885280faf710b74e07c910e9ddf66818ba5097e9273"
+  },
+  "crates/woodshed-audio/src/offline/song_export/tests.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "35e326bacd514b79fbb996c59969c9788666904f30ac4665a0ec271da6c857c1"
+  },
+  "crates/woodshed-audio/src/output_runtime/tests.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "f1f22cab94a3b3f0de0c91f41a57c06630445848ee0fe1d2d6ac9f86100da5a2",
+    "ap3": "9664ae0bec38553689e1df845cce01de6e675d285eccf30e5b277e33829f92e7"
+  },
+  "crates/woodshed-core/src/storage.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "06e9bc19badb07f980d0854b0b0669b6b3ca33550171ed254cf1a6f7c64ad7b7",
+    "ap3": "3e30602524f9f1ae9884bd90af083f9a3de177509e407d6647e8872ecc8f817d"
+  },
+  "crates/woodshed-genet/src/scenario.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "8738e174d5b23b93cc145316a01de687ee2b435724af11039b2f1a0300a720ad"
+  },
+  "design_docs/2026-08-27_smart_instrument_plan.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "f40aa6cef1f97e897d8b649f5e0a2507e123eaddf81e77922e7269a5efdf15d8",
+    "ap3": "1435dbe254df05284c843ed2d9ff47733e865a5e9463d6772f8e6a8b514ce114"
+  },
+  "design_docs/2026-09-09_audio_ports_rehome_plan.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "bb6f12c794d19158cadc6932a75f11e0fa383ee63c0dc88d1c771bbb8a1a123b",
+    "ap3": "a8967b93afab772902a934a9625e16eca30b29b9e74f50e1a1f8f4f04c392826"
+  },
+  "design_docs/DOC_README.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "b8a28c1f5df9f779d48bfdb4d2b25388421df28f3d58914b88f999ae522adfaa",
+    "ap3": "3653d3cbd902f11f45e22fc5a080981a44e2580f1d127c237a7de10fccd1fc91"
+  },
+  "ports/hocket/crates/hocket-engine/src/lib.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "ccc8a566fb209df4becc88fc4573a0195a7732705b5fce7ee5f70898eeb6de0e"
+  },
+  "ports/hocket/crates/hocket-engine/src/offline_tests.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "c66574b471bd4af49162f996c9a4954dbb0284b1b49a41574417dfb92f8fe21d"
+  },
+  "ports/hocket/crates/hocket-genet/src/recorder_audio.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "6238cef1beaf9c21de79c91a2d12c79f427f12a89b5ba78c600feb6b7c9ab5d2"
+  },
+  "ports/hocket/crates/hocket-genet/src/scenario.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "0d9e894298fc26e9dc3bcd60d42b888d569ed64431201ecae8818a87798b5a41"
+  },
+  "ports/hocket/crates/hocket-genet/src/state.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "edcc7a2bfcde2d62b95552572a3bdd33bf6b6a8f6126e829daca626a72a290bd",
+    "ap3": "b6d16322be20979487613b0644ee1c53f9c29e11e0f6a4f4df3d2bae6bedf978"
+  },
+  "ports/hocket/crates/hocket-genet/src/state/packs.rs": {
+    "ap2_baseline_recorded": true,
+    "ap2": "ff8d7ac9cfb44dd07d7d67923a23b1c6fbf8e21caa03c7d9a62f713bbcff48e9",
+    "ap3": "04964753f8d23f7c09f14a7fe0a3ae2b9fbc96af23f9a7471db6489e19c40eaf"
+  },
+  "ports/hocket/crates/hocket-genet/src/theme.rs": {
+    "ap2_baseline_recorded": false,
+    "ap2": null,
+    "ap3": "6b1c9d66bf27ccd0e47f996c5aa8913abb5669f3cb1f816452a4c17dde20db72"
+  },
+  "ports/hocket/design_docs/2026-05-18_initial_plan.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "fc965eee7f598459e317474ab47b407aab62dca34669a35677e1f3de44d2c15b",
+    "ap3": "5b30dcda2de4629cb2a4fd4d20d624b7b4fb23bbb5457244d109a9946d44202d"
+  },
+  "ports/hocket/design_docs/DOC_README.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "ecfe54b76ab7ec8073b76e57b61ef6beae515348430c034dc8cfbd8dcf373e8d",
+    "ap3": "6f2c184cd004d7297c9f2ff04b07e0c4a645b2da199d808c6c50e307ba09e2cb"
+  },
+  "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "e43ad6df5a2fd43399647e014f208e6587efc341c48b7c766a99c763d49e6b81",
+    "ap3": "309b9e272adec42d989d70a552dfe5b85a677a90394baea77dfdd16d352ed1dc"
+  },
+  "ports/ringdown/design_docs/DOC_README.md": {
+    "ap2_baseline_recorded": true,
+    "ap2": "f76220bac0b112edf6b290589197f34235041098e880e36c941bbd5d81752ef6",
+    "ap3": "ddf4997192666e7ef0add5e00c91a9a36b9a2acae5a4cf479857124f485955b5"
+  }
+}

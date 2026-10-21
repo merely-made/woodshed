@@ -265,6 +265,8 @@ pub struct Shared {
     pub recorder_leaves: hocket_views::RecorderLeaves,
     pub capture_persistence: crate::capture_persistence::CapturePersistence,
     pub wav_export: crate::wav_export::WavExport,
+    pub pack_io: crate::pack_io::PackIo,
+    pub midi_diagnostics: crate::midi_diagnostics::DiagnosticExport,
 
     /// Rebuild signatures for the custom-paint leaves: a leaf is re-rendered
     /// only when the model behind it actually moved.
@@ -334,6 +336,8 @@ impl Shared {
             ),
             capture_persistence: Default::default(),
             wav_export: Default::default(),
+            pack_io: Default::default(),
+            midi_diagnostics: Default::default(),
             neighborhood_sig: 0,
             set_graph_sig: 0,
             overview_sig: 0,

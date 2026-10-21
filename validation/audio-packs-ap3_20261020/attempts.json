@@ -1,0 +1,254 @@
+[
+  {
+    "cohort": "hocket-audio-probe",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 58.589,
+        "binary_sha256": "870eb8ce48e740a69967a6f7ab27e346e155f05eb7a04a5ca050b7ccf48fb2bd",
+        "scenario_sha256": "a04734bd56b43941c6490f40824681504002a5e4d6b70dc99bbd4b51f0a7ea87",
+        "receipt": "scenario.done",
+        "captures": 1
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-audio-probe"
+  },
+  {
+    "cohort": "hocket-final",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 125.676,
+        "binary_sha256": "b7b3473fdce79011b79f565e679b0f318f542b67dce09548e5b4a888083890d0",
+        "scenario_sha256": "147e11172f09441dc97d78f92b0181553183f1dfdb4cd91a82bc1ac8fca7da0e",
+        "receipt": "scenario.done",
+        "captures": 3
+      },
+      {
+        "run": "run-2",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 67.428,
+        "binary_sha256": "b7b3473fdce79011b79f565e679b0f318f542b67dce09548e5b4a888083890d0",
+        "scenario_sha256": "15748ef3af916ccfef538cda670b6419e77ef7125b370107644184d8de70bbfc",
+        "receipt": "scenario.done",
+        "captures": 2
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final"
+  },
+  {
+    "cohort": "hocket-pre-deadline-fix",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 139.043,
+        "binary_sha256": "02efb62d9e95e6b8f4474c2ccc5c2d0a31bcc68d5f641047795d4b6d3fe7f153",
+        "scenario_sha256": "147e11172f09441dc97d78f92b0181553183f1dfdb4cd91a82bc1ac8fca7da0e",
+        "receipt": "scenario.done",
+        "captures": 3
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-pre-deadline-fix"
+  },
+  {
+    "cohort": "hocket-pre-meter-fix",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 119.848,
+        "binary_sha256": "438d447e6c4fe1db6253e834cddbb395434af931e9b77a8dc2607bc4a16ee376",
+        "scenario_sha256": "c39353e8752a1a6c84b8194f2e0b707cf7d888b2e47a8b4bd92c99b32a53d138",
+        "receipt": "scenario.done",
+        "captures": 3
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-pre-meter-fix"
+  },
+  {
+    "cohort": "hocket-pre-overflow-fix",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 146.001,
+        "binary_sha256": "c8c928927309381cb1fc889587e03c9966e00faca153766cfb596e905cfb4ba3",
+        "scenario_sha256": "cd276801cca698335f25062c883c552406b1e79edd4d6ad3450c6257682dcaaf",
+        "receipt": "scenario.done",
+        "captures": 3
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-pre-overflow-fix"
+  },
+  {
+    "cohort": "hocket-pre-wait-fix",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 137.231,
+        "binary_sha256": "efd95b803a320c47d841364ca436d39424b9a4f0773f08a9332111fb650d4c61",
+        "scenario_sha256": "cd276801cca698335f25062c883c552406b1e79edd4d6ad3450c6257682dcaaf",
+        "receipt": "scenario.done",
+        "captures": 3
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-pre-wait-fix"
+  },
+  {
+    "cohort": "hocket-smoke-r1",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 229.695,
+        "binary_sha256": "3cf81b3b757a9338d6dc4ec0e44f49f0f711a016ec217bcca09f6ca2e90581f2",
+        "scenario_sha256": "48cddf07f019e64b440c2ad64705d19d00b0af7191a1200d8a15e6c8210270e5",
+        "receipt": null,
+        "captures": 0
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-smoke-r1"
+  },
+  {
+    "cohort": "hocket-smoke-r2",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 130.801,
+        "binary_sha256": "e8998a6bc6095c2dedc5a4a764c9e310700874208a7066c4599b89bc2739bcdb",
+        "scenario_sha256": "92e54887f3ed1d0f45ce78dad00884c3b11a005d6df74e23a8f8eceba45a53d5",
+        "receipt": null,
+        "captures": 2
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-smoke-r2"
+  },
+  {
+    "cohort": "hocket-smoke-r3",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 162.648,
+        "binary_sha256": "438d447e6c4fe1db6253e834cddbb395434af931e9b77a8dc2607bc4a16ee376",
+        "scenario_sha256": "641b452b7fbf0679004e1fa89c50aee1867ff45852218fe21053334223a6b136",
+        "receipt": "scenario.done",
+        "captures": 3
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-smoke-r3"
+  },
+  {
+    "cohort": "woodshed-final",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 94.676,
+        "binary_sha256": "5ab2e1de4ebe75c649733b7e14270ed97c9e43041e2fad75e05fc17c6aa70f47",
+        "scenario_sha256": "b88735693bf13de94203ec6ffff140132714552169e0155ec507998a36f09759",
+        "receipt": "scenario.done",
+        "captures": 3
+      },
+      {
+        "run": "run-2",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 40.747,
+        "binary_sha256": "5ab2e1de4ebe75c649733b7e14270ed97c9e43041e2fad75e05fc17c6aa70f47",
+        "scenario_sha256": "d6ccfc8fba4e39f3972e24d0570c072e8304fe75d79f23e905bb23d88798a328",
+        "receipt": "scenario.done",
+        "captures": 2
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final"
+  },
+  {
+    "cohort": "woodshed-installed-r1",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 137.16,
+        "binary_sha256": "a58cfeac17d2f141d5ad7ef84d76bbc4016c5d693d3635866ea188818689704a",
+        "scenario_sha256": "c1d31c557fd539c2dc281852d4857f2dda909c9d1c045f1394acd0a4d39e5219",
+        "receipt": "scenario.done",
+        "captures": 3
+      },
+      {
+        "run": "run-2",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": false,
+        "elapsed_seconds": 233.226,
+        "binary_sha256": "a58cfeac17d2f141d5ad7ef84d76bbc4016c5d693d3635866ea188818689704a",
+        "scenario_sha256": "7afe9cc04677fd4b5cfdc73a941f3062ce3ca13620f13f97a4c2656691eab606",
+        "receipt": null,
+        "captures": 1
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-installed-r1"
+  },
+  {
+    "cohort": "woodshed-smoke-r1",
+    "runs": [
+      {
+        "run": "run-1",
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 48.63,
+        "binary_sha256": "a58cfeac17d2f141d5ad7ef84d76bbc4016c5d693d3635866ea188818689704a",
+        "scenario_sha256": "837f426b959cffaea9e5b0a814af398ad82be892c7681fcbee11f33580de238e",
+        "receipt": "scenario.done",
+        "captures": 3
+      }
+    ],
+    "scratch": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-smoke-r1"
+  }
+]

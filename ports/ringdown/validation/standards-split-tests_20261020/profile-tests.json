@@ -1,0 +1,80 @@
+[
+  {
+    "name": "offline",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--no-default-features"
+    ],
+    "exit_code": 0,
+    "log": "offline-tests.log"
+  },
+  {
+    "name": "rpc",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--no-default-features",
+      "--features",
+      "hyvibe-rpc"
+    ],
+    "exit_code": 0,
+    "log": "rpc-tests.log"
+  },
+  {
+    "name": "packetlogger",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--no-default-features",
+      "--features",
+      "packetlogger"
+    ],
+    "exit_code": 0,
+    "log": "packetlogger-tests.log"
+  },
+  {
+    "name": "combined",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--all-features"
+    ],
+    "exit_code": 0,
+    "log": "combined-tests.log"
+  },
+  {
+    "name": "private-libraries",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown",
+      "-p",
+      "ringdown-client",
+      "-p",
+      "ringdown-ble",
+      "--lib"
+    ],
+    "exit_code": 0,
+    "log": "private-library-tests.log"
+  }
+]

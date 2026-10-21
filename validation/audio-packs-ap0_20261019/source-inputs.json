@@ -1,0 +1,7 @@
+{
+  "crates/woodshed-audio/src/sequencer.rs": "35a21e4eea6463f7e2fe26e3769c53cd88699cf89f6cdbed27ec688ff7677b18",
+  "crates/woodshed-audio/src/sound.rs": "f9ff48f987289ca3520a23f3d02960d78719ae2d9065ae0f6dbb1d7265b3e82b",
+  "crates/woodshed-audio/src/samples.rs": "fe828259b1d720a16b53281f15963848032735e656eef6a2e3e5e16d227a2c41",
+  "crates/woodshed-audio/src/offline.rs": "b18486dd649b9493a87617d1e831dcf430fc5e5ee51b4ffd31693b62cdb99fb5",
+  "crates/woodshed-audio/src/output_runtime.rs": "c8c84e289ebc2df0e59ac1b51f973d6e4870afe456e5dbcd858700614d5df97e"
+}

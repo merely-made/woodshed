@@ -1,0 +1,50 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Desktop MIDI qualification
+settle 2
+click .t-btn Send clock: off
+click .pill Tools
+click .lens Metronome
+click .t-btn Play
+act midi-dwell 1000
+wait 100000
+act midi-checkpoint before-hotplug
+act midi-dwell 5000
+wait 100000
+act midi-checkpoint after-hotplug
+assert snap midi-disconnects == 1
+assert snap midi-rearm_required == true
+click .pill Settings
+click .side-item Audio and MIDI
+capture 01_hotplug_failure_visible
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Desktop MIDI qualification
+act midi-dwell 1200
+wait 100000
+assert snap midi-rearm_required == true
+act midi-checkpoint reconnected
+capture 02_no_replay_after_hotplug
+click .t-btn Send clock: on
+click .t-btn Send clock: off
+act midi-dwell 1000
+wait 100000
+act midi-checkpoint rearmed
+click .pill Tools
+click .lens Metronome
+click .t-btn Stop
+act midi-dwell 500
+wait 100000
+click .pill Settings
+click .side-item Audio and MIDI
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint final
+capture 03_failure_history_retained

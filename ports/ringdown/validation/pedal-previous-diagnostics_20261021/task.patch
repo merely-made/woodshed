@@ -1,0 +1,661 @@
+--- a/crates/woodshed-instrument/src/midi.rs
++++ b/crates/woodshed-instrument/src/midi.rs
+@@ -23,6 +23,7 @@
+ 
+ #[cfg(feature = "ble-midi")]
+ pub mod ble;
++pub mod diagnostics;
+ 
+ use std::collections::VecDeque;
+ use std::sync::{Arc, Mutex};
+--- a/crates/woodshed-instrument/src/midi/ble.rs
++++ b/crates/woodshed-instrument/src/midi/ble.rs
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: MPL-2.0
+ //! Standard short-message BLE-MIDI transport. Native GATT lives in the supplier.
++use super::diagnostics;
+ use std::{fmt, time::Duration};
+ 
+ pub const SERVICE_UUID: &str = "03b80e5a-ede8-4b33-a751-6ce34ec4c700";
+@@ -448,6 +449,7 @@
+                                 let mut state = view.lock().unwrap(); state.status.subscribers = active;
+                                 state.peer = if active == 1 { peers.iter().next().map(|(id, gen)| (id.clone(), *gen)) } else { None };
+                                 state.status.generation = state.peer.as_ref().map_or(0, |(_, gen)| *gen);
++                                diagnostics::record("ble-subscription", None, None, Some(state.status.generation), &[], || format!("subscribed_event={subscribed}; subscribers={active}"));
+                                 state.status.phase = if active == 1 { Phase::Subscribed } else if active == 0 { Phase::Advertising } else { Phase::Unavailable };
+                                 state.status.last_error = if active > 1 { Some("Multiple subscribers; sending is disabled".into()) } else { None };
+                             }
+@@ -485,10 +487,12 @@
+                     let result = if let Err(error) = validate_command(&command, current.as_ref(), Instant::now()) { Err(error) }
+                     else {
+                         let packet = encode_short_message(&command.message, epoch.elapsed().as_millis() as u64).unwrap();
++                        diagnostics::record("ble-notify-start", None, None, Some(command.generation), &packet, || format!("midi={:?}; OS notification submission, not device acknowledgement",command.message));
+                         match tokio::time::timeout(Duration::from_millis(250), peripheral.update_characteristic(io, command.peer, command.generation, command.deadline, packet)).await {
+                             Ok(result) => result.map_err(supplier_error), Err(_) => Err(Error::Unknown),
+                         }
+                     };
++                    diagnostics::record("ble-notify-result", None, None, Some(command.generation), &command.message, || format!("{result:?}; OS result, not device acknowledgement"));
+                     if result.is_ok() { let mut state = view.lock().unwrap(); state.status.accepted_messages += 1; state.status.last_error = None; }
+                     else { view.lock().unwrap().status.last_error = result.as_ref().err().map(ToString::to_string); }
+                     let _ = command.reply.send(result);
+--- a/crates/woodshed-genet/src/midi.rs
++++ b/crates/woodshed-genet/src/midi.rs
+@@ -28,6 +28,7 @@
+ /// crosses the channel — only these plain-data messages do.
+ mod worker;
+ use pedal::{Dispatcher, Request};
++use woodshed_audio::midi::diagnostics;
+ 
+ enum ClockCmd {
+     Connect {
+@@ -374,9 +375,19 @@
+         binding: PedalBinding,
+         target: PedalTarget,
+     ) -> PedalReport {
+-        self.pedal
++        let report = self
++            .pedal
+             .submit_expected(action, binding, Some((target.revision, target.generation)))
+-            .0
++            .0;
++        diagnostics::record(
++            "desktop-decision",
++            Some(report.id),
++            Some(target.revision),
++            target.generation,
++            &[],
++            || report.summary(),
++        );
++        report
+     }
+     fn pedal_report(&self) -> Option<PedalReport> {
+         self.pedal.last.lock().unwrap().clone()
+--- a/crates/woodshed-genet/src/midi/pedal.rs
++++ b/crates/woodshed-genet/src/midi/pedal.rs
+@@ -28,8 +28,17 @@
+         expected: Option<(u64, Option<u64>)>,
+     ) -> (PedalReport, Option<Receiver<PedalReport>>) {
+         let id = self.sequence.fetch_add(1, Ordering::Relaxed) + 1;
++        diagnostics::record(
++            "admission",
++            Some(id),
++            expected.map(|t| t.0),
++            expected.and_then(|t| t.1),
++            &[],
++            || format!("action={action:?}; binding={binding:?}"),
++        );
+         let refuse = |detail: String| {
+             let report = PedalReport::refused(id, action, detail);
++            diagnostics::record("refused", Some(id), None, None, &[], || report.summary());
+             *self.last.lock().unwrap() = Some(report.clone());
+             (report, None)
+         };
+@@ -57,6 +66,16 @@
+             .is_err()
+         {
+             return refuse("A pedal action is still pending; nothing queued".into());
++        }
++        for (index, bytes) in messages.iter().enumerate() {
++            diagnostics::record(
++                "planned-message",
++                Some(id),
++                Some(revision),
++                generation,
++                bytes,
++                || format!("index={index}; action={action:?}"),
++            );
+         }
+         let report = PedalReport {
+             id,
+@@ -104,6 +123,14 @@
+     pub fn finish(&mut self, outcome: PedalOutcome, detail: impl Into<String>) {
+         self.report.outcome = outcome;
+         self.report.detail = detail.into();
++        diagnostics::record(
++            "terminal",
++            Some(self.report.id),
++            Some(self.revision),
++            self.generation,
++            &[],
++            || self.report.summary(),
++        );
+         if let Some(reply) = self.reply.take() {
+             if outcome == PedalOutcome::Uncertain {
+                 let mut state = self.output.lock().unwrap();
+--- a/crates/woodshed-genet/src/midi/worker.rs
++++ b/crates/woodshed-genet/src/midi/worker.rs
+@@ -66,6 +66,21 @@
+     fn step<P: Connection>(&mut self, out: &mut P, state: &mut OutputState) {
+         let ready = out.ready();
+         let generation = out.generation();
++        if self.generation != generation || state.ready != ready {
++            super::diagnostics::record(
++                "writer-lifetime",
++                None,
++                Some(state.revision),
++                generation,
++                &[],
++                || {
++                    format!(
++                        "ready={ready}; previous_generation={:?}; previous_ready={}",
++                        self.generation, state.ready
++                    )
++                },
++            );
++        }
+         if generation != self.generation || !ready {
+             // A replacement can occur entirely between polls. Readiness alone
+             // cannot establish that this is the subscriber we armed for.
+@@ -306,12 +321,34 @@
+         return false;
+     }
+     let index = request.report.accepted_messages;
++    super::diagnostics::record(
++        "writer-send-start",
++        Some(request.report.id),
++        Some(request.revision),
++        request.generation,
++        &request.messages[index],
++        || {
++            format!(
++                "index={index}; action={:?}; due_late_us={}",
++                request.report.action,
++                now.saturating_duration_since(request.due).as_micros()
++            )
++        },
++    );
+     let mut success = false;
+     let mut error = None;
+     with_state(output, |state| {
+         success = Clock::record_send(out, state, &request.messages[index], request.generation);
+         error = state.last_failure.clone();
+     });
++    super::diagnostics::record(
++        "writer-send-result",
++        Some(request.report.id),
++        Some(request.revision),
++        request.generation,
++        &request.messages[index],
++        || format!("index={index}; os_accepted={success}; error={error:?}"),
++    );
+     if !success {
+         request.finish(
+             PedalOutcome::Uncertain,
+--- a/crates/woodshed-genet/src/midi/controller.rs
++++ b/crates/woodshed-genet/src/midi/controller.rs
+@@ -86,6 +86,19 @@
+         self.armed = armed && self.active && target.is_some() && !self.needs_disarm;
+     }
+     pub fn receive(&mut self, epoch: u64, midi: MidiEvent, dispatcher: &Dispatcher) {
++        super::diagnostics::record(
++            "controller-input",
++            None,
++            self.target.map(|t| t.revision),
++            self.target.and_then(|t| t.generation),
++            &[],
++            || {
++                format!(
++                    "{midi:?}; source_epoch={epoch}; active_epoch={}; armed={}",
++                    self.epoch, self.armed
++                )
++            },
++        );
+         if !self.active || epoch != self.epoch {
+             return;
+         }
+@@ -117,6 +130,14 @@
+                     action,
+                     self.bindings.get(action).clone(),
+                     Some((target.revision, target.generation)),
++                );
++                super::diagnostics::record(
++                    "controller-decision",
++                    Some(report.id),
++                    Some(target.revision),
++                    target.generation,
++                    &[],
++                    || format!("input={event:?}; {}", report.summary()),
+                 );
+                 if report.outcome == super::PedalOutcome::Refused {
+                     self.notice = Some(format!("Controller input: {}", report.summary()));
+--- a/crates/woodshed-genet/src/midi/stdio.rs
++++ b/crates/woodshed-genet/src/midi/stdio.rs
+@@ -71,6 +71,7 @@
+                             "output": dispatcher.state.lock().unwrap().clone(),
+                             "bindings": dispatcher.bindings.lock().unwrap().clone(),
+                             "pedal": dispatcher.last.lock().unwrap().clone(),
++                            "diagnostics": woodshed_audio::midi::diagnostics::snapshot(),
+                         }),
+                         Command::Trigger {
+                             action,
+--- a/crates/woodshed-genet/src/midi/worker/tests.rs
++++ b/crates/woodshed-genet/src/midi/worker/tests.rs
+@@ -240,6 +240,112 @@
+ fn due(request: &mut Request) {
+     request.due = Instant::now();
+     request.expires = request.due + Duration::from_secs(1);
++}
++#[test]
++fn note_previous_and_keyboard_binding_reach_identical_writer_messages() {
++    use super::super::{
++        MidiEvent, PedalAction, PedalBindings, PedalTarget, controller::Controller,
++    };
++    use woodshed_core::midi::{ControllerBinding, ControllerKind, PedalShortcut};
++    let (dispatcher, rx) = super::super::pedal::fixture();
++    let mut bindings = PedalBindings::default();
++    bindings.effect_previous.enabled = true;
++    bindings.effect_previous.number = 66;
++    bindings.effect_previous.release = Some(0);
++    let shortcut = PedalShortcut {
++        key: "p".into(),
++        shift: false,
++        alt: false,
++    };
++    bindings.inputs.effect_previous.keyboard = Some(shortcut.clone());
++    bindings.inputs.effect_previous.controller = Some(ControllerBinding {
++        channel: 3,
++        kind: ControllerKind::Note,
++        number: 36,
++    });
++    let target = PedalTarget {
++        revision: 1,
++        generation: Some(7),
++    };
++    let mut controller = Controller::default();
++    let epoch = controller.replace_source(true);
++    controller.configure(&bindings, false, Some(target));
++    controller.configure(&bindings, true, Some(target));
++    controller.receive(
++        epoch,
++        MidiEvent::NoteOff {
++            channel: 2,
++            note: 36,
++            velocity: 64,
++        },
++        &dispatcher,
++    );
++    controller.receive(
++        epoch,
++        MidiEvent::NoteOn {
++            channel: 2,
++            note: 36,
++            velocity: 110,
++        },
++        &dispatcher,
++    );
++    let ClockCmd::Pedal(mut request) = rx.try_recv().unwrap() else {
++        panic!("expected controller request")
++    };
++    assert_eq!(request.report.action, PedalAction::EffectPrevious);
++    for _ in 0..32 {
++        controller.receive(
++            epoch,
++            MidiEvent::NoteOn {
++                channel: 2,
++                note: 36,
++                velocity: 100,
++            },
++            &dispatcher,
++        );
++    }
++    assert!(rx.try_recv().is_err());
++    let mut note_out = pedal_receiver();
++    assert!(!pedal_step(
++        &mut request,
++        &mut note_out,
++        &dispatcher.state,
++        &dispatcher.selection,
++        1
++    ));
++    due(&mut request);
++    assert!(pedal_step(
++        &mut request,
++        &mut note_out,
++        &dispatcher.state,
++        &dispatcher.selection,
++        1
++    ));
++    let action = bindings.inputs.keyboard_action(&shortcut).unwrap().unwrap();
++    let (_, reply) =
++        dispatcher.submit_expected(action, bindings.get(action).clone(), Some((1, Some(7))));
++    let ClockCmd::Pedal(mut request) = rx.try_recv().unwrap() else {
++        panic!("expected keyboard binding request")
++    };
++    let mut key_out = pedal_receiver();
++    assert!(!pedal_step(
++        &mut request,
++        &mut key_out,
++        &dispatcher.state,
++        &dispatcher.selection,
++        1
++    ));
++    due(&mut request);
++    assert!(pedal_step(
++        &mut request,
++        &mut key_out,
++        &dispatcher.state,
++        &dispatcher.selection,
++        1
++    ));
++    assert_eq!(note_out.sent, [vec![0xb0, 66, 127], vec![0xb0, 66, 0]]);
++    assert_eq!(key_out.sent, note_out.sent);
++    assert_eq!(reply.unwrap().recv().unwrap().accepted_messages, 2);
+ }
+ #[test]
+ fn pedal_press_release_exact_once_and_clock_progresses_in_gap() {
+--- a/crates/woodshed-genet/src/pedal_inputs.rs
++++ b/crates/woodshed-genet/src/pedal_inputs.rs
+@@ -144,6 +144,21 @@
+         .keyboard_action(&key)
+     {
+         Ok(Some(action)) => {
++            let target = runner.state().midi.pedal_target;
++            woodshed_audio::midi::diagnostics::record(
++                "keyboard-input",
++                None,
++                target.map(|t| t.revision),
++                target.and_then(|t| t.generation),
++                &[],
++                || {
++                    format!(
++                        "key={}; repeat={}; action={action:?}",
++                        key.label(),
++                        press.repeat
++                    )
++                },
++            );
+             // Fresh key-down only. The shared native host retains OS repeat
+             // metadata; releasing the key permits the next fresh press.
+             if !press.repeat {
+--- a/ports/ringdown/design_docs/2026-09-02_client_surface_plan.md
++++ b/ports/ringdown/design_docs/2026-09-02_client_surface_plan.md
+@@ -559,6 +559,49 @@
+ fresh release/press then works. Connections close after the final observation.
+ The shared synthesized-focus gate remains source/focused-test-qualified, with
+ Windows/X11 native focus interaction and other-platform runtime still open.
++
++### Previous source diagnostics (2026-10-21)
++
++**Status: bounded software/native/guitar comparison complete; miss not reproduced.** The earlier Note-triggered Previous with no observed
++change remains unresolved. Comparison uses the existing keyboard/Note mapping,
++dispatcher, connection and writer; outgoing Previous remains Channel 1 / CC66
++127 then 0, independently of the incoming Note binding.
++
++The shared instrument seam adds an opt-in process-local diagnostic journal
++(`INSTRUMENT_MIDI_DIAGNOSTICS=1` at startup). It retains at most 512 events with
++sequence, monotonic elapsed microseconds, request id where available, output
++revision/generation, exact short-message bytes and bounded detail. Overwritten
++and truncated evidence is explicit. There is no hot-path file I/O, extra writer,
++retry, background logger or default recording. The existing desktop JSONL Status
++command exposes a read-only snapshot. Events cover input interpretation,
++admission, planned bytes, each writer send, BLE notification packet/result and
++subscriber changes. BLE packet events are OS submission evidence, not an air
++capture or guitar acknowledgement; sequential single-slot writer events provide
++their request correlation.
++
++Done conditions are a focused Note/keyboard writer comparison, native retained
++keyboard-hook and selected-input comparison against independent receiving bytes,
++and a separate owner-gated guitar comparison with visible effect names. Sparse
++and held Note input are distinguished, one gesture is observed at a time, and
++an unconfirmed action is not retried automatically. The earlier negative result
++is retained even if a new bounded trial cannot reproduce it. Evidence lives in
++[Previous diagnostics](../validation/pedal-previous-diagnostics_20261021/README.md).
++
++Current evidence: 38 focused cases, Mac app/fixture build and shared Windows/Linux
++instrument checks pass. A fresh native cohort alternates P and Note36 twice:
++eight independent receiving messages exactly match the writer trace, with four
++CC66 127/0 pairs and observed release gaps of 50.3–51.1 ms. The journal retains
++107 events without overwrite. The separate guitar cohort uses real P, sparse
++Note36 and Note36 with 32 held repeats. All emit identical outgoing CC66 127/0
++messages, with observed writer gaps 50.428 / 50.491 / 50.526 ms and 50 ms BLE
++packet timestamp gaps. The owner confirms Rev → Off in all three cases. Three
++observed Next anchors plus those Previous actions total 12 attempted/accepted
++messages, with one subscription generation, zero disconnects/failures, 124
++complete journal events, and both ports closed at completion. No Note-specific
++output difference reproduced; this does not establish the historical miss's
++cause. The original negative receipt remains frozen. No protocol, timing or
++retry change was justified by this comparison.
++
+ 
+ ### Pedal acceptance (2026-10-20)
+ 
+@@ -1428,6 +1471,16 @@
+   refused rather than exposed. The guard is a comment; Phase B makes it code.
+ 
+ ## Progress
++
++- **2026-10-21 — Previous input comparison complete; historical miss not reproduced.**
++  Added default-off bounded diagnostics through the shared instrument seam and
++  existing desktop Status. Thirty-eight focused cases and shared Windows/Linux
++  instrument checks pass. Native keyboard/Note comparison independently receives
++  eight exact matching messages. Real P, sparse Note and held Note each return
++  Rev to Off with identical CC66 press/release and 50.4–50.5 ms observed gaps.
++  Twelve physical OS-accepted messages, zero disconnects, no duplicate gesture
++  and complete 124-event trace; ports close. The earlier no-change observation
++  remains unexplained, with no speculative protocol or retry fix.
+ 
+ - **2026-10-21 — Input desktop and bounded guitar qualification.** Native learning exposed
+   render-delayed events; moved the sole live controller edge gate to the existing
+--- a/ports/ringdown/design_docs/DOC_README.md
++++ b/ports/ringdown/design_docs/DOC_README.md
+@@ -87,6 +87,12 @@
+ checks finish with 12 OS-accepted messages, quiet reconnect/holds, five observed
+ single changes and one unresolved Note-triggered no-change. Windows/X11 focus
+ interaction remains unqualified.
++The [Previous comparison](2026-09-02_client_surface_plan.md#previous-source-diagnostics-2026-10-21)
++adds opt-in bounded input/writer/BLE diagnostics to investigate that observation
++through the same writer. Its 38 focused cases and new eight-message native
++comparison pass with identical output bytes. Real P, sparse Note and held Note
++each return Rev to Off in the traced guitar comparison (12 accepted messages,
++zero disconnects). The earlier miss did not reproduce and remains unexplained.
+ 
+ Earlier device session: [Q-PC MIDI pedal experiment](../validation/midi-pedal_20261017/README.md)
+ records the first successful software-pedal trigger: a direct CoreBluetooth
+--- a/design_docs/2026-05-15_midi_design.md
++++ b/design_docs/2026-05-15_midi_design.md
+@@ -86,6 +86,13 @@
+ changes; one earlier Note-triggered no-change remains unresolved. Reconnect
+ disarms and does not replay held input. Windows/X11 focus and native runtime on
+ other platforms remain unqualified; OS acceptance is not device acknowledgement.
++The [Previous-source investigation](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#previous-source-diagnostics-2026-10-21)
++adds a default-off bounded journal, exposed by existing desktop JSONL Status,
++for exact writer bytes/timing and BLE subscription/notification evidence. It
++changes neither admission nor release/retry semantics. Its 38 focused cases and
++eight-message independent native comparison pass; real P, sparse Note and held
++Note each return Rev to Off with the same CC66 bytes in the traced guitar trial.
++The earlier miss did not reproduce and its cause remains unproven.
+ 
+ ---
+ 
+--- a/design_docs/DOC_README.md
++++ b/design_docs/DOC_README.md
+@@ -354,6 +354,11 @@
+   and 48 focused cases/35 exact native messages across saved/Clear/reassign
+   reopenings. Separate real-key/guitar checks finish with quiet reconnect/holds,
+   five observed single changes and one unresolved Note-triggered no-change.
++  The [Previous comparison](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#previous-source-diagnostics-2026-10-21)
++  adds opt-in bounded input/writer/BLE history and a separate keyboard-versus-Note
++  investigation through the existing owner: 38 focused cases, eight exact native
++  receiver messages, and owner-confirmed real P/sparse Note/held Note Rev → Off.
++  The historical miss did not reproduce and remains unexplained.
+ - [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — Current visual
+   reference; its product/navigation framing is superseded by Stage/Set/Tools.
+ - [2026-05-21_arpeggio_lens_plan.md](2026-05-21_arpeggio_lens_plan.md) — Partial
+@@ -442,6 +447,10 @@
+   identify material, realize it on an instrument, arrange it into
+   progressions/exercises/practice sets, and feed app shells that rehearse
+   it.
++- **A MIDI send trace is not a guitar acknowledgement**: keep opt-in bounded
++  input/admission/writer/transport observations separate from owner-observed
++  effect changes. Later success does not explain an earlier unobserved action;
++  diagnostics must not add hot-path file I/O, retries or a second writer.
+ - **Pure core, thin shell**: `crates/woodshedding` must remain pure data
+   + math — no I/O, no UI, no audio. It may model the portable operations
+   required for woodshedding, but app-specific rehearsal UI, persistence,
+--- /dev/null
++++ b/crates/woodshed-instrument/src/midi/diagnostics.rs
+@@ -0,0 +1,164 @@
++//! Opt-in observations, never an admission, writer, retry or device acknowledgement.
++//! Set INSTRUMENT_MIDI_DIAGNOSTICS=1 before startup. No hot-path file I/O.
++use serde::Serialize;
++use std::{
++    collections::VecDeque,
++    sync::{Mutex, OnceLock},
++    time::Instant,
++};
++
++const CAPACITY: usize = 512;
++
++#[derive(Clone, Debug, Serialize)]
++pub struct Event {
++    pub sequence: u64,
++    pub elapsed_micros: u64,
++    pub stage: &'static str,
++    pub request_id: Option<u64>,
++    pub revision: Option<u64>,
++    pub generation: Option<u64>,
++    pub bytes: Vec<u8>,
++    pub detail: String,
++    pub truncated: bool,
++}
++
++#[derive(Clone, Debug, Serialize)]
++pub struct Snapshot {
++    pub capacity: usize,
++    pub overwritten: u64,
++    pub events: Vec<Event>,
++}
++
++struct Journal {
++    start: Instant,
++    sequence: u64,
++    events: VecDeque<Event>,
++    capacity: usize,
++    overwritten: u64,
++}
++impl Journal {
++    fn new(capacity: usize) -> Self {
++        Self {
++            start: Instant::now(),
++            sequence: 0,
++            events: VecDeque::new(),
++            capacity,
++            overwritten: 0,
++        }
++    }
++    fn push(&mut self, mut event: Event) {
++        self.sequence = self.sequence.saturating_add(1);
++        event.sequence = self.sequence;
++        event.elapsed_micros = self.start.elapsed().as_micros().min(u64::MAX as u128) as u64;
++        event.truncated = event.bytes.len() > 16 || event.detail.chars().count() > 256;
++        event.bytes.truncate(16);
++        event.detail = event.detail.chars().take(256).collect();
++        if self.events.len() == self.capacity {
++            self.events.pop_front();
++            self.overwritten = self.overwritten.saturating_add(1);
++        }
++        self.events.push_back(event);
++    }
++    fn snapshot(&self) -> Snapshot {
++        Snapshot {
++            capacity: self.capacity,
++            overwritten: self.overwritten,
++            events: self.events.iter().cloned().collect(),
++        }
++    }
++}
++
++fn journal() -> Option<&'static Mutex<Journal>> {
++    static JOURNAL: OnceLock<Option<Mutex<Journal>>> = OnceLock::new();
++    JOURNAL
++        .get_or_init(|| {
++            (std::env::var("INSTRUMENT_MIDI_DIAGNOSTICS").as_deref() == Ok("1"))
++                .then(|| Mutex::new(Journal::new(CAPACITY)))
++        })
++        .as_ref()
++}
++
++/// Disabled by default; lazy detail construction and bounded memory when enabled.
++/// Losing diagnostic access cannot change the musical operation's outcome.
++pub fn record(
++    stage: &'static str,
++    request_id: Option<u64>,
++    revision: Option<u64>,
++    generation: Option<u64>,
++    bytes: &[u8],
++    detail: impl FnOnce() -> String,
++) {
++    if let Some(journal) = journal() {
++        let detail = detail();
++        if let Ok(mut journal) = journal.lock() {
++            journal.push(Event {
++                sequence: 0,
++                elapsed_micros: 0,
++                stage,
++                request_id,
++                revision,
++                generation,
++                bytes: bytes.to_vec(),
++                detail,
++                truncated: false,
++            });
++        }
++    }
++}
++
++/// Read-only copy; it never drains, changes arming or alters a send deadline.
++pub fn snapshot() -> Option<Snapshot> {
++    journal()?.lock().ok().map(|journal| journal.snapshot())
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    fn event() -> Event {
++        Event {
++            sequence: 0,
++            elapsed_micros: 0,
++            stage: "test",
++            request_id: Some(4),
++            revision: Some(2),
++            generation: Some(7),
++            bytes: vec![0xb0, 66, 127],
++            detail: "observed, not acknowledged".into(),
++            truncated: false,
++        }
++    }
++    #[test]
++    fn journal_is_bounded_sequenced_and_snapshot_does_not_drain() {
++        let mut journal = Journal::new(2);
++        for _ in 0..4 {
++            journal.push(event());
++        }
++        let snapshot = journal.snapshot();
++        assert_eq!(snapshot.overwritten, 2);
++        assert_eq!(
++            snapshot
++                .events
++                .iter()
++                .map(|e| e.sequence)
++                .collect::<Vec<_>>(),
++            [3, 4]
++        );
++        assert_eq!(journal.snapshot().events.len(), 2);
++        assert_eq!(snapshot.events[1].bytes, [0xb0, 66, 127]);
++        assert!(!snapshot.events[1].truncated);
++        assert!(snapshot.events[0].elapsed_micros <= snapshot.events[1].elapsed_micros);
++    }
++    #[test]
++    fn oversized_diagnostics_are_explicitly_truncated_without_utf8_damage() {
++        let mut journal = Journal::new(1);
++        let mut entry = event();
++        entry.bytes = vec![0; 32];
++        entry.detail = "é".repeat(300);
++        journal.push(entry);
++        let snapshot = journal.snapshot();
++        let entry = &snapshot.events[0];
++        assert!(entry.truncated);
++        assert_eq!(entry.bytes.len(), 16);
++        assert_eq!(entry.detail.chars().count(), 256);
++    }
++}

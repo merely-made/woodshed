@@ -1,0 +1,35 @@
+ringdown probe — Phase 1 control run
+everything below is predicted from static analysis until it answers
+
+[1/4] scanning 10s...
+      looking for service eb65b6c6-fec3-4ed1-a6fc-9eff755a4160
+      or a device named like the System Menu's BT ID (e.g. H2-SE614)
+      found instrument: [name/address redacted]
+      ADVERTISEMENT CONFIRMED — the service UUID is in the advertisement
+
+[2/4] connecting to #0...
+      reply timeout set to 5s
+      connected; GATT surface has both expected characteristics
+      write length in use: 497 (assumed, not negotiated)
+      transport: Llt2 (chosen from the firmware versions in the banner)
+
+[3/4] reading the version banner (a GATT read, before any RPC)...
+      BANNER CONFIRMED
+      audio DSP (STM): 2.4.0
+      connectivity (ESP): 1.3.0
+
+[4/4] GetStatus — the control run...
+      *** THE PROTOCOL MAP IS CONFIRMED AGAINST HARDWARE ***
+
+      device          H2S
+      cpu id          [redacted]
+      battery         100%
+      free space      7.63 GB (99.3% free)
+      firmware ESP    V1.3.0
+      firmware STM    V2.4.0
+
+      cpu id and STM version are what a firmware assessment would start from.
+
+disconnected.
+
+STDERR:

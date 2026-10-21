@@ -193,6 +193,21 @@ mod tests {
     }
 
     #[test]
+    fn project_bundle_retains_edited_pack_through_cbor() {
+        let mut r = Recorder::default();
+        let selection = audio_packs::files::load(std::path::Path::new("bundled"), None).unwrap();
+        let selection = selection.edit(&selection.revision(), audio_packs::PackEdit::MoveHit {track:0,from:0,to:1}).unwrap();
+        let midi = selection.midi().unwrap().bytes;
+        let pcm = selection.render_bar(48_000).unwrap();
+        r.audio_pack = Some(selection);
+        let bundle = r.project_bundle();
+        let reopened = hocket_model::ProjectBundle::from_bytes(&bundle.to_bytes().unwrap()).unwrap();
+        let pack = reopened.audio_pack.unwrap();
+        assert_eq!(midi, pack.midi().unwrap().bytes);
+        assert_eq!(pcm, pack.render_bar(48_000).unwrap());
+    }
+
+    #[test]
     fn delayed_capture_keeps_admitted_track_clock_and_sample_rate() {
         let (mut r, mut a, token) = armed();
         let id = r.session.tracks[0].id;
@@ -777,6 +792,8 @@ struct Ticket {
 }
 
 pub struct Recorder {
+    /// Local pack draft saved by the project owner. Added PCM uses normal history.
+    pub audio_pack: Option<audio_packs::PackSelection>,
     pub session: Session,
     pub history: History,
     pub store: InMemoryStore,
@@ -840,6 +857,7 @@ impl Recorder {
             needs_replay: false,
             retire_voices: false,
             imported_replay: Vec::new(),
+            audio_pack: None,
         }
     }
 
@@ -862,6 +880,7 @@ impl Recorder {
         self.ticket = None;
         self.actions.clear();
         self.imported_replay.clear();
+        self.audio_pack = None;
         self.session = session;
         self.history = history;
         self.store = store;
@@ -982,6 +1001,12 @@ impl Recorder {
                 }
             }
         }
+    }
+
+    pub fn project_bundle(&self) -> hocket_model::ProjectBundle {
+        let mut bundle = hocket_model::ProjectBundle::new(self.session.clone(), self.history.clone());
+        bundle.audio_pack = self.audio_pack.clone();
+        bundle
     }
 
     /// Host-decoded clipboard/import PCM enters through the same model owner.

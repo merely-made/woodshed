@@ -1,0 +1,26 @@
+    Checking itoa v1.0.18
+    Checking memchr v2.8.3
+    Checking midly v0.5.3
+    Checking hound v3.5.1
+    Checking audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
+error[E0463]: can't find crate for `core`
+  |
+  = note: the `wasm32-unknown-unknown` target may not be installed
+  = help: consider downloading the target with `rustup target add wasm32-unknown-unknown`
+
+For more information about this error, try `rustc --explain E0463`.
+error[E0463]: can't find crate for `std`
+  |
+  = note: the `wasm32-unknown-unknown` target may not be installed
+  = help: consider downloading the target with `rustup target add wasm32-unknown-unknown`
+
+error: could not compile `itoa` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `hound` (lib) due to 1 previous error
+error: could not compile `audio-primitives` (lib) due to 1 previous error
+error: could not compile `memchr` (lib) due to 1 previous error
+error: could not compile `midly` (lib) due to 1 previous error

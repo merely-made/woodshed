@@ -1,0 +1,309 @@
+{
+  "before": {
+    "audio": {
+      "click_enabled": false,
+      "drum_output_observed": false,
+      "playing_voices": 1
+    },
+    "engine": {
+      "assigned": 0,
+      "bar_phase": 74496,
+      "input_frames": 0,
+      "meter_active": false,
+      "queued": 1,
+      "sample_rate": 48000
+    },
+    "output_trace": [
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 1668,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 38912,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 3122,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 13568,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 4590,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 83200,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 6139,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 61952,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 7598,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 35584,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 9060,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 10240,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 10530,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 80896,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 11990,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 54528,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 13449,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 29184,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 14910,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 2816,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 16389,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 73472,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      }
+    ]
+  },
+  "after": {
+    "audio": {
+      "click_enabled": false,
+      "drum_output_observed": true,
+      "playing_voices": 1
+    },
+    "engine": {
+      "assigned": 1,
+      "bar_phase": 49364,
+      "input_frames": 0,
+      "meter_active": false,
+      "queued": 0,
+      "sample_rate": 48000
+    },
+    "output_trace": [
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 1694,
+        "engine": {
+          "assigned": 0,
+          "bar_phase": 74456,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 1,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 3172,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 50684,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 4638,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 26912,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 6125,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 4164,
+          "input_frames": 0,
+          "meter_active": true,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": true,
+        "elapsed_ms": 7605,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 74820,
+          "input_frames": 0,
+          "meter_active": true,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": true,
+        "elapsed_ms": 9083,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 51048,
+          "input_frames": 0,
+          "meter_active": true,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": true,
+        "elapsed_ms": 10551,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 27276,
+          "input_frames": 0,
+          "meter_active": true,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": true,
+        "elapsed_ms": 12019,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 3504,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 13486,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 74160,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      },
+      {
+        "click": false,
+        "controller_meter": false,
+        "elapsed_ms": 14948,
+        "engine": {
+          "assigned": 1,
+          "bar_phase": 49364,
+          "input_frames": 0,
+          "meter_active": false,
+          "queued": 0,
+          "sample_rate": 48000
+        }
+      }
+    ]
+  }
+}

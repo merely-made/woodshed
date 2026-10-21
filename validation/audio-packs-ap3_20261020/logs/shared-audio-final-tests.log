@@ -1,0 +1,396 @@
+warning: skipping duplicate package `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/proofs/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/proofs/Cargo.toml
+
+warning: skipping duplicate package `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/muniment/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/eidetic/muniment/Cargo.toml
+
+warning: skipping duplicate package `sprigging v0.2.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/sprigging/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/sprigging/Cargo.toml
+
+warning: skipping duplicate package `cambium v0.3.3 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/cambium/Cargo.toml
+
+warning: skipping duplicate package `chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/chartulary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/eidetic/chartulary/Cargo.toml
+
+warning: skipping duplicate package `mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/surface-api/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/surface-api/Cargo.toml
+
+warning: skipping duplicate package `workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/workbench/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/workbench/Cargo.toml
+
+warning: skipping duplicate package `meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/meristem/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/meristem/Cargo.toml
+
+warning: skipping duplicate package `cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/cambium/cambium-winit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/cambium/cambium-winit/Cargo.toml
+
+warning: skipping duplicate package `mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/domain/apparatus/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/domain/apparatus/Cargo.toml
+
+warning: skipping duplicate package `armillary v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/armillary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/armillary/Cargo.toml
+
+warning: skipping duplicate package `mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/graph/graph-kernel/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/graph/graph-kernel/Cargo.toml
+
+warning: skipping duplicate package `numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/conatus/numen/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/conatus/numen/Cargo.toml
+
+warning: skipping duplicate package `document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/document-canvas/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/inker/document-canvas/Cargo.toml
+
+warning: skipping duplicate package `inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/inker/inker/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/inker/inker/Cargo.toml
+
+warning: skipping duplicate package `mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/document-lanes/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/document-lanes/Cargo.toml
+
+warning: skipping duplicate package `pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/system/pandect/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/system/pandect/Cargo.toml
+
+warning: skipping duplicate package `illume v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/nematic/illume/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/nematic/illume/Cargo.toml
+
+warning: skipping duplicate package `mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/distillery/alembic/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/distillery/alembic/Cargo.toml
+
+warning: skipping duplicate package `eidetic v0.0.2 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/eidetic-core/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/eidetic/eidetic-core/Cargo.toml
+
+warning: skipping duplicate package `incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/incipit/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/d1a200b/crates/incipit/Cargo.toml
+
+warning: patch `mere-proofs v0.1.0 (https://github.com/merely-made/mere.git?branch=main#d1a200b1)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#cba46d85)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling audio-packs v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-packs)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:473:14
+    |
+473 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+473 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+473 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:521:14
+    |
+521 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+521 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+521 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:542:14
+    |
+542 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+542 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+542 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-audio)
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling audio-pattern v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-pattern)
+warning: `woodshed-audio` (lib test) generated 4 warnings (4 duplicates)
+    Finished `test` profile [unoptimized] target(s) in 3.92s
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/deps/audio_packs-353588cfe406ea78)
+
+running 13 tests
+test samples::tests::bank_build_sound_leaves_empty_when_absent ... ok
+test samples::tests::rehydrate_pattern_skips_click_tracks ... ok
+test samples::tests::bank_build_sound_attaches_when_present ... ok
+test samples::tests::rehydrate_pattern_attaches_buffers_for_known_ids ... ok
+test samples::tests::bank_insert_and_get_round_trip ... ok
+test samples::tests::load_wav_round_trip ... ok
+test samples::tests::load_wav_downmixes_stereo_to_mono ... ok
+test tests::positional_edits_refuse_stale_occupied_or_invalid_targets ... ok
+test tests::exports_refuse_existing_destination_without_modification ... ok
+test tests::invalid_retained_drafts_tempo_gain_and_render_bounds_are_refused ... ok
+test tests::corrupted_assets_and_missing_files_are_refused ... ok
+test tests::installed_edited_rhythm_survives_uninstallation_bit_exact ... ok
+test tests::inactive_edits_survive_switch_and_serialization ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running unittests src/bin/audio-pack.rs (/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/deps/audio_pack-1607163c647a0d49)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/deps/audio_pattern-658419cfe41d3a89)
+
+running 35 tests
+test render::mixer_tests::process_buffer_silent_when_stopped ... ok
+test sequencer::tests::metronome_dense_fires_every_step ... ok
+test sequencer::tests::metronome_downbeat_is_accented ... ok
+test sequencer::tests::metronome_only_beats_fire ... ok
+test sequencer::tests::step_duration_120_bpm_quarter_is_500ms ... ok
+test sequencer::tests::step_duration_60_bpm_eighth_is_500ms ... ok
+test sequencer::tests::steps_per_bar_3_4_thirty_second_is_24 ... ok
+test sequencer::tests::steps_per_bar_4_4_quarter_is_4 ... ok
+test render::mixer_tests::process_buffer_voices_decay_to_silence ... ok
+test sequencer::tests::steps_per_bar_4_4_sixteenth_is_16 ... ok
+test sequencer::tests::pattern_round_trips_through_serde_json ... ok
+test sequencer::tests::steps_per_bar_6_8_eighth_triplet_is_18 ... ok
+test sequencer::tests::subdivision_constants_are_correct ... ok
+test sequencer::tests::time_signature_defaults_to_4_4 ... ok
+test sound::tests::accent_uses_different_frequency ... ok
+test sound::tests::click_envelope_decays ... ok
+test sound::tests::click_render_returns_none_past_duration ... ok
+test sound::tests::click_amplitude_is_bounded ... ok
+test sound::tests::click_render_starts_nonzero ... ok
+test sound::tests::gain_scales_and_clamps ... ok
+test sound::tests::normalize_brings_peak_to_target ... ok
+test sound::tests::normalize_silent_is_noop ... ok
+test sound::tests::reverse_flips_order ... ok
+test sound::tests::sample_accent_boosts_gain ... ok
+test sound::tests::sample_pitch_up_consumes_buffer_faster ... ok
+test sound::tests::sample_returns_none_past_end ... ok
+test sound::tests::sample_round_trip_via_serde_preserves_id_and_drops_buffer ... ok
+test sound::tests::sample_with_buffer_renders_value_at_start ... ok
+test sound::tests::sample_without_buffer_renders_none ... ok
+test render::mixer_tests::bpm_increase_speeds_up_without_glitch ... ok
+test render::mixer_tests::bpm_change_does_not_pause_playback ... ok
+test render::mixer_tests::process_buffer_produces_audio_when_playing ... ok
+test render::mixer_tests::process_buffer_advances_step_at_predicted_time ... ok
+test render::mixer_tests::process_buffer_subdivision_scales_step_count ... ok
+test render::mixer_tests::process_buffer_step_count_scales_with_bpm ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/deps/woodshed_audio-f6ba1392bf1ff938)
+
+running 160 tests
+test backing_phrase::tests::seconds_strum_and_render_work_are_bounded_before_render ... ok
+test calibration::tests::session_with_total_clicks_clamps_minimum ... ok
+test calibration::tests::session_starts_idle ... ok
+test capture_feed::tests::rate_admission_requires_actual_matching_configuration ... ok
+test capture_feed::tests::overflow_is_reported_without_evicting_accepted_frames ... ok
+test capture_feed::tests::discard_consumes_only_pending_samples ... ok
+test capture_feed::tests::disable_and_clear_exclude_previous_generations ... ok
+test chord_audio::tests::empty_pitches_yields_empty_buffer ... ok
+test calibration::tests::rejected_click_commands_cannot_start_or_complete_calibration ... ok
+test calibration::tests::fake_click_drives_start_completion_and_retry_without_engine ... ok
+test chord_audio::tests::phrase_keeps_before_and_after_groups_ordered_with_a_silent_gap ... ok
+test backing_phrase::tests::phrase_rejects_render_work_before_pcm_allocation ... ok
+test input::tests::fundamental_bias_does_not_promote_when_no_sub_multiple_present ... ok
+test input::tests::fundamental_bias_does_not_demote_when_consensus_is_already_lowest ... ok
+test input::tests::builder_prepares_capture_from_explicit_source_configuration ... ok
+test input::tests::capture_consumer_is_transferred_once_and_rate_precedes_callbacks ... ok
+test input::tests::fundamental_bias_promotes_lower_entry_when_consensus_is_3rd_harmonic ... ok
+test input::tests::pitch_analyzer_handle_starts_with_empty_snapshot ... ok
+test input::tests::pitch_analyzer_set_enabled_round_trips ... ok
+test input::tests::rms_of_constant_one_is_one ... ok
+test input::tests::pitch_analyzer_disabled_does_not_publish_a_detection ... ok
+test input::tests::rms_of_silence_is_zero ... ok
+test input::tests::rms_of_pure_sine_is_one_over_sqrt_two ... ok
+test input::tests::same_pitch_is_not_a_harmonic ... ok
+test input::tests::quiet_playing_passes_threshold ... ok
+test input::tests::second_harmonic_is_recognized ... ok
+test input::tests::smoothing_returns_consensus_when_majority_agrees ... ok
+test backing_phrase::tests::phrase_rejects_unbounded_and_nonfinite_inputs_before_render ... ok
+test input::tests::smoothing_returns_none_when_history_too_short ... ok
+test input::tests::smoothing_returns_none_when_no_majority ... ok
+test input::tests::silence_threshold_gates_very_quiet_signal ... ok
+test input::tests::smoothing_uses_most_recent_matching_detection ... ok
+test input::tests::sub_octave_is_recognized ... ok
+test input::tests::third_harmonic_is_recognized ... ok
+test input::tests::unrelated_pitches_are_not_harmonics ... ok
+test looper::tests::arm_record_off_at_bar_boundary ... ok
+test looper::tests::arm_record_takes_effect_at_bar_boundary ... ok
+test looper::tests::new_looper_is_quiet_and_empty ... ok
+test looper::tests::fresh_record_after_clear_starts_silent ... ok
+test looper::tests::overdub_sums_into_existing_buffer ... ok
+test looper::tests::playback_gain_scales_output ... ok
+test looper::tests::playback_loops_at_bar_boundary ... ok
+test looper::tests::recording_captures_input_at_cursor ... ok
+test looper::tests::playback_returns_recorded_audio ... ok
+test looper::tests::soft_clip_compresses_large_signals_below_unity ... ok
+test chord_audio::tests::cancellable_renderer_preserves_pcm_and_abandons_work_between_chunks ... ok
+test looper::tests::soft_clip_passes_small_signals_unchanged ... ok
+test midi::tests::clock_sync_120_bpm_from_simulated_ticks ... ok
+test midi::tests::clock_sync_reset_clears_state ... ok
+test midi::tests::clock_sync_60_bpm_from_simulated_ticks ... ok
+test midi::tests::clock_sync_returns_none_without_ticks ... ok
+test midi::tests::parse_control_change ... ok
+test chord_audio::tests::render_produces_correct_buffer_length ... ok
+test midi::tests::parse_explicit_note_off ... ok
+test midi::tests::parse_note_on_velocity_zero_is_note_off ... ok
+test midi::tests::parse_note_on_with_velocity ... ok
+test midi::tests::parse_realtime_messages ... ok
+test midi::tests::parse_unknown_returns_none ... ok
+test offline::song_export::tests::absolute_clock_and_phrase_failures_never_touch_the_export_writer ... ok
+test backing_phrase::tests::seconds_onsets_keep_exact_frames_across_tempo_and_reject_frame_collisions ... ok
+test offline::song_export::tests::malformed_snapshots_and_preparation_bounds_refuse_before_touching_the_writer ... ok
+test offline::song_export::tests::phrase_rejections_leave_export_writer_untouched ... ok
+test chord_audio::tests::release_tail_decays_toward_zero ... ok
+test offline::song_export::tests::buffered_sink_failure_is_reported_at_finalization ... ok
+test chord_audio::tests::block_chord_has_simultaneous_onset ... ok
+test chord_audio::tests::strum_starts_first_note_at_zero ... ok
+test offline::song_export::tests::float_wav_preserves_completed_pcm_default_gain_and_one_cycle_hard_end ... ok
+test chord_audio::tests::output_stays_within_unit_range ... ok
+test offline::song_export::tests::frozen_export_does_not_advance_or_change_an_existing_live_runtime ... ok
+test backing_phrase::tests::fractional_rate_strum_rounding_preserves_the_integer_voice_onset ... ok
+test onset::tests::analyzer_disabled_by_default_emits_nothing ... ok
+test onset::tests::threshold_round_trips_through_handle ... ok
+test offline::song_export::tests::backing_click_is_honored_without_a_count_in_or_appended_tail ... ok
+test offline::song_export::tests::unrelated_pending_transport_commands_do_not_change_the_complete_export_cycle ... ok
+test output_runtime::tests::a_one_step_click_pattern_retriggers_every_cycle ... ok
+test output_runtime::tests::arbitrary_finite_tempo_edits_preserve_beat_phase_and_loop_changes_do_not_restart ... ok
+test chord_audio::tests::more_pitches_does_not_clip_louder_than_one_pitch ... ok
+test output_runtime::tests::atomic_calibration_start_uses_one_slot_and_full_queue_rejection_preserves_pattern ... ok
+test output_runtime::tests::backing_phrase_render_work_is_bounded_across_the_whole_snapshot ... ok
+test offline::tests::render_pattern_produces_audio_not_silence ... ok
+test offline::tests::render_pattern_returns_correct_buffer_length ... ok
+test offline::tests::export_wav_writes_readable_file ... ok
+test output_runtime::tests::backing_click_is_independent_of_calibration_pattern ... ok
+test output_runtime::tests::both_metronome_transport_edges_cancel_previews_but_tempo_only_preserves_them ... ok
+test output_runtime::tests::boundary_operations_remain_bounded_after_command_acknowledgement ... ok
+test output_runtime::tests::cancellation_keeps_accepted_boundary_operations_in_fifo_order ... ok
+test output_runtime::tests::cancelled_previews_do_not_publish_and_preview_voices_are_bounded ... ok
+test offline::tests::render_pattern_clicks_are_localized_to_beats ... ok
+test output_runtime::tests::clearing_pcm_preserves_play_accepted_before_the_first_graph_block ... ok
+test output_runtime::tests::count_in_waits_one_measure_and_muted_click_skips_it ... ok
+test output_runtime::tests::clear_session_stops_an_audible_program_at_the_next_callback_boundary ... ok
+test output_runtime::tests::fixed_strum_offset_must_fit_before_the_card_ends ... ok
+test output_runtime::tests::canonical_metronome_uses_rounded_denominator_beats_without_boundary_drift ... ok
+test output_runtime::tests::clear_session_silences_and_retires_program_even_when_observer_queue_is_full ... ok
+test output_runtime::tests::exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_output ... ok
+test output_runtime::tests::explicit_next_completes_a_timed_card_once_and_starts_the_next_card ... ok
+test output_runtime::tests::focused_card_auto_repeats_but_explicit_next_leaves_it_even_while_paused ... ok
+test output_runtime::tests::invalid_absolute_timing_preserves_admitted_backing_and_capture_refuses_it ... ok
+test output_runtime::tests::idle_attached_capture_does_not_block_program_after_take_is_retired ... ok
+test output_runtime::tests::full_transition_queue_freezes_clock_and_resume_preserves_every_card_event ... ok
+test output_runtime::tests::fractional_tempo_count_in_uses_one_canonical_measure ... ok
+test output_runtime::tests::manual_program_keeps_started_span_open_until_explicit_advance ... ok
+test output_runtime::tests::nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_valid_work ... ok
+test output_runtime::tests::invalid_phrase_replacement_preserves_the_accepted_runtime ... ok
+test output_runtime::tests::overflow_before_boundary_is_ignored_but_during_take_invalidates ... ok
+test output_runtime::tests::prepared_chord_matches_legacy_strum_and_warm_cache_reuses_pcm ... ok
+test output_runtime::tests::prepared_integer_cycle_tone_meets_frequency_error_and_has_bounded_loop_seam ... ok
+test output_runtime::tests::pause_freezes_program_position_and_pcm_then_resume_continues_the_same_event ... ok
+test output_runtime::tests::phrase_mixes_with_capture_and_click_across_loop_boundaries_without_callback_allocation ... ok
+test output_runtime::tests::production_graph_is_silent_stopped_and_has_one_device_clock ... ok
+test output_runtime::tests::primed_input_survives_in_block_seek_arm_and_replays_without_edit ... ok
+test output_runtime::tests::seconds_phrase_work_is_bounded_across_segments ... ok
+test output_runtime::tests::repeated_paused_navigation_never_starts_an_unheard_card_before_resume ... ok
+test output_runtime::tests::seconds_domain_card_and_gate_keep_fixed_device_frame_duration_across_tempo_edit ... ok
+test output_runtime::tests::selected_capture_tests::selected_arm_waits_through_count_in_and_boundary_without_recording_lead_input ... ok
+test output_runtime::tests::selected_capture_tests::existing_follow_capture_still_crosses_nonuniform_song_segments_with_either_seek_flag ... ok
+test output_runtime::tests::absolute_backing_duration_and_phrase_are_block_size_invariant_without_callback_allocation ... ok
+test output_runtime::tests::selected_capture_tests::selected_stop_cancels_unstarted_arm_and_preserves_follow_and_legacy_guards ... ok
+test output_runtime::tests::stale_epoch_commands_cannot_pause_or_retime_a_replacement_program ... ok
+test output_runtime::tests::selected_capture_tests::selection_and_stale_seek_or_rewind_cannot_redirect_a_reserved_or_active_take ... ok
+test output_runtime::tests::starvation_invalidates_and_reset_does_not_publish_old_owner_pcm ... ok
+test output_runtime::tests::selected_capture_tests::selected_invalid_input_never_publishes_partial_pcm_or_changes_other_takes ... ok
+test output_runtime::tests::terminal_one_shot_cancels_an_unreachable_arm ... ok
+test output_runtime::tests::tempo_edit_preserves_fractional_metronome_phase ... ok
+test output_runtime::tests::unrepresentable_future_tone_becomes_a_per_card_refusal_sentinel ... ok
+test song::clock_tests::absolute_duration_is_exact_and_transient_with_independent_beat_grid ... ok
+test song::clock_tests::bars_and_legacy_none_keep_their_exact_arithmetic ... ok
+test song::clock_tests::canonical_clock_honors_meter_and_rounds_per_beat_before_measures ... ok
+test output_runtime::tests::unsupported_rates_and_aggregate_resources_are_rejected_before_publication ... ok
+test song::clock_tests::legacy_playback_keeps_whole_block_rounding_and_old_beat_and_lead ... ok
+test song::clock_tests::new_or_cleared_bars_do_not_inherit_legacy_capture_timing ... ok
+test song::tests::add_bar_appends_and_inherits_settings ... ok
+test song::tests::attach_and_detach_audio_buffer ... ok
+test song::tests::bar_length_multiplies_duration ... ok
+test output_runtime::tests::variable_tempo_blocks_and_one_shot_clear_the_entire_tail ... ok
+test song::tests::copy_paste_round_trips ... ok
+test song::tests::bar_length_serde_default_for_legacy ... ok
+test song::tests::insert_bar_shifts_cursor_right_when_needed ... ok
+test song::tests::loop_wraps_at_end ... ok
+test song::tests::move_bar_repositions_without_changing_count ... ok
+test song::tests::multi_measure_bar_advances_after_full_block ... ok
+test song::tests::new_song_has_one_default_bar ... ok
+test song::tests::one_shot_stops_at_end ... ok
+test song::tests::pending_changes_apply_at_bar_boundary ... ok
+test song::tests::pending_clear_drops_unapplied ... ok
+test song::tests::remove_bar_adjusts_cursor ... ok
+test song::tests::remove_last_remaining_bar_errors ... ok
+test song::tests::song_serializes_to_json ... ok
+test output_runtime::tests::selected_capture_tests::selected_bars_and_seconds_repeat_replace_or_overdub_only_the_original_target ... ok
+test backing_phrase::tests::phrase_is_bounded_to_exact_bar_frames_and_validates_ordered_onsets ... ok
+test input::tests::pitch_analyzer_enabled_detects_a4_from_sine ... ok
+test output_runtime::tests::grouped_strum_offsets_share_one_onset_and_all_256_legacy_pitch_slots_are_supported ... ok
+test output_runtime::tests::legacy_capture_plays_exactly_but_clear_is_required_before_new_recording ... ok
+test output_runtime::tests::prepared_pack_swap_and_backing_steps_render_without_callback_allocation ... ok
+test offline::song_export::tests::wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_boundaries ... ok
+test offline::song_export::tests::absolute_seconds_and_bars_mix_with_exact_wav_live_parity_at_both_rates ... ok
+test offline::song_export::tests::retained_pack_backing_exports_exactly_and_obeys_song_click_switch ... ok
+test output_runtime::tests::fractional_and_eighth_meter_count_in_and_capture_end_on_exact_frames_without_allocating ... ok
+test offline::song_export::tests::phrase_export_matches_live_pcm_at_48k_and_441k_with_variable_meters_and_lengths ... ok
+test midi::tests::list_ports_does_not_panic ... ok
+
+test result: ok. 160 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.65s
+
+   Doc-tests audio_packs
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests audio_pattern
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests woodshed_audio
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

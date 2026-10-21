@@ -1,0 +1,17 @@
+RESULT ok
+captured 01_selected_no_messages
+waited 26 frames
+waited 6 frames
+captured 02_stopped
+waited 26 frames
+waited 11 frames
+captured 03_reconnect_requires_arm
+waited 6 frames
+waited 5 frames
+captured 04_closed
+capture 01_selected_no_messages 2360x1960 digest=60d856db53e07f5c file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/clock-r3/run/01_selected_no_messages.png
+capture 02_stopped 2360x1960 digest=0043891928a4ad84 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/clock-r3/run/02_stopped.png
+capture 03_reconnect_requires_arm 2360x1960 digest=ae200c1dc671b145 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/clock-r3/run/03_reconnect_requires_arm.png
+capture 04_closed 2360x1960 digest=b9f0218618500639 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/clock-r3/run/04_closed.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 181 frames, 184 redraws, 3 unpresented redraws

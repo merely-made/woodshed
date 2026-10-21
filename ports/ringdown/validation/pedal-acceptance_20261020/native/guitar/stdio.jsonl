@@ -1,0 +1,15 @@
+{"bindings":{"effect_next":{"channel":1,"enabled":true,"kind":"control-change","number":67,"release":0,"value":127},"effect_previous":{"channel":1,"enabled":true,"kind":"control-change","number":66,"release":0,"value":127}},"id":"g-status-1","output":{"accepted":0,"attempted":0,"connected":"Bluetooth MIDI pedal (no encryption)","disconnects":0,"error":null,"failed":0,"generation":1,"last_failure":null,"pedal_failure":null,"ready":true,"rearm_required":false,"revision":1,"status":"MIDI receiver subscribed (unencrypted compatibility) · OS accepted 0; refused/uncertain 0"},"pedal":null}
+{"id":"g-next-1","pedal":{"accepted_messages":2,"action":"effect-next","detail":"All messages accepted by OS; musical result unobserved","id":1,"outcome":"accepted"}}
+{"bindings":{"effect_next":{"channel":1,"enabled":true,"kind":"control-change","number":67,"release":0,"value":127},"effect_previous":{"channel":1,"enabled":true,"kind":"control-change","number":66,"release":0,"value":127}},"id":"g-status-2","output":{"accepted":2,"attempted":2,"connected":"Bluetooth MIDI pedal (no encryption)","disconnects":0,"error":null,"failed":0,"generation":1,"last_failure":null,"pedal_failure":null,"ready":true,"rearm_required":false,"revision":1,"status":"MIDI receiver subscribed (unencrypted compatibility) · OS accepted 2; refused/uncertain 0"},"pedal":{"accepted_messages":2,"action":"effect-next","detail":"All messages accepted by OS; musical result unobserved","id":1,"outcome":"accepted"}}
+{"id":"g-previous-1","pedal":{"accepted_messages":2,"action":"effect-previous","detail":"All messages accepted by OS; musical result unobserved","id":2,"outcome":"accepted"}}
+{"bindings":{"effect_next":{"channel":1,"enabled":true,"kind":"control-change","number":67,"release":0,"value":127},"effect_previous":{"channel":1,"enabled":true,"kind":"control-change","number":66,"release":0,"value":127}},"id":"g-off-status","output":{"accepted":4,"attempted":4,"connected":"Bluetooth MIDI pedal (no encryption)","disconnects":0,"error":null,"failed":0,"generation":1,"last_failure":null,"pedal_failure":null,"ready":true,"rearm_required":false,"revision":1,"status":"MIDI receiver subscribed (unencrypted compatibility) · OS accepted 4; refused/uncertain 0"},"pedal":{"accepted_messages":2,"action":"effect-previous","detail":"All messages accepted by OS; musical result unobserved","id":2,"outcome":"accepted"}}
+woodshed-genet: waited 43 frames
+woodshed-genet: captured 01_advertising
+woodshed-genet: waited 187 frames
+woodshed-genet: captured 02_subscribed
+woodshed-genet: waited 2054 frames
+woodshed-genet: captured 04_disconnected
+woodshed-genet: waited 288 frames
+woodshed-genet: waited 7 frames
+woodshed-genet: captured 05_reconnected_no_replay
+woodshed-genet: RESULT ok (2621 frames, 4 captures)

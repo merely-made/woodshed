@@ -11,6 +11,7 @@ rust-version = "1.97.1"
 publish = false
 
 [dependencies]
+audio-packs.workspace = true
 hocket-model.workspace = true
 hocket-project.workspace = true
 audio-primitives.workspace = true

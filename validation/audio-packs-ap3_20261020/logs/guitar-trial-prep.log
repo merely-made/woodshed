@@ -1,0 +1,5 @@
+     Locking 1 package to highest compatible version
+   Compiling ap3-midi-trial-prep v0.0.0 (/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/guitar-midi-prep)
+    Finished `dev` profile [unoptimized] target(s) in 0.37s
+     Running `/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/ap3-midi-trial-prep /Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final-before.mid /Users/markik/Code/repos/woodshed/validation/audio-packs-ap3_20261020/artifacts/11-Ringdown_AP3.mid`
+Prepared SMF0 / PPQ480 / channel10, 5 bars, 60 notes, no tempo meta (guitar tempo controls playback).

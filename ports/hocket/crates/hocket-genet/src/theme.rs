@@ -84,6 +84,17 @@ pub fn sheet() -> String {
 .export-step:hover { color: var(--text); background-color: var(--raised); }
 .export-bars { color: var(--text-dim); font-size: 10px; min-width: 38px; text-align: center; }
 
+/* Kit editing shares the window with the recorder. Keep its transport reachable
+   while a large installed kit scrolls within its own retained region. */
+.audio-pack-panel { padding:12px 22px; flex-shrink:0; max-height:44%; min-height:0;
+    overflow-y:auto; border-top:1px solid var(--line-soft); box-sizing:border-box; }
+.audio-pack-panel h3 { margin:0 0 6px; font-size:14px; }
+.audio-pack-panel p { margin:6px 0; font-size:12px; color:var(--text-dim); }
+.audio-pack-panel .transport { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:6px 0; }
+.audio-pack-panel .t-btn { display:flex; align-items:center; padding:4px 8px; border:1px solid var(--line);
+    border-radius:5px; background-color:var(--surface); color:var(--text); font-size:12px; }
+.audio-pack-panel .t-btn:hover { background-color:var(--raised); }
+
 /* middle row: rail + table. `min-height: 0` overrides flexbox's default
    `min-height: auto` so `.body` can shrink below its lanes' min-content and
    `.table` scrolls internally instead of shoving `.transport` off-screen. */

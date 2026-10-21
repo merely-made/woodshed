@@ -1,0 +1,149 @@
+{
+  "recorded_at_utc": "2026-10-20T20:18:59.207353+00:00",
+  "status": "implemented locally; bounded composition/host compilation and release-build evidence",
+  "head": "0452bcea1ff227924631ac190744e2bd9282fba5",
+  "checkout": "pre-existing dirty AP1/AP2/AP3 and audit work preserved; no commit or publication",
+  "owners": {
+    "midi": "woodshed-instrument::midi, re-exported by woodshed-audio",
+    "private_session": "ringdown-ble::instrument",
+    "patterns_and_files": "existing audio-pattern/audio-packs",
+    "entrypoint": "existing ringdown-probe"
+  },
+  "source_moves": [
+    {
+      "from": "crates/woodshed-audio/src/midi.rs",
+      "to": "crates/woodshed-instrument/src/midi.rs",
+      "byte_identical_to_HEAD": true,
+      "sha256": "9f2474b8dd0cfa7ae24dc7b1f62ac7685168930113b4718322b1409a5143fee9"
+    },
+    {
+      "from": "crates/woodshed-instrument/src/lib.rs",
+      "to": "ports/ringdown/crates/ringdown-ble/src/instrument.rs",
+      "changes": "module paths/imports and module description; no intentional behavior changes"
+    },
+    {
+      "from": "crates/woodshed-instrument/src/session.rs",
+      "to": "ports/ringdown/crates/ringdown-ble/src/instrument/session.rs",
+      "changes": "parent-module import and doc link"
+    },
+    {
+      "from": "crates/woodshed-instrument/examples/metronome_link.rs",
+      "to": "ports/ringdown/crates/ringdown-ble/examples/metronome_link.rs",
+      "changes": "crate import and run command"
+    },
+    {
+      "from": "ports/ringdown/apps/probe/src/main.rs",
+      "to": "ports/ringdown/apps/probe/src/rpc.rs",
+      "changes": "RPC-only module, explicit --rpc argument prefix; shared file export and PacketLogger dispatch moved to feature-gated entry point"
+    }
+  ],
+  "graphs": [
+    {
+      "file": "midi-linux.json",
+      "package": "ringdown-probe",
+      "target": "x86_64-unknown-linux-gnu",
+      "requested_features": null,
+      "default_features": true,
+      "packages": 42,
+      "private_dependencies": []
+    },
+    {
+      "file": "midi-macos.json",
+      "package": "ringdown-probe",
+      "target": "x86_64-apple-darwin",
+      "requested_features": null,
+      "default_features": true,
+      "packages": 45,
+      "private_dependencies": []
+    },
+    {
+      "file": "midi-windows.json",
+      "package": "ringdown-probe",
+      "target": "x86_64-pc-windows-msvc",
+      "requested_features": null,
+      "default_features": true,
+      "packages": 55,
+      "private_dependencies": []
+    },
+    {
+      "file": "offline-linux.json",
+      "package": "ringdown-probe",
+      "target": "x86_64-unknown-linux-gnu",
+      "requested_features": null,
+      "default_features": false,
+      "packages": 34,
+      "private_dependencies": []
+    },
+    {
+      "file": "offline-macos.json",
+      "package": "ringdown-probe",
+      "target": "x86_64-apple-darwin",
+      "requested_features": null,
+      "default_features": false,
+      "packages": 34,
+      "private_dependencies": []
+    },
+    {
+      "file": "offline-windows.json",
+      "package": "ringdown-probe",
+      "target": "x86_64-pc-windows-msvc",
+      "requested_features": null,
+      "default_features": false,
+      "packages": 34,
+      "private_dependencies": []
+    },
+    {
+      "file": "woodshed-audio-macos.json",
+      "package": "woodshed-audio",
+      "target": "x86_64-apple-darwin",
+      "requested_features": null,
+      "default_features": true,
+      "packages": 168,
+      "private_dependencies": []
+    }
+  ],
+  "builds": "builds.json",
+  "artifacts": [
+    {
+      "profile": "midi",
+      "path": "/Users/markik/Code/testing/woodshed/ringdown-standards_20261020/midi/ringdown-probe",
+      "sha256": "567ef7eab9d6d42a12a2c971bf30a6ecad367cbe963d6c9ad79dd7ef4554c0d3",
+      "bytes": 1696744,
+      "compiler_inputs": "midi-compiler-inputs.d",
+      "private_compiler_inputs": [],
+      "target": "x86_64-apple-darwin",
+      "executed": false
+    },
+    {
+      "profile": "offline",
+      "path": "/Users/markik/Code/testing/woodshed/ringdown-standards_20261020/offline/ringdown-probe",
+      "sha256": "83ae2f63f60d4d37e276f8c4a2b11c39773e9ec45ec7736cc19867ed613e460f",
+      "bytes": 1662864,
+      "compiler_inputs": "offline-compiler-inputs.d",
+      "private_compiler_inputs": [],
+      "target": "x86_64-apple-darwin",
+      "executed": false
+    }
+  ],
+  "checks": {
+    "host_compilation": true,
+    "private_examples_executed": false,
+    "binaries_executed": false,
+    "tests_run": false,
+    "guitar_access": false,
+    "external_messages_sent": 0,
+    "new_section_links_verified": 6,
+    "diff_check_passed": true,
+    "source_hashes": 54,
+    "midi_move_byte_identical": true
+  },
+  "limits": [
+    "Windows/Linux are dependency-graph qualification, not cross-compilation or execution.",
+    "No production BLE-MIDI peripheral implemented; only existing OS MIDI ports are exposed.",
+    "No live Beats playback command or guitar file installation added.",
+    "Whole repository/source package still contains private research modules; binary exclusion is the qualified boundary.",
+    "No legal/license clearance or resolution of the earlier APK/codec/PacketLogger/standards questions.",
+    "Root woodshed-audio compilation retains four pre-existing deprecated fetch_update warnings; no change made to that unrelated runtime."
+  ],
+  "source_hashes": "source-hashes.json"
+}
