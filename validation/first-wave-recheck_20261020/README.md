@@ -4,7 +4,17 @@ Rechecked on October 20, 2026, from freshly fetched `origin/main`
 `9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac`. The isolated branch is
 `codex/audit-first-wave-20261020`. The primary checkout and unrelated work were
 preserved. Two concrete corrections are committed locally at `22c9900` (A1)
-and `6a65a4d` (Q1). No push is authorized or performed in this wave.
+and `6a65a4d` (Q1). No push was authorized or performed during the October 20
+implementation wave.
+
+October 21 publication: the user authorized delivery and scoped cleanup. Source
+`cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6` is published directly to `main` after
+refreshing the remote, verifying all retained source/evidence hashes, and
+repeating 50 focused A1/Q1 checks. The remote base had not advanced, so delivery
+was a fast-forward with no integration conflicts. A fresh independent remote
+clone verifies the source and retained evidence. Exact publication processes and
+limits are in [publication.json](publication.json). These reruns repeat existing
+cases and are not added to the original distinct-case total below.
 
 The parallel lanes first traced current production callers rather than treating
 the frozen audit as a current defect list. One Hocket owner covered A2, A3 and

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-publication-doc-links-20261021",
+  "command": [
+    "/Users/markik/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "validation/link-model-p6_20261016/doc_link_audit.py",
+    "--repo",
+    ".",
+    "--base",
+    "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
+  ],
+  "started_at": "2026-10-21T19:08:41.940694Z",
+  "ended_at": "2026-10-21T19:08:43.357568Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "log": "/Users/markik/Code/testing/woodshed-first-wave-publication-20261021/publication-doc-links.log",
+  "log_sha256": "81c36a1aacf1056d75268925346185bc1c1c65c1537c732896d6bfcbeec2519e",
+  "source_commit": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
+}
