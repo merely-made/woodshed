@@ -1,0 +1,113 @@
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop" test) generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.93s
+     Running unittests src/main.rs (target/build/debug/deps/redshank_desktop-0147183782a77c28)
+
+running 91 tests
+test appearance_tests::native_appearance_scenarios_use_the_existing_shared_lane ... ok
+test diagnostics::tests::capture_cut_is_admission_context_without_consuming_a_reader ... ok
+test diagnostics::tests::capture_cut_rejects_conflicts_and_unbounded_identity ... ok
+test diagnostics::tests::disabled_retention_reports_gaps_without_payloads ... ok
+test diagnostics::tests::independent_receipt_and_inspection_readers_report_loss ... ok
+test diagnostics_worker_tests::coalesced_dirty_revisions_do_not_invent_save_requests_or_action_causes ... ok
+test diagnostics_worker_tests::real_io_failure_and_retry_share_logical_revision_but_keep_distinct_requests ... ok
+test diagnostics_worker_tests::real_worker_success_precedes_durable_ack_and_causal_links_follow_owners ... ok
+test recovery::tests::recovery_copy_completion_cannot_discard_a_newer_model_revision ... ok
+test recovery::tests::recovery_copy_contains_draft_and_newer_editor_text_prevents_exit ... ok
+test recovery::tests::recovery_discard_does_not_admit_queued_media_removals_or_forged_save_replies ... ok
+test scenario::tests::a_seed_change_moves_the_scope_class_and_persists ... ok
+test scenario::tests::an_unknown_label_is_a_miss_the_loop_can_fail_on ... ok
+test scenario::tests::applying_a_label_emits_a_real_command ... ok
+test scenario::tests::observed_reports_one_event_per_transition ... ok
+test scenario::tests::position_events_are_bucketed_to_seconds ... ok
+test scenario::tests::product_observation_retains_each_transition_once ... ok
+test scenario::tests::quiescence_waits_for_host_work_and_readback_but_not_playing ... ok
+test scenario::tests::subscribing_uses_the_shipping_command_and_preserves_the_url ... ok
+test scenario::tests::the_command_vocabulary_parses_every_documented_label ... ok
+test scenario::tests::the_key_verb_knows_the_documented_shortcuts ... ok
+test selected_clip::tests::private_missing_and_changed_voice_are_refused_without_output ... ok
+test selected_clip::tests::selected_voice_process_fixture ... ignored
+test appearance_tests::export_guards_preserve_choice_future_generations_and_open_media ... ok
+test session::tests::a_completed_item_reopened_at_zero_stays_completed ... ok
+test session::tests::aligned_open_rechecks_current_threshold_and_original_target ... ok
+test session::tests::aligned_open_requires_a_ready_current_selection_and_destination_digest ... ok
+test session::tests::aligned_open_returns_a_separate_point_without_rewriting_original_span ... ok
+test session::tests::aligned_open_revalidates_saved_evidence ... ok
+test session::tests::all_notes_filter_lists_every_item_s_annotations ... ok
+test session::tests::approximate_note_seeking_still_requires_a_ready_current_load ... ok
+test session::tests::capture_fingerprint_is_optional_when_disabled_missing_or_insufficient ... ok
+test session::tests::capture_fingerprint_uses_source_anchor_after_reaction_and_excludes_decode_future ... ok
+test session::tests::day_labels_read_from_the_host_clock ... ok
+test session::tests::ending_playback_reports_completed_and_closes_the_listening_session ... ok
+test session::tests::item_rows_and_feed_rows_carry_the_library_facts_the_design_shows ... ok
+test session::tests::item_rows_carry_the_cached_receipt_and_the_pin ... ok
+test session::tests::note_seeking_requires_identity_unless_approximate_is_explicit ... ok
+test session::tests::projection_attaches_preview_state_only_to_the_matching_voice_note ... ok
+test session::tests::projection_keeps_each_notes_identity_and_frozen_target_separate ... ok
+test session::tests::projection_retains_voice_note_duration ... ok
+test session::tests::queue_reorder_and_projection_preserve_playback_and_draft_anchor ... ok
+test session::tests::refused_note_probe_preserves_saved_progress_when_selecting_away ... ok
+test session::tests::resume_completed_from_saved_reopens_where_the_listener_stopped ... ok
+test session::tests::selecting_a_completed_item_restarts_instead_of_seeking_to_end ... ok
+test session::tests::selection_change_rejects_old_clock_and_receipt ... ok
+test session::tests::streaming_notes_need_a_strong_validator_for_exact_seeking ... ok
+test session::tests::the_open_listening_session_is_projected_as_active ... ok
+test session::tests::the_reaction_offset_moves_the_anchor_back_and_keeps_the_press ... ok
+test selected_clip::tests::selected_voice_uses_owned_blob_and_preserves_millisecond_target ... ok
+test tests::a_new_note_action_cancels_a_pending_open_even_when_it_fails ... ok
+test tests::a_refused_replacement_note_keeps_the_accepted_seeks_progress_ack ... ok
+test tests::a_capture_ducks_the_output_and_the_lift_follows_the_last_open_capture ... ok
+test tests::canceled_and_failed_recovery_copy_keep_session_nonwriting ... ok
+test tests::capture_projection_fails_on_an_owner_borrow_conflict ... ok
+test tests::capture_projection_is_opt_in_and_uses_a_fixed_fresh_run ... ok
+test tests::capture_projection_seals_redacted_ui_and_actual_persistence ... ok
+test tests::changing_tabs_or_volume_keeps_the_pending_note_open ... ok
+test tests::cache_object_is_removed_only_after_its_model_revision_is_durable ... ok
+test tests::closing_cancels_a_pending_note_open ... ok
+test tests::editing_an_old_text_note_preserves_its_target_without_loading_audio ... ok
+test tests::failed_restoration_never_dispatches_writes_after_edits_or_retry ... ok
+test tests::failed_transport_commands_do_not_release_the_note_progress_hold ... ok
+test tests::feed_failures_are_separate_from_import_diagnostics_and_clear_on_success ... ok
+test tests::failed_save_preserves_dirty_revision_and_can_retry ... ok
+test appearance_tests::product_copy_preserves_endorsed_wetland_and_dirty_close_can_be_cancelled ... ok
+test tests::later_mutation_remains_dirty_after_earlier_save_ack ... ok
+test tests::note_draft_survives_failed_save_and_later_typing_survives_success ... ok
+test tests::recovery_close_keeps_work_and_transient_notices_until_explicit_discard ... ok
+test tests::removing_selected_library_item_clears_player_queue_and_editor ... ok
+test tests::revision_zero_recovery_draft_is_retained_by_keep_working ... ok
+test tests::scenario_wait_covers_asynchronous_product_work ... ok
+test tests::standalone_feed_fetch_retains_final_parser_facts ... ok
+test tests::successful_recovery_copy_reopens_and_closes_without_original_durability ... ok
+test tests::feed_fetch_accepts_large_rss_and_enforces_the_configured_stream_limit ... ok
+test tests::transcript_fetch_rejects_oversized_response ... ok
+test tests::transcript_fetch_survives_offline_store_reopen ... ok
+test tests::transcript_response_belongs_to_requested_item_after_selection_changes ... ok
+test tests::successful_restoration_admits_empty_or_older_valid_state ... ok
+test tests::transcript_response_cannot_restore_deleted_then_readded_item ... ok
+test tests::unchanged_recovery_closes_without_attempting_persistence ... ok
+test tests::voice_blob_is_removed_only_after_note_deletion_is_durable ... ok
+test voice::tests::voice_blob_is_content_addressed_and_path_confined ... ok
+test appearance_tests::saving_same_identity_keeps_applied_snapshot_until_explicit_apply ... ok
+test appearance_tests::native_listener_feed_route_survives_application_chrome ... ok
+test appearance_tests::corrupt_stores_and_failed_choice_writes_preserve_owned_bytes_and_presentation ... ok
+test tests::host_routes_typing_to_editor_and_command_enter_to_note_save ... ok
+test appearance_tests::selected_span_note_menu_and_export_stay_inside_the_window ... ok
+test appearance_tests::editor_native_text_route_does_not_edit_listener_note_or_queue_commands ... ok
+test appearance_tests::narrow_editor_keeps_parent_actions_visible_and_saves_through_shared_controls ... ok
+test appearance_tests::four_modes_authored_roles_and_reopen_preserve_listener_state_and_queue ... ok
+
+test result: ok. 90 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.94s
+

@@ -1,0 +1,303 @@
+{
+  "committed_source": "421ea8e5bd865175a9b54a0d59e886cb857bb431",
+  "qualification_recorded_head": "01c4b3af61d17af69779619d2bd7fd77bf06abdc",
+  "qualification_state": "Final uncommitted source bytes were committed without further source edits. The source file manifest binds that committed tree to the checked bytes. Earlier superseded attempts are retained and not counted.",
+  "files": [
+    {
+      "path": ".cargo/config.toml",
+      "sha256": "af174c7f9ac5ae8e0536a8fd2fa0251e680f23edab3ffbb5098aa914a48cdb01"
+    },
+    {
+      "path": "crates/timed-text/Cargo.toml",
+      "sha256": "a5f55cb56e5710bb14ac866104092c0e5f7fbfb5d2950c2fa3ab0aa7d2e6d541"
+    },
+    {
+      "path": "crates/timed-text/src/lib.rs",
+      "sha256": "ce1662770bdb87938a886f1149809453f160663b01c46ecb6c7e0eac8eb2f988"
+    },
+    {
+      "path": "ports/redshank/Cargo.lock",
+      "sha256": "3d6728ac8a01e6fe6bc1071a9d8875dd9333c78f833ed45e26c2ce7569d99f07"
+    },
+    {
+      "path": "ports/redshank/Cargo.toml",
+      "sha256": "ad81bd9ff1006ecfe8a51b7a5351c6d2f912a4d09e0db5c46cdee831b73bd895"
+    },
+    {
+      "path": "ports/redshank/cache/Cargo.toml",
+      "sha256": "c9f8cf539cfdee3bbc7c134eb4a4ac5450f63a731801fe2a2ad303dfea23ee7e"
+    },
+    {
+      "path": "ports/redshank/cache/src/lib.rs",
+      "sha256": "8f68ce7a15aab394eed7e8e46dca4ebd10329c05b00a3b3e4001108c0bc265f3"
+    },
+    {
+      "path": "ports/redshank/desktop/Cargo.toml",
+      "sha256": "7e1844899006f6e8b6dff3ab0dc16cab21ef8bf143b94c11c8c86c94463c7b4a"
+    },
+    {
+      "path": "ports/redshank/desktop/src/appearance.rs",
+      "sha256": "cc28f23c92137b101db830be0229ccabb2be862bee8f546e0c3f58649abd0248"
+    },
+    {
+      "path": "ports/redshank/desktop/src/appearance_host.rs",
+      "sha256": "ba991fdcf1dbfd921a3b02e2e38b1834e1e1e89abfb3d0bdbaf7b1cc3ed1bdb9"
+    },
+    {
+      "path": "ports/redshank/desktop/src/appearance_tests.rs",
+      "sha256": "2d467874639ef1534058be582c25d212252f987f1f982ab9cc71fa3fa20b48f6"
+    },
+    {
+      "path": "ports/redshank/desktop/src/appearance_view.rs",
+      "sha256": "b9ceb03797579e32bf83fed124c4da6f551aee39c5e9832a9e40d2816d1f3404"
+    },
+    {
+      "path": "ports/redshank/desktop/src/diagnostics.rs",
+      "sha256": "0f932e1040a0e6593809c87de0abe5213029ef870170a9ab544ea53da6ece448"
+    },
+    {
+      "path": "ports/redshank/desktop/src/diagnostics_worker_tests.rs",
+      "sha256": "fd6543c1d4ec9ebfe20c46bbcf8f25c6dda98a588d3820c9c52a5dda4749d7ca"
+    },
+    {
+      "path": "ports/redshank/desktop/src/headed_receipt.rs",
+      "sha256": "4acd46ea48027febd254901fd15aa787c681e257d195941d22b8ed4a8e9e151f"
+    },
+    {
+      "path": "ports/redshank/desktop/src/main.rs",
+      "sha256": "d40d2fe5c8cbb8cfa0495c8ecb1d092025da32ef8cfcee342f4513b2636ce960"
+    },
+    {
+      "path": "ports/redshank/desktop/src/recovery.rs",
+      "sha256": "e536eb4e6c62bccbb36d063941b068c9d6018bd1273ca880b7701c9f1a40763b"
+    },
+    {
+      "path": "ports/redshank/desktop/src/scenario.rs",
+      "sha256": "cce6de79ce2d83c01213535c8688bc119a6a5cd0908be1e217853dd38f9bae1e"
+    },
+    {
+      "path": "ports/redshank/desktop/src/selected_clip.rs",
+      "sha256": "c34d24c6fd9c68ed35783546d5f1f54c9afe1a9696d3dfe8f8fbb79f2df809e8"
+    },
+    {
+      "path": "ports/redshank/desktop/src/session.rs",
+      "sha256": "c3d40458a9825d1bf4495dad850aa85e126e8be442cc440b06d7c2a8e9d5e896"
+    },
+    {
+      "path": "ports/redshank/desktop/src/voice.rs",
+      "sha256": "45d926b6b1adc2183498cc800157c0f5b3335979feb53ddfcc5960d3b333469e"
+    },
+    {
+      "path": "ports/redshank/feed/Cargo.toml",
+      "sha256": "c7bb88da9572380d11a881b0c10fa9e2b1a82d18d31b564d4e2e021c3613a3f8"
+    },
+    {
+      "path": "ports/redshank/feed/src/lib.rs",
+      "sha256": "9e08e97bf1604860d4f33c2b81cd668f50e1e8d356d10f63a1ce6ef514cb6119"
+    },
+    {
+      "path": "ports/redshank/model/Cargo.toml",
+      "sha256": "63900b444de11e47fdc8fd67d7f408e9fefb64a5f632679342e58ab4e31f535c"
+    },
+    {
+      "path": "ports/redshank/model/examples/selected_export.rs",
+      "sha256": "6ca361b99e16dbc7f1868d9cdd6256afe6636c526638d94a8e5a706f0f64d4bb"
+    },
+    {
+      "path": "ports/redshank/model/src/lib.rs",
+      "sha256": "944eaef775dae2371b337260bbd60001a1d7d440ffaa6b7e368cee49c31ea7ea"
+    },
+    {
+      "path": "ports/redshank/model/src/selected_export.rs",
+      "sha256": "f53aa506e33cdab95b16378169752d4f9408cc9ecb9928dff038720605652412"
+    },
+    {
+      "path": "ports/redshank/model/tests/alignment.rs",
+      "sha256": "a6b309c4713051c981be4a883761df782ec73ad046f567751de63a6da1b6d078"
+    },
+    {
+      "path": "ports/redshank/model/tests/representation_identity.rs",
+      "sha256": "ee21175532465654d96c664091da1453be6a6d23feebd0a1e9b3f2965426a6bb"
+    },
+    {
+      "path": "ports/redshank/model/tests/w3c_conformance.rs",
+      "sha256": "be82b9eb836f018679d3e3268a351efaa7969c554c74fb8e5c604d34c3b84c74"
+    },
+    {
+      "path": "ports/redshank/playback/Cargo.toml",
+      "sha256": "c9a71cf072fb82e398664161ab608c7e55e67cc9bd2e2fe4b5e2798201faf147"
+    },
+    {
+      "path": "ports/redshank/playback/src/alignment.rs",
+      "sha256": "9901e975e16c92f1433a2768bb878418c38f3fa51ed0c39b772c46f10d79bfd8"
+    },
+    {
+      "path": "ports/redshank/playback/src/backend.rs",
+      "sha256": "434d4071eabd22629fc5c57c6963f566b1cd568a6dee67b194821733b6cafba8"
+    },
+    {
+      "path": "ports/redshank/playback/src/controller_adapter.rs",
+      "sha256": "1dd09b3a019e736604cf1ede3ca16297bf8d10a1741c4547d8fb97d01ab5098c"
+    },
+    {
+      "path": "ports/redshank/playback/src/http_range.rs",
+      "sha256": "85039fa223206f8f61daf8ceb3d9c30023266c11149ef10ce2246efa7e5a07f6"
+    },
+    {
+      "path": "ports/redshank/playback/src/lib.rs",
+      "sha256": "32741674ba0322bdf7feb75b1f5877d18fdf7e12a0c96f6dfdc0a3d276ee9d6e"
+    },
+    {
+      "path": "ports/redshank/playback/src/output.rs",
+      "sha256": "9ab867c3884cb32610e42f4b02e0596b39536d45f1560aff955e4e69744fdb69"
+    },
+    {
+      "path": "ports/redshank/playback/src/worker.rs",
+      "sha256": "12148fa07e11e6bd990f4ff1cddb14e9cd9ca9a691b7f10d2c8b4afb94018140"
+    },
+    {
+      "path": "ports/redshank/playback/tests/ipc_consumer.rs",
+      "sha256": "395a33eff0b6a63d6c9a21180764b5d0dd4a7a06da1a0f3179f3c1f880e9feb2"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/Cargo.lock",
+      "sha256": "65f2002c876e686ba9339d0c41408a192edf55c70d540a925577958d199ffa43"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/Cargo.toml",
+      "sha256": "0e605cf38f4a66d7f939e6c1fa999fc92dd74b83346769b3cb16feaf729f667d"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/common/Cargo.toml",
+      "sha256": "8c89db173e3ae4e95c5bae7e03cc4a3d84828e9b1e592fc88bef511362c82121"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/common/src/lib.rs",
+      "sha256": "c735a97ff6e6815c3e079aa42a500af41c359b6ac8bd9baa7eca40ee5ab1234d"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/gstreamer-path/Cargo.toml",
+      "sha256": "abd7a3259fdd157a207b6868f115b86077bb5458f2b88864b7d15a2482e73b14"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/gstreamer-path/src/main.rs",
+      "sha256": "1992fdfe742c84a497422bcfd817bf556cfac872af64a0aec3d25ca2eb214b4f"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/symphonia-path/Cargo.toml",
+      "sha256": "b13628f102681318ea84703a2e5746aa3ddbb1715fea65ef4483d7ec1cd477aa"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/symphonia-path/src/http_range.rs",
+      "sha256": "67bbbae38354f0fb38f9c6ab58a4bd8897bb63f286ab38ced362167322fea0a7"
+    },
+    {
+      "path": "ports/redshank/spikes/playback/symphonia-path/src/main.rs",
+      "sha256": "2d373431e9d0e63f87a333069e2c3915edb7c67b30e4351e9e64d1b636430398"
+    },
+    {
+      "path": "ports/redshank/storage/Cargo.toml",
+      "sha256": "444c53af6113a13e1522ee251080303e5ed344a61445f959fa0d7913105676ff"
+    },
+    {
+      "path": "ports/redshank/storage/src/lib.rs",
+      "sha256": "14cdfaba67e133dbfac08c680703f873b7f0b6d16f4cc0f3af55a695ec9d5835"
+    },
+    {
+      "path": "ports/redshank/storage/src/recovery.rs",
+      "sha256": "1ebc69f89ce6625d24328a354c483c559f1b78f65e9fa0997232e14790f16246"
+    },
+    {
+      "path": "ports/redshank/surfaces/Cargo.toml",
+      "sha256": "34d4ed84c461a945a8e84d935480064d3bb65751158c879de9edbfc5cc4100c1"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/dock.rs",
+      "sha256": "b0f614a760b0aac6d7724456b0bce8c596ff3741951823caaa2aaa34286d19f2"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/lib.rs",
+      "sha256": "dbbc78cd553eea557143f34c6a50dc78122f92dd00ce9247638f296df062026e"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/rail.rs",
+      "sha256": "ae3c5a3a637c5f86421b8796f362f36e408ff539a3ebf218d6d6228ee14f6bb5"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/redshank.css",
+      "sha256": "f3d72be0def255c7be3c4e57d97c03e182d46c053a467eadc8bcda7592130d4f"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/card.rs",
+      "sha256": "a92ee13c410f3262502ee56e945b0bda18b13830e90f1245fcfc64d1411a2610"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/chain.rs",
+      "sha256": "c2d52b3cfd7cfde8f357eeeeb7118ee9282d1064582d78017ccbfbac41bdcf72"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/geometry.rs",
+      "sha256": "33552e3874f1bb95c204542807b0e89ab5462db3664751999c2240cd9a65855a"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/mod.rs",
+      "sha256": "40e38f840709b1eede70acf8d026e7e12936df1bfcd14d7439d439ea514eda1e"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/orrery.rs",
+      "sha256": "b83333efeb784963927ec3c8baca21b1da5f2c80f2af7e13890e400d9e7fa41a"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/scene/trail.rs",
+      "sha256": "70dba4d0737fc4bc0a7ae55ff682fddfb4e39c618fbc85c223c054c4298f3f69"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/shell.rs",
+      "sha256": "46233e3de7ec5bebbe850460557b8a486d5fe75a11fab3f201b68834e1d9cbbc"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/surface_api.rs",
+      "sha256": "3ebaf278310b80fe92c85df279a7ef8d08553fa40d2f6b904aee35128a8f9f1b"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/controls.rs",
+      "sha256": "09cbbc09601d0ac4fb791886eca04d84b60804041f7d1c785ef7cc596dd949ff"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/library.rs",
+      "sha256": "5e0ffc540269a64dad0378c164a6ec200bd6b2c2bdb905e274a604cdc4fb1da5"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/listen.rs",
+      "sha256": "a56eec69cf2232a527c8fa8b856c465ed143886e59986ec80e2686ed15035c4e"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/mod.rs",
+      "sha256": "3ba01be8c07f8b09842257ce5cb95a6d465a2331872431f70d8e5a4315d13cf0"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/notes.rs",
+      "sha256": "b43ae84c60f8b7cb7cc3b05f6ebf0d203c2ec118a93cf845f86e6bdfd196f85a"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/rows.rs",
+      "sha256": "f3a4216c6a976743a16b7f96564908e4e918b44bec71d0f98c42e94251764d61"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/tabs/settings.rs",
+      "sha256": "fd99f81eb71295f47dcc7c2db813cac3d5bf796f2faa37916d7ebecb0da85bef"
+    },
+    {
+      "path": "ports/redshank/surfaces/src/theme.rs",
+      "sha256": "42e67ee4418d2644474fc42eb2c1c6b085f6802b679dee423b70047630054857"
+    },
+    {
+      "path": "ports/redshank/web/Cargo.toml",
+      "sha256": "ea646b299602e01ff55c623196969e98e4111d4bf569eb7dbcca12590172c58e"
+    },
+    {
+      "path": "ports/redshank/web/src/lib.rs",
+      "sha256": "7e0e522a4f39f8ba74cab7099fd2b94af8969c21f20b52c2a3e21243e0aa90a3"
+    }
+  ]
+}

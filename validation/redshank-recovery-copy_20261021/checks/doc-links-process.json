@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-doc-links-20261021",
+  "command": [
+    "/Users/markik/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "validation/link-model-p6_20261016/doc_link_audit.py",
+    "--repo",
+    ".",
+    "--base",
+    "01c4b3af61d17af69779619d2bd7fd77bf06abdc"
+  ],
+  "started_at": "2026-10-21T23:36:52.641981Z",
+  "ended_at": "2026-10-21T23:36:54.170554Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-20261021/checks/doc-links.log",
+  "log_sha256": "8cbdd7b9e5aaad5607b7de545c4da508878d0bd2bdde4e9dc6936a425be370f5",
+  "source_commit": "421ea8e5bd865175a9b54a0d59e886cb857bb431"
+}

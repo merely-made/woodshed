@@ -1,0 +1,155 @@
+{
+  "date": "2026-10-21",
+  "archived_count": 11,
+  "archived": [
+    {
+      "id": "01a1466b-953c-7150-9745-52c558ae8933",
+      "title": "Woodshed full-source audit: ringdown",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-953c-7150-9745-52c558ae8933\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-ffc7-7373-9580-221dba86036e",
+      "title": "Woodshed full-source audit: tooling\u2026",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-ffc7-7373-9580-221dba86036e\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-d053-72e3-90b4-7d0d6b99f4b6",
+      "title": "Woodshed full-source audit: validation\u2026",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-d053-72e3-90b4-7d0d6b99f4b6\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-9871-71a3-8880-a04b4b401b0c",
+      "title": "Woodshed full-source audit: theory",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-9871-71a3-8880-a04b4b401b0c\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-9023-7492-9861-91fe588b8af6",
+      "title": "Woodshed full-source audit: redshank",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-9023-7492-9861-91fe588b8af6\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-8bd4-7781-ae17-2e99de448e09",
+      "title": "Woodshed full-source audit: hocket",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-8bd4-7781-ae17-2e99de448e09\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-8855-7b32-b6e3-981d66b1be02",
+      "title": "Woodshed full-source audit: shared",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-8855-7b32-b6e3-981d66b1be02\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-84ac-7af1-8058-4effdd713fac",
+      "title": "Woodshed full-source audit: audio",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-84ac-7af1-8058-4effdd713fac\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-8148-73a0-8448-dce8fec15d17",
+      "title": "Woodshed full-source audit: host",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-8148-73a0-8448-dce8fec15d17\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466b-7ba8-7190-9090-60dc2a6eb1ca",
+      "title": "Woodshed full-source audit: views",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466b-7ba8-7190-9090-60dc2a6eb1ca\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    },
+    {
+      "id": "01a1466e-c998-75e1-9600-50a1e984de25",
+      "title": "Woodshed audit: uncommitted Stage timing\u2026",
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"threadId\":\"01a1466e-c998-75e1-9600-50a1e984de25\",\"archived\":true}"
+          }
+        ],
+        "isError": false
+      }
+    }
+  ],
+  "preserved": [
+    "01a1466b-78b2-7a70-8f39-95973fa6c6cf",
+    "01a13e25-f19f-7bc2-927f-d67393eda1f3",
+    "01a14181-bec3-7042-b812-77738b0f7e95"
+  ],
+  "scope": "Completed related audit partitions only; P5a implementation owner unchanged."
+}

@@ -1,0 +1,42 @@
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop" test) generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.77s
+     Running unittests src/main.rs (target/build/debug/deps/redshank_desktop-0147183782a77c28)
+
+running 5 tests
+test recovery::tests::invalid_span_draft_refuses_copy_without_consuming_the_editor ... ok
+test recovery::tests::recovery_copy_completion_cannot_discard_a_newer_model_revision ... ok
+test recovery::tests::recovery_discard_does_not_admit_queued_media_removals_or_forged_save_replies ... ok
+test recovery::tests::recovery_copy_contains_draft_and_newer_editor_text_prevents_exit ... ok
+test recovery::tests::native_close_hook_and_recovery_controls_keep_the_appearance_barrier ... FAILED
+
+failures:
+
+---- recovery::tests::native_close_hook_and_recovery_controls_keep_the_appearance_barrier stdout ----
+Listener recovery failed: NoValidGeneration { paths: ["/var/folders/96/dck6q6xj3490x43zr8fb8pbm0000gp/T/.tmpRJToZe/state-00000000000000000001.json"] }
+
+thread 'recovery::tests::native_close_hook_and_recovery_controls_keep_the_appearance_barrier' (53705709) panicked at desktop/src/recovery.rs:61:13:
+assertion failed: host.click_on(&taproot::Selector::role("button").with_attr("aria-label",
+            "Keep Working"))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    recovery::tests::native_close_hook_and_recovery_controls_keep_the_appearance_barrier
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 88 filtered out; finished in 0.29s
+
+error: test failed, to rerun pass `-p redshank-desktop --bin redshank-desktop`

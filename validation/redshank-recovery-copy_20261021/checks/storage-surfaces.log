@@ -1,0 +1,455 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling libc v0.2.189
+   Compiling cfg-if v1.0.4
+   Compiling bitflags v2.13.1
+   Compiling autocfg v1.5.1
+   Compiling syn v3.0.4
+   Compiling syn v2.0.119
+   Compiling libm v0.2.16
+   Compiling objc2-encode v4.1.0
+   Compiling foldhash v0.2.0
+   Compiling objc2 v0.6.4
+   Compiling cfg_aliases v0.2.2
+   Compiling stable_deref_trait v1.2.1
+   Compiling num-traits v0.2.19
+   Compiling once_cell v1.21.4
+   Compiling synstructure v0.13.2
+   Compiling serde_derive v1.0.229
+   Compiling log v0.4.34
+   Compiling objc2-core-foundation v0.3.2
+   Compiling parking_lot_core v0.9.12
+   Compiling equivalent v1.0.2
+   Compiling zerofrom-derive v0.1.7
+   Compiling bytemuck_derive v1.12.0
+   Compiling scopeguard v1.2.0
+   Compiling arrayvec v0.7.8
+   Compiling zerofrom v0.1.8
+   Compiling lock_api v0.4.14
+   Compiling yoke-derive v0.8.2
+   Compiling bytemuck v1.25.2
+   Compiling thiserror v2.0.20
+   Compiling thiserror-impl v2.0.20
+   Compiling yoke v0.8.3
+   Compiling memchr v2.8.3
+   Compiling objc2-foundation v0.3.2
+   Compiling smallvec v1.16.0
+   Compiling zerovec-derive v0.11.6
+   Compiling parking_lot v0.12.5
+   Compiling hashbrown v0.17.1
+   Compiling siphasher v1.0.3
+   Compiling zerovec v0.11.8
+   Compiling phf_shared v0.13.1
+   Compiling displaydoc v0.2.7
+   Compiling zerocopy v0.8.56
+   Compiling zerocopy-derive v0.8.56
+   Compiling writeable v0.6.4
+   Compiling fastrand v2.5.0
+   Compiling rustc-hash v1.1.0
+   Compiling phf_generator v0.13.1
+   Compiling tinystr v0.8.4
+   Compiling litemap v0.8.3
+   Compiling unicode-width v0.2.2
+   Compiling bit-vec v0.9.1
+   Compiling icu_locale_core v2.3.0
+   Compiling bit-set v0.10.0
+   Compiling codespan-reporting v0.13.1
+   Compiling potential_utf v0.1.6
+   Compiling zerotrie v0.2.5
+   Compiling itoa v1.0.18
+   Compiling icu_provider v2.3.1
+   Compiling utf8_iter v1.0.4
+   Compiling icu_collections v2.3.0
+   Compiling indexmap v2.14.1
+   Compiling euclid v0.22.14
+   Compiling font-types v0.12.4
+   Compiling block2 v0.6.2
+   Compiling icu_properties_data v2.3.0
+   Compiling objc2-metal v0.3.2
+   Compiling read-fonts v0.41.0
+   Compiling naga-types v30.0.1
+   Compiling phf_macros v0.13.1
+   Compiling objc2-core-graphics v0.3.2
+   Compiling naga v30.0.1
+   Compiling serde_bytes v0.11.19
+   Compiling raw-window-handle v0.6.2
+   Compiling zmij v1.0.23
+   Compiling icu_normalizer_data v2.3.0
+   Compiling simd-adler32 v0.3.10
+   Compiling linebender_resource_handle v0.1.1
+   Compiling phf v0.13.1
+   Compiling half v2.7.1
+   Compiling objc2-quartz-core v0.3.2
+   Compiling jobserver v0.1.35
+   Compiling static_assertions v1.1.0
+   Compiling shlex v2.0.1
+   Compiling adler2 v2.0.1
+   Compiling find-msvc-tools v0.1.12
+   Compiling crc32fast v1.5.1
+   Compiling serde_json v1.0.151
+   Compiling cc v1.4.5
+   Compiling wgpu-types v30.0.1
+   Compiling icu_properties v2.3.0
+   Compiling string_cache_codegen v0.6.1
+   Compiling phf_codegen v0.13.1
+   Compiling wgpu-hal v30.0.1
+   Compiling new_debug_unreachable v1.0.6
+   Compiling web_atoms v0.2.6
+   Compiling icu_normalizer v2.3.0
+   Compiling skrifa v0.44.0
+   Compiling miniz_oxide v0.9.1
+   Compiling raw-window-metal v1.1.0
+   Compiling libloading v0.8.9
+   Compiling profiling v1.0.18
+   Compiling precomputed-hash v0.1.1
+   Compiling string_cache v0.9.0
+   Compiling flate2 v1.1.10
+   Compiling miniz_oxide v0.8.9
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling fdeflate v0.3.7
+   Compiling polycool v0.4.0
+   Compiling wgpu-core v30.0.1
+   Compiling litrs v1.0.0
+   Compiling document-features v0.2.12
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling kurbo v0.13.1
+   Compiling png v0.18.1
+   Compiling tendril v0.5.1
+   Compiling color v0.3.3
+   Compiling wgpu v30.0.1
+   Compiling svg_fmt v0.4.5
+   Compiling guillotiere v0.7.0
+   Compiling peniko v0.6.1
+   Compiling markup5ever v0.39.0
+   Compiling idna_adapter v1.2.2
+   Compiling percent-encoding v2.3.2
+   Compiling form_urlencoded v1.2.2
+   Compiling idna v1.1.0
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling tracing-attributes v0.1.31
+   Compiling tracing-core v0.1.36
+   Compiling futures-core v0.3.34
+   Compiling object v0.39.1
+   Compiling pin-project-lite v0.2.17
+   Compiling tracing v0.1.44
+   Compiling futures-intrusive v0.5.0
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling url v2.5.8
+   Compiling semver v1.0.28
+   Compiling crossbeam-utils v0.8.22
+   Compiling objc-sys v0.3.5
+   Compiling rustc_version v0.4.1
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling enumn v0.1.14
+   Compiling uuid v1.26.0
+   Compiling crossbeam-epoch v0.9.20
+   Compiling accesskit v0.25.1
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling ar_archive_writer v0.5.3
+   Compiling heapless v0.7.17
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling app_units v0.7.8
+   Compiling pkg-config v0.3.34
+   Compiling crossbeam-deque v0.8.7
+   Compiling winnow v1.0.4
+   Compiling vcpkg v0.2.15
+   Compiling byteorder v1.5.0
+   Compiling icu_locale_fallback_data v2.3.0
+   Compiling allocator-api2 v0.2.21
+   Compiling libz-sys v1.1.29
+   Compiling hashbrown v0.16.1
+   Compiling hash32 v0.2.1
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling objc2 v0.5.2
+   Compiling psm v0.1.32
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling serde_spanned v1.1.1
+   Compiling html5ever v0.39.0
+   Compiling xml5ever v0.39.0
+   Compiling rayon-core v1.13.0
+   Compiling unicode-segmentation v1.13.3
+   Compiling alloc-no-stdlib v2.0.4
+   Compiling wuff-capi v0.2.0
+   Compiling typenum v1.20.1
+   Compiling dtoa v1.0.11
+   Compiling icu_segmenter_data v2.3.0
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling toml v1.1.5+spec-1.1.0
+   Compiling dtoa-short v0.3.5
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling hybrid-array v0.4.15
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling brotli-decompressor v5.0.3
+   Compiling block2 v0.5.1
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling stacker v0.1.25
+   Compiling cobs v0.3.0
+   Compiling encoding_rs v0.8.35
+   Compiling objc2-core-text v0.3.2
+   Compiling cssparser-macros v0.7.0
+   Compiling glob v0.3.4
+   Compiling core-foundation-sys v0.8.7
+   Compiling dispatch v0.2.0
+   Compiling pollster v1.0.1
+   Compiling bytes v1.12.1
+   Compiling objc2-foundation v0.2.2
+   Compiling wuff v0.2.9
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling fontsan v0.7.0
+   Compiling core-foundation v0.9.4
+   Compiling cssparser v0.37.0
+   Compiling postcard v1.1.3
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling icu_locale_fallback v2.3.0
+   Compiling sceno v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling foreign-types-macros v0.2.4
+   Compiling memmap2 v0.9.11
+   Compiling genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling foreign-types-shared v0.3.1
+   Compiling bitflags v1.3.2
+   Compiling zune-core v0.5.3
+   Compiling pxfm v0.1.30
+   Compiling weezl v0.1.12
+   Compiling color_quant v1.1.0
+   Compiling either v1.18.0
+   Compiling quick-error v2.0.1
+   Compiling byteorder-lite v0.1.0
+   Compiling parlance v0.1.0
+   Compiling image-webp v0.2.4
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling scenograph v0.0.5 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling moxcms v0.8.1
+   Compiling rayon v1.12.0
+   Compiling gif v0.14.2
+   Compiling foreign-types v0.5.0
+   Compiling zune-jpeg v0.5.15
+   Compiling core-graphics-types v0.1.3
+   Compiling icu_segmenter v2.3.0
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling objc2-app-kit v0.2.2
+   Compiling block-buffer v0.12.1
+   Compiling crypto-common v0.2.2
+   Compiling parley_data v0.10.0
+   Compiling harfrust v0.12.0
+   Compiling genet-taffy v0.14.0
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling winit v0.30.13
+   Compiling workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling const-oid v0.10.2
+   Compiling anymore v1.0.0
+   Compiling digest v0.11.3
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling image v0.25.10
+   Compiling core-graphics v0.23.2
+   Compiling scenomise v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling sprigging v0.2.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cpufeatures v0.3.1
+   Compiling cursor-icon v1.2.0
+   Compiling backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling data-url v0.3.2
+   Compiling smol_str v0.2.2
+   Compiling dpi v0.1.2
+   Compiling cambium v0.4.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling sha2 v0.11.0
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling getrandom v0.4.3
+   Compiling rustix v1.1.4
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling accesskit_consumer v0.39.1
+   Compiling redshank-model v0.0.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank/model)
+   Compiling errno v0.3.14
+   Compiling web-time v1.1.0
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling accesskit_macos v0.27.1
+   Compiling num-conv v0.2.2
+   Compiling time-core v0.1.9
+   Compiling tempfile v3.27.0
+   Compiling time-macros v0.2.32
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling objc2-core-data v0.3.2
+   Compiling objc2-cloud-kit v0.3.2
+   Compiling objc2-core-image v0.3.2
+   Compiling objc2-core-video v0.3.2
+   Compiling powerfmt v0.2.0
+   Compiling deranged v0.5.8
+   Compiling objc2-app-kit v0.3.2
+   Compiling tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling light-file-dialog v3.21.3
+   Compiling time v0.3.55
+   Compiling timed-text v0.1.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/crates/timed-text)
+   Compiling redshank-storage v0.0.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank/storage)
+   Compiling redshank-surfaces v0.0.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank/surfaces)
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 53.96s
+     Running unittests src/lib.rs (target/build/debug/deps/redshank_storage-c1d810121eb0a01d)
+
+running 22 tests
+test tests::all_invalid_generations_refuse_replacement_and_preserve_every_byte ... ok
+test recovery::tests::recovery_copy_refuses_destination_symlink_alias_of_original ... ok
+test recovery::tests::recovery_copy_missing_media_leaves_no_published_model_or_original_changes ... ok
+test tests::earlier_schema_one_without_selection_keeps_progress_and_notes ... ok
+test tests::empty_and_missing_directories_have_no_published_state ... ok
+test recovery::tests::recovery_copy_refuses_existing_and_original_destinations_without_writes ... ok
+test recovery::tests::recovery_copy_refuses_directory_media_and_host_only_sources ... ok
+test tests::corrupt_newer_generation_falls_back_to_the_latest_valid_state ... ok
+test tests::explicitly_saved_transcript_survives_restart_and_item_removal ... ok
+test tests::cleanup_error_reports_failure_without_rolling_back_published_state ... ok
+test tests::io_failure_refuses_load_and_save_without_publishing_or_pruning ... ok
+test recovery::tests::recovery_copy_refuses_missing_or_unsupported_voice_blobs ... ok
+test tests::library_progress_queue_and_annotations_survive_restart ... ok
+test tests::schema_one_without_selected_item_still_loads ... ok
+test recovery::tests::recovery_copy_deduplicates_local_references ... ok
+test tests::failed_publish_leaves_the_previous_generation_readable ... ok
+test tests::failed_publication_does_not_prune_retained_recovery_states ... ok
+test tests::vanished_and_corrupt_candidates_never_become_an_empty_restore ... ok
+test tests::vanished_newest_candidate_falls_back_to_older_valid_generation ... ok
+test recovery::tests::recovery_copy_reopens_with_local_cache_voice_and_inline_evidence ... ok
+test tests::pruning_counts_valid_states_and_leaves_pending_and_unrelated_files ... ok
+test tests::repeated_saves_bound_disk_history_and_keep_two_recovery_states ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.52s
+
+     Running unittests src/lib.rs (target/build/debug/deps/redshank_surfaces-4434a42780473f45)
+
+running 107 tests
+test dock::tests::compact_surface_has_semantic_player_and_capture_controls ... ok
+test dock::tests::voice_capture_uses_pointer_press_and_release ... ok
+test dock::tests::completed_offers_replay ... ok
+test dock::tests::player_and_capture_mount_independently_and_emit_commands ... ok
+test dock::tests::pressing_the_seek_track_seeks_to_the_pressed_fraction ... ok
+test rail::tests::rail_carries_the_same_facts_and_commands ... ok
+test dock::tests::rate_and_volume_cycle ... ok
+test dock::tests::unavailable_transport_rejects_commands ... ok
+test dock::tests::recording_swaps_the_transport_row_and_keeps_the_rows ... ok
+test rail::tests::recording_rail_shows_the_frozen_anchor_and_both_exits ... ok
+test scene::chain::tests::the_context_card_lists_the_neighbours_by_date ... ok
+test scene::chain::tests::a_pinned_episode_is_marked_and_the_card_offers_unpin ... ok
+test scene::chain::tests::overview_draws_one_row_per_feed_and_a_local_audio_row ... ok
+test scene::chain::tests::refresh_emits_for_the_current_feed ... ok
+test scene::chain::tests::newest_episode_leads_the_vertical_chain ... ok
+test scene::geometry::tests::publication_dates_compare_utc_instants_across_feed_formats ... ok
+test scene::chain::tests::the_scene_segment_emits_select_scene ... ok
+test dock::tests::every_compact_layout_requires_an_explicit_approximate_note_action ... ok
+test scene::orrery::tests::the_ring_carries_every_episode_and_the_notes_as_satellites ... ok
+test scene::orrery::tests::the_newest_episode_sits_at_twelve ... ok
+test scene::orrery::tests::the_centre_caption_uses_the_counts_and_the_refresh_schedule ... ok
+test scene::chain::tests::vertical_chain_marks_every_episode_state_and_hangs_its_notes ... ok
+test scene::orrery::tests::the_selected_card_opens_the_episode ... ok
+test scene::chain::tests::the_header_summarises_one_feed_and_the_whole_library ... ok
+test scene::trail::tests::sessions_group_by_day_with_a_total_and_a_week_summary ... ok
+test scene::chain::tests::episode_and_note_and_card_actions_emit_commands ... ok
+test shell::tests::every_scope_class_is_reachable_from_the_state ... ok
+test scene::trail::tests::the_active_session_is_washed_to_its_playhead_and_carries_its_notes ... ok
+test shell::tests::rail_layout_puts_the_rail_beside_the_tab_strip ... ok
+test scene::trail::tests::every_session_action_emits_select_item ... ok
+test scene::tests::the_three_projections_carry_the_same_six_episodes ... ok
+test shell::tests::notice_is_a_status_line_under_the_header ... ok
+test shell::tests::svg_elements_mount ... ok
+test surface_api::tests::a_host_projection_reaches_the_dock_on_the_next_frame ... ok
+test shell::tests::shell_carries_the_scope_layout_and_one_panel ... ok
+test surface_api::tests::a_pressed_control_reaches_the_host_through_the_dock_handle ... ok
+test surface_api::tests::the_descriptor_accepts_the_episode_source_kind ... ok
+test surface_api::tests::an_unavailable_transport_reports_itself_to_the_host ... ok
+test surface_api::tests::the_session_renders_the_dock_under_the_scope_class ... ok
+test shell::tests::copying_disables_recovery_actions_and_rejects_clicks ... ok
+test shell::tests::segment_law_marks_the_selected_destination ... ok
+test shell::tests::recovery_and_copy_outcomes_stay_visible_in_both_layouts ... ok
+test tabs::library::tests::each_episode_has_exactly_one_primary_action ... ok
+test tabs::library::tests::buffering_the_current_item_swaps_its_badge ... ok
+test shell::tests::recovery_actions_emit_intents_without_changing_host_facts ... ok
+test shell::tests::recovery_actions_follow_host_dirty_and_close_facts ... ok
+test tabs::library::tests::library_and_scenes_share_chronological_episode_order ... ok
+test tabs::library::tests::an_episode_menu_pins_and_unpins ... ok
+test tabs::library::tests::episodes_download_then_remove_and_leave_the_library ... ok
+test tabs::library::tests::a_feed_row_hides_refresh_behind_its_menu ... ok
+test tabs::library::tests::roster_row_shows_counts_badge_and_offline_bytes ... ok
+test tabs::library::tests::refresh_failure_offers_a_retry_that_refreshes ... ok
+test tabs::listen::tests::a_pinned_queue_row_carries_the_mark ... ok
+test tabs::library::tests::selecting_a_feed_and_local_audio_emits_select_feed ... ok
+test tabs::listen::tests::empty_queue_and_notes_show_quiet_rows ... ok
+test tabs::library::tests::the_phone_scene_block_selects_a_projection ... ok
+test tabs::library::tests::unavailable_episode_shows_its_message_and_retries ... ok
+test tabs::listen::tests::note_rows_open_edit_delete_and_play ... ok
+test tabs::listen::tests::editor_is_hidden_until_capture_then_saves_the_frozen_anchor ... ok
+test tabs::library::tests::the_playing_item_reads_playing_and_refuses_its_command ... ok
+test tabs::library::tests::the_quiet_field_subscribes_and_opens_local_files ... ok
+test tabs::listen::tests::note_rows_show_type_word_anchor_and_open_at ... ok
+test tabs::listen::tests::playing_voice_note_reports_progress_and_stops ... ok
+test tabs::listen::tests::queue_rows_carry_badge_listened_width_and_the_active_ring ... ok
+test tabs::listen::tests::span_capture_saves_a_span_note ... ok
+test tabs::listen::tests::queue_row_offers_download_then_removal ... ok
+test tabs::listen::tests::queue_rows_select_and_reorder ... ok
+test tabs::notes::tests::an_empty_episode_shows_the_quiet_row ... ok
+test tabs::listen::tests::transcript_tracks_position_and_requests_seek_without_inserting_markup ... ok
+test tabs::listen::tests::the_phone_segment_counts_both_sections_and_marks_one_off ... ok
+test tabs::listen::tests::the_overflow_menu_opens_one_row_at_a_time ... ok
+test tabs::listen::tests::the_note_menu_flips_privacy_per_note ... ok
+test tabs::notes::tests::alignment_actions_preserve_note_and_item_identity ... ok
+test tabs::notes::tests::the_playhead_cluster_is_the_one_seeded_open ... ok
+test tabs::notes::tests::the_representation_card_reads_the_projected_receipt ... ok
+test tabs::notes::tests::the_cluster_chip_counts_its_notes_and_the_list_truncates ... ok
+test tabs::notes::tests::the_filter_segment_and_export_emit_commands ... ok
+test tabs::notes::tests::the_header_reads_the_selected_item_facts ... ok
+test tabs::notes::tests::selected_clip_export_requires_owner_capability_and_a_shareable_note ... ok
+test tabs::notes::tests::running_and_missing_fingerprint_explain_the_state_without_a_realign_action ... ok
+test tabs::notes::tests::the_representation_card_says_only_what_the_receipt_supports ... ok
+test tabs::notes::tests::the_span_card_plays_edits_and_deletes ... ok
+test tabs::notes::tests::the_strip_places_ticks_and_a_span_wash ... ok
+test tabs::notes::tests::cluster_collapse_keeps_the_header_and_drops_the_rows ... ok
+test tabs::settings::tests::capture_behaviour_and_privacy_segments_emit_their_fields ... ok
+test tabs::settings::tests::cache_budget_stepper_moves_by_256_mib ... ok
+test tabs::notes::tests::unproven_and_different_notes_show_an_explicit_approximate_action ... ok
+test tabs::settings::tests::duck_level_steps_by_five_percent_and_stops_at_the_ends ... ok
+test tabs::settings::tests::every_section_and_control_kind_is_present ... ok
+test tabs::settings::tests::reaction_offset_steps_by_one_second ... ok
+test tabs::settings::tests::rate_segment_sets_the_backend_and_the_store ... ok
+test tabs::settings::tests::skip_steppers_emit_update_settings_with_the_changed_field ... ok
+test tabs::settings::tests::refresh_seed_and_mode_segments_emit_their_fields ... ok
+test theme::tests::brand_dark_derives_exactly_from_tinct ... ok
+test theme::tests::sheet_carries_every_scope_and_the_component_rules ... ok
+test tabs::settings::tests::toggles_flip_their_field ... ok
+test theme::tests::sheet_uses_no_outline_and_no_ellipsis ... ok
+test theme::tests::wetland_dark_matches_the_canvas ... ok
+test theme::tests::wetland_derivation_drift_is_recorded ... ok
+test tabs::settings::tests::alignment_search_limit_persists_hour_steps_and_caps_at_one_day ... ok
+test tabs::settings::tests::alignment_score_persists_similarity_threshold_between_800_and_990 ... ok
+test tabs::settings::tests::feed_limit_steps_by_one_mib_and_stays_bounded ... ok
+test tabs::settings::tests::fingerprint_window_persists_disable_and_bounded_capture_choices ... ok
+test theme::hosted_role_tests::embedded_dock_paints_host_roles_and_exact_legacy_fallbacks ... ok
+test shell::tests::artwork_background_image_changes_no_geometry_and_paints_nothing ... ok
+test shell::tests::dock_height_is_identical_at_phone_width ... ok
+test shell::tests::dock_height_is_identical_in_every_transport_state ... ok
+
+test result: ok. 107 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
+
+   Doc-tests redshank_storage
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests redshank_surfaces
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
