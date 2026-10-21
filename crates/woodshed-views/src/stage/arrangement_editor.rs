@@ -1,8 +1,9 @@
 //! Musical alignment authoring and shared portable scene presentation.
 use super::{UiChild, UiState, WorkspacePanel};
 use cambium::{
-    BackdropSceneEvent, TextInput, backdrop_scene_reading, clickable, custom_leaf, el, map_state,
-    on_key, on_pointer, text, text_field,
+    BackdropSceneEvent, FocusEvent, FocusPhase, History, Key, KeyEvent, TextInput, text_field_typed,
+    backdrop_scene_reading, clickable, custom_leaf, el, map_state, on_focus, on_key, on_pointer,
+    text,
 };
 use pictograph::canvas::backdrop_surface::{BackdropSurface, SurfaceTheme};
 use scenomise::document::SceneDocument;
@@ -94,6 +95,40 @@ pub struct Draft {
     placed: BTreeSet<CardId>,
     rests: Vec<String>,
     original: String,
+    history: History<ArrangementSnapshot, EditKey>,
+    history_snapshot: ArrangementSnapshot,
+    focused_field: Rc<RefCell<FocusTracker>>,
+    bar_counts: TextInput,
+    selected_bars: Vec<usize>,
+    grouping_preview: Option<GroupingPreview>,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct ArrangementSnapshot {
+    fields: BTreeMap<String, String>,
+    cards: Vec<CardId>,
+    placed: BTreeSet<CardId>,
+    rests: Vec<String>,
+    time_signatures: Vec<TimeSignatureChange>,
+    bar_groups: Vec<BarGroup>,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum EditKey {
+    Field(String),
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct GroupingPreview {
+    source: ArrangementSnapshot,
+    selected: Vec<usize>,
+    counts: Vec<u32>,
+    before: Vec<BarGroup>,
+    after: Vec<BarGroup>,
+    conflict: bool,
+    use_update: bool,
+}
+#[derive(Default)]
+struct FocusTracker {
+    field: Option<String>,
+    break_run: bool,
 }
 impl Draft {
     fn from_saved(
@@ -109,6 +144,19 @@ impl Draft {
             placed: BTreeSet::new(),
             rests: vec![],
             original: String::new(),
+            history: History::new(),
+            history_snapshot: ArrangementSnapshot {
+                fields: BTreeMap::new(),
+                cards: vec![],
+                placed: BTreeSet::new(),
+                rests: vec![],
+                time_signatures: vec![],
+                bar_groups: vec![],
+            },
+            focused_field: Rc::new(RefCell::new(FocusTracker::default())),
+            bar_counts: TextInput::new("2 + 2"),
+            selected_bars: vec![],
+            grouping_preview: None,
         };
         let a = d.context.alignment.clone();
         d.put("name", a.name);
@@ -129,6 +177,7 @@ impl Draft {
         }
         d.add_current_cards(set);
         d.original = d.signature();
+        d.history_snapshot = d.snapshot();
         d
     }
     fn put(&mut self, key: &str, value: impl ToString) {
@@ -231,6 +280,8 @@ impl Draft {
                     })
                 })
                 .collect::<Result<_, String>>()?,
+            time_signatures: self.context.alignment.time_signatures.clone(),
+            bar_groups: self.context.alignment.bar_groups.clone(),
         })
     }
     fn signature(&self) -> String {
@@ -245,6 +296,129 @@ impl Draft {
             self.placed,
             self.rests
         )
+    }
+    fn snapshot(&self) -> ArrangementSnapshot {
+        ArrangementSnapshot {
+            fields: self
+                .fields
+                .iter()
+                .map(|(key, value)| (key.clone(), value.text().to_owned()))
+                .collect(),
+            cards: self.cards.clone(),
+            placed: self.placed.clone(),
+            rests: self.rests.clone(),
+            time_signatures: self.context.alignment.time_signatures.clone(),
+            bar_groups: self.context.alignment.bar_groups.clone(),
+        }
+    }
+    fn observe_edit(&mut self) {
+        let current = self.snapshot();
+        if current == self.history_snapshot {
+            return;
+        }
+        let mut focus = self.focused_field.borrow_mut();
+        if focus.break_run {
+            self.history.break_run();
+            focus.break_run = false;
+        }
+        let coalesce_field = focus.field.as_ref().filter(|focused| {
+            current.cards == self.history_snapshot.cards
+                && current.placed == self.history_snapshot.placed
+                && current.rests == self.history_snapshot.rests
+                && current.time_signatures == self.history_snapshot.time_signatures
+                && current.bar_groups == self.history_snapshot.bar_groups
+                && current.fields.iter().all(|(key, value)| {
+                    key == *focused || self.history_snapshot.fields.get(key) == Some(value)
+                })
+                && current.fields.len() == self.history_snapshot.fields.len()
+        });
+        let key = coalesce_field.map(|field| EditKey::Field(field.clone()));
+        if key.is_none() {
+            self.history.break_run();
+        }
+        self.history.record(self.history_snapshot.clone(), key, 0);
+        self.history_snapshot = current;
+    }
+    fn restore(&mut self, snapshot: ArrangementSnapshot) {
+        self.fields = snapshot
+            .fields
+            .iter()
+            .map(|(key, value)| (key.clone(), TextInput::new(value)))
+            .collect();
+        self.cards = snapshot.cards.clone();
+        self.placed = snapshot.placed.clone();
+        self.rests = snapshot.rests.clone();
+        self.context.alignment.time_signatures = snapshot.time_signatures.clone();
+        self.context.alignment.bar_groups = snapshot.bar_groups.clone();
+        self.grouping_preview = None;
+        self.history_snapshot = snapshot;
+    }
+    fn parse_group_counts(&self) -> Result<Vec<u32>, String> {
+        let pattern = self.bar_counts.text();
+        if pattern.len() > 1024 {
+            return Err("Bar grouping is too long".into());
+        }
+        let counts: Vec<u32> = pattern
+            .split(|c: char| c.is_whitespace() || c == '+')
+            .filter(|s| !s.is_empty())
+            .map(|s| s.parse().map_err(|_| "Use counts such as 2 + 2".to_string()))
+            .collect::<Result<_, _>>()?;
+        if counts.is_empty() || counts.contains(&0) {
+            return Err("Use positive bar counts such as 2 + 2".into());
+        }
+        Ok(counts)
+    }
+    fn preview_grouping(&mut self) -> Result<(), String> {
+        let alignment = self.alignment()?;
+        let counts = self.parse_group_counts()?;
+        let after = woodshedding::rehearsal::arrangement::bars::regroup(
+            &alignment,
+            &self.selected_bars,
+            &counts,
+        )?;
+        let first = *self.selected_bars.first().ok_or("Select bars to group")? as u32;
+        let end = (*self.selected_bars.last().unwrap() + 1) as u32;
+        let before: Vec<_> = alignment
+            .bar_groups
+            .iter()
+            .copied()
+            .filter(|group| group.first >= first && group.first + group.count <= end)
+            .collect();
+        let after_selected: Vec<_> = after
+            .iter()
+            .copied()
+            .filter(|group| group.first >= first && group.first + group.count <= end)
+            .collect();
+        let conflict = !before.is_empty() && before != after_selected;
+        self.grouping_preview = Some(GroupingPreview {
+            source: self.snapshot(),
+            selected: self.selected_bars.clone(),
+            counts,
+            before,
+            after,
+            conflict,
+            use_update: !conflict,
+        });
+        Ok(())
+    }
+    fn apply_grouping(&mut self) -> Result<(), String> {
+        let preview = self
+            .grouping_preview
+            .clone()
+            .ok_or("Preview a bar grouping first")?;
+        if self.snapshot() != preview.source {
+            return Err("Draft changed since this grouping preview. Preview again.".into());
+        }
+        if self.selected_bars != preview.selected || self.parse_group_counts()? != preview.counts {
+            return Err("Grouping selection or counts changed since preview. Preview again.".into());
+        }
+        if preview.conflict && !preview.use_update {
+            self.grouping_preview = None;
+            return Ok(());
+        }
+        self.context.alignment.bar_groups = preview.after;
+        self.grouping_preview = None;
+        Ok(())
     }
     pub fn dirty(&self) -> bool {
         self.base.as_ref() != serde_json::to_value(&self.context).ok().as_ref()
@@ -350,16 +524,47 @@ impl ArrangementEditor {
                 .is_some_and(|g| g.original != g.proposed)
     }
     pub fn field(&self, owner: WorkingSetId, key: &str) -> Option<&TextInput> {
-        self.drafts.get(&owner)?.fields.get(key)
+        let draft = self.drafts.get(&owner)?;
+        if key == "bar-counts" {
+            Some(&draft.bar_counts)
+        } else {
+            draft.fields.get(key)
+        }
     }
     pub fn field_mut(&mut self, owner: WorkingSetId, key: &str) -> Option<&mut TextInput> {
         // map_state also borrows fields while rebuilding an unchanged view.
         // Actual text changes invalidate the captured draft signature in sync.
-        self.drafts.get_mut(&owner)?.fields.get_mut(key)
+        let draft = self.drafts.get_mut(&owner)?;
+        if key == "bar-counts" {
+            Some(&mut draft.bar_counts)
+        } else {
+            draft.fields.get_mut(key)
+        }
+    }
+    pub fn group_preview_active(&self, owner: WorkingSetId) -> bool {
+        self.drafts.get(&owner).is_some_and(|draft| draft.grouping_preview.is_some())
+    }
+    pub fn grouping_text(&self, owner: WorkingSetId) -> Option<String> {
+        let draft = self.drafts.get(&owner)?;
+        let groups = &draft.context.alignment.bar_groups;
+        Some(groups.iter().map(|group| group.count.to_string()).collect::<Vec<_>>().join(" + "))
+    }
+    pub fn can_undo(&self, owner: WorkingSetId) -> bool {
+        self.drafts.get(&owner).is_some_and(|draft| draft.history.can_undo())
+    }
+    pub fn can_redo(&self, owner: WorkingSetId) -> bool {
+        self.drafts.get(&owner).is_some_and(|draft| draft.history.can_redo())
     }
 }
 impl UiState {
+    fn capture_arrangement_history(&mut self, owner: WorkingSetId) {
+        if let Some(draft) = self.arrangement_editor.drafts.get_mut(&owner) {
+            draft.observe_edit();
+            draft.history.break_run();
+        }
+    }
     pub fn start_arrangement(&mut self) {
+        self.music_editor.legacy = true;
         let owner = self.working_sets.active_id;
         if self
             .arrangement_editor
@@ -389,6 +594,8 @@ impl UiState {
                     .collect(),
                 cards: vec![],
                 rests: vec![],
+                time_signatures: vec![],
+                bar_groups: vec![],
             };
             let mut copy = self.set.clone();
             save_progression_arrangement(&self.stage, &mut copy, a)?;
@@ -417,8 +624,135 @@ impl UiState {
         self.arrangement_editor.notice = None;
         self.sync_arrangement_scene();
     }
+    pub fn undo_arrangement_edit(&mut self) {
+        let owner = self.working_sets.active_id;
+        if let Some(draft) = self.arrangement_editor.drafts.get_mut(&owner) {
+            draft.observe_edit();
+        }
+        let restored = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&owner)
+            .and_then(|draft| draft.history.undo(draft.snapshot()));
+        if let Some(snapshot) = restored {
+            if let Some(draft) = self.arrangement_editor.drafts.get_mut(&owner) {
+                draft.restore(snapshot);
+                let mut focus = draft.focused_field.borrow_mut();
+                focus.field = None;
+                focus.break_run = true;
+            }
+            self.arrangement_editor.notice = Some("Arrangement edit undone.".into());
+            self.sync_arrangement_scene();
+        }
+    }
+    pub fn redo_arrangement_edit(&mut self) {
+        let owner = self.working_sets.active_id;
+        if let Some(draft) = self.arrangement_editor.drafts.get_mut(&owner) {
+            draft.observe_edit();
+        }
+        let restored = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&owner)
+            .and_then(|draft| draft.history.redo(draft.snapshot()));
+        if let Some(snapshot) = restored {
+            if let Some(draft) = self.arrangement_editor.drafts.get_mut(&owner) {
+                draft.restore(snapshot);
+                let mut focus = draft.focused_field.borrow_mut();
+                focus.field = None;
+                focus.break_run = true;
+            }
+            self.arrangement_editor.notice = Some("Arrangement edit redone.".into());
+            self.sync_arrangement_scene();
+        }
+    }
+    pub fn select_arrangement_bar(&mut self, index: usize) {
+        let owner = self.working_sets.active_id;
+        if let Some(draft) = self.arrangement_editor.drafts.get_mut(&owner) {
+            if draft.selected_bars.contains(&index) {
+                draft.selected_bars.retain(|selected| *selected != index);
+            } else {
+                draft.selected_bars.push(index);
+                draft.selected_bars.sort_unstable();
+            }
+            draft.grouping_preview = None;
+        }
+        self.sync_arrangement_scene();
+    }
+    pub fn preview_arrangement_grouping(&mut self) {
+        let owner = self.working_sets.active_id;
+        let result = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&owner)
+            .ok_or("Start an arrangement first".to_string())
+            .and_then(Draft::preview_grouping);
+        match result {
+            Ok(()) => {
+                self.arrangement_editor.notice = None;
+                self.sync_arrangement_scene();
+            },
+            Err(error) => self.arrangement_editor.notice = Some(error),
+        }
+    }
+    pub fn choose_arrangement_grouping(&mut self, use_update: bool) {
+        let owner = self.working_sets.active_id;
+        if let Some(preview) = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&owner)
+            .and_then(|draft| draft.grouping_preview.as_mut())
+        {
+            preview.use_update = use_update;
+        }
+        self.sync_arrangement_scene();
+    }
+    pub fn apply_arrangement_grouping(&mut self) {
+        let owner = self.working_sets.active_id;
+        let kept_local = self
+            .arrangement_editor
+            .drafts
+            .get(&owner)
+            .and_then(|draft| draft.grouping_preview.as_ref())
+            .is_some_and(|preview| preview.conflict && !preview.use_update);
+        let result = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&owner)
+            .ok_or("Start an arrangement first".to_string())
+            .and_then(|draft| {
+                draft.candidate(&self.set)?;
+                draft.observe_edit();
+                draft.history.break_run();
+                draft.apply_grouping()
+            });
+        match result {
+            Ok(()) => {
+                if kept_local {
+                    self.arrangement_editor.notice = Some("Existing bar grouping kept.".into());
+                    self.sync_arrangement_scene();
+                } else {
+                    self.arrangement_editor.notice = Some("Bar grouping choice applied to the draft.".into());
+                    self.sync_arrangement_scene();
+                }
+            },
+            Err(error) => self.arrangement_editor.notice = Some(error),
+        }
+    }
+    pub fn cancel_arrangement_grouping(&mut self) {
+        if let Some(draft) = self
+            .arrangement_editor
+            .drafts
+            .get_mut(&self.working_sets.active_id)
+        {
+            draft.grouping_preview = None;
+        }
+        self.arrangement_editor.notice = Some("Bar grouping preview cancelled.".into());
+        self.sync_arrangement_scene();
+    }
     pub fn save_arrangement(&mut self) {
         self.commit_arrangement_gesture();
+        self.capture_arrangement_history(self.working_sets.active_id);
         let result = (|| {
             let d = self
                 .arrangement_editor
@@ -431,8 +765,23 @@ impl UiState {
         })();
         match result {
             Ok(saved) => {
-                self.set.progression_arrangement = saved;
-                self.reload_arrangement();
+                self.set.progression_arrangement = saved.clone();
+                if let Some(draft) = self
+                    .arrangement_editor
+                    .drafts
+                    .get_mut(&self.working_sets.active_id)
+                {
+                    if let Some(saved) = saved {
+                        draft.context = saved;
+                    }
+                    draft.base = serde_json::to_value(&self.set.progression_arrangement)
+                        .ok()
+                        .filter(|value| !value.is_null());
+                    draft.original = draft.signature();
+                    draft.history_snapshot = draft.snapshot();
+                    draft.history.mark_saved();
+                    draft.grouping_preview = None;
+                }
                 self.arrangement_editor.notice =
                     Some("Arrangement saved to this working Set.".into());
             },
@@ -461,7 +810,12 @@ impl UiState {
             }
         }
         if let Some(d) = self.arrangement_editor.drafts.get_mut(&owner) {
+            // Capture edits to the current draft before Set membership adds
+            // unplaced, source-owned Card rows. Those rows are view inputs,
+            // not arrangement history edits.
+            d.observe_edit();
             d.add_current_cards(&self.set);
+            d.history_snapshot = d.snapshot();
         }
         let palette = self
             .appearance
@@ -488,7 +842,7 @@ impl UiState {
             warning: rgba(palette.danger),
         };
         let signature = format!(
-            "{:?}|{}|{}|{:?}",
+            "{:?}|{}|{}|{:?}|{:?}|{}",
             theme,
             serde_json::to_string(&self.set).unwrap_or_default(),
             self.arrangement_editor
@@ -500,7 +854,16 @@ impl UiState {
                 .gesture
                 .as_ref()
                 .filter(|g| g.proposed != g.original)
-                .map(|g| (&g.key, g.proposed))
+                .map(|g| (&g.key, g.proposed)),
+            self.arrangement_editor
+                .drafts
+                .get(&owner)
+                .and_then(|draft| draft.grouping_preview.as_ref()),
+            self.arrangement_editor
+                .drafts
+                .get(&owner)
+                .map(|draft| draft.bar_counts.text())
+                .unwrap_or_default()
         );
         if self.arrangement_editor.owner == Some(owner)
             && self.arrangement_editor.signature == signature
@@ -524,7 +887,19 @@ impl UiState {
                         &format!("woodshed/working-set/{}", g.owner.0),
                     )
                 } else {
-                    d.candidate(&self.set)
+                    let mut candidate = d.candidate(&self.set)?;
+                if let Some(preview) = &d.grouping_preview {
+                    let preview_is_current = d.snapshot() == preview.source
+                        && d.selected_bars == preview.selected
+                        && d.parse_group_counts().ok().as_ref() == Some(&preview.counts)
+                        && (!preview.conflict || preview.use_update);
+                    if preview_is_current {
+                        if let Some(arrangement) = candidate.progression_arrangement.as_mut() {
+                            arrangement.alignment.bar_groups = preview.after.clone();
+                        }
+                        }
+                    }
+                    Ok(candidate)
                 }
             })
             .and_then(|set| {
@@ -568,6 +943,8 @@ impl UiState {
         if let Some(g) = self.arrangement_editor.gesture.take() {
             if self.arrangement_gesture_current(&g) && g.proposed != g.original {
                 let d = self.arrangement_editor.drafts.get_mut(&g.owner).unwrap();
+                d.observe_edit();
+                d.history.break_run();
                 match d.candidate_intent(
                     &self.set,
                     &g.intent,
@@ -741,6 +1118,8 @@ impl UiState {
         else {
             return;
         };
+        d.observe_edit();
+        d.history.break_run();
         if let (Some(original), Ok(extent)) = (d.occurrence_span(&key), d.number("extent")) {
             if original.length == 0
                 || original
@@ -802,6 +1181,7 @@ impl UiState {
         self.arrangement_editor.surfaces.borrow_mut().select(event);
     }
     pub fn place_arrangement_cards_in_order(&mut self) {
+        self.capture_arrangement_history(self.working_sets.active_id);
         if let Some(d) = self
             .arrangement_editor
             .drafts
@@ -832,6 +1212,7 @@ impl UiState {
         self.sync_arrangement_scene();
     }
     pub fn add_arrangement_rest(&mut self) {
+        self.capture_arrangement_history(self.working_sets.active_id);
         if let Some(d) = self
             .arrangement_editor
             .drafts
@@ -870,9 +1251,49 @@ fn button(
         move |ui: &mut UiState, _| action(ui),
     ))
 }
+fn action_button(
+    label: impl Into<String>,
+    class: &str,
+    action_name: &str,
+    action: impl Fn(&mut UiState) + 'static,
+) -> UiChild {
+    Box::new(clickable(
+        el("button", text(label.into()))
+            .attr("class", format!("t-btn {class}"))
+            .attr("data-arrangement-action", action_name),
+        move |ui: &mut UiState, _| action(ui),
+    ))
+}
+fn grouping_label(groups: &[BarGroup]) -> String {
+    if groups.is_empty() {
+        return "No existing groups".into();
+    }
+    groups
+        .iter()
+        .map(|group| format!("Bars {}–{}", group.first + 1, group.first + group.count))
+        .collect::<Vec<_>>()
+        .join(", ")
+}
+fn quarter_note_position(ticks: u32) -> String {
+    let whole = ticks / 4 + 1;
+    let remainder = ticks % 4;
+    if remainder == 0 {
+        whole.to_string()
+    } else {
+        format!("{whole} + {remainder}/4")
+    }
+}
 fn field(ui: &UiState, key: &str, label: &str) -> UiChild {
     let owner = ui.working_sets.active_id;
     let name = key.to_string();
+    let focus_name = name.clone();
+    let focus_tracker = ui
+        .arrangement_editor
+        .drafts
+        .get(&owner)
+        .expect("draft field")
+        .focused_field
+        .clone();
     let input = ui
         .arrangement_editor
         .field(owner, key)
@@ -882,17 +1303,81 @@ fn field(ui: &UiState, key: &str, label: &str) -> UiChild {
             "label",
             (
                 el("span", text(label)),
-                map_state(text_field(input), move |ui: &mut UiState| {
-                    ui.arrangement_editor
-                        .field_mut(owner, &name)
-                        .expect("mounted draft field")
-                }),
+                map_state(
+                    on_focus(
+                        text_field_typed(input),
+                        move |_input: &mut TextInput, event: FocusEvent| {
+                            let mut tracker = focus_tracker.borrow_mut();
+                            tracker.break_run = true;
+                            match event.phase {
+                                FocusPhase::Gained => tracker.field = Some(focus_name.clone()),
+                                FocusPhase::Lost => {
+                                    if tracker.field.as_deref() == Some(focus_name.as_str()) {
+                                        tracker.field = None;
+                                    }
+                                }
+                            }
+                        },
+                    ),
+                    move |ui: &mut UiState| {
+                        ui.arrangement_editor
+                            .field_mut(owner, &name)
+                            .expect("mounted draft field")
+                    },
+                ),
             ),
         )
         .attr("class", "arrangement-field")
         .attr("aria-label", label.to_string())
         .attr("data-arrangement-field", key.to_string()),
     )
+}
+
+fn count_field(ui: &UiState, owner: WorkingSetId) -> UiChild {
+    let input = ui
+        .arrangement_editor
+        .drafts
+        .get(&owner)
+        .map(|draft| &draft.bar_counts)
+        .expect("arrangement draft");
+    Box::new(
+        el(
+            "label",
+            (
+                el("span", text("Bar counts (for example 2 + 2)")),
+                map_state(
+                    text_field_typed(input)
+                        .attr("class", "arrangement-group-count-input")
+                        .attr("aria-label", "Bar counts")
+                        .attr("data-arrangement-field", "bar-counts"),
+                    move |ui: &mut UiState| {
+                        &mut ui.arrangement_editor.drafts.get_mut(&owner).expect("mounted draft").bar_counts
+                    },
+                ),
+            ),
+        )
+        .attr("class", "arrangement-field")
+        .attr("style", "width:max-content;align-items:flex-start")
+        .attr("data-arrangement-field", "bar-counts"),
+    )
+}
+
+fn arrangement_history_key(ui: &mut UiState, event: KeyEvent) {
+    let command = event.mods.ctrl || event.mods.meta;
+    if !command {
+        return;
+    }
+    let Key::Character(character) = &event.key else {
+        return;
+    };
+    let key = character.to_ascii_lowercase();
+    match (key.as_str(), event.mods.shift) {
+        ("z", true) | ("y", _) => ui.redo_arrangement_edit(),
+        ("z", false) => ui.undo_arrangement_edit(),
+        _ => return,
+    }
+    event.prevent_default();
+    event.stop_propagation();
 }
 fn spans(ui: &UiState, prefix: &str) -> Vec<UiChild> {
     vec![
@@ -910,7 +1395,7 @@ pub fn screen(ui: &UiState) -> UiChild {
         Box::new(el(
             "p",
             text(
-                "Expected roles and supplied occurrences. Four ticks per quarter-note beat; editing does not change Card order, timing or playback.",
+            "Expected roles and supplied occurrences. Four ticks per quarter note. Editing updates the arrangement; Card order and practice playback remain separate.",
             ),
         )),
     ];
@@ -980,6 +1465,8 @@ pub fn screen(ui: &UiState) -> UiChild {
             el(
                 "div",
                 vec![
+                    action_button("Undo", "arrangement-undo", "undo", UiState::undo_arrangement_edit),
+                    action_button("Redo", "arrangement-redo", "redo", UiState::redo_arrangement_edit),
                     field(ui, "name", "Arrangement name"),
                     field(ui, "extent", "Extent (ticks)"),
                     button(
@@ -1001,6 +1488,74 @@ pub fn screen(ui: &UiState) -> UiChild {
             )
             .attr("class", "arrangement-actions"),
         ));
+        if !d.context.alignment.time_signatures.is_empty() {
+            let mut grouping: Vec<UiChild> = vec![
+                Box::new(el("h3", text("Bar grouping"))),
+                Box::new(el("p", text("Select consecutive bars, then preview a partition. Grouping changes only the authored bar groups."))),
+                count_field(ui, owner),
+            ];
+            match d.alignment().and_then(|alignment| woodshedding::rehearsal::arrangement::bars::bars(&alignment).map(|bars| (alignment, bars))) {
+                Ok((_, bars)) => {
+                    for (index, bar) in bars.iter().enumerate() {
+                        let selected = d.selected_bars.contains(&index);
+                    grouping.push(Box::new(clickable(
+                            el("button", text(format!(
+                                "Bar {} · quarter-note positions {}–{}{}{}",
+                                index + 1,
+                                quarter_note_position(bar.start),
+                                quarter_note_position(bar.start + bar.length),
+                                if !bar.complete { " · incomplete" } else { "" },
+                                if selected { " · selected" } else { "" }
+                            )))
+                            .attr("class", "t-btn arrangement-bar-select")
+                            .attr("data-arrangement-bar", index.to_string())
+                            .attr("aria-pressed", selected.to_string()),
+                            move |ui: &mut UiState, _| ui.select_arrangement_bar(index),
+                        )));
+                    }
+                }
+                Err(error) => grouping.push(Box::new(el("p", text(error)).attr("role", "status"))),
+            }
+            grouping.push(action_button("Preview grouping", "arrangement-group-preview", "group-preview", UiState::preview_arrangement_grouping));
+            if let Some(preview) = &d.grouping_preview {
+                let stale = d.snapshot() != preview.source
+                    || d.selected_bars != preview.selected
+                    || d.parse_group_counts().ok().as_ref() != Some(&preview.counts);
+                grouping.push(Box::new(el("p", text(format!(
+                    "{} bars · {} · {}",
+                    preview.selected.len(),
+                    if preview.conflict { "existing groups conflict" } else { "no conflicting groups" },
+                    if stale { "Draft changed; preview again before applying." } else { "Preview is current." }
+                ))).attr("role", "status")));
+                grouping.push(Box::new(el(
+                    "p",
+                    text(format!(
+                        "Existing: {} · Proposed: {}",
+                        grouping_label(&preview.before),
+                        grouping_label(&preview.after)
+                    )),
+                )));
+                if preview.conflict {
+                    grouping.push(action_button(
+                        if preview.use_update { "Keep local" } else { "Keep local · selected" },
+                        "arrangement-group-choice",
+                        "group-choice-local",
+                        |ui| ui.choose_arrangement_grouping(false),
+                    ));
+                    grouping.push(action_button(
+                        if preview.use_update { "Use update · selected" } else { "Use update" },
+                        "arrangement-group-choice",
+                        "group-choice-update",
+                        |ui| ui.choose_arrangement_grouping(true),
+                    ));
+                }
+                grouping.push(action_button("Apply grouping", "arrangement-group-apply", "group-apply", UiState::apply_arrangement_grouping));
+                grouping.push(action_button("Cancel preview", "arrangement-group-cancel", "group-cancel", UiState::cancel_arrangement_grouping));
+            }
+            body.push(Box::new(el("div", grouping).attr("class", "arrangement-grouping")));
+        } else {
+            body.push(Box::new(el("p", text("Author a time signature before grouping bars."))));
+        }
         let mut rows: Vec<UiChild> = vec![Box::new(el("h3", text("Expected roles")))];
         for (i, role) in d.context.roles.iter().enumerate() {
             let mut row = vec![Box::new(el(
@@ -1033,6 +1588,7 @@ pub fn screen(ui: &UiState) -> UiChild {
                     },
                     "arrangement-place",
                     move |ui| {
+                        ui.capture_arrangement_history(owner);
                         if let Some(d) = ui.arrangement_editor.drafts.get_mut(&owner) {
                             if !d.placed.remove(&id) {
                                 d.placed.insert(id);
@@ -1053,6 +1609,7 @@ pub fn screen(ui: &UiState) -> UiChild {
                     "Forget missing binding",
                     "arrangement-forget",
                     move |ui| {
+                        ui.capture_arrangement_history(owner);
                         if let Some(d) = ui.arrangement_editor.drafts.get_mut(&owner) {
                             d.cards.retain(|c| *c != id);
                             d.placed.remove(&id);
@@ -1088,6 +1645,7 @@ pub fn screen(ui: &UiState) -> UiChild {
                 "Remove rest",
                 "arrangement-remove-rest",
                 move |ui| {
+                    ui.capture_arrangement_history(owner);
                     if let Some(d) = ui.arrangement_editor.drafts.get_mut(&owner) {
                         d.rests.retain(|r| r != &k);
                     }
@@ -1253,7 +1811,14 @@ pub fn screen(ui: &UiState) -> UiChild {
                 },
             ),
     ));
-    Box::new(el("div", body).attr("class", "arrangement-workspace"))
+    Box::new(
+        on_key(
+            el("div", body).attr("class", "arrangement-workspace"),
+            arrangement_history_key,
+        )
+        .capture(true)
+        .focusable(false),
+    )
 }
 
 pub const CSS:&str="
@@ -1263,8 +1828,8 @@ pub const CSS:&str="
 .arrangement-field [role=textbox] { min-width:80px; max-width:220px; min-height:26px; padding:4px; border:1px solid currentColor; }
 .arrangement-row { padding:8px 0; border-bottom:1px solid #606878; }
 .arrangement-columns {display:flex;gap:16px;align-items:flex-start;min-width:0;}
-.arrangement-preview { flex:1 1 auto; display:flex; flex-direction:column; gap:8px; min-width:0; overflow-x:auto; }
-.arrangement-scene-scroll { width:100%; overflow-x:auto; flex:none; }
+.arrangement-preview { flex:1 1 auto; display:flex; flex-direction:column; gap:8px; min-width:0; }
+.arrangement-scene-scroll { width:100%; height:300px; overflow-x:auto; overflow-y:hidden; flex:none; }
 .arrangement-preview .backdrop-scene-reading { display:flex; flex-direction:column; gap:6px; padding:8px; }
 .arrangement-preview .backdrop-scene-reading button { min-height:28px; text-align:left; }
 .arrangement-preview .backdrop-scene-occurrence { padding:5px; }
@@ -1316,6 +1881,229 @@ mod tests {
     }
     fn value(v: &impl serde::Serialize) -> serde_json::Value {
         serde_json::to_value(v).unwrap()
+    }
+    fn enable_test_meter(ui: &mut UiState) {
+        let owner = ui.working_sets.active_id;
+        let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+        draft.context.alignment.time_signatures = vec![TimeSignatureChange {
+            start: 0,
+            numerator: 4,
+            denominator: 4,
+        }];
+        draft.history_snapshot = draft.snapshot();
+    }
+    #[test]
+    fn grouping_preview_cancel_and_conflict_choices_do_not_edit_until_apply() {
+        let mut ui = fixture();
+        enable_test_meter(&mut ui);
+        let owner = ui.working_sets.active_id;
+        {
+            let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+            draft.context.alignment.bar_groups = vec![BarGroup { first: 0, count: 2 }];
+            draft.history_snapshot = draft.snapshot();
+            draft.selected_bars = vec![0, 1];
+            draft.bar_counts = TextInput::new("1 + 1");
+        }
+        let initial = ui.arrangement_editor.drafts[&owner].snapshot();
+        ui.preview_arrangement_grouping();
+        let draft = &ui.arrangement_editor.drafts[&owner];
+        assert_eq!(draft.snapshot(), initial);
+        assert!(draft.grouping_preview.as_ref().unwrap().conflict);
+        assert!(!draft.grouping_preview.as_ref().unwrap().use_update);
+        let scene = ui.arrangement_editor.surfaces.borrow();
+        let scenomise::backdrops::SceneFacts::TemplatedSequence(sequence) =
+            &scene.document.as_ref().unwrap().primary.facts
+        else {
+            panic!("arrangement scene should be a templated sequence")
+        };
+        assert!(sequence.template.groups.iter().any(|group| {
+            group.key == "bar-group-0" && group.label == "Bars 1–2"
+        }));
+        drop(scene);
+        ui.cancel_arrangement_grouping();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].snapshot(), initial);
+        assert!(!ui.arrangement_editor.group_preview_active(owner));
+
+        ui.preview_arrangement_grouping();
+        ui.apply_arrangement_grouping();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].snapshot(), initial);
+        ui.preview_arrangement_grouping();
+        ui.choose_arrangement_grouping(true);
+        ui.apply_arrangement_grouping();
+        assert_eq!(
+            ui.arrangement_editor.drafts[&owner].context.alignment.bar_groups,
+            vec![BarGroup { first: 0, count: 1 }, BarGroup { first: 1, count: 1 }]
+        );
+        ui.undo_arrangement_edit();
+        assert_eq!(
+            ui.arrangement_editor.drafts[&owner].context.alignment.bar_groups,
+            vec![BarGroup { first: 0, count: 2 }]
+        );
+        ui.redo_arrangement_edit();
+        assert_eq!(
+            ui.arrangement_editor.drafts[&owner].context.alignment.bar_groups,
+            vec![BarGroup { first: 0, count: 1 }, BarGroup { first: 1, count: 1 }]
+        );
+    }
+    #[test]
+    fn preview_draws_the_proposal_without_changing_the_authored_candidate_or_history() {
+        let mut ui = fixture();
+        enable_test_meter(&mut ui);
+        let owner = ui.working_sets.active_id;
+        {
+            let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+            draft.selected_bars = vec![0, 1];
+            draft.bar_counts = TextInput::new("2");
+        }
+        let before = ui.arrangement_editor.surfaces.borrow().document.clone().unwrap();
+        ui.preview_arrangement_grouping();
+
+        let candidate = ui.arrangement_editor.drafts[&owner].candidate(&ui.set).unwrap();
+        assert!(candidate.progression_arrangement.unwrap().alignment.bar_groups.is_empty());
+        assert!(!ui.arrangement_editor.can_undo(owner));
+        let after = ui.arrangement_editor.surfaces.borrow().document.clone().unwrap();
+        assert_ne!(before, after);
+        let scenomise::backdrops::SceneFacts::TemplatedSequence(sequence) = &after.primary.facts
+        else {
+            panic!("arrangement scene should be a templated sequence")
+        };
+        assert!(sequence.template.groups.iter().any(|group| {
+            group.key == "bar-group-0" && group.label == "Bars 1–2"
+        }));
+    }
+
+    #[test]
+    fn bar_count_native_field_is_borrowed_but_remains_outside_authored_history() {
+        let mut ui = fixture();
+        let owner = ui.working_sets.active_id;
+        let dirty_before = ui.arrangement_editor.drafts[&owner].dirty();
+        assert_eq!(ui.arrangement_editor.field(owner, "bar-counts").unwrap().text(), "2 + 2");
+        *ui.arrangement_editor.field_mut(owner, "bar-counts").unwrap() = TextInput::new("1 + 3");
+        ui.sync_arrangement_scene();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].bar_counts.text(), "1 + 3");
+        assert!(!ui.arrangement_editor.can_undo(owner));
+        assert_eq!(ui.arrangement_editor.drafts[&owner].dirty(), dirty_before);
+    }
+
+    #[test]
+    fn grouping_apply_refuses_a_changed_saved_set() {
+        let mut ui = fixture();
+        enable_test_meter(&mut ui);
+        ui.save_arrangement();
+        let owner = ui.working_sets.active_id;
+        {
+            let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+            draft.selected_bars = vec![0, 1];
+            draft.bar_counts = TextInput::new("2");
+        }
+        ui.preview_arrangement_grouping();
+        ui.set.progression_arrangement.as_mut().unwrap().alignment.name.push_str(" external");
+        ui.apply_arrangement_grouping();
+        assert_eq!(
+            ui.arrangement_editor.drafts[&owner].context.alignment.bar_groups,
+            Vec::<BarGroup>::new()
+        );
+        assert!(ui.arrangement_editor.notice.as_deref().unwrap().contains("changed"));
+    }
+    #[test]
+    fn grouping_preview_refuses_a_changed_source_and_ordinary_edit_is_earlier_in_history() {
+        let mut ui = fixture();
+        enable_test_meter(&mut ui);
+        let owner = ui.working_sets.active_id;
+        let original_name = ui.arrangement_editor.drafts[&owner].value("name").to_string();
+        let original_extent = ui.arrangement_editor.drafts[&owner].value("extent").to_string();
+        edit(&mut ui, "name", "Earlier title");
+        {
+            let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+            draft.span_fields("role-0", Span { start: 8, length: 16 });
+        }
+        ui.sync_arrangement_scene();
+        {
+            let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+            draft.selected_bars = vec![0, 1];
+            draft.bar_counts = TextInput::new("2");
+        }
+        ui.preview_arrangement_grouping();
+        edit(&mut ui, "extent", "128");
+        assert!(ui.arrangement_editor.drafts.get_mut(&owner).unwrap().apply_grouping().is_err());
+        ui.undo_arrangement_edit();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].value("extent"), original_extent);
+        ui.undo_arrangement_edit();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].span("role-0").unwrap().start, 0);
+        ui.undo_arrangement_edit();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].value("name"), original_name);
+    }
+    #[test]
+    fn save_keeps_history_and_undo_redo_tracks_the_saved_marker() {
+        let mut ui = fixture();
+        let original_name = ui.arrangement_editor.drafts[&ui.working_sets.active_id]
+            .value("name")
+            .to_string();
+        edit(&mut ui, "name", "Saved name");
+        ui.save_arrangement();
+        assert!(!ui.arrangement_editor.drafts[&ui.working_sets.active_id].dirty());
+        ui.undo_arrangement_edit();
+        assert!(ui.arrangement_editor.drafts[&ui.working_sets.active_id].dirty());
+        assert_eq!(ui.arrangement_editor.drafts[&ui.working_sets.active_id].value("name"), original_name);
+        ui.redo_arrangement_edit();
+        assert!(!ui.arrangement_editor.drafts[&ui.working_sets.active_id].dirty());
+        assert_eq!(ui.arrangement_editor.drafts[&ui.working_sets.active_id].value("name"), "Saved name");
+    }
+    #[test]
+    fn typing_in_one_focused_field_is_one_arrangement_history_step() {
+        let mut ui = fixture();
+        let owner = ui.working_sets.active_id;
+        let original_name = ui.arrangement_editor.drafts[&owner].value("name").to_string();
+        ui.arrangement_editor.drafts.get_mut(&owner).unwrap().focused_field.borrow_mut().field = Some("name".into());
+        edit(&mut ui, "name", "First");
+        edit(&mut ui, "name", "Second");
+        ui.arrangement_editor.drafts.get_mut(&owner).unwrap().focused_field.borrow_mut().field = None;
+        ui.arrangement_editor.drafts.get_mut(&owner).unwrap().history.break_run();
+        ui.undo_arrangement_edit();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].value("name"), original_name);
+    }
+    #[test]
+    fn refreshing_set_membership_does_not_record_or_undo_an_arrangement_edit() {
+        let mut ui = fixture();
+        let owner = ui.working_sets.active_id;
+        let original_name = ui.arrangement_editor.drafts[&owner].value("name").to_string();
+        edit(&mut ui, "name", "Authored title");
+        let history = ui.arrangement_editor.drafts[&owner].history.clone();
+
+        let mut incoming = ui.set.cards[0].clone();
+        let next_id = ui.set.cards.iter().map(|card| card.id.0).max().unwrap() + 1;
+        incoming.id = CardId(next_id);
+        ui.set.cards.push(incoming);
+        ui.sync_arrangement_scene();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].history, history);
+        assert!(ui.arrangement_editor.drafts[&owner].cards.contains(&CardId(next_id)));
+
+        ui.undo_arrangement_edit();
+        assert_eq!(ui.arrangement_editor.drafts[&owner].value("name"), original_name);
+        assert!(ui.arrangement_editor.drafts[&owner].cards.contains(&CardId(next_id)));
+        ui.sync_arrangement_scene();
+        assert!(!ui.arrangement_editor.can_undo(owner));
+    }
+    #[test]
+    fn span_editor_rebuild_preserves_authored_meter_and_bar_groups() {
+        let mut ui = fixture();
+        let owner = ui.working_sets.active_id;
+        let draft = ui.arrangement_editor.drafts.get_mut(&owner).unwrap();
+        draft.context.alignment.time_signatures = vec![
+            woodshedding::rehearsal::arrangement::TimeSignatureChange {
+                start: 0,
+                numerator: 4,
+                denominator: 4,
+            },
+        ];
+        draft.context.alignment.bar_groups = vec![
+            woodshedding::rehearsal::arrangement::BarGroup { first: 0, count: 2 },
+        ];
+        draft.put("role-0-start", 2);
+        let rebuilt = draft.alignment().unwrap();
+        assert_eq!(rebuilt.time_signatures, draft.context.alignment.time_signatures);
+        assert_eq!(rebuilt.bar_groups, draft.context.alignment.bar_groups);
+        assert_eq!(rebuilt.role_spans[0].start, 2);
     }
     fn card_span(ui: &UiState, key: &str) -> Span {
         ui.arrangement_editor.drafts[&ui.working_sets.active_id]

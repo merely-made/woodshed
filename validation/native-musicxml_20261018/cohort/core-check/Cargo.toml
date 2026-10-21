@@ -1,0 +1,107 @@
+[workspace]
+[package]
+name="woodshed-core-music-check"
+version="0.0.0"
+edition="2021"
+[lib]
+name="woodshed_core"
+path="/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshed-core/src/lib.rs"
+
+[dependencies]
+audio-primitives = {path = "/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/audio-primitives", version = "0.1.0"}
+woodshedding = {path = "/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshedding", version = "0.1.0"}
+scenomise = {git = "https://github.com/merely-made/mere.git", branch = "main", optional = true, features = ["djot"]}
+blake3 = {version = "1", optional = true}
+woodshed-graph = {path = "/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshed-graph", version = "0.1.0"}
+sceno = {git = "https://github.com/merely-made/mere.git", branch = "main"}
+scenotime = {git = "https://github.com/merely-made/mere.git", branch = "main"}
+tabard = {git = "https://github.com/merely-made/mere.git", branch = "main"}
+serde = {version = "1.0", features = ["derive"]}
+serde_json = {version = "1.0"}
+personae = {git = "https://github.com/merely-made/dramatis.git", branch = "main"}
+muniment = {git = "https://github.com/merely-made/mere.git", branch = "main"}
+async-trait = "0.1"
+pollster = "0.4"
+chartulary = {git = "https://github.com/merely-made/mere.git", branch = "main"}
+hex = "0.4"
+wavicle = {git = "https://github.com/merely-made/wavicle.git", rev = "2c5a49fd48db7a54aeab9e712804fd065411aef9", default-features = false, features = ["encode", "decode"]}
+
+[dev-dependencies]
+serde_json = {version = "1.0"}
+tokio = {version = "1", features = ["macros", "rt"]}
+
+[features]
+portable-scenes = ["dep:scenomise", "dep:blake3"]
+
+[patch."https://github.com/merely-made/mere.git"]
+mere-personal-facts = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/domain/personal-facts"}
+murm = {git = "https://github.com/merely-made/murm.git", branch = "main"}
+cambium = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium"}
+cambium-genet-winit-host = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-genet-winit-host"}
+chartulary = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/eidetic/chartulary"}
+chirograph = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/chirograph"}
+eidetic = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/eidetic/eidetic-core"}
+esp = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/intel/esp"}
+mere-fetch = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/fetch"}
+gemot = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/moot/gemot"}
+graphshell = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/ports/graphshell"}
+graphshell-endpoint = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graphshell/graphshell-endpoint"}
+graphshell-host = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graphshell/graphshell-host"}
+illume = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/nematic/illume"}
+inker = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/inker"}
+insigne = {git = "https://github.com/merely-made/dramatis.git", branch = "main"}
+knot-editor-host = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/knot-editor-host"}
+mere-proofs = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/proofs"}
+mere-surface-api = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/surface-api"}
+mere-transport = {git = "https://github.com/merely-made/murm.git", branch = "main"}
+mora-cmudict = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/intel/mora-cmudict"}
+reference-data = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/intel/reference-data"}
+muniment = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/eidetic/muniment"}
+nematic = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/nematic/nematic"}
+notochord = {git = "https://github.com/merely-made/dramatis.git", branch = "main"}
+pandect = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/pandect"}
+personae = {git = "https://github.com/merely-made/dramatis.git", branch = "main"}
+sceno = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/sceno"}
+scenograph = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenograph"}
+scenomise = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenomise"}
+scenotime = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenotime"}
+script-rhai = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/script/rhai"}
+servitor = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/servitor"}
+stickleback = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/stickleback"}
+armillary = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/armillary"}
+cambium-rootstock = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-rootstock"}
+cambium-winit = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-winit"}
+cambium-winit-a11y = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-winit-a11y"}
+command-menu = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/command-menu"}
+document-canvas = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/document-canvas"}
+backstep = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/backstep"}
+errand = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/errand"}
+graphshell-client = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graphshell/graphshell-client"}
+incipit = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/incipit"}
+luggage = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/luggage"}
+mere = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/mere"}
+mere-alembic = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/distillery/alembic"}
+mere-apparatus = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/domain/apparatus"}
+mere-cartography = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/canvas/cartography"}
+mere-curation = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/curation"}
+mere-document-lanes = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/document-lanes"}
+mere-fleece = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/fleece"}
+mere-forme = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/forme"}
+mere-kernel = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graph/graph-kernel"}
+mere-page-load = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/page-load"}
+mere-overmap = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/mere-overmap"}
+mere-view = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/mere-view"}
+mere-webrtc-carrier = {git = "https://github.com/merely-made/murm.git", branch = "main"}
+meristem = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/meristem"}
+mesquite = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/mesquite"}
+mien = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/moot/mien"}
+mooting = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/moot/mooting"}
+numen = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/conatus/numen"}
+pictograph = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/canvas/pictograph"}
+seiche = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/conatus/seiche"}
+sprigging = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/sprigging"}
+tabard = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/tabard"}
+tabard-workshop = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/tabard-workshop"}
+tinct = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/tinct"}
+uxtree = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/uxtree"}
+workbench = {path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/workbench"}

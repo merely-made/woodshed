@@ -1,0 +1,696 @@
+{
+  "dirty": false,
+  "live": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 0,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Progressions",
+      "progression_expanded": 2,
+      "progression_idx": 6,
+      "root_idx": 3,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 260,
+        "set_graph_reading": "Set",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 0,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Progressions",
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":3,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[],\"focus\":null,\"roles\":[],\"background\":[],\"folds\":[]}",
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "b662fa1d-1b05-4258-94d0-e92c94f58598"
+    },
+    "practice_history": {
+      "entries": [],
+      "owners": [],
+      "visits": []
+    },
+    "progression_expanded": 2,
+    "progression_idx": 6,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 3,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 1,
+          "label": "Dm7 (iim7)",
+          "material": {
+            "Chord": {
+              "name": "Minor 7",
+              "root": 2
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-x-0-2-1-1",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 2,
+          "label": "G7 (V7)",
+          "material": {
+            "Chord": {
+              "name": "Dominant 7",
+              "root": 7
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "3-2-3-x-3-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 3,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-2-0-0-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 4,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-x-0-0-0",
+            "voicing_idx": 1,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 4,
+      "loop_mode": "Off",
+      "music": {
+        "musicxml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><score-partwise version=\"4.0\"><work><work-title>Working Set 1</work-title></work><part-list><score-part id=\"P1\"><part-name>Guitar</part-name></score-part></part-list><part id=\"P1\"><measure number=\"1\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><direction><direction-type><metronome><beat-unit>quarter</beat-unit><per-minute>120</per-minute></metronome></direction-type><sound tempo=\"120\"/></direction><harmony><root><root-step>D</root-step><root-alter>0</root-alter></root><kind>minor-seventh</kind></harmony><note><pitch><step>D</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>A</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>C</step><alter>0</alter><octave>5</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>F</step><alter>0</alter><octave>5</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>C</step><alter>0</alter><octave>5</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>A</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>D</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>A</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>D</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>4</string><fret>0</fret></technical></notations></note><note><pitch><step>A</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>3</string><fret>2</fret></technical></notations></note><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>2</string><fret>1</fret></technical></notations></note><note><pitch><step>F</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>1</string><fret>1</fret></technical></notations></note><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>2</string><fret>1</fret></technical></notations></note><note><pitch><step>A</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>3</string><fret>2</fret></technical></notations></note><note><pitch><step>D</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>4</string><fret>0</fret></technical></notations></note><note><pitch><step>A</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>3</string><fret>2</fret></technical></notations></note></measure><measure number=\"2\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><harmony><root><root-step>G</root-step><root-alter>0</root-alter></root><kind>dominant</kind></harmony><note><pitch><step>G</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>F</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>D</step><alter>0</alter><octave>5</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>G</step><alter>0</alter><octave>2</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>6</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>2</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>5</string><fret>2</fret></technical></notations></note><note><chord/><pitch><step>F</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>4</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>D</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>2</string><fret>3</fret></technical></notations></note></measure><measure number=\"3\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><harmony><root><root-step>C</root-step><root-alter>0</root-alter></root><kind>major-seventh</kind></harmony><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>C</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>5</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>4</string><fret>2</fret></technical></notations></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>3</string><fret>0</fret></technical></notations></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>2</string><fret>0</fret></technical></notations></note></measure><measure number=\"4\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><harmony><root><root-step>C</root-step><root-alter>0</root-alter></root><kind>major-seventh</kind></harmony><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>5</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>C</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>5</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>3</string><fret>0</fret></technical></notations></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>2</string><fret>0</fret></technical></notations></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>1</string><fret>0</fret></technical></notations></note></measure></part></score-partwise>"
+      }
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"arrangement\",\"id\":1464811858,\"title\":\"Arrangement\",\"kind\":\"woodshed.arrangement\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":4}},\"active_panel\":\"arrangement\"}"
+  },
+  "score": {
+    "instrument": "Guitar",
+    "measures": [
+      {
+        "events": [
+          {
+            "notes": [
+              {
+                "fret": 0,
+                "string": 4
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 2,
+                "string": 3
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 1,
+                "string": 2
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 1,
+                "string": 1
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 1,
+                "string": 2
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 2,
+                "string": 3
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 0,
+                "string": 4
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          },
+          {
+            "notes": [
+              {
+                "fret": 2,
+                "string": 3
+              }
+            ],
+            "rest": false,
+            "value": "Eighth"
+          }
+        ],
+        "harmony": {
+          "kind": "Minor7",
+          "root": 2
+        },
+        "meter": {
+          "beat_type": 4,
+          "beats": 4
+        }
+      },
+      {
+        "events": [
+          {
+            "notes": [
+              {
+                "fret": 3,
+                "string": 6
+              },
+              {
+                "fret": 2,
+                "string": 5
+              },
+              {
+                "fret": 3,
+                "string": 4
+              },
+              {
+                "fret": 3,
+                "string": 2
+              }
+            ],
+            "rest": false,
+            "value": "Whole"
+          }
+        ],
+        "harmony": {
+          "kind": "Dominant7",
+          "root": 7
+        },
+        "meter": {
+          "beat_type": 4,
+          "beats": 4
+        }
+      },
+      {
+        "events": [
+          {
+            "notes": [
+              {
+                "fret": 3,
+                "string": 5
+              },
+              {
+                "fret": 2,
+                "string": 4
+              },
+              {
+                "fret": 0,
+                "string": 3
+              },
+              {
+                "fret": 0,
+                "string": 2
+              }
+            ],
+            "rest": false,
+            "value": "Whole"
+          }
+        ],
+        "harmony": {
+          "kind": "Major7",
+          "root": 0
+        },
+        "meter": {
+          "beat_type": 4,
+          "beats": 4
+        }
+      },
+      {
+        "events": [
+          {
+            "notes": [
+              {
+                "fret": 3,
+                "string": 5
+              },
+              {
+                "fret": 0,
+                "string": 3
+              },
+              {
+                "fret": 0,
+                "string": 2
+              },
+              {
+                "fret": 0,
+                "string": 1
+              }
+            ],
+            "rest": false,
+            "value": "Whole"
+          }
+        ],
+        "harmony": {
+          "kind": "Major7",
+          "root": 0
+        },
+        "meter": {
+          "beat_type": 4,
+          "beats": 4
+        }
+      }
+    ],
+    "tempo": 120,
+    "title": "Working Set 1",
+    "tuning": [
+      64,
+      59,
+      55,
+      50,
+      45,
+      40
+    ]
+  },
+  "stored": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 0,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Progressions",
+      "progression_expanded": 2,
+      "progression_idx": 6,
+      "root_idx": 3,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 260,
+        "set_graph_reading": "Set",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 0,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Progressions",
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":3,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[],\"focus\":null,\"roles\":[],\"background\":[],\"folds\":[]}",
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "b662fa1d-1b05-4258-94d0-e92c94f58598"
+    },
+    "practice_history": {
+      "entries": [],
+      "owners": [],
+      "visits": []
+    },
+    "progression_expanded": 2,
+    "progression_idx": 6,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 3,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 1,
+          "label": "Dm7 (iim7)",
+          "material": {
+            "Chord": {
+              "name": "Minor 7",
+              "root": 2
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-x-0-2-1-1",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 2,
+          "label": "G7 (V7)",
+          "material": {
+            "Chord": {
+              "name": "Dominant 7",
+              "root": 7
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "3-2-3-x-3-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 3,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-2-0-0-x",
+            "voicing_idx": 0,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        },
+        {
+          "from": {
+            "Progression": {
+              "key": 0,
+              "name": "ii-V-I (Jazz)"
+            }
+          },
+          "id": 4,
+          "label": "Cmaj7 (IM7)",
+          "material": {
+            "Chord": {
+              "name": "Major 7",
+              "root": 0
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": "x-3-x-0-0-0",
+            "voicing_idx": 1,
+            "voicing_profile": "root-bass/position4/v1"
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 4,
+      "loop_mode": "Off",
+      "music": {
+        "musicxml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><score-partwise version=\"4.0\"><work><work-title>Working Set 1</work-title></work><part-list><score-part id=\"P1\"><part-name>Guitar</part-name></score-part></part-list><part id=\"P1\"><measure number=\"1\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><direction><direction-type><metronome><beat-unit>quarter</beat-unit><per-minute>120</per-minute></metronome></direction-type><sound tempo=\"120\"/></direction><harmony><root><root-step>D</root-step><root-alter>0</root-alter></root><kind>minor-seventh</kind></harmony><note><pitch><step>D</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>A</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>C</step><alter>0</alter><octave>5</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>F</step><alter>0</alter><octave>5</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>C</step><alter>0</alter><octave>5</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>A</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>D</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><note><pitch><step>A</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>1</voice><type>eighth</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>D</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>4</string><fret>0</fret></technical></notations></note><note><pitch><step>A</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>3</string><fret>2</fret></technical></notations></note><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>2</string><fret>1</fret></technical></notations></note><note><pitch><step>F</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>1</string><fret>1</fret></technical></notations></note><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>2</string><fret>1</fret></technical></notations></note><note><pitch><step>A</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>3</string><fret>2</fret></technical></notations></note><note><pitch><step>D</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>4</string><fret>0</fret></technical></notations></note><note><pitch><step>A</step><alter>0</alter><octave>3</octave></pitch><duration>3</duration><voice>2</voice><type>eighth</type><staff>2</staff><notations><technical><string>3</string><fret>2</fret></technical></notations></note></measure><measure number=\"2\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><harmony><root><root-step>G</root-step><root-alter>0</root-alter></root><kind>dominant</kind></harmony><note><pitch><step>G</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>F</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>D</step><alter>0</alter><octave>5</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>G</step><alter>0</alter><octave>2</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>6</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>2</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>5</string><fret>2</fret></technical></notations></note><note><chord/><pitch><step>F</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>4</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>D</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>2</string><fret>3</fret></technical></notations></note></measure><measure number=\"3\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><harmony><root><root-step>C</root-step><root-alter>0</root-alter></root><kind>major-seventh</kind></harmony><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>C</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>5</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>4</string><fret>2</fret></technical></notations></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>3</string><fret>0</fret></technical></notations></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>2</string><fret>0</fret></technical></notations></note></measure><measure number=\"4\"><attributes><divisions>6</divisions><time><beats>4</beats><beat-type>4</beat-type></time><staves>2</staves><clef number=\"1\"><sign>G</sign><line>2</line></clef><clef number=\"2\"><sign>TAB</sign><line>5</line></clef><staff-details number=\"2\"><staff-lines>6</staff-lines><staff-tuning line=\"1\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"2\"><tuning-step>A</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>2</tuning-octave></staff-tuning><staff-tuning line=\"3\"><tuning-step>D</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"4\"><tuning-step>G</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"5\"><tuning-step>B</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>3</tuning-octave></staff-tuning><staff-tuning line=\"6\"><tuning-step>E</tuning-step><tuning-alter>0</tuning-alter><tuning-octave>4</tuning-octave></staff-tuning></staff-details><transpose number=\"1\"><diatonic>0</diatonic><chromatic>0</chromatic><octave-change>-1</octave-change></transpose></attributes><harmony><root><root-step>C</root-step><root-alter>0</root-alter></root><kind>major-seventh</kind></harmony><note><pitch><step>C</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>5</octave></pitch><duration>24</duration><voice>1</voice><type>whole</type><staff>1</staff></note><backup><duration>24</duration></backup><note><pitch><step>C</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>5</string><fret>3</fret></technical></notations></note><note><chord/><pitch><step>G</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>3</string><fret>0</fret></technical></notations></note><note><chord/><pitch><step>B</step><alter>0</alter><octave>3</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>2</string><fret>0</fret></technical></notations></note><note><chord/><pitch><step>E</step><alter>0</alter><octave>4</octave></pitch><duration>24</duration><voice>2</voice><type>whole</type><staff>2</staff><notations><technical><string>1</string><fret>0</fret></technical></notations></note></measure></part></score-partwise>"
+      }
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"arrangement\",\"id\":1464811858,\"title\":\"Arrangement\",\"kind\":\"woodshed.arrangement\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":4}},\"active_panel\":\"arrangement\"}"
+  }
+}

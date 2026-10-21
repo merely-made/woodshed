@@ -12,6 +12,7 @@
 pub mod appearance;
 pub mod demo;
 pub mod fretboard_leaf;
+pub mod notation_leaf;
 pub mod persona;
 pub mod settings_provider;
 pub mod stage;

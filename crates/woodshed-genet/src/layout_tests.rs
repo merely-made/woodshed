@@ -31,7 +31,7 @@ fn rect(
     let id = {
         let node = harness.runner().dom();
         let dom = node.borrow();
-        taproot::matching(&dom, &Selector::class(class))
+        taproot::matching_classes(&dom, &Selector::class(class))
             .into_iter()
             .next()
             .unwrap_or_else(|| panic!("missing .{class}"))
@@ -44,7 +44,7 @@ fn rect(
 fn class_count(h: &Harness<UiState, crate::sync::Logic, UiChild>, class: &str) -> usize {
     let node = h.runner().dom();
     let dom = node.borrow();
-    taproot::matching(&dom, &Selector::class(class)).len()
+    taproot::matching_classes(&dom, &Selector::class(class)).len()
 }
 
 #[test]
@@ -438,7 +438,7 @@ fn card_parameters_and_explanations_do_not_overlap_and_related_rows_still_stage(
         let button_ids = {
             let node = h.runner().dom();
             let dom = node.borrow();
-            let row = taproot::matching(&dom, &Selector::class("card-control-row"))[0];
+            let row = taproot::matching_classes(&dom, &Selector::class("card-control-row"))[0];
             dom.dom_children(row).collect::<Vec<_>>()
         };
         for id in button_ids {
@@ -606,7 +606,7 @@ fn rehearsal_board_scroll_preserves_extent_and_note_hits() {
     let nodes = {
         let dom = h.runner().dom();
         let dom = dom.borrow();
-        taproot::matching(&dom, &Selector::class("fret-label"))
+        taproot::matching_classes(&dom, &Selector::class("fret-label"))
     };
     let point = nodes
         .into_iter()
@@ -927,7 +927,7 @@ fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
     let dom = h.runner().dom();
     let dom = dom.borrow();
     assert!(
-        taproot::matching(
+        taproot::matching_classes(
             &dom,
             &Selector::class("t-btn").containing("Explore compatible scales")
         )
@@ -935,24 +935,24 @@ fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
         "an ordinary scale must not render chord-to-scale discovery"
     );
     assert!(
-        taproot::matching(&dom, &Selector::class("t-btn").containing("Discover ")).is_empty(),
+        taproot::matching_classes(&dom, &Selector::class("t-btn").containing("Discover ")).is_empty(),
         "an ordinary scale must not render chord-to-arpeggio discovery"
     );
     assert_eq!(
-        taproot::matching(&dom, &Selector::class("stage-context-panel")).len(),
+        taproot::matching_classes(&dom, &Selector::class("stage-context-panel")).len(),
         1,
         "only the populated scale-pattern panel should remain; no empty styled chord panels"
     );
     assert_eq!(
-        taproot::matching(&dom, &Selector::class("scale-patterns")).len(),
+        taproot::matching_classes(&dom, &Selector::class("scale-patterns")).len(),
         1
     );
     assert_eq!(
-        taproot::matching(&dom, &Selector::class("scale-pattern-choice")).len(),
+        taproot::matching_classes(&dom, &Selector::class("scale-pattern-choice")).len(),
         2,
         "thirds and fourths are useful scale actions rather than an empty panel"
     );
-    let panel = taproot::matching(&dom, &Selector::class("scale-patterns"))[0];
+    let panel = taproot::matching_classes(&dom, &Selector::class("scale-patterns"))[0];
     assert!(
         dom.dom_children(panel).any(|child| {
             dom.dom_children(child)
@@ -1105,7 +1105,7 @@ fn invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar()
     let unavailable = {
         let dom = h.runner().dom();
         let dom = dom.borrow();
-        taproot::matching(
+        taproot::matching_classes(
             &dom,
             &Selector::class("scale-setup-unavailable").containing("missing-test-tuning"),
         )
@@ -1117,7 +1117,7 @@ fn invalid_saved_scale_setup_shows_the_reason_and_cannot_sound_the_live_guitar()
     let labels = {
         let dom = h.runner().dom();
         let dom = dom.borrow();
-        taproot::matching(&dom, &Selector::class("fret-label"))
+        taproot::matching_classes(&dom, &Selector::class("fret-label"))
     };
     assert!(
         labels.is_empty(),
@@ -1318,7 +1318,7 @@ fn inspected_pattern_revalidates_removed_and_invalid_sources_before_authoring() 
         let unavailable = {
             let dom = h.runner().dom();
             let dom = dom.borrow();
-            taproot::matching(
+            taproot::matching_classes(
                 &dom,
                 &Selector::class("scale-pattern-unavailable").containing(reason),
             )
@@ -1536,7 +1536,7 @@ fn inspected_chord_approach_rejects_stale_pairs_and_saved_shape_failures() {
         let unavailable = {
             let dom = h.runner().dom();
             let dom = dom.borrow();
-            taproot::matching(&dom, &Selector::class("chord-approach-unavailable"))
+            taproot::matching_classes(&dom, &Selector::class("chord-approach-unavailable"))
         };
         assert!(
             !unavailable.is_empty(),
@@ -1639,7 +1639,7 @@ fn relationship_recipe_controls_compile_explain_and_return_to_exact_source_at_tw
         let node = {
             let dom = h.runner().dom();
             let dom = dom.borrow();
-            taproot::matching(
+            taproot::matching_classes(
                 &dom,
                 &Selector::class("graph-canvas-swatch-node").with_attr("data-key", "set:1:card:3"),
             )[0]

@@ -228,6 +228,7 @@ fn micros(elapsed: std::time::Duration) -> u64 {
 
 /// The application's own state, beside the host's.
 pub struct Shared {
+    pub music_leaf_sig: Option<String>,
     /// The W0.1 audio seam: cpal on desktop, Web Audio on the web host.
     pub backend: Option<CpalBackend>,
     /// The MIDI seam: midir on desktop, Web MIDI on the web host.
@@ -315,6 +316,7 @@ impl Shared {
         pending_roster: Option<Roster>,
     ) -> Rc<RefCell<Self>> {
         Rc::new(RefCell::new(Self {
+            music_leaf_sig: None,
             backend: None,
             midi: MidiHost::new(),
             storage,

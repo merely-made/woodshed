@@ -304,7 +304,7 @@ fn click(host: &mut Host, selector: Selector) {
 #[test]
 fn appearance_settings_offer_named_themes_modes_and_keyboard_focus_without_authoring() {
     let mut host = mount(UiState::new());
-    assert!(host.with_dom(|dom| taproot::matching(dom, &action("edit-appearance")).is_empty()));
+    assert!(host.with_dom(|dom| taproot::matching_classes(dom, &action("edit-appearance")).is_empty()));
     for builtin in ThemeMode::ALL {
         click(&mut host, theme(builtin.theme_id()));
         assert_eq!(host.state().app_settings.appearance.theme, builtin.label());
@@ -331,8 +331,12 @@ fn appearance_settings_offer_named_themes_modes_and_keyboard_focus_without_autho
     let focused = host
         .focus()
         .expect("Appearance buttons participate in keyboard focus");
+    let projection = host.a11y_projection();
     assert!(
-        host.with_dom(|dom| taproot::matching(dom, &Selector::role("button")).contains(&focused))
+        host.with_dom(|dom| {
+            taproot::matching_with_projection(dom, &Selector::role("button"), &projection)
+                .contains(&focused)
+        })
     );
 }
 
@@ -381,7 +385,7 @@ fn authoring_copy_preview_close_cancel_save_and_apply_follow_real_controls() {
     assert_eq!(host.state().app_settings.appearance.theme, "Ember");
     click(&mut host, action("back-to-woodshed"));
     assert!(!host.state().appearance.workshop_open);
-    assert!(host.with_dom(|dom| !taproot::matching(dom, &theme(&copy_id)).is_empty()));
+    assert!(host.with_dom(|dom| !taproot::matching_classes(dom, &theme(&copy_id)).is_empty()));
     click(&mut host, theme("woodshed:slate"));
     click(&mut host, theme(&copy_id));
     assert_eq!(
@@ -444,7 +448,7 @@ fn authored_shared_roles_recolor_the_product_surface_and_reset_on_builtin_select
         )
         .unwrap();
     let mut host = mount(ui);
-    let product = host.with_dom(|dom| taproot::matching(dom, &Selector::class("board"))[0]);
+    let product = host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("board"))[0]);
     let background = host.computed_value(product, "background-color").unwrap();
     let background = background.to_ascii_lowercase().replace(' ', "");
     assert!(matches!(
@@ -461,7 +465,7 @@ fn authored_shared_roles_recolor_the_product_surface_and_reset_on_builtin_select
     );
     click(&mut host, theme("woodshed:slate"));
     host.relayout();
-    let product = host.with_dom(|dom| taproot::matching(dom, &Selector::class("board"))[0]);
+    let product = host.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("board"))[0]);
     let restored = host.computed_value(product, "background-color").unwrap();
     assert_ne!(restored.to_ascii_lowercase().replace(' ', ""), background);
     assert_eq!(

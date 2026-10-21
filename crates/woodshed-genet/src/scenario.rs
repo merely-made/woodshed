@@ -2007,9 +2007,26 @@ impl Snapshot<'_, '_> {
             // `data-key` — rather than from a UiState field that would report
             // "none" forever.
             .with_field("graph-focus", self.graph_focus_key())
+            .with_field("music-drag",ui.music_drag_active().to_string())
+            .with_field("music-drag-position",ui.music_drag_position().map(|(s,f)|format!("s{s}/f{f}/")).unwrap_or_else(||"none".into()))
+            .with_field("music-preview",ui.music_preview_active().to_string())
+            .with_field("music-mismatch",ui.music_draft().is_some_and(|d|d.score.chord_mismatch(d.selected.0)).to_string())
+            .with_field("music-pitch",ui.music_draft().and_then(|d|d.score.measures[d.selected.0].events[d.selected.1].notes.first().and_then(|n|d.score.pitch(*n).ok())).map(|p|p.to_string()).unwrap_or_else(||"none".into()))
+            .with_field("music-saved",ui.set.music.is_some().to_string())
+            .with_field("music-dirty",ui.music_draft().is_some_and(|d|d.dirty()).to_string())
+            .with_field("music-can-undo",ui.music_draft().is_some_and(|d|d.can_undo()).to_string())
+            .with_field("music-view",ui.music_draft().map(|d|d.view.label()).unwrap_or("none"))
+            .with_field("music-notes",ui.music_draft().map(|d|d.score.measures[d.selected.0].events[d.selected.1].notes.len()).unwrap_or(0).to_string())
+            .with_field("music-rest",ui.music_draft().is_some_and(|d|d.score.measures[d.selected.0].events[d.selected.1].rest).to_string())
+            .with_field("music-bars",ui.music_draft().map(|d|d.score.measures.len()).unwrap_or(0).to_string())
             .with_field("arrangement-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::PRIMARY_KEY).to_string())
             .with_field("arrangement-related-producer", self.ctx.producers.contains(woodshed_views::stage::arrangement_editor::RELATED_KEY).to_string())
             .with_field("arrangement-preview",ui.arrangement_editor.preview_active().to_string())
+            .with_field("arrangement-group-preview",ui.arrangement_editor.group_preview_active(ui.working_sets.active_id).to_string())
+            .with_field("arrangement-groups",ui.arrangement_editor.grouping_text(ui.working_sets.active_id).filter(|s|!s.is_empty()).unwrap_or_else(||"none".into()))
+            .with_field("arrangement-group-counts",ui.arrangement_editor.field(ui.working_sets.active_id,"bar-counts").map(|f|f.text().to_owned()).unwrap_or_default())
+            .with_field("arrangement-can-undo",ui.arrangement_editor.can_undo(ui.working_sets.active_id).to_string())
+            .with_field("arrangement-can-redo",ui.arrangement_editor.can_redo(ui.working_sets.active_id).to_string())
             .with_field("arrangement-saved",ui.set.progression_arrangement.is_some().to_string())
             .with_field("arrangement-dirty",ui.arrangement_editor.dirty().to_string())
             .with_field("arrangement-primary",ui.arrangement_editor.surfaces.borrow().primary.is_some().to_string())
@@ -2277,7 +2294,7 @@ impl Probe<'_, '_> {
         let nodes = {
             let dom = self.ctx.runner.dom();
             let dom = dom.borrow();
-            taproot::matching(&dom, &Selector::class("arrangement-scene"))
+            taproot::matching_classes(&dom, &Selector::class("arrangement-scene"))
         };
         nodes.into_iter().find_map(|node| self.ctx.painted_rect(node))
             .ok_or("arrangement scene has no native layout".into())
@@ -2304,7 +2321,10 @@ impl Automatable for Probe<'_, '_> {
         let candidates = {
             let dom = self.ctx.runner.dom();
             let dom = dom.borrow();
-            taproot::matching(&dom, selector)
+            self.ctx
+                .a11y_projection()
+                .map(|projection| taproot::matching_with_projection(&dom, selector, &projection))
+                .unwrap_or_default()
         };
         let (width, height) = self.ctx.logical_size;
         for node in candidates {
@@ -2706,7 +2726,10 @@ impl Automatable for Probe<'_, '_> {
                 let id = ui.stage_scale_pattern().expect("fixture scale pattern");
                 ui.set.select_id(id);
             },
+            "music-progression-example" => { crate::arrangement::seed_example(ui);ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Arrangement); },
+            "music-rhythm-example" => {ui.create_working_set_from("Rhythmic study",Default::default());ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Arrangement);ui.music_example(true);},
             "arrangement-editor-example" => crate::arrangement::seed_example(ui),
+            "arrangement-bar-example" => crate::arrangement::seed_bar_example(ui),
             "catalog-audition-admission-example" => {
                 use woodshed_core::harmony::KeyedCatalogRef;
                 use woodshedding::pitch::PitchClass;
@@ -3021,6 +3044,27 @@ impl Probe<'_, '_> {
                     self.release(point.0, point.1);
                 }
                 Ok(())
+            },
+            Some(verb @ ("press-music-fret"|"move-music-fret"|"release-music-fret")) => {
+                let string=parts.next().ok_or("music fret wants string and fret")?;
+                let fret=parts.next().ok_or("music fret wants string and fret")?;
+                if parts.next().is_some(){return Err("music fret wants string and fret".into());}
+                let selector=Selector::class("music-fret").with_attr("data-music-position",format!("s{string}/f{fret}/"));
+                let taproot::SelectorTarget::Hit(hit)=self.selector_target(&selector) else{return Err("fret cell is not visible".into());};let point=hit.point;
+                match verb{"press-music-fret"=>self.press(point.0,point.1),"move-music-fret"=>self.moved(point.0,point.1),_=>self.release(point.0,point.1)}
+                Ok(())
+            },
+            Some("checkpoint-music") => {
+                use std::io::Write;
+                let name=parts.next().ok_or("checkpoint-music wants a name")?;
+                if parts.next().is_some()||name.is_empty()||!name.bytes().all(|b|b.is_ascii_alphanumeric()||b==b'-'){return Err("simple checkpoint name required".into());}
+                let directory=std::path::PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("isolated capture directory required")?);
+                let ui=self.ctx.runner.state();
+                if !matches!(self.shared.seal,Some(woodshed_views::persona::PracticeSeal::Sealed{..})){return Err("music checkpoint requires sealed custody".into());}
+                let stored=self.shared.storage.as_ref().ok_or("no store")?.load().ok_or("unreadable sealed session")?;
+                let persisted=woodshed_core::storage::decode_session(&stored).map_err(|e|e.to_string())?.session;
+                let value=serde_json::json!({"live":ui.to_persisted(),"stored":persisted,"score":ui.music_draft().map(|d|&d.score),"dirty":ui.music_draft().is_some_and(|d|d.dirty())});
+                std::fs::OpenOptions::new().write(true).create_new(true).open(directory.join(format!("{name}.json"))).map_err(|e|e.to_string())?.write_all(&serde_json::to_vec_pretty(&value).map_err(|e|e.to_string())?).map_err(|e|e.to_string())
             },
             Some("checkpoint-arrangement") => {
                 use std::io::Write;
