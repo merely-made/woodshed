@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-main-publication-20261021",
+  "command": [
+    "git",
+    "push",
+    "origin",
+    "HEAD:main"
+  ],
+  "started_at": "2026-10-21T23:37:30.197215Z",
+  "ended_at": "2026-10-21T23:37:31.763389Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-20261021/publish.log",
+  "log_sha256": "83112efb5a09059e92d0fe0c53de9444d4e72f0a8f657eca96a4be11beb5b704",
+  "source_commit": "f4904a272e5b0d120a7075d59a80e84ab2afdf11"
+}

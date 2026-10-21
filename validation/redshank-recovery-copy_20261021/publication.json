@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-21",
+  "published_through": "f4904a272e5b0d120a7075d59a80e84ab2afdf11",
+  "advertised_main": "f4904a272e5b0d120a7075d59a80e84ab2afdf11",
+  "source_commit": "421ea8e5bd865175a9b54a0d59e886cb857bb431",
+  "source_files_verified": 74,
+  "evidence_files_verified": 24,
+  "verification": "Fetched origin/main and remote advertised main match; every qualified source hash and every published evidence file matches the fetched tree.",
+  "push_process": "publication-process.json",
+  "push_log": "publication.log",
+  "publication_scope": "This observed publication precedes the follow-up metadata commit containing this record.",
+  "native_or_device_claim": false
+}

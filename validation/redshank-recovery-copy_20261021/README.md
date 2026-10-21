@@ -3,7 +3,7 @@
 Date: 2026-10-21. Qualified source: `421ea8e5bd865175a9b54a0d59e886cb857bb431`,
 from published `01c4b3af61d17af69779619d2bd7fd77bf06abdc`.
 The maintainer accepted D3 and authorized direct main publication. Publication
-is established separately by Git refs and the external delivery record.
+is observed through `f4904a27`: see the [publication record](publication.json) for the remote ref and source/evidence verification.
 
 Failed original restoration retains a permanently nonwriting generation store.
 An unchanged recovery session can close without attempting a save. Changed
