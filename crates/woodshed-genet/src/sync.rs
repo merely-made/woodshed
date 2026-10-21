@@ -8,7 +8,6 @@
 use cambium_genet_winit_host::AppCtx;
 use woodshed_core::audio::{AudioBackend, AudioRequest, CalibrationStatus};
 use woodshed_core::loop_plan::{LoopPlan, LooperSource};
-use woodshed_core::midi::MidiBackend as _;
 use woodshed_core::song::SongDoc;
 use woodshed_views::stage::{UiChild, UiState};
 
@@ -21,16 +20,6 @@ use crate::shared::Shared;
 pub type Logic = Box<dyn FnMut(&UiState) -> UiChild>;
 /// The host context a woodshed hook receives.
 pub type Ctx<'a> = AppCtx<'a, UiState, Logic, UiChild>;
-
-/// Resolve a MIDI port dropdown selection to a connect target: index 0 = "None"
-/// (disconnect), else `ports[idx - 1]`.
-fn midi_port_at(ports: &[String], selected: usize) -> Option<String> {
-    if selected == 0 {
-        None
-    } else {
-        ports.get(selected - 1).cloned()
-    }
-}
 
 /// Everything woodshed does after an input dispatch.
 pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
@@ -53,6 +42,7 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     crate::pack_io::after_dispatch(shared, ctx);
     push_backend(shared, ctx);
     crate::wav_export::after_dispatch(shared, ctx);
+    crate::music_export::after_dispatch(ctx);
     // Window verbs used to be drained here from four `UiState` flags. The
     // host owns them now: the caption buttons call `WindowCommands` directly
     // and the title bar drags from its `--app-region` declaration.
@@ -570,77 +560,54 @@ pub(crate) fn execute_recorder_request(
 /// Connect / disconnect per the dropdowns, and re-scan the port lists on
 /// request.
 fn midi_devices(shared: &mut Shared, ctx: &mut Ctx<'_>) {
-    let midi = &mut shared.midi;
-    ctx.runner.update(|ui| {
-        if std::mem::take(&mut ui.midi.refresh_requested) {
-            // Preserve names through reordering. A vanished output becomes
-            // None, rather than silently selecting a different indexed port.
-            let input = midi_port_at(&ui.midi.input_ports, ui.midi.input_dd.selected);
-            let output = midi_port_at(&ui.midi.output_ports, ui.midi.output_dd.selected);
-            ui.midi.input_ports = midi.input_ports();
-            ui.midi.output_ports = midi.output_ports();
-            ui.midi.input_dd.selected = refreshed_selection(&ui.midi.input_ports, input.as_deref());
-            ui.midi.output_dd.selected =
-                refreshed_selection(&ui.midi.output_ports, output.as_deref());
-        }
-        let in_target = midi_port_at(&ui.midi.input_ports, ui.midi.input_dd.selected);
-        // Requested intent also matters after endpoint loss: explicit None
-        // must retire the old request even when no input is connected now.
-        midi.connect_input(in_target.as_deref());
-        let out_target = midi_port_at(&ui.midi.output_ports, ui.midi.output_dd.selected);
-        // The host deduplicates requested intent. Comparing only confirmed
-        // connections would miss None while a previous open is still pending.
-        midi.connect_output(out_target.as_deref());
-        midi.set_pedal_bindings(&ui.app_settings.audio_midi.midi_pedal);
-        if let Some(action) = ui.midi.pedal_request.take() {
-            let binding = ui.app_settings.audio_midi.midi_pedal.get(action).clone();
-            ui.midi.pedal_report =
-                Some(if let Some(target) = ui.midi.pedal_request_target.take() {
-                    midi.trigger_pedal_for_target(action, binding, target)
-                } else {
-                    midi.trigger_pedal(action, binding)
-                });
-        }
-    });
-    poll_midi_state(shared, ctx);
+    shared
+        .midi
+        .set_pedal_bindings(&ctx.runner.state().app_settings.audio_midi.midi_pedal);
+    ctx.runner
+        .update(|ui| sync_midi_devices(ui, &mut shared.midi));
+    crate::pedal_inputs::sync(shared, ctx.runner.state());
 }
-fn refreshed_selection(ports: &[String], previous: Option<&str>) -> usize {
-    previous
-        .and_then(|name| ports.iter().position(|port| port == name))
-        .map_or(0, |i| i + 1)
-}
-/// Publish asynchronous MIDI changes during ordinary frames, without another
-/// click and without opening/connecting devices in this read-only projection.
-pub(crate) fn poll_midi_state(shared: &mut Shared, ctx: &mut Ctx<'_>) {
-    let input = shared.midi.connected_input().map(str::to_string);
-    let output = shared.midi.connected_output().map(str::to_string);
-    let notice = shared.midi.output_status().map(str::to_string);
-    let ready = shared.midi.output_ready();
-    let target = shared.midi.pedal_target();
-    let pedal = shared.midi.pedal_report();
-    let current = &ctx.runner.state().midi;
-    if current.connected_in != input
-        || current.connected_out != output
-        || current.output_notice != notice
-        || current.output_ready != ready
-        || current.pedal_target != target
-        || current.pedal_report != pedal
-    {
-        ctx.runner.update(|ui| {
-            ui.midi.connected_in = input;
-            ui.midi.connected_out = output;
-            ui.midi.output_notice = notice;
-            ui.midi.output_ready = ready;
-            if ui.midi.pedal_target != target {
-                ui.midi.disarm_inputs();
-                ui.midi.input_notice =
-                    Some("Output connection changed; pedal inputs disarmed".into());
-            }
-            ui.midi.pedal_target = target;
-            ui.midi.pedal_report = pedal;
+
+/// Reconcile requested routing through the one backend, then observe completion.
+fn sync_midi_devices(ui: &mut UiState, midi: &mut impl woodshed_core::midi::MidiBackend) {
+    if std::mem::take(&mut ui.midi.refresh_requested) {
+        ui.midi
+            .refresh_ports(midi.input_ports(), midi.output_ports());
+    }
+    let input = ui.midi.selected_input().map(str::to_string);
+    midi.connect_input(input.as_deref());
+    let output = ui.midi.selected_output().map(str::to_string);
+    midi.connect_output(output.as_deref());
+    if let Some(action) = ui.midi.pedal_request.take() {
+        let binding = ui.app_settings.audio_midi.midi_pedal.get(action).clone();
+        ui.midi.pedal_report = Some(if let Some(target) = ui.midi.pedal_request_target.take() {
+            midi.trigger_pedal_for_target(action, binding, target)
+        } else {
+            midi.trigger_pedal(action, binding)
         });
     }
-    crate::pedal_inputs::sync(shared, ctx.runner.state());
+    poll_midi_state(ui, midi);
+}
+
+/// Read-only completion projection shared by ordinary frames and dispatch.
+pub(crate) fn poll_midi_state(
+    ui: &mut UiState,
+    midi: &mut impl woodshed_core::midi::MidiBackend,
+) -> bool {
+    midi.poll();
+    ui.midi.connected_in = midi.connected_input().map(str::to_string);
+    ui.midi.connected_out = midi.connected_output().map(str::to_string);
+    ui.midi.error = midi.error().map(str::to_string);
+    ui.midi.output_notice = midi.output_status().map(str::to_string);
+    ui.midi.output_ready = midi.output_ready();
+    let target = midi.pedal_target();
+    if ui.midi.pedal_target != target {
+        ui.midi.disarm_inputs();
+        ui.midi.input_notice = Some("Output connection changed; pedal inputs disarmed".into());
+    }
+    ui.midi.pedal_target = target;
+    ui.midi.pedal_report = midi.pedal_report();
+    midi.needs_service()
 }
 
 /// Publish the admitted snapshot to the view. A refused edit must not make the
@@ -726,6 +693,128 @@ mod tests {
     use woodshed_core::personal_relations::{PersonalRelationSource, PersonalRelationSourceId};
     use woodshed_core::storage::SessionStore;
     use woodshedding::rehearsal::{Hold, Set};
+
+    #[derive(Default)]
+    struct RoutingBackend {
+        accepted: Option<String>,
+        completion: Option<String>,
+        requested: Option<String>,
+        error: Option<String>,
+    }
+    impl woodshed_core::midi::MidiBackend for RoutingBackend {
+        fn poll(&mut self) {
+            if let Some(name) = self.completion.take() {
+                self.accepted = Some(name);
+            }
+        }
+        fn input_ports(&self) -> Vec<String> {
+            vec![]
+        }
+        fn output_ports(&self) -> Vec<String> {
+            vec!["B".into(), "A".into()]
+        }
+        fn connect_input(&mut self, _: Option<&str>) {}
+        fn connect_output(&mut self, port: Option<&str>) {
+            self.requested = port.map(str::to_string);
+        }
+        fn connected_input(&self) -> Option<&str> {
+            None
+        }
+        fn connected_output(&self) -> Option<&str> {
+            self.accepted.as_deref()
+        }
+        fn clock_bpm(&self) -> Option<f32> {
+            None
+        }
+        fn recent_events(&self) -> Vec<String> {
+            vec![]
+        }
+        fn set_clock_out(&mut self, _: bool, _: bool, _: f32) {}
+        fn error(&self) -> Option<&str> {
+            self.error.as_deref()
+        }
+    }
+
+    #[test]
+    fn midi_sync_keeps_requested_and_accepted_output_distinct() {
+        let mut ui = UiState::new();
+        ui.midi.output_ports = vec!["A".into(), "B".into()];
+        ui.midi.output_dd.selected = 2;
+        let mut backend = RoutingBackend {
+            accepted: Some("A".into()),
+            error: Some("B refused".into()),
+            ..Default::default()
+        };
+        sync_midi_devices(&mut ui, &mut backend);
+        assert_eq!(backend.requested.as_deref(), Some("B"));
+        assert_eq!(ui.midi.connected_out.as_deref(), Some("A"));
+        assert_eq!(ui.midi.error.as_deref(), Some("B refused"));
+        backend.completion = Some("B".into());
+        backend.error = None;
+        // An ordinary frame observes completion without a new input dispatch.
+        poll_midi_state(&mut ui, &mut backend);
+        assert_eq!(ui.midi.connected_out.as_deref(), Some("B"));
+        assert!(ui.midi.error.is_none());
+    }
+
+    #[test]
+    fn midi_sync_error_reaches_settings_status() {
+        use cambium_genet_winit_host::Harness;
+        use taproot::Selector;
+        let mut ui = UiState::new();
+        ui.select_app_section(woodshed_core::storage::AppSection::Settings);
+        ui.app_settings.page = woodshed_core::settings::SettingsPage::AudioMidi;
+        let mut backend = RoutingBackend {
+            error: Some("output refused by fake connector".into()),
+            ..Default::default()
+        };
+        sync_midi_devices(&mut ui, &mut backend);
+        let logic: Logic = Box::new(woodshed_views::stage::stage_root);
+        let mut harness = Harness::new(woodshed_views::theme::slate_stage_css(), ui, logic);
+        harness.layout_at(1100.0, 900.0);
+        let dom = harness.runner().dom();
+        let dom = dom.borrow();
+        assert_eq!(
+            taproot::matching_classes(
+                &dom,
+                &Selector::class("settings-line")
+                    .with_attr("role", "status")
+                    .containing("output refused by fake connector")
+            )
+            .len(),
+            1
+        );
+    }
+
+    #[test]
+    fn midi_sync_forwards_return_to_accepted_route_to_cancel_pending_replacement() {
+        let mut ui = UiState::new();
+        ui.midi.output_ports = vec!["A".into(), "B".into()];
+        ui.midi.output_dd.selected = 1;
+        let mut backend = RoutingBackend {
+            accepted: Some("A".into()),
+            requested: Some("B".into()),
+            ..Default::default()
+        };
+        sync_midi_devices(&mut ui, &mut backend);
+        assert_eq!(backend.requested.as_deref(), Some("A"));
+        ui.midi.output_dd.selected = 0;
+        sync_midi_devices(&mut ui, &mut backend);
+        assert!(backend.requested.is_none());
+    }
+
+    #[test]
+    fn midi_sync_rescan_keeps_route_by_name() {
+        let mut ui = UiState::new();
+        ui.midi.output_ports = vec!["A".into(), "B".into()];
+        ui.midi.output_dd.selected = 2;
+        ui.midi.refresh_requested = true;
+        let mut backend = RoutingBackend::default();
+        sync_midi_devices(&mut ui, &mut backend);
+        assert_eq!(ui.midi.output_dd.selected, 1);
+        assert_eq!(backend.requested.as_deref(), Some("B"));
+        assert!(!ui.midi.refresh_requested);
+    }
 
     struct RejectingSessionBackend(Arc<Mutex<BTreeMap<String, Vec<u8>>>>);
 
@@ -1427,17 +1516,24 @@ mod tests {
 
 #[cfg(test)]
 mod midi_selection_tests {
-    use super::refreshed_selection;
+    use woodshed_views::stage::UiState;
     #[test]
     fn refresh_preserves_output_name_across_reordering() {
-        assert_eq!(
-            refreshed_selection(&["new".into(), "wanted".into()], Some("wanted")),
-            2
-        );
+        let mut ui = UiState::new();
+        ui.midi.output_ports = vec!["wanted".into()];
+        ui.midi.output_dd.selected = 1;
+        ui.midi
+            .refresh_ports(vec![], vec!["new".into(), "wanted".into()]);
+        assert_eq!(ui.midi.output_dd.selected, 2);
     }
     #[test]
     fn disappeared_output_becomes_none_instead_of_another_port() {
-        assert_eq!(refreshed_selection(&["other".into()], Some("gone")), 0);
-        assert_eq!(refreshed_selection(&["other".into()], None), 0);
+        let mut ui = UiState::new();
+        ui.midi.output_ports = vec!["gone".into()];
+        ui.midi.output_dd.selected = 1;
+        ui.midi.refresh_ports(vec![], vec!["other".into()]);
+        assert_eq!(ui.midi.output_dd.selected, 0);
+        ui.midi.refresh_ports(vec![], vec!["another".into()]);
+        assert_eq!(ui.midi.output_dd.selected, 0);
     }
 }

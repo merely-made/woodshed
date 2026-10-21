@@ -1,4 +1,4 @@
-# Supplier snapshot: Mere d1a200b1877223f5b6ced7f5fbaca3671c10f5dd.
+# Supplier snapshot: Mere 7de937d0e708db24d9a325cbff3fbe5beb3a4d3c.
 # Workspace/path dependencies expanded to their original Git source identities.
 # See PATCHES.md. This is the one existing host, substituted via a source patch.
 [package]
@@ -17,21 +17,21 @@ image-decode = ["taproot/image-decode", "cambium-rootstock/image-decode", "cambi
 
 [dependencies]
 parley = { package = "genet-parley", version = "0.10.0", git = "https://github.com/merely-made/genet.git", branch = "main" }
-accesskit = "0.24"
+accesskit = "0.25.1"
 light-file-dialog = "3.21.3"
 meristem = { version = "0.2.0", git = "https://github.com/merely-made/mere.git", branch = "main" }
-cambium = { version = "0.3.3", git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium = { version = "0.4.0", git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-rootstock = { version = "0.1.0", default-features = false, git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-winit = { version = "0.3.0", git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-winit-a11y = { version = "0.3.0", default-features = false, git = "https://github.com/merely-made/mere.git", branch = "main" }
-sprigging = { version = "0.2.1", git = "https://github.com/merely-made/mere.git", branch = "main" }
+sprigging = { version = "0.2.2", git = "https://github.com/merely-made/mere.git", branch = "main" }
 taproot = { version = "0.1.0", git = "https://github.com/merely-made/genet.git", branch = "main", default-features = false }
 genet-scripted-dom = { version = "=0.1.2", git = "https://github.com/merely-made/genet.git", branch = "main" }
 genet-winit-host = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 layout_dom_api = { package = "layout-dom-api", version = "=0.1.1", git = "https://github.com/merely-made/genet.git", branch = "main" }
-netrender = { version = "=0.1.2", git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
-paint_list_api = { version = "=0.1.2", git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
-paint_list_render = { version = "=0.1.2", git = "https://github.com/merely-made/netrender.git", rev = "e8cda06efc11c11595f2fa1bb30bce7e72979537" }
+netrender = { version = "=0.1.2", git = "https://github.com/merely-made/netrender.git", branch = "main" }
+paint_list_api = { version = "=0.1.2", git = "https://github.com/merely-made/netrender.git", branch = "main" }
+paint_list_render = { version = "=0.1.2", git = "https://github.com/merely-made/netrender.git", branch = "main" }
 wgpu = { version = "30.0.1" }
 genet-render-host = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 winit = { version = "0.30.13" }

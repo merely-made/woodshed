@@ -1,0 +1,48 @@
+{
+  "status": "published",
+  "date": "2026-10-19",
+  "published_revision": "fd9fb821381af950b5dd052402a0e53d24fcec80",
+  "integration_baseline": "47fbb7a",
+  "reviewed_commits": [
+    "6431d5a",
+    "8e4a96d",
+    "42b245a",
+    "9c40518",
+    "a35e481",
+    "b3cd4e9",
+    "f32212d",
+    "7b161a9",
+    "4fc7631"
+  ],
+  "integration_checks": [
+    {
+      "receipt": "integration/recorder.json",
+      "archived_log": "integration/recorder.log",
+      "source_commit": "e158f87bd1f29509c112cedda17dbc08e4ed68b8"
+    },
+    {
+      "receipt": "integration/diagnostics.json",
+      "archived_log": "integration/diagnostics.log",
+      "source_commit": "e158f87bd1f29509c112cedda17dbc08e4ed68b8"
+    }
+  ],
+  "limits": "Repeated 38 Recorder and 2 diagnostics cases passed at e158f87. Later merge preserves all nine B6 source/test files and locks; incoming Hocket supplier manifest requirements preserved as received, not requalified. Original 171-case receipt retains original supplier identities. Logs are archival copies of recorded external paths. No native qualification.",
+  "source_sha256": {
+    "crates/hocket-recorder/src/lib.rs": "bbc7f9ef58869bb8659541dbf0bfabba7f67b35dbfc905329d20e0ec3c1e81f3",
+    "crates/hocket-recorder/tests/tempo_replay.rs": "553d401f1bac543b174a9938c7fc79ec969574b7c2856e256374f1eaf79795f8",
+    "crates/hocket-views/src/recorder_adapter.rs": "ce53a7ce61e2da2877a309963f0058075bae6125366f190bdd124696fe1b7bbe",
+    "crates/hocket-views/tests/recorder_adapter.rs": "f381ed8e13634f012be2e9ff942863d2192c041b9f256976ffe618e1268ee90c",
+    "ports/hocket/crates/hocket-engine/src/offline_tests.rs": "3f20b6e5936a1dedc1170cd3e40297843d07961d0f7995888ea4778a8b089813",
+    "ports/hocket/crates/hocket-genet/src/appearance_tests.rs": "da366cd42739ec85d89fbaaef700b05fc7d1af75aa592d8d5237ede469557e8b",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "ea5c7bd5e9035615eb4c61898956085e351eb63921f21c0c8153260ebe4d69b9",
+    "ports/hocket/crates/hocket-genet/src/theme.rs": "527b1ab8d2922abffc28d8246f2a93198cd6cbd2d05bbc643f4692eca46e2ac4",
+    "ports/hocket/crates/hocket-genet/src/view.rs": "8d592e54d9d89019886d1baf7fc3f214cd9e68f39dc0a5cd533471c989fa4d24"
+  },
+  "unchanged_lock_sha256": {
+    "Cargo.lock": "fd60c83d3fbb03060d0519f8161cadb7011e5c21058c0d80f328dca18602cd63",
+    "ports/hocket/Cargo.lock": "8db3378dd2d9dee7cc2e886c40097b85786c96268cd80357b4db9ffeaf6d0c24",
+    "ports/redshank/Cargo.lock": "65553591e32039b0f26e07220954695e3952f376a88c82e4d277121ac5b0a6cf",
+    "ports/ringdown/Cargo.lock": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+    "validation/relationship-recipe/Cargo.lock": "415623ff2ff97317fc8d49998dc8e54f33c4265113a03b76c4a54e31f09c5e11"
+  }
+}

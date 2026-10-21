@@ -1,0 +1,17 @@
+# Fresh process reads the exact Set-owned MusicXML; no fixture reset.
+settle 10
+ui-zoom 1
+assert snap practice-saved == true
+assert snap music-saved == true
+assert snap music-dirty == false
+assert snap music-bars == 2
+checkpoint-music reopened
+click .music-view @data-music-view=Score
+settle 5
+capture 01_reopened_score
+resize 420 1100
+settle 8
+capture 02_reopened_narrow
+wheel 0 400 px on .workspace-screen
+settle 5
+capture 03_reopened_fretboard

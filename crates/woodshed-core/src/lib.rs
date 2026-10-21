@@ -15,8 +15,8 @@ pub mod audio;
 pub mod card_shapes;
 pub mod card_timing;
 pub use card_timing::{CardPreviewResult, CardTimingError, resolve_card_timing};
-pub mod captured_arpeggio;
 pub mod catalog_explorations;
+pub mod captured_arpeggio;
 pub mod chord_approach;
 pub mod comparison_disclosure;
 pub mod connected_catalog;
@@ -27,20 +27,14 @@ pub mod loop_capture;
 pub mod loop_plan;
 pub mod mere;
 pub mod midi;
-pub mod music;
 pub mod musical_context;
+pub mod music;
 pub mod personal_relations;
 pub mod pitch_motion_reading;
 pub mod practice_clock;
 pub use practice_clock::{
     LiveSequenceKind, PracticeCard, PracticeEvent, PracticeHold, PracticeProgram,
 };
-#[cfg(feature = "portable-scenes")]
-pub mod arrangement_scene;
-#[cfg(feature = "portable-scenes")]
-pub mod fretboard_scene;
-#[cfg(feature = "portable-scenes")]
-pub mod progression_scene;
 pub mod retained_sets;
 pub mod saved_arrangements;
 pub mod scale_pattern_discovery;
@@ -54,6 +48,14 @@ pub mod song;
 pub mod stage_candidates;
 pub mod stage_context;
 pub mod stage_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod fretboard_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod progression_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod arrangement_scene;
+#[cfg(feature = "portable-scenes")]
+pub mod arrangement_document;
 pub mod storage;
 pub mod tonnetz;
 pub mod working_sets;
@@ -616,10 +618,7 @@ pub fn set_from_practice(ps: &PracticeSet) -> Set {
 /// `None` = manual (no auto-advance). The card's own bpm wins over the
 /// transport's; `Reps` counts as bars (one rep per bar until per-rep
 /// audio lands).
-pub fn card_dwell(
-    card: &Card,
-    fallback_bpm: f32,
-) -> Result<Option<std::time::Duration>, CardTimingError> {
+pub fn card_dwell(card: &Card, fallback_bpm: f32) -> Result<Option<std::time::Duration>, CardTimingError> {
     Ok(resolve_card_timing(&card.timing, fallback_bpm)?.dwell)
 }
 
@@ -1381,12 +1380,7 @@ impl StageState {
             let end_limit = tuning.instrument.standard_fret_count();
             let (start, end) = card.setting.fret_window.map_or(
                 (self.fret_start, self.fret_count.min(end_limit)),
-                |window| {
-                    (
-                        window.start,
-                        window.start.saturating_add(window.span).min(end_limit),
-                    )
-                },
+                |window| (window.start, window.start.saturating_add(window.span).min(end_limit)),
             );
             let start = start.max(card.setting.capo.unwrap_or(0));
             if start > end {
@@ -1399,8 +1393,7 @@ impl StageState {
                 .find(|formula| formula.name == name)
                 .and_then(|formula| board.positions_for_chord(formula, root).ok())
                 .map(|positions| {
-                    positions
-                        .into_iter()
+                    positions.into_iter()
                         .filter(|position| position.fret >= start && position.fret <= end)
                         .map(FretDot::from_position)
                         .collect()
@@ -1451,18 +1444,17 @@ impl StageState {
                     })
                     .unwrap_or_default();
             },
-            Material::Path { positions, root } => {
-                // A drawn path carries its own notes: resolve each position
-                // against the current tuning and name its degree from the root
-                // it was drawn over. Positions off the neck (a saved path opened
-                // under a narrower tuning) are dropped rather than panicking.
-                let strings = self.string_count();
+            Material::Path { root, .. } => {
+                // Resolve the saved instruction on its retained setup. The
+                // live fret window clips only this visualization.
                 let root_pc = root.value() as i32;
-                return positions
-                    .iter()
-                    .filter(|(s, f)| *s < strings && *f >= self.fret_start && *f <= self.fret_count)
-                    .map(|&(s, f)| {
-                        let pitch = board.pitch_at(s, f);
+                let Ok(notes) = self.path_contact_pitches(card) else {
+                    return Vec::new();
+                };
+                return notes
+                    .into_iter()
+                    .filter(|((_, fret), _)| *fret >= self.fret_start && *fret <= self.fret_count)
+                    .map(|((s, f), pitch)| {
                         let semis = (pitch.pitch_class() as i32 - root_pc).rem_euclid(12);
                         FretDot {
                             string_index: s,
@@ -1509,6 +1501,62 @@ impl StageState {
             self.progression_idx = Some(idx);
             self.progression_expanded = 0;
         }
+    }
+
+    /// Resolve every authored Path contact on the Card's retained setup.
+    /// Repeated contacts and their order are material, so this never sorts or
+    /// deduplicates. The live viewport is intentionally not consulted.
+    pub(crate) fn path_contact_pitches(
+        &self,
+        card: &Card,
+    ) -> Result<Vec<((usize, u8), Pitch)>, String> {
+        let Material::Path { positions, .. } = &card.material else {
+            return Err("Card is not Path material".into());
+        };
+        let tuning = self
+            .resolve_card_tuning(card)
+            .map_err(|error| error.to_string())?;
+        let fret_limit = tuning.instrument.standard_fret_count();
+        let capo = card.setting.capo.unwrap_or(0);
+        if positions.is_empty() {
+            return Err("Path has no positions".into());
+        }
+        if let Some(&(string, fret)) = positions.iter().find(|(string, fret)| {
+            *string >= tuning.string_count() || *fret > fret_limit || *fret < capo
+        }) {
+            return Err(format!(
+                "Path contact ({string}, {fret}) is unavailable on its saved setup"
+            ));
+        }
+        let board = Fretboard::new(tuning, fret_limit);
+        Ok(positions
+            .iter()
+            .map(|&(string, fret)| ((string, fret), board.pitch_at(string, fret)))
+            .collect())
+    }
+
+    /// Effective contacts used by generic sound, managed lowering, and
+    /// retained recipe validation. Paths resolve the complete saved sequence;
+    /// other material reuses its established dot realization.
+    pub(crate) fn card_contact_pitches(
+        &self,
+        card: &Card,
+    ) -> Result<Vec<((usize, u8), f32)>, String> {
+        if matches!(card.material, Material::Path { .. }) {
+            return self
+                .path_contact_pitches(card)
+                .map(|notes| {
+                    notes
+                        .into_iter()
+                        .map(|(contact, pitch)| (contact, pitch.frequency() as f32))
+                        .collect()
+                });
+        }
+        Ok(self
+            .dots_for_card(card)
+            .into_iter()
+            .map(|dot| ((dot.string_index, dot.fret), dot.frequency))
+            .collect())
     }
 
     pub fn progression_expand(&mut self, idx: usize) {
@@ -1979,16 +2027,16 @@ impl StageState {
                 }
             },
             Material::Riff { .. } => (Vec::new(), false),
-            Material::Path { positions, .. } => {
+            Material::Path { .. } => {
                 // A drawn path is inherently sequential: sound it as an
                 // ascending-style cascade *in drawn order* (its order is the
                 // material), not as a block.
-                let board = Fretboard::new(self.tuning(), self.fret_count);
-                let strings = self.string_count();
-                let hz: Vec<f32> = positions
-                    .iter()
-                    .filter(|(s, f)| *s < strings && *f <= self.fret_count)
-                    .map(|&(s, f)| board.pitch_at(s, f).frequency() as f32)
+                let Ok(notes) = self.path_contact_pitches(card) else {
+                    return Ok((Vec::new(), 0.0, 0.0));
+                };
+                let hz: Vec<f32> = notes
+                    .into_iter()
+                    .map(|(_, pitch)| pitch.frequency() as f32)
                     .collect();
                 (hz, true)
             },
@@ -2048,16 +2096,26 @@ impl StageState {
                 // Play only the marked positions, as their actual fretboard
                 // pitches — isolate the shape you selected.
                 let set: std::collections::HashSet<(usize, u8)> = marked.iter().copied().collect();
-                let mut hz: Vec<f32> = self
-                    .dots_for_card(card)
+                let contacts = match self.card_contact_pitches(card) {
+                    Ok(contacts) => contacts,
+                    Err(_) => return Ok((Vec::new(), 0.0, 0.0)),
+                };
+                let mut hz: Vec<f32> = contacts
                     .into_iter()
-                    .filter(|d| set.contains(&(d.string_index, d.fret)) && d.frequency > 0.0)
-                    .map(|d| d.frequency)
+                    .filter(|(contact, pitch)| set.contains(contact) && *pitch > 0.0)
+                    .map(|(_, pitch)| pitch)
                     .collect();
+                if matches!(card.material, Material::Path { .. }) {
+                    if hz.is_empty() {
+                        return Ok((Vec::new(), 0.0, 0.0));
+                    }
+                    let (dur, strum) = voicing_shape(hz.len(), true);
+                    return Ok((hz, dur, strum));
+                }
                 hz.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
                 hz.dedup();
                 if hz.is_empty() {
-                    return self.card_voicing(card);
+                    return Ok((Vec::new(), 0.0, 0.0));
                 }
                 let (dur, strum) = voicing_shape(hz.len(), false);
                 Ok((hz, dur, strum))
@@ -2065,13 +2123,14 @@ impl StageState {
             MarkMode::Mute => {
                 // Drop the marked notes' pitch classes from the clean voicing,
                 // so the chord keeps voicing nicely minus the muted note(s).
-                let dots = self.dots_for_card(card);
+                let contacts = self.card_contact_pitches(card).unwrap_or_default();
                 let muted_pcs: std::collections::HashSet<u8> = marked
                     .iter()
                     .filter_map(|pos| {
-                        dots.iter()
-                            .find(|d| (d.string_index, d.fret) == *pos)
-                            .map(|d| pc_from_hz(d.frequency))
+                        contacts
+                            .iter()
+                            .find(|(contact, _)| contact == pos)
+                            .map(|(_, frequency)| pc_from_hz(*frequency))
                     })
                     .collect();
                 let (pitches, _, _) = self.card_voicing(card)?;
@@ -2082,7 +2141,8 @@ impl StageState {
                 if kept.is_empty() {
                     return Ok((Vec::new(), 0.0, 0.0));
                 }
-                let (dur, strum) = voicing_shape(kept.len(), false);
+                let (dur, strum) =
+                    voicing_shape(kept.len(), matches!(card.material, Material::Path { .. }));
                 Ok((kept, dur, strum))
             },
         }
@@ -2198,10 +2258,7 @@ mod tests {
         stage.set_lens(Lens::Chords);
         let mut card = stage.card_from_lens().unwrap();
         card.timing.hold = Hold::Bars(1);
-        card.touch = Touch::Arpeggiate {
-            direction: ArpeggioDirection::Up,
-            inversion: 0,
-        };
+        card.touch = Touch::Arpeggiate { direction: ArpeggioDirection::Up, inversion: 0 };
         for bpm in [20.0, 400.0] {
             card.timing.bpm = Some(bpm);
             let retained = serde_json::to_value(&card).unwrap();
@@ -2213,8 +2270,7 @@ mod tests {
             let mut scale = StageState::new().card_from_lens().unwrap();
             scale.touch = Touch::Walk;
             scale.timing = card.timing.clone();
-            let (_, scale_duration, _) =
-                stage.card_sounding_pitches_at_tempo(&scale, 90.0).unwrap();
+            let (_, scale_duration, _) = stage.card_sounding_pitches_at_tempo(&scale, 90.0).unwrap();
             assert!((scale_duration - dwell).abs() < 0.0001);
         }
     }
@@ -2224,10 +2280,7 @@ mod tests {
         use woodshedding::rehearsal::Hold;
         let s = StageState::new();
         let mut card = s.card_from_lens().unwrap();
-        assert!(
-            card_dwell(&card, 120.0).unwrap().is_none(),
-            "manual by default"
-        );
+        assert!(card_dwell(&card, 120.0).unwrap().is_none(), "manual by default");
         card.timing.hold = Hold::Bars(2);
         let d = card_dwell(&card, 120.0).unwrap().unwrap();
         assert!((d.as_secs_f32() - 4.0).abs() < 0.01, "2 bars at 120 = 4s");
@@ -2469,6 +2522,37 @@ mod tests {
             crate::history::catalog_id_for_card(&card).is_none(),
             "a drawn path has no catalog identity"
         );
+    }
+
+    #[test]
+    fn saved_path_uses_retained_setup_and_viewport_only_clips_dots() {
+        let mut stage = StageState::new();
+        stage.append_to_path(0, 2);
+        let card = stage.card_from_drawn_path().expect("path is authored");
+        let expected = stage.card_voicing(&card).unwrap().0;
+
+        stage.set_tuning(1);
+        stage.fret_start = 8;
+        stage.fret_count = 12;
+        assert!(
+            stage.dots_for_card(&card).is_empty(),
+            "viewport clips display"
+        );
+        assert_eq!(
+            stage.card_voicing(&card).unwrap().0,
+            expected,
+            "a valid saved contact remains playable with its retained setup"
+        );
+    }
+
+    #[test]
+    fn stale_solo_marks_do_not_fall_back_to_the_full_chord() {
+        let mut stage = StageState::new();
+        stage.set_lens(Lens::Chords);
+        let mut card = stage.card_from_lens().unwrap();
+        card.setting.mark_mode = MarkMode::Solo;
+        card.setting.marked = vec![(usize::MAX, u8::MAX)];
+        assert!(stage.card_sounding_pitches(&card).unwrap().0.is_empty());
     }
 
     #[test]

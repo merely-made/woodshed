@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-20",
+  "status": "published",
+  "published_source_revision": "20bcc1c362407f35bc26dac8b63e30e7befebec9",
+  "integration_baseline": "b2fe4df3d86931c01d2e3ab24806bdf738ade037",
+  "reviewed_task_tip": "2e6ed69c63ea352124e6c240ec2ef4753f2e50a2",
+  "reviewed_commit_count": 11,
+  "scope": "Merged current main, retaining its supplier and shared notation changes. DOC_README conflict resolved by preserving both entries; coordination hash refreshed. All nine qualified MIDI source/test files remain byte-identical. Ordinary source push succeeded before this publication metadata was prepared.",
+  "source_sha256": {
+    "crates/woodshed-core/src/midi.rs": "e226f0f3aeaa139f36db46adc0af690ef38e843e0e4107d2b7514460b1679dc2",
+    "crates/woodshed-genet/src/drive.rs": "ed0f055c0bc2432d312e55d340c37939eb64dbcb52a16a7dbf8e92dab8795983",
+    "crates/woodshed-genet/src/midi.rs": "3e1660d663941d4b3ba79a078a90d73528be94386846995008e836d8eeee4cb0",
+    "crates/woodshed-genet/src/midi/midi_output.rs": "9e3b784d4a8f76da198e29768fca9fe7a0e1ff32066b0c0767eae444c5fed800",
+    "crates/woodshed-genet/src/persona.rs": "6c99c5eb6b2db8d1c57a2c09b82122fc07189f541246f808108f616703457689",
+    "crates/woodshed-genet/src/sync.rs": "2b38d2d4ad068734eebec9eff2080e984c02cd3d19162ace63c81723cd758b76",
+    "crates/woodshed-views/src/stage.rs": "84aed0f003edce0cd7e3afc1156e8cf3dd2feafcfd33089bdf96e27ddb953793",
+    "crates/woodshed-views/src/stage/settings.rs": "3e1b4a6159fac49260f3b14c443cfb464611ea0b78015fede3026daa2e0fe8dc",
+    "crates/woodshed-views/tests/midi_state.rs": "2c531641ed5d0b6692d139b873045598f5c273224bc25c35ea7e2c478cdfb716"
+  },
+  "integration_gates": [
+    {
+      "receipt": "validation/midi-admission_20261019/integration/midi.json",
+      "archived_log": "validation/midi-admission_20261019/integration/midi.log",
+      "passed": 18,
+      "ignored": 0,
+      "log_sha256": "9e8bbab68cab675ca3e30e461a9bf3e71cc0376d2d1abf8b50503d485069e5ab"
+    },
+    {
+      "receipt": "validation/midi-admission_20261019/integration/persona.json",
+      "archived_log": "validation/midi-admission_20261019/integration/persona.log",
+      "passed": 20,
+      "ignored": 0,
+      "log_sha256": "cd227cea58f06a68a8734d693aff2dd09bd0e535f68047c40545ddbb5f1a9bd3"
+    },
+    {
+      "receipt": "validation/midi-admission_20261019/integration/selection.json",
+      "archived_log": "validation/midi-admission_20261019/integration/selection.log",
+      "passed": 5,
+      "ignored": 0,
+      "log_sha256": "defb412c367005aef51afd37aba456c7d918b50afe83eb00dc9f76d3722bc58a"
+    }
+  ],
+  "distinct_passing_cases": 42,
+  "counting": "18 MIDI +20 persona +5 selection minus one overlapping reset case. Exact case set matches original receipt; repeated cases are not additional distinct qualification.",
+  "current_lock_sha256": {
+    "Cargo.lock": "9233c3fee1f1bfd613cea22080263c08f25db8ac0b74af65278edfe705cda63b",
+    "ports/hocket/Cargo.lock": "14dc52d1f86209de64a7b702be3c25d80a3016f3548983614cc992de41286c93",
+    "ports/redshank/Cargo.lock": "3d6728ac8a01e6fe6bc1071a9d8875dd9333c78f833ed45e26c2ce7569d99f07",
+    "ports/ringdown/Cargo.lock": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+    "validation/relationship-recipe/Cargo.lock": "0760deecd93100c02c5046d7b629b170a89809278df76831128b6231331f633a"
+  },
+  "lock_scope": "Manifests and locks match incoming main. Only root MIDI/persona/view CPU gates ran; other port lock hashes record preservation, not port qualification. Original receipt retains original supplier identities.",
+  "toolchain": {
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "log_archives": {
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/whitespace-source-docs.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/whitespace-source-docs.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/persona-v3.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/persona-v3.log",
+      "sha256": "59c6a9f96b258f107c7d1ed8e9d24b79d0e7df41d1e22790b1cc5bfc19576a36"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/whitespace.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/whitespace.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/midi-v2.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/midi-v2.log",
+      "sha256": "5dbdc630125654703dd9574b5f424fcf51eddfcd5687cc32d74c545ab8352d08"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/whitespace-raw.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/whitespace-raw.log",
+      "sha256": "0822802038dcadda81743aff26ccb6c8c98480cd56d851644651da01ebcc4260"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/midi-v3.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/midi-v3.log",
+      "sha256": "ecde98e8a5dd8f30f8cedad08c90b2a3dc54e1fd6ea480f2bcc55db0a0b82a05"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/doc-links-final.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/doc-links-final.log",
+      "sha256": "eddbda075cf7c4df1dd65d6e9644647d16f7bab0d0d56595896c381013e7d5ef"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/selection-v3.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/selection-v3.log",
+      "sha256": "eb1316be6513442f4365412261efc4928489ea1db503e4eda2f06b16ca8f94d0"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-admission-20261019/host-dev.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/host-dev.log",
+      "sha256": "d9e2a66eed866fb444af576e9903916679ae76912426940e5cce04e12523e296"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/selection.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/selection.log",
+      "sha256": "907f9f84665c188cca4dde787fa1225daa0218ab5bfb28f988bcadd7b35556ed"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/whitespace-final.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/whitespace-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/doc-links.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/doc-links.log",
+      "sha256": "eddbda075cf7c4df1dd65d6e9644647d16f7bab0d0d56595896c381013e7d5ef"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/midi-admission_20261019/checks/midi.log": {
+      "archived_log": "validation/midi-admission_20261019/checks/midi.log",
+      "sha256": "8e62cbbc0740f54e4a07c8c22e179600aba8bcb5155620d0c657bb01c8ef2ee6"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-publication-20261020/persona.log": {
+      "archived_log": "validation/midi-admission_20261019/integration/persona.log",
+      "sha256": "cd227cea58f06a68a8734d693aff2dd09bd0e535f68047c40545ddbb5f1a9bd3"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-publication-20261020/selection.log": {
+      "archived_log": "validation/midi-admission_20261019/integration/selection.log",
+      "sha256": "defb412c367005aef51afd37aba456c7d918b50afe83eb00dc9f76d3722bc58a"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-publication-20261020/midi.log": {
+      "archived_log": "validation/midi-admission_20261019/integration/midi.log",
+      "sha256": "9e8bbab68cab675ca3e30e461a9bf3e71cc0376d2d1abf8b50503d485069e5ab"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/whitespace.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/whitespace.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/recorder.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/recorder.log",
+      "sha256": "f06de3b3c9337be58c42fe8673896a2bde77a356d430d1dd72932acde35e5538"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/tempo-baseline.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/tempo-baseline.log",
+      "sha256": "f0c8c6d568555633a6e4555322437f1744878eb379b90b0ce6c54cbb812e79a9"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/views-unit-blocked.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/views-unit-blocked.log",
+      "sha256": "204784ff62041f38a18fdaf2dedd986135eacd91004116ffcf0a7c0f5576327f"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/engine.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/engine.log",
+      "sha256": "c46d15dab37ff4a2ceb208c9df1213de79fcd2f4c12338dab9a3ba6a54fc64fa"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/diagnostics.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/diagnostics.log",
+      "sha256": "6846ce3538e24d3c72a1a4a6b5abef7e3943bdca075af8e30f8975c919517bf4"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/hocket-host.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/hocket-host.log",
+      "sha256": "72c3fc26beb195bedafdf00a6dc9dfb4819e519c64c077bfa81ab8337410a12a"
+    },
+    "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/hocket-host-v2.log": {
+      "archived_log": "validation/recorder-runtime_20261019/checks/hocket-host-v2.log",
+      "sha256": "d0107e53c6e6f8bccd2e2ab68693ca697f72c41296e3178dd454800b6f3d8953"
+    },
+    "/Users/markik/Code/testing/woodshed/recorder-runtime-integration-20261019/recorder.log": {
+      "archived_log": "validation/recorder-runtime_20261019/integration/recorder.log",
+      "sha256": "4bd1b6099f876e97f057d2230d3d711949a1f2f88000a448fe7b3ac9e2001c74"
+    },
+    "/Users/markik/Code/testing/woodshed/recorder-runtime-integration-20261019/diagnostics.log": {
+      "archived_log": "validation/recorder-runtime_20261019/integration/diagnostics.log",
+      "sha256": "7b24525fc4484e368a37a5a084e23f9e23eaca826b6964d2fbf94e01c0cc7fc4"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-publication-20261020/doc-links.log": {
+      "archived_log": "validation/midi-admission_20261019/integration/doc-links.log",
+      "sha256": "03d9723bc5ea4929fcc733db285e007b74fa8f19ca2d969237cc7962b9574259"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-publication-20261020/doc-links-v2.log": {
+      "archived_log": "validation/midi-admission_20261019/integration/doc-links-v2.log",
+      "sha256": "6b4e24ec9c2fccbceba3ab057fad55646c032101a1b652b031b2cf9edabd970d"
+    },
+    "/Users/markik/Code/testing/woodshed/midi-publication-20261020/whitespace.log": {
+      "archived_log": "validation/midi-admission_20261019/integration/whitespace.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "archive_note": "Process receipts retain their original absolute log paths as provenance. Repository-relative archived copies are byte-identical and remain available after pruning the temporary checkout; original receipts/log bytes are not rewritten.",
+  "cleanup_scope": "Only codex/woodshed-b6-20261019 and its clean temporary worktree. Ignored content consists solely of Cargo build caches. Other worktrees and native validation remain outside cleanup scope. Actual cleanup result is recorded externally at /Users/markik/Code/testing/woodshed/midi-publication-20261020/cleanup-result.json.",
+  "limits": [
+    "No native/device/physical qualification or new supplier edits.",
+    "Original frozen audit and qualified source receipts remain historical; no refreshed full-source audit claim."
+  ],
+  "document_checks": [
+    {
+      "receipt": "validation/midi-admission_20261019/integration/doc-links-v2.json",
+      "exit_code": 0
+    },
+    {
+      "receipt": "validation/midi-admission_20261019/integration/whitespace.json",
+      "exit_code": 0
+    }
+  ],
+  "excluded_document_attempt": {
+    "receipt": "validation/midi-admission_20261019/integration/doc-links.json",
+    "exit_code": 1,
+    "reason": "Zero-findings assumption rejected one identical existing supplier-heading finding in baseline and current documents. Corrected gate compares baseline; no new findings."
+  },
+  "whitespace_scope": "Staged source/document metadata; raw .log files excluded to preserve observed bytes.",
+  "baseline_link_finding": "Unchanged DOC_README supplier heading target reported by scanner in b2fe4df and current documents; no new findings."
+}

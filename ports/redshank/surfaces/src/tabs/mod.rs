@@ -161,6 +161,13 @@ pub const TABS_CSS: &str = r#"
   padding: 8px 12px; font-size: var(--text-ui-13); }
 .rs-notes-chip .rs-badge { background: var(--t-text); color: var(--t-bg); border-radius: 2px;
   padding: 0 4px; }
+/* A span's identity and alignment explanations share its bounded card.
+   The generic row tail cannot shrink; let these controls wrap so the menu
+   remains reachable even with an unavailable original recording. */
+.rs-notes-span .rs-row-tail { flex-wrap: wrap; width: 100%; min-width: 0; }
+.rs-notes-span .rs-note-identity { flex: 1 1 100%; min-width: 0; }
+.rs-notes-span .rs-note-alignment { flex: 1; min-width: 0; }
+.rs-notes-span .rs-row-menu { margin-left: auto; }
 .rs-notes-span-head { display: flex; justify-content: space-between; align-items: baseline; }
 .rs-notes-span-body { font-size: var(--text-ui-13); line-height: 1.45; }
 @media (max-width: 900px) {

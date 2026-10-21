@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "validation/link-model-p6_20261016/doc_link_audit.py",
+    "--repo",
+    ".",
+    "--base",
+    "6e6498a"
+  ],
+  "started_at": "2026-10-18T08:11:23.234551+00:00",
+  "ended_at": "2026-10-18T08:11:24.412251+00:00",
+  "exit_code": 0,
+  "log_sha256": "13ec8a9d7bc77e7540a4d91effc9795fbf9c3a4ea1a9db62d20717d48d90b913"
+}

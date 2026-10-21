@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-19",
+  "scope": "Woodshed root, Hocket, Redshank, and relationship-recipe supplier intake",
+  "checkpoint": "79c2b908a7a3ea0dfc45fd6d6c4cf7bbbc375ebf",
+  "suppliers": {
+    "eidetic": "543f5ff38f87a09afc04dbc59f57c2dfbc6a9943",
+    "gemot": "67ce0ac3e2b48be951a677a9eca245eaabd56d63",
+    "esp": "af5597c670da111713dd306f4feba8db892a86d2",
+    "armillary": "6827559937f07f78a6a830dfbfcaa54210dd093c"
+  },
+  "locked_metadata": {
+    "command": "cargo +1.99.1 metadata --format-version 1 --locked --offline --filter-platform aarch64-apple-darwin",
+    "result": "pass in all four graphs; one source identity per active family; no local path overrides",
+    "mere": {
+      "root": "48fd33851ed0e9386ea06b511acb0a3b5f33bc04",
+      "hocket": "4d60510c40a985aa88ddde381c9f56105dbd9f9a",
+      "redshank": "48fd33851ed0e9386ea06b511acb0a3b5f33bc04",
+      "relationship_recipe": "48fd33851ed0e9386ea06b511acb0a3b5f33bc04"
+    },
+    "source_ids": {
+      "root": {"eidetic": "543f5ff38f87a09afc04dbc59f57c2dfbc6a9943", "esp": "af5597c670da111713dd306f4feba8db892a86d2", "armillary": "6827559937f07f78a6a830dfbfcaa54210dd093c"},
+      "hocket": {"eidetic": "543f5ff38f87a09afc04dbc59f57c2dfbc6a9943", "armillary": "6827559937f07f78a6a830dfbfcaa54210dd093c"},
+      "redshank": {"eidetic": "543f5ff38f87a09afc04dbc59f57c2dfbc6a9943"},
+      "relationship_recipe": {"eidetic": "543f5ff38f87a09afc04dbc59f57c2dfbc6a9943", "esp": "af5597c670da111713dd306f4feba8db892a86d2", "armillary": "6827559937f07f78a6a830dfbfcaa54210dd093c"}
+    }
+  },
+  "hocket_lock": {
+    "mere_revision": "4d60510c40a985aa88ddde381c9f56105dbd9f9a",
+    "reason": "Hocket requires Cambium 0.4.0 and Sprigging 0.2.2",
+    "regenerated_by": "Cargo metadata --offline; no lockfile hand-edit"
+  },
+  "checks": {
+    "root_core_graph": {"result": "pass", "passed": 331, "receipt": "../../../../testing/supplier-execution-20261019/woodshed-phase1-integrated-root-core-graph-retry1.json"},
+    "hocket_workspace": {"result": "pass", "receipt": "../../../../testing/supplier-execution-20261019/woodshed-phase1-integrated-hocket-workspace.json"},
+    "redshank_workspace": {"result": "pass", "receipt": "../../../../testing/supplier-execution-20261019/woodshed-phase1-integrated-redshank-workspace.json"},
+    "relationship_recipe_workspace": {"result": "pass", "receipt": "../../../../testing/supplier-execution-20261019/woodshed-phase1-integrated-recipe-workspace.json"}
+  },
+  "publication": "Direct fast-forward publication status is recorded in the external supplier execution receipt."
+}

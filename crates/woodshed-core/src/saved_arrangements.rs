@@ -62,7 +62,6 @@ pub fn save_progression_arrangement(
 
 fn validate_alignment(set: &Set, saved: &SavedProgressionArrangement) -> Result<(), String> {
     let a = &saved.alignment;
-    woodshedding::rehearsal::arrangement::bars::validate_groups(a)?;
     if saved.version != 1 {
         return Err("Unsupported saved arrangement version; attachment retained".into());
     }
@@ -79,6 +78,7 @@ fn validate_alignment(set: &Set, saved: &SavedProgressionArrangement) -> Result<
     {
         return Err("Arrangement requires a named, bounded template with one span per role".into());
     }
+    woodshedding::rehearsal::arrangement::bars::validate_groups(a)?;
     let valid_span = |s: Span| {
         s.length > 0
             && s.start
@@ -207,7 +207,6 @@ mod tests {
                 }),
             }],
             rests: vec![],
-
             time_signatures: vec![],
             bar_groups: vec![],
         };

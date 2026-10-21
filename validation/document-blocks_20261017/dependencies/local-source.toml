@@ -1,0 +1,7 @@
+[patch."https://github.com/merely-made/mere.git"]
+inker = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/inker" }
+nematic = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/nematic/nematic" }
+sceno = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/sceno" }
+scenomise = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenomise" }
+scenograph = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenograph" }
+scenotime = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenotime" }

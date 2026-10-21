@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-fresh-clone-20261021",
+  "command": [
+    "git",
+    "clone",
+    "--no-checkout",
+    "--depth",
+    "1",
+    "git@github.com:merely-made/woodshed.git",
+    "/Users/markik/Code/testing/woodshed-first-wave-publication-20261021/remote-proof"
+  ],
+  "started_at": "2026-10-21T19:07:16.909695Z",
+  "ended_at": "2026-10-21T19:07:30.448901Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "log": "/Users/markik/Code/testing/woodshed-first-wave-publication-20261021/fresh-clone.log",
+  "log_sha256": "3e06851017305d7c561fbc0c0ef24bfcf8917a2fa583d86b0df175232de52416",
+  "source_commit": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
+}

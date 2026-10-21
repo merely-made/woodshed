@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "b5-final-views",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-views",
+    "--lib"
+  ],
+  "started_at": "2026-10-19T18:26:12.923015Z",
+  "ended_at": "2026-10-19T18:26:36.901334Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/repos/woodshed",
+  "log": "/Users/markik/Code/repos/woodshed/validation/recorder-select-one_20261019/checks/views.log",
+  "log_sha256": "81c5b220bd2e084666a39c05f75e3c1cdc1a1c531817862c00fa6112597f78d2",
+  "source_commit": "b804d90104bd86caca6b8fc20e8176e1afd5feae"
+}

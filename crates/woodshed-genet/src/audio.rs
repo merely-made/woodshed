@@ -21,6 +21,8 @@ use woodshed_core::song::SongDoc;
 
 mod loop_projection;
 mod practice_clock;
+mod music_program;
+mod music_clock;
 mod input_admission;
 mod microphone_access;
 #[cfg(test)]
@@ -200,7 +202,7 @@ fn to_song(doc: &SongDoc) -> Song {
             bpm: b.bpm,
             time_signature: TimeSignature::new(b.beats, 4),
             subdivision: Subdivision::QUARTER,
-            chord_ref: (b.root_freq_hz > 0.0).then(|| ChordRef {
+            chord_ref: (!b.is_silent()).then(|| ChordRef {
                 formula_name: b.formula_name.clone(),
                 root_freq_hz: b.root_freq_hz,
                 pitches_hz: b.pitches_hz.clone(),
@@ -558,6 +560,27 @@ impl CpalBackend {
             initial_error: error.clone(),
             error,
         }
+    }
+
+    /// Isolated scenario lane: the same sample processor without a device.
+    pub(crate) fn offline_for_receipt() -> Self {
+        Self::with_runtime(OutputRuntime::offline(48_000))
+    }
+    pub(crate) fn advance_receipt_frames(&mut self, frames: usize) -> Result<Vec<f32>, String> {
+        if self.native_output || frames > 8192 {
+            return Err(
+                "Receipt frame pump requires a software output and at most 8192 frames.".into(),
+            );
+        }
+        self.service();
+        let mut pcm = vec![0.0; frames * 2];
+        self.output
+            .as_mut()
+            .ok_or("No software output")?
+            .render_offline(&mut pcm)
+            .map_err(|e| e.to_string())?;
+        self.service();
+        Ok(pcm)
     }
 
     #[cfg(test)]
@@ -2067,6 +2090,35 @@ mod tests {
         assert_eq!(projected.bars[0].length, 0);
         assert!(audio.try_set_song(&doc).is_err());
         assert_eq!(serde_json::to_value(&doc).unwrap(), payload);
+    }
+
+    #[test]
+    fn saved_song_silence_omits_only_audio_and_unmute_retains_exact_authored_voicing() {
+        let mut doc = SongDoc::default();
+        doc.bars.push(Default::default());
+        doc.bars[0].formula_name.clear(); // custom imported material, not a catalog lookup
+        doc.bars[0].chord_label = "Authored voicing".into();
+        doc.bars[0].root_freq_hz = 217.3;
+        doc.bars[0].pitches_hz = vec![217.3, 281.6, 336.2];
+        doc.bars[0].bpm = 113.5;
+        doc.bars[0].beats = 5;
+        doc.bars[0].length = 3;
+        let original = serde_json::to_value(&doc).unwrap();
+        let voiced = to_song(&doc);
+        doc.bars[0].toggle_silent();
+        let muted = to_song(&doc);
+        assert!(muted.bars[0].chord_ref.is_none());
+        assert_eq!(muted.bars[0].duration_samples(48_000.0), voiced.bars[0].duration_samples(48_000.0));
+        let mut reopened: SongDoc = serde_json::from_slice(&serde_json::to_vec(&doc).unwrap()).unwrap();
+        assert!(to_song(&reopened).bars[0].chord_ref.is_none());
+        reopened.bars[0].toggle_silent();
+        assert_eq!(serde_json::to_value(&reopened).unwrap(), original);
+        let restored = to_song(&reopened);
+        let before = voiced.bars[0].chord_ref.as_ref().unwrap();
+        let after = restored.bars[0].chord_ref.as_ref().unwrap();
+        assert_eq!(after.root_freq_hz.to_bits(), before.root_freq_hz.to_bits());
+        assert_eq!(after.pitches_hz.iter().map(|f| f.to_bits()).collect::<Vec<_>>(),
+                   before.pitches_hz.iter().map(|f| f.to_bits()).collect::<Vec<_>>());
     }
 
     #[test]

@@ -1,0 +1,12 @@
+test_baseline_existing_broken_link_is_not_new (test_doc_link_audit.HistoricalTargetTests.test_baseline_existing_broken_link_is_not_new) ... ok
+test_baseline_path_does_not_follow_current_symlink (test_doc_link_audit.HistoricalTargetTests.test_baseline_path_does_not_follow_current_symlink) ... ok
+test_deleted_heading_is_new_finding_and_same_document_uses_baseline_text (test_doc_link_audit.HistoricalTargetTests.test_deleted_heading_is_new_finding_and_same_document_uses_baseline_text) ... ok
+test_deleted_target_file_is_new_finding (test_doc_link_audit.HistoricalTargetTests.test_deleted_target_file_is_new_finding) ... ok
+test_renamed_heading_is_new_finding (test_doc_link_audit.HistoricalTargetTests.test_renamed_heading_is_new_finding) ... ok
+test_unchanged_valid_control_has_no_findings (test_doc_link_audit.HistoricalTargetTests.test_unchanged_valid_control_has_no_findings) ... ok
+test_valid_binary_links_do_not_require_text_decoding (test_doc_link_audit.HistoricalTargetTests.test_valid_binary_links_do_not_require_text_decoding) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.026s
+
+OK

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-root-models-final-20261020",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "woodshed-core",
+    "-p",
+    "woodshedding",
+    "-p",
+    "hocket-model",
+    "-p",
+    "hocket-project",
+    "--lib"
+  ],
+  "started_at": "2026-10-20T21:00:50.345664Z",
+  "ended_at": "2026-10-20T21:00:55.690318Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "log": "/Users/markik/Code/testing/woodshed/first-wave-20261020/root-models-final.log",
+  "log_sha256": "2cd2d95a13cbb759422f2fee3f93c4bf8e681935a36da5dfd7d8ca38a0be572b",
+  "source_commit": "6a65a4d7d340ec635900188bd8f4e6a6207a6756"
+}

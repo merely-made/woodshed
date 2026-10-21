@@ -5,7 +5,9 @@
 //! Returns whether any of them wants another frame — the host keeps frames
 //! coming while it does, and sleeps when it does not.
 
-use woodshed_core::audio::{AudioBackend, CalibrationStatus};
+use woodshed_core::audio::{
+    AudioBackend, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM,
+};
 use woodshed_core::midi::MidiBackend as _;
 use woodshed_views::stage::UiState;
 
@@ -35,6 +37,7 @@ pub fn requires_live_frame(shared: &Shared, ui: &UiState) -> bool {
         || ui.stage.exercise_playing
         || ui.stage.scale_run_playing
         || ui.calib_active
+        || shared.midi.needs_service()
         || shared
             .backend
             .as_ref()
@@ -107,7 +110,7 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
         }
         return false;
     }
-    let mut animating = false;
+    let mut animating = crate::sync::poll_midi_state(ui, &mut shared.midi);
     let previous_history = ui.practice_history.len();
     let previous_cursor = ui.rehearsal_set().cursor;
     if let Some(observation) = poll_audio(shared) {
@@ -152,7 +155,7 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     }
     if midi_in_connected && ui.midi.clock_slave {
         if let Some(bpm) = midi_clock_bpm {
-            let bpm = bpm.clamp(30.0, 300.0);
+            let bpm = bpm.clamp(TRANSPORT_MIN_BPM, TRANSPORT_MAX_BPM);
             if (ui.transport.bpm - bpm).abs() > 0.3 {
                 ui.set_bpm(bpm);
                 backend.set_metronome(ui.transport);

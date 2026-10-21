@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "date": "2026-10-19",
+  "scope": "Shipping Redshank native note privacy/menu/export controls; selected owned voice bytes only",
+  "preserved_target": {
+    "end_offset_ms": 4500,
+    "item_id": "source-recording",
+    "offset_ms": 1250,
+    "pressed_offset_ms": 1400,
+    "representation": {
+      "byte_length": null,
+      "complete_digest": null,
+      "etag": null,
+      "final_url": null,
+      "last_modified": null,
+      "media_type": null,
+      "requested_url": null,
+      "retrieved_at_ms": null
+    }
+  },
+  "body_bytes": 9644,
+  "body_blake3": "069b481c4f7cae9c0db3bc2475ced43efe54596e172757b0584f37f28a2fb5f9",
+  "body_matches_owner_blob": true,
+  "private_menu_reviewed_without_export": true,
+  "shareable_menu_and_export_capture_reviewed": true,
+  "bounded_layout_test": "passed at 960 and 420 logical pixels with missing recording explanations",
+  "source_base": "be4d6d042e421ae5178d742d30137d7d59206322",
+  "files_sha256": {
+    "ports/redshank/desktop/src/appearance_tests.rs": "2d467874639ef1534058be582c25d212252f987f1f982ab9cc71fa3fa20b48f6",
+    "ports/redshank/surfaces/src/tabs/mod.rs": "3ba01be8c07f8b09842257ce5cb95a6d465a2331872431f70d8e5a4315d13cf0",
+    "ports/redshank/surfaces/src/tabs/rows.rs": "f3a4216c6a976743a16b7f96564908e4e918b44bec71d0f98c42e94251764d61"
+  },
+  "package_sha256": "5a827b54732c76cbe8e630b423f43fd68670e7c44f56f5998f4d7289d59265cc",
+  "limitations": [
+    "Synthetic 100 ms owner-generated WAV; no microphone capture or acoustic quality claim",
+    "OS destination dialog is not used: the owner exports to its announced exports directory",
+    "Original recording remains unavailable; timeline labels outside the window are outside this action-row repair"
+  ]
+}

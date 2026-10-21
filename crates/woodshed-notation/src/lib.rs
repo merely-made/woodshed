@@ -1,8 +1,13 @@
-//! Shared bounded Chart, Tab and staff notation renderer for native and browser hosts.
+//! Bounded chart, tablature and staff notation for Sprigging hosts.
 //!
 //! Musical outlines are Bravura (SMuFL), not approximated clefs or Unicode
 //! fallback text. Ordinary labels are exposed for the host's DOM text overlay.
 //! Geometry is authored once and shared with the host's event controls.
+//!
+//! The default `accessibility` feature supplies fallback leaf labels and a
+//! playback description for native consumers. Hosts that supply accessible
+//! event controls and their own leaf label can disable default features; the
+//! same paint, layout, labels and event rectangles remain available.
 pub use sprigging::ColorF;
 use sprigging::{Leaf, PaintCx, Path, Size, SizeHint};
 use woodshedding::notation::{NoteValue, Score};
@@ -50,6 +55,7 @@ pub struct NotationLeaf {
     score: Score,
     view: NotationView,
     selected: (usize, usize),
+    playhead: Option<(usize, usize)>,
     size: Size,
     bars: Vec<Bar>,
     ink: ColorF,
@@ -129,6 +135,7 @@ impl NotationLeaf {
             score,
             view,
             selected,
+            playhead: None,
             size: Size {
                 width,
                 height: (y + row_height + PAD).max(100.0),
@@ -138,6 +145,21 @@ impl NotationLeaf {
             accent,
             dirty: true,
         }
+    }
+
+    /// Mark the current playback event independently of editing selection.
+    /// `None` clears the cursor; positions outside this score are ignored.
+    /// This is a paint/a11y projection and does not choose transport policy.
+    pub fn with_playhead(mut self, playhead: Option<(usize, usize)>) -> Self {
+        let playhead = playhead.filter(|&(bar, event)| {
+            self.score
+                .measures
+                .get(bar)
+                .is_some_and(|m| event < m.events.len())
+        });
+        self.dirty |= self.playhead != playhead;
+        self.playhead = playhead;
+        self
     }
 
     pub fn intrinsic_size(&self) -> Size {
@@ -313,6 +335,23 @@ impl Leaf for NotationLeaf {
         let Ok(face) = ttf_parser::Face::parse(FONT, 0) else {
             return;
         };
+        // A shape distinct from authoring's accented glyphs: one translucent
+        // column with a solid leading and bottom edge, including silent rests.
+        if let Some(playhead) = self.playhead {
+            if let Some((_, _, (x, y, width, height))) = self
+                .event_rects()
+                .into_iter()
+                .find(|(bar, event, _)| (*bar, *event) == playhead)
+            {
+                let wash = ColorF {
+                    a: self.accent.a * 0.12,
+                    ..self.accent
+                };
+                cx.fill_rect(x, y, width, height, wash);
+                cx.fill_rect(x, y, 2.0, height, self.accent);
+                cx.fill_rect(x, y + height - 2.0, width, 2.0, self.accent);
+            }
+        }
         let (clef, base, transpose) = clef_profile(&self.score.instrument);
         for bar in &self.bars {
             let measure = &self.score.measures[bar.index];
@@ -571,8 +610,23 @@ impl Leaf for NotationLeaf {
         }
         self.dirty = false;
     }
+    #[cfg(feature = "accessibility")]
     fn accessibility(&mut self, node: &mut accesskit::Node) {
         node.set_role(accesskit::Role::GraphicsObject);
+        if let Some((bar, event)) = self.playhead {
+            let kind = if self.score.measures[bar].events[event].rest {
+                "rest"
+            } else {
+                "sounding notes"
+            };
+            node.set_state_description(format!(
+                "Playback: bar {}, event {}, {kind}",
+                bar + 1,
+                event + 1
+            ));
+        } else {
+            node.clear_state_description();
+        }
         if node.label().is_none() {
             node.set_label(format!(
                 "{}: {:?}, {} measures",
@@ -791,6 +845,86 @@ mod tests {
         );
         assert!(narrow.bars[1].y >= narrow.bars[0].y + narrow.bars[0].height);
     }
+    #[test]
+    fn playback_cursor_is_separate_from_selection_in_all_views_and_rests() {
+        for view in [NotationView::Chart, NotationView::Tab, NotationView::Score] {
+            for rest in [false, true] {
+                let mut base = leaf(640.0, view);
+                if rest {
+                    let event = &mut base.score.measures[1].events[0];
+                    event.notes.clear();
+                    event.rest = true;
+                }
+                let authored = base.score.clone();
+                let rects = base.event_rects();
+                let mut baseline = Vec::new();
+                let size = base.size;
+                base.paint(&mut PaintCx::new(&mut baseline, size));
+                assert!(!base.paint_dirty());
+                let mut playing = base.with_playhead(Some((1, 0)));
+                assert!(playing.paint_dirty());
+                assert_eq!(playing.selected, (0, 0));
+                assert_eq!(playing.score, authored);
+                assert_eq!(playing.event_rects(), rects);
+                let mut commands = Vec::new();
+                playing.paint(&mut PaintCx::new(&mut commands, size));
+                assert_eq!(commands.len(), baseline.len() + 3);
+                assert!(matches!(&commands[0], sprigging::PaintCmd::DrawRect(rect)
+                    if rect.color.a == playing.accent.a * 0.12));
+                // Existing musical glyphs and their authoring-selection colors
+                // remain identical. Playback adds only its background geometry.
+                assert_eq!(
+                    serde_json::to_value(&commands[3..]).unwrap(),
+                    serde_json::to_value(&baseline).unwrap()
+                );
+                #[cfg(feature = "accessibility")]
+                let mut node = accesskit::Node::new(accesskit::Role::GenericContainer);
+                #[cfg(feature = "accessibility")]
+                {
+                    node.set_label("Authored score label");
+                    playing.accessibility(&mut node);
+                    assert_eq!(node.label(), Some("Authored score label"));
+                    assert_eq!(
+                        node.state_description(),
+                        Some(if rest {
+                            "Playback: bar 2, event 1, rest"
+                        } else {
+                            "Playback: bar 2, event 1, sounding notes"
+                        })
+                    );
+                }
+                let mut stopped = playing.with_playhead(None);
+                assert!(stopped.paint_dirty());
+                #[cfg(feature = "accessibility")]
+                {
+                    stopped.accessibility(&mut node);
+                    assert!(node.state_description().is_none());
+                }
+                let mut cleared = Vec::new();
+                stopped.paint(&mut PaintCx::new(&mut cleared, size));
+                assert_eq!(
+                    serde_json::to_value(&cleared).unwrap(),
+                    serde_json::to_value(&baseline).unwrap()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn invalid_playback_positions_are_ignored_and_default_has_no_cursor() {
+        let mut leaf = leaf(640.0, NotationView::Score);
+        assert_eq!(leaf.playhead, None);
+        let mut commands = Vec::new();
+        let size = leaf.size;
+        leaf.paint(&mut PaintCx::new(&mut commands, size));
+        let leaf = leaf.with_playhead(Some((usize::MAX, 0)));
+        assert_eq!(leaf.playhead, None);
+        assert!(!leaf.paint_dirty());
+        let leaf = leaf.with_playhead(Some((0, usize::MAX)));
+        assert_eq!(leaf.playhead, None);
+        assert_eq!(leaf.selected, (0, 0));
+    }
+
     #[test]
     fn chord_chart_uses_authored_meter_beat_count() {
         let mut counts = Vec::new();

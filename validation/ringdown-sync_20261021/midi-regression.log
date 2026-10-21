@@ -1,0 +1,258 @@
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#64d47ac4)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling arrayvec v0.7.8
+   Compiling thiserror v2.0.21
+   Compiling read-fonts v0.41.0
+   Compiling icu_provider v2.3.1
+   Compiling accesskit v0.25.1
+   Compiling tracing-core v0.1.36
+   Compiling naga-types v30.0.1
+   Compiling markup5ever v0.39.0
+   Compiling mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling sceno v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cobs v0.3.0
+   Compiling tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling polycool v0.4.0
+   Compiling blake3 v1.8.7
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling naga v30.0.1
+   Compiling wgpu-types v30.0.1
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling xml5ever v0.39.0
+   Compiling kurbo v0.13.1
+   Compiling icu_properties v2.3.0
+   Compiling icu_normalizer v2.3.0
+   Compiling tracing v0.1.44
+   Compiling html5ever v0.39.0
+   Compiling postcard v1.1.3
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/eidetic.git?rev=738ef15956a29a125820b2d6c2280d39a6214f8e#738ef159)
+   Compiling icu_locale_fallback v2.3.0
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling icu_segmenter v2.3.0
+   Compiling workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling illume v0.0.3 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling image v0.25.10
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling peniko v0.6.1
+   Compiling idna_adapter v1.2.2
+   Compiling scenograph v0.0.5 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling idna v1.1.0
+   Compiling parley_data v0.10.0
+   Compiling backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/eidetic.git?rev=738ef15956a29a125820b2d6c2280d39a6214f8e#738ef159)
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling url v2.5.8
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-primitives)
+   Compiling taffy v0.11.0-experimental-cache-fix.3
+   Compiling numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling audio-pattern v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-pattern)
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling num-rational v0.4.2
+   Compiling winit v0.30.13
+   Compiling tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling audio-packs v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-packs)
+   Compiling nalgebra v0.35.0
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling ena v0.14.4
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshedding)
+   Compiling scenomise v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling ble-peripheral-rust v0.2.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/vendor/ble-peripheral-rust)
+   Compiling mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/hocket-model)
+   Compiling midir v0.11.0
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling armillary v0.1.1 (https://github.com/merely-made/armillary.git?rev=e67c5def1c735be047492a867bcdc8b41fba22b8#e67c5def)
+   Compiling accesskit_consumer v0.39.1
+   Compiling gaz v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling accesskit_macos v0.27.1
+   Compiling dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/hocket-project)
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling woodshed-instrument v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-instrument)
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling skrifa v0.44.0
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling harfrust v0.12.0
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/hocket-recorder)
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-graph)
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/eidetic.git?rev=738ef15956a29a125820b2d6c2280d39a6214f8e#738ef159)
+   Compiling notochord v0.1.1 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling esp v0.1.0 (https://github.com/merely-made/esp.git?rev=809deb6be341d3b6eeaad9534d9d162bd3105f4a#809deb6b)
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1
+   Compiling incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-core)
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-audio)
+   Compiling rfd v0.17.2
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:552:14
+    |
+552 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+552 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+552 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:600:14
+    |
+600 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+600 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+600 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:621:14
+    |
+621 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+621 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+621 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling glamx v0.3.1
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling parry2d v0.31.1
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling rapier2d v0.36.0
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling wgpu v30.0.1
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling sprigging v0.2.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cambium v0.4.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling woodshed-notation v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-notation)
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling audio-pack-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/audio-pack-views)
+   Compiling mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/hocket-views)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling cambium-genet-winit-host v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/vendor/cambium-genet-winit-host)
+warning: unused import: `NSWindow`
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:511:25
+    |
+511 |     use objc2_app_kit::{NSWindow, NSWindowButton};
+    |                         ^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:540:46
+    |
+540 |             view.convertRect_fromView(frame, unsafe { ns_window.contentView() }.as_deref());
+    |                                              ^^^^^^ unnecessary `unsafe` block
+    |
+    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `window_control_node` is never used
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:113:4
+    |
+113 | fn window_control_node<D>(dom: &D, root: NodeId, accessible_label: &str) -> Option<NodeId>
+    |    ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `window_control_rect` is never used
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:139:15
+    |
+139 | pub(crate) fn window_control_rect<D>(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: `cambium-genet-winit-host` (lib) generated 4 warnings (run `cargo fix --lib -p cambium-genet-winit-host` to apply 1 suggestion)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-views)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-views/src/stage/music_editor/practice.rs:98:14
+   |
+98 |             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+98 -             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+98 +             .try_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+   |
+
+warning: `woodshed-views` (lib) generated 1 warning (run `cargo fix --lib -p woodshed-views` to apply 1 suggestion)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-ringdown-sync/crates/woodshed-genet)
+error[E0432]: unresolved import `super::refreshed_selection`
+    --> crates/woodshed-genet/src/sync.rs:1519:9
+     |
+1519 |     use super::refreshed_selection;
+     |         ^^^^^^^-------------------
+     |                |
+     |                no `refreshed_selection` in `sync`
+
+For more information about this error, try `rustc --explain E0432`.
+error: could not compile `woodshed-genet` (bin "woodshed-genet" test) due to 1 previous error

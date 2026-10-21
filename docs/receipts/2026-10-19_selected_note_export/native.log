@@ -1,0 +1,6 @@
+[cambium-winit] accessibility Installed, 60 nodes projected
+redshank-scenario: captured 01_private_note_menu
+redshank-scenario: captured 02_shareable_note_menu
+redshank-scenario: captured 03_selected_voice_exported
+redshank-scenario: Selected voice body exported through the visible note-row control
+redshank-scenario: RESULT ok (62 frames, 3 captures)

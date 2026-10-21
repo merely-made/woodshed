@@ -166,19 +166,13 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// Refresh every leaf from the current state. Called from the frame hook,
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
-    let signature = woodshed_views::stage::notation_reading::signature(ui);
-    if signature != shared.notation_sig {
-        shared.notation_sig = signature.clone();
-        leaves.remove(&woodshed_views::notation_leaf::NOTATION_LEAF_KEY);
-        if signature.is_some() {
-            if let Some(leaf) = woodshed_views::stage::notation_reading::leaf(ui) {
-                leaves.insert(
-                    woodshed_views::notation_leaf::NOTATION_LEAF_KEY,
-                    Box::new(leaf),
-                );
-            }
+    if let Some(draft)=ui.music_draft(){
+        let signature=format!("{:?}{:?}{:?}{}{:?}",draft.score,draft.view,draft.selected,ui.viewport_width,(ui.app_settings.appearance.clone(),ui.music_presentation_key(),ui.appearance.resolve(&ui.app_settings.appearance).palette));
+        if shared.music_leaf_sig.as_ref()!=Some(&signature){
+            if let Some(leaf)=woodshed_views::stage::music_editor::notation_leaf(ui){leaves.insert(woodshed_views::notation_leaf::NOTATION_LEAF_KEY,Box::new(leaf));shared.music_leaf_sig=Some(signature);}
         }
     }
+
     let recorder = woodshed_views::stage::recorder_projection(ui);
     shared
         .recorder_leaves

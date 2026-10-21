@@ -341,7 +341,9 @@ fn rail(state: &AppState) -> Child {
                     el(
                         "div",
                         text(format!(
-                            "Your contact token changes. The one you have shared ({short}...) stops reaching you, so peers holding it need the new one."
+                            "You agree to persona {} with contact token {}. Peers using your current token ({short}...) will no longer reach you; re-share the new token with them.",
+                            staged.profile,
+                            staged.gaining_token,
                         )),
                     )
                     .attr("class", "handoff-note"),
@@ -509,8 +511,6 @@ fn audio_device_controls(state: &AppState) -> Child {
                     ),
                 )
                 .attr("class", "device-select"),
-                el("span", text(state.audio_status_label().to_string()))
-                    .attr("class", "audio-status mono"),
             ),
         )
         .attr("class", "audio-devices"),

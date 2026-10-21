@@ -317,11 +317,12 @@ mod tests {
             HostHooks::inert(),
         );
         host.layout_at(1000.0, 800.0);
+        let projection = host.a11y_projection();
         let node = host.with_dom(|dom| {
             taproot::matching_with_projection(
                 dom,
                 &Selector::role("button").with_attr("data-appearance-theme", "woodshed:slate"),
-                &host.a11y_projection(),
+                &projection,
             )[0]
         });
         let bounds = host.painted_rect(node).unwrap();

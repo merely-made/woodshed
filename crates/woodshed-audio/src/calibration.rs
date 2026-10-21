@@ -54,7 +54,9 @@ use crate::sequencer::{SequencerPattern, Subdivision, TimeSignature};
 // Strophe. Re-exported so existing
 // `woodshed_audio::{estimate_latency_from_pairs, MATCH_WINDOW}` paths
 // resolve unchanged. The live session driver below builds on it.
-pub use audio_primitives::calibration::{MATCH_WINDOW, count_matches, estimate_latency_from_pairs};
+pub use audio_primitives::calibration::{
+    MATCH_WINDOW, count_matches, estimate_latency_and_count, estimate_latency_from_pairs,
+};
 
 /// BPM the calibration metronome runs at. 60 BPM = one click per
 /// second — slow enough to leave plenty of "guard space" between
@@ -286,25 +288,25 @@ impl CalibrationSession {
         let onset_instants: Vec<Instant> = snapshot.recent.iter().map(|o| o.at).collect();
         // Require at least half the clicks to have matched.
         let minimum = self.total_clicks / 2;
-        Ok(
-            match estimate_latency_from_pairs(&self.expected_clicks, &onset_instants, minimum) {
-                Some(latency) => CalibrationOutcome::Success {
-                    latency,
-                    matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
-                    total_clicks: self.total_clicks,
-                },
-                None => CalibrationOutcome::InsufficientPairs {
-                    matched_pairs: count_matches(&self.expected_clicks, &onset_instants),
-                    total_clicks: self.total_clicks,
-                },
+        let estimate = estimate_latency_and_count(&self.expected_clicks, &onset_instants, minimum);
+        Ok(match estimate.latency {
+            Some(latency) => CalibrationOutcome::Success {
+                latency,
+                matched_pairs: estimate.matched_pairs,
+                total_clicks: self.total_clicks,
             },
-        )
+            None => CalibrationOutcome::InsufficientPairs {
+                matched_pairs: estimate.matched_pairs,
+                total_clicks: self.total_clicks,
+            },
+        })
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::input::Analyzer;
 
     // Pure pairing/median tests (estimate_latency_from_pairs,
     // count_matches) moved with the code to audio-primitives. What
@@ -353,6 +355,31 @@ mod tests {
             self.set_click_pattern(pattern)?;
             self.play_click()
         }
+    }
+
+    fn noise(sample: usize) -> f32 {
+        ((sample as f32 * 12.9898).sin() * 43_758.547).fract() * 0.01
+    }
+
+    fn feed_warmup(analyzer: &mut crate::onset::OnsetAnalyzer, at: Instant) {
+        let quiet: Vec<f32> = (0..14_400).map(noise).collect();
+        analyzer.process(&quiet, 48_000.0, at);
+    }
+
+    fn feed_transient(
+        analyzer: &mut crate::onset::OnsetAnalyzer,
+        at: Instant,
+        sample_offset: usize,
+    ) {
+        let mut samples: Vec<f32> = (sample_offset..sample_offset + 12_000).map(noise).collect();
+        let hit = 2_048;
+        for (index, sample) in samples.iter_mut().enumerate().skip(hit) {
+            let decay_sample = index - hit;
+            if decay_sample < 256 {
+                *sample += 0.8 * (-0.02 * decay_sample as f32).exp();
+            }
+        }
+        analyzer.process(&samples, 48_000.0, at);
     }
 
     #[test]
@@ -450,5 +477,54 @@ mod tests {
     fn session_with_total_clicks_clamps_minimum() {
         let s = CalibrationSession::new().with_total_clicks(0);
         assert!(s.total_clicks >= 2);
+    }
+
+    #[test]
+    fn session_poll_reports_success_with_estimator_support() {
+        let mut click = FakeClick::default();
+        let mut analyzer = crate::onset::OnsetAnalyzer::new();
+        let onset = analyzer.handle();
+        let mut session = CalibrationSession::new().with_total_clicks(2);
+        session.start(&mut click, &onset).unwrap();
+        let start = session.start_at.unwrap();
+
+        feed_warmup(&mut analyzer, start);
+        feed_transient(&mut analyzer, start + Duration::from_millis(30), 0);
+        feed_transient(&mut analyzer, start + Duration::from_millis(1_030), 12_000);
+
+        assert!(matches!(
+            session
+                .poll_at(&mut click, &onset, start + Duration::from_millis(1_300))
+                .unwrap(),
+            CalibrationOutcome::Success {
+                matched_pairs: 2,
+                total_clicks: 2,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn session_poll_excludes_nearest_negative_onset_from_displayed_support() {
+        let mut click = FakeClick::default();
+        let mut analyzer = crate::onset::OnsetAnalyzer::new();
+        let onset = analyzer.handle();
+        let mut session = CalibrationSession::new().with_total_clicks(2);
+        session.start(&mut click, &onset).unwrap();
+        let start = session.start_at.unwrap();
+
+        feed_warmup(&mut analyzer, start);
+        feed_transient(&mut analyzer, start - Duration::from_millis(20), 0);
+        feed_transient(&mut analyzer, start + Duration::from_millis(30), 12_000);
+
+        assert!(matches!(
+            session
+                .poll_at(&mut click, &onset, start + Duration::from_millis(1_300))
+                .unwrap(),
+            CalibrationOutcome::InsufficientPairs {
+                matched_pairs: 0,
+                total_clicks: 2
+            }
+        ));
     }
 }

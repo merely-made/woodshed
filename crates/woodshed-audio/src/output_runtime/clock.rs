@@ -102,6 +102,10 @@ pub enum ProgramStatus {
 /// Coherent logical position published with the device-frame observation.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ProgramSnapshot {
+    /// Last boundary-applied replacement, or zero for the initial program.
+    pub revision: u64,
+    /// Current prepared segment count, including after a replacement.
+    pub card_count: usize,
     pub epoch: ProgramEpoch,
     pub device_frame: u64,
     pub card_index: usize,

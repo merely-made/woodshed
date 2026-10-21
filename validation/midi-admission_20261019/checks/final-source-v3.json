@@ -1,0 +1,14 @@
+{
+  "source_revision": "480c0d6d36d65d5252940782313525aa5c91ac3f",
+  "source_sha256": {
+    "crates/woodshed-core/src/midi.rs": "e226f0f3aeaa139f36db46adc0af690ef38e843e0e4107d2b7514460b1679dc2",
+    "crates/woodshed-genet/src/drive.rs": "ed0f055c0bc2432d312e55d340c37939eb64dbcb52a16a7dbf8e92dab8795983",
+    "crates/woodshed-genet/src/midi.rs": "3e1660d663941d4b3ba79a078a90d73528be94386846995008e836d8eeee4cb0",
+    "crates/woodshed-genet/src/midi/midi_output.rs": "9e3b784d4a8f76da198e29768fca9fe7a0e1ff32066b0c0767eae444c5fed800",
+    "crates/woodshed-genet/src/persona.rs": "6c99c5eb6b2db8d1c57a2c09b82122fc07189f541246f808108f616703457689",
+    "crates/woodshed-genet/src/sync.rs": "2b38d2d4ad068734eebec9eff2080e984c02cd3d19162ace63c81723cd758b76",
+    "crates/woodshed-views/src/stage.rs": "84aed0f003edce0cd7e3afc1156e8cf3dd2feafcfd33089bdf96e27ddb953793",
+    "crates/woodshed-views/src/stage/settings.rs": "3e1b4a6159fac49260f3b14c443cfb464611ea0b78015fede3026daa2e0fe8dc",
+    "crates/woodshed-views/tests/midi_state.rs": "2c531641ed5d0b6692d139b873045598f5c273224bc25c35ea7e2c478cdfb716"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "authoring_selection": [
+    0,
+    0
+  ],
+  "device": {
+    "active_frames": 998,
+    "bar": 0,
+    "beat_ticks": 31,
+    "bpm": 96.0,
+    "card_frames": 998,
+    "event": 1,
+    "native_stream_count": 0,
+    "output_frame": 241000,
+    "processing_blocks": 30,
+    "program_epoch": 1,
+    "program_revision": 0,
+    "program_status": "Playing",
+    "sample_rate": 48000
+  },
+  "kind": "woodshed-native-music-practice-output-runtime",
+  "music": {
+    "applied_canonical_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489",
+    "draft_canonical_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489",
+    "draft_dirty": false,
+    "saved_exact_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489",
+    "stored_exact_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489"
+  },
+  "owner": 2,
+  "pcm": {
+    "advances": [
+      {
+        "device_frame_end": 241000,
+        "device_frame_start": 0,
+        "nonzero_samples": 445974,
+        "pcm_f32le_blake3": "14d19b32aa6b023a50e98db6a4d4fd5fc0216fd4c80410232c589e63efe4df8b",
+        "processor_blocks": 30,
+        "rendered_samples": 482000,
+        "requested_frames": 241000
+      }
+    ],
+    "cumulative_blake3": "14d19b32aa6b023a50e98db6a4d4fd5fc0216fd4c80410232c589e63efe4df8b",
+    "encoding": "f32 IEEE-754 bit patterns, little endian, interleaved stereo",
+    "frames": 241000,
+    "nonzero_samples": 445974,
+    "samples": 482000
+  },
+  "playback": {
+    "applied_revision": 0,
+    "bar": 0,
+    "bar_beat_ticks": 31,
+    "bpm": 96.0,
+    "desired_revision": 0,
+    "event": 0,
+    "owner": 2,
+    "pending_update": false,
+    "rest": false,
+    "run_epoch": 1,
+    "status": "playing"
+  }
+}

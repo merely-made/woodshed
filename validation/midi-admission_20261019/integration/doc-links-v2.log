@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "checked_local_links": 130,
+    "findings": [
+      {
+        "document": "design_docs/DOC_README.md",
+        "target": "../validation/stack-family_20261011/README.md#foundation-supplier-intake--2026-10-19",
+        "reason": "missing heading"
+      }
+    ]
+  },
+  "published_documents": {
+    "checked_local_links": 135,
+    "findings": [
+      {
+        "document": "design_docs/DOC_README.md",
+        "target": "../validation/stack-family_20261011/README.md#foundation-supplier-intake--2026-10-19",
+        "reason": "missing heading"
+      }
+    ]
+  },
+  "new_findings": []
+}

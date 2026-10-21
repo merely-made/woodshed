@@ -10,6 +10,7 @@ mod diagnostics;
 mod diagnostics_worker_tests;
 mod headed_receipt;
 mod scenario;
+mod selected_clip;
 mod session;
 mod voice;
 
@@ -596,6 +597,7 @@ impl Desktop {
     ) {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
+        state.note_clip_export_available = true;
         if let Some(error) = &self.persistence.recovery_error {
             state.notice = Some(error.clone());
         }
@@ -1632,6 +1634,7 @@ impl Desktop {
                 state.apply_presentation(&command);
             },
             CompactCommand::ExportAnnotations => self.export_annotations(state)?,
+            CompactCommand::ExportNoteClip(id) => self.export_note_clip(state, &id)?,
         }
         Ok(())
     }
@@ -1800,7 +1803,7 @@ impl Desktop {
                 IoReply::Exported { path, result } => {
                     self.export_pending = false;
                     state.notice = Some(match result {
-                        Ok(()) => format!("Exported annotations to {}", path.display()),
+                        Ok(()) => format!("Exported to {}", path.display()),
                         Err(error) => error,
                     });
                 },

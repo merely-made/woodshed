@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-19",
+  "timezone": "America/New_York",
+  "base_commit": "f219f0ba66b294ed0290088ce8b398d9190e4f00",
+  "source_state": "local working-tree changes identified by source-fingerprints.json",
+  "environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0"
+  },
+  "checks": [
+    {
+      "name": "library",
+      "command": "cargo test --locked --offline -p woodshedding",
+      "passed": 213
+    },
+    {
+      "name": "consumer",
+      "command": "cargo test --locked --offline --manifest-path examples/musicxml-timing/Cargo.toml",
+      "passed": 4
+    },
+    {
+      "name": "native",
+      "command": "cargo test --locked --offline -p woodshed-genet audio::music_",
+      "passed": 13
+    },
+    {
+      "name": "editor",
+      "command": "cargo test --locked --offline -p woodshed-genet -p woodshed-views music_editor::practice::tests",
+      "passed": 7
+    }
+  ],
+  "total_passed": 237,
+  "consumer_clippy": "passed with -D warnings",
+  "scope": "Portable library, standalone MusicXML consumer, native software output/clock and editor-state tests; no fresh headed or hardware qualification."
+}

@@ -1,0 +1,8 @@
+{
+  "woodshed_head": "493197eba778869f6952cfff7f023898edc72c67",
+  "mere_head": "7077ea440f926932714fb607bfafcbdf44b1343e",
+  "source_status": "Dirty prototype worktrees; no commit or supplier repin; source hashes identify tested contents.",
+  "external_run": "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2",
+  "build_harnesses": "/Users/markik/Code/output/woodshed-native-musicxml-20261018",
+  "binary_sha256": "ae01825d8cd0518ed983dee148e124b13490532868773cc42b00f959ec480be9"
+}

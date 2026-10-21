@@ -19,7 +19,10 @@ pub use looper::recorder::{
 };
 pub use looper::{RecorderBuffer, RecorderObservation};
 use woodshed_core::arrangement::{GraphArrangement, arrange_graph};
-use woodshed_core::audio::{AudioRequest, CalibrationStatus, TransportState, TunerState};
+use woodshed_core::audio::{
+    AudioRequest, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM, TransportState,
+    TunerState,
+};
 use woodshed_core::harmony::KeyedCatalogRef;
 use woodshed_core::history::{
     EngagementKind, ObservationProvenance, PracticeHistory, catalog_id_for_card,
@@ -56,8 +59,8 @@ mod context;
 mod context_tests;
 mod instances;
 mod looper;
+pub mod music_editor;
 mod musical_context;
-pub mod notation_reading;
 mod overview;
 pub mod overview_atmosphere;
 pub mod overview_dynamics;
@@ -968,6 +971,8 @@ pub struct MidiUiState {
     pub learn_controller_flush: bool,
     pub input_notice: Option<String>,
     pub pedal_report: Option<woodshed_core::midi::PedalReport>,
+    /// Host-reported backend diagnostic, when MIDI setup or refresh fails.
+    pub error: Option<String>,
     /// Host-polled recent-events readout (newest last).
     pub events: Vec<String>,
     /// One-shot: re-scan the port lists. Host consumes after dispatch.
@@ -1026,10 +1031,42 @@ impl MidiUiState {
             learn_controller_flush: false,
             input_notice: None,
             pedal_report: None,
+            error: None,
             events: Vec::new(),
             refresh_requested: false,
         }
     }
+
+    pub fn selected_input(&self) -> Option<&str> {
+        selected_port_name(&self.input_ports, self.input_dd.selected)
+    }
+
+    pub fn selected_output(&self) -> Option<&str> {
+        selected_port_name(&self.output_ports, self.output_dd.selected)
+    }
+
+    /// Replace the available port lists while preserving selections by name.
+    /// A selected port that disappeared becomes "None"; its old index is
+    /// never applied to the replacement list.
+    pub fn refresh_ports(&mut self, inputs: Vec<String>, outputs: Vec<String>) {
+        self.input_dd.selected = self
+            .selected_input()
+            .and_then(|selected| inputs.iter().position(|port| port == selected))
+            .map_or(0, |index| index + 1);
+        self.output_dd.selected = self
+            .selected_output()
+            .and_then(|selected| outputs.iter().position(|port| port == selected))
+            .map_or(0, |index| index + 1);
+        self.input_ports = inputs;
+        self.output_ports = outputs;
+    }
+}
+
+fn selected_port_name(ports: &[String], selection: usize) -> Option<&str> {
+    selection
+        .checked_sub(1)
+        .and_then(|index| ports.get(index))
+        .map(String::as_str)
 }
 
 impl Default for MidiUiState {
@@ -1109,7 +1146,7 @@ pub struct UiState {
     pub relationship_opened_link_layout: Option<scenograph::link::OpenedLinkLayout>,
     pub retained_set_name: TextInput,
     pub arrangement_editor: arrangement_editor::ArrangementEditor,
-    pub notation_reading: notation_reading::Reading,
+    pub music_editor: music_editor::MusicEditor,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
     pub overview_folds: overview_folds::OverviewFolds,
@@ -1406,7 +1443,7 @@ impl UiState {
             relationship_opened_link_layout: None,
             retained_set_name: TextInput::new(""),
             arrangement_editor: Default::default(),
-            notation_reading: Default::default(),
+            music_editor: Default::default(),
             overview_focus: None,
             overview_notice: None,
             overview_folds: Default::default(),
@@ -1886,6 +1923,7 @@ impl UiState {
     /// every dispatch (the `select` widget mutates only its own
     /// `SelectState`).
     pub fn sync(&mut self) {
+        self.sync_music_editor();
         self.sync_arrangement_scene();
         self.sync_rehearsal_observation();
         self.stage.set_tuning(self.tuning_dd.selected);
@@ -2112,7 +2150,7 @@ impl UiState {
     }
 
     pub fn set_bpm(&mut self, bpm: f32) {
-        self.transport.bpm = bpm.clamp(30.0, 300.0);
+        self.transport.bpm = bpm.clamp(TRANSPORT_MIN_BPM, TRANSPORT_MAX_BPM);
         self.app_settings.metronome.bpm = self.transport.bpm;
     }
 
@@ -2564,6 +2602,7 @@ impl UiState {
         self.pack_busy = false;
         self.pack_notice.clear();
         self.arrangement_editor = Default::default();
+        self.music_editor = Default::default();
         self.set = session.set.clone();
         self.retained_sets = session.retained_sets.clone();
         self.working_sets = session.working_sets.clone();
@@ -2680,7 +2719,12 @@ impl UiState {
         self.set.ensure_card_ids();
         self.app_settings.stage.adopt_legacy_relation_visibility();
         self.section = session.section;
-        self.transport.bpm = self.app_settings.metronome.bpm.clamp(30.0, 300.0);
+        self.transport.bpm = self
+            .app_settings
+            .metronome
+            .bpm
+            .clamp(TRANSPORT_MIN_BPM, TRANSPORT_MAX_BPM);
+        self.app_settings.metronome.bpm = self.transport.bpm;
         self.tuning_dd = SelectState::new(self.stage.tuning_idx);
         self.root_dd = SelectState::new(self.stage.root_idx);
         self.set_arrangement_dd = SelectState::new(self.app_settings.stage.set_arrangement.index())
@@ -3650,7 +3694,7 @@ fn tab_content(ui: &UiState) -> UiChild {
         AppSection::Stage => match ui.workspace.active_panel() {
             Some(WorkspacePanel::Overview) if ui.relationship_open => relationship::screen(ui),
             Some(WorkspacePanel::Overview) => overview::screen(ui),
-            Some(WorkspacePanel::Arrangement) => arrangement_editor::screen(ui),
+            Some(WorkspacePanel::Arrangement) => music_editor::screen(ui),
             Some(WorkspacePanel::Related) => {
                 Box::new(el("div", related::panel(ui)).attr("class", "related-workspace"))
             },
@@ -3720,6 +3764,8 @@ pub fn stage_root(ui: &UiState) -> UiChild {
     if ui.appearance.workshop_open {
         return crate::appearance::workshop_screen(ui);
     }
+    let music_context =
+        ui.workspace.active_panel() == Some(WorkspacePanel::Arrangement) && !ui.music_editor.legacy;
     let mut nav: Vec<UiChild> = AppSection::ALL
         .iter()
         .map(|&section| {
@@ -3739,7 +3785,7 @@ pub fn stage_root(ui: &UiState) -> UiChild {
             "div",
             (
                 workspace_strip(ui),
-                el("div", nav).attr("class", "pills"),
+                (!music_context).then(|| el("div", nav).attr("class", "pills")),
                 ui.practice_save_notice
                     .as_ref()
                     .filter(|_| !ui.practice_close_pending)
@@ -4742,5 +4788,29 @@ mod audio_request_tests {
             ui.audio_requests.is_empty(),
             "one drain site owns consumption; a missed clear cannot repeat a command"
         );
+    }
+
+    #[test]
+    fn shared_transport_tempo_endpoints_survive_settings_restore() {
+        let mut ui = UiState::new();
+        ui.set_bpm(woodshed_core::audio::TRANSPORT_MIN_BPM);
+        assert_eq!(ui.transport.bpm, 1.0);
+        ui.nudge_bpm(-5.0);
+        assert_eq!(ui.transport.bpm, 1.0);
+
+        ui.set_bpm(woodshed_core::audio::TRANSPORT_MAX_BPM);
+        assert_eq!(ui.transport.bpm, 400.0);
+        ui.nudge_bpm(5.0);
+        assert_eq!(ui.transport.bpm, 400.0);
+
+        let persisted = ui.to_persisted();
+        for bpm in [1.0, 400.0] {
+            let mut settings = ui.app_settings.clone();
+            settings.metronome.bpm = bpm;
+            let mut restored = UiState::new();
+            restored.apply_persisted(&persisted, settings);
+            assert_eq!(restored.transport.bpm, bpm);
+            assert_eq!(restored.app_settings.metronome.bpm, bpm);
+        }
     }
 }

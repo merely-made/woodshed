@@ -21,6 +21,7 @@ use woodshed_views::stage::{
 #[derive(Default)]
 pub(super) struct PracticeClockHost {
     active: Option<BoundProgram>,
+    music: super::music_clock::MusicClockHost,
 }
 
 struct BoundProgram {
@@ -51,6 +52,12 @@ impl super::CpalBackend {
                 );
             }
             stop_live(ui);
+            if ui.music_practice_requested() {
+                ui.stop_music_practice();
+                ui.music_editor.notice = Some(
+                    "Audio output is unavailable. Practice requires an active output clock.".into(),
+                );
+            }
             return false;
         };
         self.practice_clock.sync(output, ui)
@@ -59,6 +66,34 @@ impl super::CpalBackend {
 
 impl PracticeClockHost {
     fn sync(&mut self, output: &mut OutputRuntime, ui: &mut UiState) -> bool {
+        if self.music.active()
+            && (ui.rehearsal_running || live_kind(ui).is_some() || ui.song_playing)
+        {
+            ui.stop_music_practice();
+        }
+        if ui.music_practice_requested() || self.music.active() {
+            if ui.music_practice_requested() {
+                if let Some(bound) = &mut self.active {
+                    request_stop(output, bound);
+                    output.drain_program_transitions();
+                    let snapshot = output.snapshot().program;
+                    if snapshot.epoch == bound.epoch
+                        && matches!(
+                            snapshot.status,
+                            ProgramStatus::Stopped | ProgramStatus::Complete
+                        )
+                    {
+                        self.active = None;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+            let busy = self.music.sync(output, ui);
+            if busy || ui.music_practice_requested() {
+                return busy;
+            }
+        }
         let snapshot = output.snapshot().program;
         if let Some(bound) = &mut self.active {
             let same_session = std::sync::Arc::ptr_eq(&bound.session, &ui.audio_session);

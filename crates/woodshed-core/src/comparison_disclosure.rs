@@ -10,8 +10,14 @@ use serde::{Deserialize, Serialize};
 use woodshedding::pitch::{Pitch, Spelling};
 use woodshedding::rehearsal::{CardId, Set};
 
-use crate::harmony::{KeyedCatalogRef, compare_pitch_sets};
+use crate::harmony::{KeyedCatalogRef, PitchSetComparison, compare_pitch_sets};
 use crate::working_sets::WorkingSetId;
+
+#[cfg(test)]
+mod construction_stats;
+#[cfg(test)]
+mod passage_tests;
+mod projection;
 
 pub const SHARED_PITCH_CLASSES: &str = "music.shared_pitch_classes";
 pub const TONE_DIFFERENCES: &str = "music.pitch_class_differences";
@@ -75,61 +81,14 @@ pub fn occurrence_id(owner: WorkingSetId, card: CardId) -> String {
 /// receiving compiler owns its typed schema. No projection grammar is copied
 /// here. The original Stage fixture format is unaffected.
 pub fn projection_json(material: &SelectedMaterial) -> serde_json::Value {
-    use serde_json::json;
-    let source = json!({
-        "authority": "woodshed",
-        "domain": "music.practice",
-        "resource": format!("working-set:{}", material.owner.0),
-    });
-    let occurrences = material
-        .occurrences
-        .iter()
-        .map(|item| {
-            json!({
-                "occurrence_id": item.occurrence_id,
-                "source": {"adapter": DISCLOSURE_ADAPTER, "id": item.material.wire_key()},
-                "values": {
-                    "occurrence_id": {"kind": "text", "value": item.occurrence_id},
-                    "label": {"kind": "text", "value": item.label},
-                    "order": {"kind": "number", "value": item.order},
-                },
-            })
-        })
-        .collect::<Vec<_>>();
-    let evidence = material
-        .occurrences
-        .iter()
-        .filter(|item| {
-            item.occurrence_id == material.relationship.from
-                || item.occurrence_id == material.relationship.to
-        })
-        .map(|item| json!({"adapter": DISCLOSURE_ADAPTER, "id": item.material.wire_key()}))
-        .collect::<Vec<_>>();
-    json!({
-        "dataset": {
-            "source": source,
-            "revision": material.revision,
-            "fields": {"occurrence_id": "text", "label": "text", "order": "number"},
-            "occurrences": occurrences,
-        },
-        "facets": ["authored_order", "occurrence_labels", "explained_relationships"],
-        "relationships": [{
-            "id": material.relationship.id,
-            "from_occurrence": material.relationship.from,
-            "to_occurrence": material.relationship.to,
-            "kind": SHARED_PITCH_CLASSES,
-            "label": "Shared pitch classes",
-            "explanation": material.relationship.explanation,
-            "provenance": {
-                "source": source,
-                "source_revision": material.revision,
-                "method": material.relationship.method,
-                "method_version": 1,
-                "provider": "woodshed",
-                "evidence": evidence,
-            },
-        }],
-    })
+    let mut value = projection::dataset(material.owner, &material.revision, &material.occurrences);
+    value["relationships"] = serde_json::json!([projection::overlap(
+        material.owner,
+        &material.revision,
+        &material.occurrences,
+        &material.relationship,
+    )]);
+    value
 }
 
 /// Richer owner-disclosed relationships over the same exact selected pair.
@@ -150,65 +109,13 @@ pub fn comparison_projection_json(material: &SelectedMaterial) -> serde_json::Va
         .expect("disclosed endpoint");
     let comparison =
         compare_pitch_sets(&left.material, &right.material).expect("validated catalog material");
-    let names = |tones: &BTreeSet<woodshedding::pitch::PitchClass>| {
-        let labels = tones
-            .iter()
-            .map(|pc| {
-                let p = Pitch::from_midi(60 + i32::from(pc.value()), Spelling::Sharps);
-                format!("{}{}", p.name, p.accidental)
-            })
-            .collect::<Vec<_>>();
-        if labels.is_empty() {
-            "none".into()
-        } else {
-            labels.join(", ")
-        }
-    };
-    let mut provenance = value["relationships"][0]["provenance"].clone();
-    provenance["method"] = json!(FULL_COMPARISON_METHOD);
-    let relation = |kind: &str, label: &str, from: &str, to: &str, explanation: String| {
-        json!({
-            "id": format!("set:{}:{}:{}:{}", material.owner.0, kind, left.card.0, right.card.0),
-            "from_occurrence": from, "to_occurrence": to, "kind": kind,
-            "label": label,
-            "explanation": format!("{explanation} Exact catalog pitch classes; register, fingering, voice leading, key and harmonic function are not inferred."),
-            "provenance": provenance,
-        })
-    };
-    let mut relationships = if comparison.shared.is_empty() {
-        Vec::new()
-    } else {
-        vec![value["relationships"][0].clone()]
-    };
-    if comparison.left_only.is_empty() && comparison.right_only.is_empty() {
-        relationships.push(relation(PITCH_EQUALITY, "Same pitch classes", &left.occurrence_id, &right.occurrence_id,
-            format!("{} and {} have the same pitch classes: {}. Their occurrences and articulation remain distinct.", left.label, right.label, names(&comparison.shared))));
-    } else {
-        relationships.push(relation(TONE_DIFFERENCES, "Pitch-class differences", &left.occurrence_id, &right.occurrence_id,
-            format!("Shared: {}. Only in {}: {}. Only in {}: {}. These are set differences, not paired voice movements.", names(&comparison.shared), left.label, names(&comparison.left_only), right.label, names(&comparison.right_only))));
-        let container = if comparison.left_only.is_empty() {
-            Some((right, left, &comparison.right_only))
-        } else if comparison.right_only.is_empty() {
-            Some((left, right, &comparison.left_only))
-        } else {
-            None
-        };
-        if let Some((outer, inner, extras)) = container {
-            relationships.push(relation(
-                PITCH_CONTAINMENT,
-                "Pitch-class containment",
-                &outer.occurrence_id,
-                &inner.occurrence_id,
-                format!(
-                    "{} contains every pitch class of {}. Additional tones in {}: {}.",
-                    outer.label,
-                    inner.label,
-                    outer.label,
-                    names(extras)
-                ),
-            ));
-        }
-    }
+    let relationships = projection::comparison(
+        material.owner,
+        left,
+        right,
+        &comparison,
+        value["relationships"][0].clone(),
+    );
     value["relationships"] = json!(relationships);
     value
 }
@@ -236,33 +143,59 @@ pub fn passage_projection_json(
         .zip(ordered.get(1))
         .map(|(a, b)| (*a, *b))
         .ok_or(DisclosureError::EmptySelection)?;
-    // Validate all selected identities/material before disclosing any pair.
+    // Preserve the passage's pair-selection error precedence, then resolve every
+    // selected identity/material once before constructing any returned passage.
+    let selection = ResolvedSelection::capture(owner, revision, set, selected, pair)?;
+    project_passage(owner, revision, &selection.occurrences)
+}
+
+/// Project a passage after checking an explicit comparison pair. The comparison
+/// comes before the passage bound, matching retained source reconstruction's
+/// established error order. This returns facts, not navigation authority.
+pub fn comparison_passage_projection_json(
+    owner: WorkingSetId,
+    revision: &str,
+    set: &Set,
+    selected: &[CardId],
+    pair: (CardId, CardId),
+) -> Result<serde_json::Value, DisclosureError> {
     let facts = disclose_comparison(owner, revision, set, selected, pair)?;
-    let mut value = comparison_projection_json(&facts);
+    if selected.len() > 64 {
+        return Err(DisclosureError::SelectionTooLarge);
+    }
+    project_passage(facts.owner, &facts.revision, &facts.occurrences)
+}
+
+fn project_passage(
+    owner: WorkingSetId,
+    revision: &str,
+    occurrences: &[SelectedOccurrence],
+) -> Result<serde_json::Value, DisclosureError> {
+    let mut value = projection::dataset(owner, revision, occurrences);
     let mut relationships = Vec::new();
-    for pair in ordered.windows(2) {
-        let facts = disclose_comparison(owner, revision, set, selected, (pair[0], pair[1]))?;
-        let pair_value = comparison_projection_json(&facts);
-        for mut relation in pair_value["relationships"]
-            .as_array()
-            .expect("owner schema")
-            .iter()
-            .cloned()
-        {
+    for pair in occurrences.windows(2) {
+        let (left, right) = (&pair[0], &pair[1]);
+        let comparison = compare_pitch_sets(&left.material, &right.material)
+            .ok_or(DisclosureError::UnsupportedMaterial(left.card))?;
+        let relationship = shared_relationship(owner, left, right, &comparison);
+        // Adjacent occurrences are already in authored order, including the
+        // evidence ordering required by the legacy public projection wrapper.
+        let overlap = projection::overlap(owner, revision, pair, &relationship);
+        for mut relation in projection::comparison(owner, left, right, &comparison, overlap) {
             let label = |field: &str| {
-                facts
-                    .occurrences
-                    .iter()
-                    .find(|o| o.occurrence_id == relation[field].as_str().unwrap())
-                    .unwrap()
-                    .label
-                    .clone()
+                let id = relation[field].as_str().expect("generated pair endpoint");
+                if id == left.occurrence_id {
+                    &left.label
+                } else {
+                    assert_eq!(id, right.occurrence_id, "generated pair endpoint");
+                    &right.label
+                }
             };
             relation["label"] = serde_json::json!(format!(
                 "{} · {} / {}",
                 relation["label"].as_str().unwrap(),
                 label("from_occurrence"),
-                label("to_occurrence")
+                label("to_occurrence"),
             ));
             relationships.push(relation);
         }
@@ -304,52 +237,7 @@ fn disclose_pair(
     pair: (CardId, CardId),
     require_overlap: bool,
 ) -> Result<SelectedMaterial, DisclosureError> {
-    if owner.0 == 0 {
-        return Err(DisclosureError::InvalidOwner);
-    }
-    if revision.trim().is_empty() {
-        return Err(DisclosureError::MissingRevision);
-    }
-    if selected.is_empty() {
-        return Err(DisclosureError::EmptySelection);
-    }
-    let mut included = BTreeSet::new();
-    for &id in selected {
-        if !id.is_assigned() || set.cards.iter().filter(|card| card.id == id).count() > 1 {
-            return Err(DisclosureError::InvalidCardIdentity(id));
-        }
-        if !included.insert(id) {
-            return Err(DisclosureError::DuplicateSelection(id));
-        }
-        if set.card(id).is_none() {
-            return Err(DisclosureError::UnknownCard(id));
-        }
-    }
-    for endpoint in [pair.0, pair.1] {
-        if !included.contains(&endpoint) {
-            return Err(DisclosureError::EndpointNotSelected(endpoint));
-        }
-    }
-    if pair.0 == pair.1 {
-        return Err(DisclosureError::SameOccurrence);
-    }
-    let occurrences = set
-        .cards
-        .iter()
-        .enumerate()
-        .filter(|(_, card)| included.contains(&card.id))
-        .map(|(index, card)| {
-            let material = KeyedCatalogRef::from_card(card)
-                .ok_or(DisclosureError::UnsupportedMaterial(card.id))?;
-            Ok(SelectedOccurrence {
-                card: card.id,
-                occurrence_id: occurrence_id(owner, card.id),
-                material,
-                label: card.label.clone(),
-                order: index + 1,
-            })
-        })
-        .collect::<Result<Vec<_>, DisclosureError>>()?;
+    let occurrences = ResolvedSelection::capture(owner, revision, set, selected, pair)?.occurrences;
     let left = occurrences
         .iter()
         .find(|entry| entry.card == pair.0)
@@ -363,6 +251,86 @@ fn disclose_pair(
     if require_overlap && comparison.shared.is_empty() {
         return Err(DisclosureError::NoSharedPitchClasses);
     }
+    let relationship = shared_relationship(owner, left, right, &comparison);
+    Ok(SelectedMaterial {
+        owner,
+        revision: revision.into(),
+        occurrences,
+        relationship,
+    })
+}
+
+/// Operation-local facts. Construction keeps identity, endpoint and material
+/// validation in their existing order; it owns no source revision or cache.
+struct ResolvedSelection {
+    occurrences: Vec<SelectedOccurrence>,
+}
+impl ResolvedSelection {
+    fn capture(
+        owner: WorkingSetId,
+        revision: &str,
+        set: &Set,
+        selected: &[CardId],
+        pair: (CardId, CardId),
+    ) -> Result<Self, DisclosureError> {
+        #[cfg(test)]
+        construction_stats::selection();
+        if owner.0 == 0 {
+            return Err(DisclosureError::InvalidOwner);
+        }
+        if revision.trim().is_empty() {
+            return Err(DisclosureError::MissingRevision);
+        }
+        if selected.is_empty() {
+            return Err(DisclosureError::EmptySelection);
+        }
+        let mut included = BTreeSet::new();
+        for &id in selected {
+            if !id.is_assigned() || set.cards.iter().filter(|card| card.id == id).count() > 1 {
+                return Err(DisclosureError::InvalidCardIdentity(id));
+            }
+            if !included.insert(id) {
+                return Err(DisclosureError::DuplicateSelection(id));
+            }
+            if set.card(id).is_none() {
+                return Err(DisclosureError::UnknownCard(id));
+            }
+        }
+        for endpoint in [pair.0, pair.1] {
+            if !included.contains(&endpoint) {
+                return Err(DisclosureError::EndpointNotSelected(endpoint));
+            }
+        }
+        if pair.0 == pair.1 {
+            return Err(DisclosureError::SameOccurrence);
+        }
+        let occurrences = set
+            .cards
+            .iter()
+            .enumerate()
+            .filter(|(_, card)| included.contains(&card.id))
+            .map(|(index, card)| {
+                let material = KeyedCatalogRef::from_card(card)
+                    .ok_or(DisclosureError::UnsupportedMaterial(card.id))?;
+                Ok(SelectedOccurrence {
+                    card: card.id,
+                    occurrence_id: occurrence_id(owner, card.id),
+                    material,
+                    label: card.label.clone(),
+                    order: index + 1,
+                })
+            })
+            .collect::<Result<Vec<_>, DisclosureError>>()?;
+        Ok(Self { occurrences })
+    }
+}
+
+fn shared_relationship(
+    owner: WorkingSetId,
+    left: &SelectedOccurrence,
+    right: &SelectedOccurrence,
+    comparison: &PitchSetComparison,
+) -> SharedPitchRelationship {
     let labels = comparison
         .shared
         .iter()
@@ -371,10 +339,10 @@ fn disclose_pair(
             format!("{}{}", pitch.name, pitch.accidental)
         })
         .collect::<Vec<_>>();
-    let relationship = SharedPitchRelationship {
+    SharedPitchRelationship {
         id: format!(
             "set:{}:shared-pitch-classes:{}:{}",
-            owner.0, pair.0.0, pair.1.0
+            owner.0, left.card.0, right.card.0
         ),
         from: left.occurrence_id.clone(),
         to: right.occurrence_id.clone(),
@@ -386,13 +354,7 @@ fn disclose_pair(
             labels.join(", ")
         ),
         method: COMPARISON_METHOD.into(),
-    };
-    Ok(SelectedMaterial {
-        owner,
-        revision: revision.into(),
-        occurrences,
-        relationship,
-    })
+    }
 }
 
 #[cfg(test)]

@@ -134,8 +134,6 @@ pub fn sheet() -> String {
                               box-sizing: border-box; }
 .device-select .select-option { color: var(--text-dim); font-size: 11px; padding: 5px 8px; }
 .device-select .select-option:hover { color: var(--text); background-color: var(--raised); }
-.audio-status { color: var(--text-faint); font-size: 9px; max-width: 178px; overflow: hidden;
-                white-space: nowrap; text-overflow: ellipsis; }
 "#,
         hocket_views::theme::sheet()
     )

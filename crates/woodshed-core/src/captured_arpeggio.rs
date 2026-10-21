@@ -118,18 +118,11 @@ impl CapturedRecipe {
                 _ => return Err("Captured recipe shape is unavailable.".into()),
             }
         }
-        if matches!(card.material, Material::ScalePattern { .. }) {
-            let scale = stage
-                .scale_card_realization(&card)
-                .map_err(|error| error.to_string())?;
-            if card.setting.marked.iter().any(|position| {
-                !scale
-                    .dots
-                    .iter()
-                    .any(|dot| (dot.string_index, dot.fret) == *position)
-            }) {
-                return Err("Captured scale-pattern marked contact is unavailable.".into());
-            }
+        let contacts = stage.card_contact_pitches(&card)?;
+        if card.setting.marked.iter().any(|position| {
+            !contacts.iter().any(|(contact, _)| contact == position)
+        }) {
+            return Err("Captured recipe marked contact is unavailable.".into());
         }
         let preview = stage.card_sounding_pitches(&card).map_err(|error| error.to_string())?;
         if preview.0.is_empty()
@@ -316,18 +309,37 @@ mod tests {
         assert!(CapturedArpeggio::capture(&no_source, &StageState::new(), 81.0).is_err());
         assert!(CapturedArpeggio::capture(&source(), &StageState::new(), f32::NAN).is_err());
     }
+
+    #[test]
+    fn chord_recipe_rejects_mixed_available_and_stale_solo_marks() {
+        let stage = StageState::new();
+        let mut card = source();
+        let available = stage
+            .dots_for_card(&card)
+            .first()
+            .map(|dot| (dot.string_index, dot.fret))
+            .expect("chord has a resolved contact");
+        card.setting.mark_mode = woodshedding::rehearsal::MarkMode::Solo;
+        card.setting.marked = vec![available, (usize::MAX, u8::MAX)];
+        assert!(CapturedArpeggio::capture(&card, &stage, 81.0).is_err());
+    }
     #[test]
     fn marked_formula_resolves_saved_window_and_tuning_not_live_board() {
+        let mut stage = StageState::new();
+        stage.fret_start = 5;
+        stage.fret_count = 12;
         let mut card = source();
-        card.setting.marked = vec![(1, 5)];
+        let contact = stage
+            .dots_for_card(&card)
+            .first()
+            .map(|dot| (dot.string_index, dot.fret))
+            .expect("formula chord has a contact in the active window");
+        card.setting.marked = vec![contact];
         card.setting.mark_mode = MarkMode::Solo;
         card.touch = Touch::Arpeggiate {
             direction: ArpeggioDirection::UpDown,
             inversion: 0,
         };
-        let mut stage = StageState::new();
-        stage.fret_start = 5;
-        stage.fret_count = 12;
         let recipe = CapturedArpeggio::capture(&card, &stage, 80.0).unwrap();
         let frozen = recipe.card().unwrap();
         let before = stage.card_sounding_pitches(&frozen).unwrap();

@@ -91,17 +91,11 @@ pub(crate) fn preflight(
         if total_work > MAX_RENDER_WORK {
             return Err("backing phrase exceeds render-work bound");
         }
-        for &frequency in &event.pitches_hz {
-            if !frequency.is_finite()
-                || frequency <= 0.0
-                || frequency as f64
-                    * (remaining as f64 / rate as f64)
-                    * 3.0
-                    * std::f32::consts::TAU as f64
-                    > f32::MAX as f64 / 2.0
-            {
-                return Err("backing phrase pitch cannot render finite PCM");
-            }
+        if !crate::chord_audio::chord_frequencies_render_finite(
+            &event.pitches_hz,
+            remaining as f64 / rate as f64,
+        ) {
+            return Err("backing phrase pitch cannot render finite PCM");
         }
         starts.push((onset, strum));
     }
@@ -147,7 +141,11 @@ pub(crate) fn render(
             }
         }
     }
-    Ok(SampleBuffer::new(output, rate))
+    let pcm = SampleBuffer::new(output, rate);
+    if !pcm.has_finite_samples() {
+        return Err("backing phrase rendered nonfinite PCM");
+    }
+    Ok(pcm)
 }
 
 #[cfg(test)]

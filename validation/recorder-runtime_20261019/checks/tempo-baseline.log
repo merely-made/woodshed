@@ -1,0 +1,115 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling cfg-if v1.0.5
+   Compiling libc v0.2.190
+   Compiling getrandom v0.4.3
+   Compiling typenum v1.20.1
+   Compiling rand_core v0.10.1
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling semver v1.0.28
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling zerocopy v0.8.59
+   Compiling cc v1.6.0
+   Compiling cmov v0.5.4
+   Compiling zmij v1.0.23
+   Compiling rustc_version v0.4.1
+   Compiling constant_time_eq v0.4.2
+   Compiling ctutils v0.4.2
+   Compiling signature v3.0.0
+   Compiling curve25519-dalek v5.0.0
+   Compiling arrayvec v0.7.8
+   Compiling subtle v2.6.1
+   Compiling ed25519 v3.0.0
+   Compiling thiserror v1.0.69
+   Compiling serde_json v1.0.151
+   Compiling getrandom v0.3.4
+   Compiling ciborium-io v0.2.2
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling wavicle v0.1.0 (https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd)
+   Compiling hound v3.5.1
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/worktrees/woodshed-b6-20261019/crates/audio-primitives)
+   Compiling syn v2.0.119
+   Compiling hybrid-array v0.4.15
+   Compiling syn v3.0.6
+   Compiling cpufeatures v0.3.1
+   Compiling blake3 v1.8.7
+   Compiling crypto-common v0.2.2
+   Compiling block-buffer v0.12.1
+   Compiling inout v0.2.2
+   Compiling digest v0.11.3
+   Compiling universal-hash v0.6.1
+   Compiling cipher v0.5.2
+   Compiling aead v0.6.1
+   Compiling poly1305 v0.9.1
+   Compiling sha2 v0.11.0
+   Compiling uuid v1.27.0
+   Compiling serde_derive v1.0.229
+   Compiling async-trait v0.1.92
+   Compiling zeroize_derive v1.5.0
+   Compiling zerocopy-derive v0.8.59
+   Compiling thiserror-impl v1.0.69
+   Compiling zeroize v1.9.0
+   Compiling chacha20 v0.10.2
+   Compiling chacha20poly1305 v0.11.0
+   Compiling ed25519-dalek v3.0.0
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/eidetic.git?rev=de6b1dce75dd6725d72c79b829e4878c7903a381#de6b1dce)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling half v2.7.1
+   Compiling ciborium-ll v0.2.2
+   Compiling ciborium v0.2.2
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/worktrees/woodshed-b6-20261019/crates/hocket-model)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/worktrees/woodshed-b6-20261019/crates/hocket-project)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/testing/woodshed/recorder-runtime-baseline-20261019)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 43s
+     Running tests/tempo_replay.rs (/Users/markik/Code/worktrees/woodshed-b6-20261019/target/build/debug/deps/tempo_replay-02394332a851ef32)
+
+running 5 tests
+test stop_all_then_nudge_does_not_replay_silent_model_layers ... ok
+test refused_stop_or_replay_reports_only_accepted_voices ... FAILED
+test refused_clock_keeps_existing_voices_and_history_untouched ... FAILED
+test offline_tempo_authoring_replays_audible_layers_after_audio_recovers ... ok
+test successful_nudges_replay_only_currently_eligible_live_voices_in_order ... FAILED
+
+failures:
+
+---- refused_stop_or_replay_reports_only_accepted_voices stdout ----
+
+thread 'refused_stop_or_replay_reports_only_accepted_voices' (47449021) panicked at tests/tempo_replay.rs:349:5:
+assertion `left == right` failed
+  left: "previous recorder voices have not stopped"
+ right: "stop refused"
+
+---- refused_clock_keeps_existing_voices_and_history_untouched stdout ----
+
+thread 'refused_clock_keeps_existing_voices_and_history_untouched' (47449020) panicked at tests/tempo_replay.rs:263:5:
+assertion `left == right` failed
+  left: {}
+ right: {LayerKey { track_id: TrackId(47f03ac8-8def-4bd0-a854-c11e540a5692), layer_index: 0 }: Played { samples: [0.1, 0.2], sample_rate: 44100, gain: 0.5, aligned: true }}
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- successful_nudges_replay_only_currently_eligible_live_voices_in_order stdout ----
+
+thread 'successful_nudges_replay_only_currently_eligible_live_voices_in_order' (47449023) panicked at tests/tempo_replay.rs:215:9:
+assertion `left == right` failed
+  left: 0
+ right: 1
+
+
+failures:
+    refused_clock_keeps_existing_voices_and_history_untouched
+    refused_stop_or_replay_reports_only_accepted_voices
+    successful_nudges_replay_only_currently_eligible_live_voices_in_order
+
+test result: FAILED. 2 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test tempo_replay`

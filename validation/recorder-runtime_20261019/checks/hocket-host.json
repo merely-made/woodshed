@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "b6-final-hocket-host",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-p",
+    "hocket-genet",
+    "--bin",
+    "hocket-genet"
+  ],
+  "started_at": "2026-10-20T02:11:29.855891Z",
+  "ended_at": "2026-10-20T02:12:03.712241Z",
+  "exit_code": 101,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-b6-20261019/ports/hocket",
+  "log": "/Users/markik/Code/worktrees/woodshed-b6-20261019/validation/recorder-runtime_20261019/checks/hocket-host.log",
+  "log_sha256": "72c3fc26beb195bedafdf00a6dc9dfb4819e519c64c077bfa81ab8337410a12a",
+  "source_commit": "f32212da1948757df40e663cf82db973c4141b5c"
+}

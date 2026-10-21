@@ -123,6 +123,48 @@ fn pending(reason: impl std::fmt::Display) -> IdentityError {
     IdentityError::Backend(format!("identity pending: {reason}"))
 }
 
+/// Admit the identity observed at confirmation against the exact staged
+/// profile/key and the still-current Hocket key. Consent and the returned
+/// home are committed together only after every binding check passes.
+fn admit_family_offer(
+    data_root: &Path,
+    current_home: &IdentityHome,
+    staged_profile: &str,
+    staged_key: &str,
+    staged_losing_token: &str,
+    actual_profile: &str,
+    actual_key: &str,
+    actual_losing_token: &str,
+    protection: String,
+) -> Result<IdentityHome, IdentityError> {
+    let IdentityHome::Apart { family_profile, .. } = current_home else {
+        return Err(IdentityError::Backend(
+            "this identity is already the family persona".into(),
+        ));
+    };
+    if family_profile != staged_profile
+        || staged_profile != actual_profile
+        || staged_key != actual_key
+        || staged_losing_token != actual_losing_token
+    {
+        return Err(IdentityError::Backend(
+            "persona identity changed since the offer; offer it again".into(),
+        ));
+    }
+
+    save_consent(
+        data_root,
+        &FamilyConsent {
+            profile: actual_profile.to_owned(),
+            public_key: actual_key.to_owned(),
+        },
+    )?;
+    Ok(IdentityHome::Family {
+        profile: actual_profile.to_owned(),
+        protection,
+    })
+}
+
 /// Hocket's identity, as djinn holds it.
 pub struct LocalIdentity {
     speaker: CustodyIdentity,
@@ -204,26 +246,70 @@ impl LocalIdentity {
     /// re-shared. Callers must have said so before calling. Consent is written
     /// before the switch, so an identity that cannot record the decision does
     /// not quietly make it.
-    pub fn join_family(&mut self) -> Result<(), IdentityError> {
-        let IdentityHome::Apart { family_profile, .. } = self.home.clone() else {
+    pub fn family_offer(&self) -> Result<(String, String), IdentityError> {
+        let IdentityHome::Apart { family_profile, .. } = &self.home else {
             return Err(IdentityError::Backend(
                 "this identity is already the family persona".into(),
             ));
         };
-        let family = CustodyIdentity::connect(CUSTODY_APP).map_err(pending)?;
-        save_consent(
+        let family = CustodyIdentity::connect_as(
+            CUSTODY_APP,
+            Some(ProfileId(family_profile.clone())),
+        )
+        .map_err(pending)?;
+        let actual_profile = family
+            .profile()
+            .map(|profile| profile.0.clone())
+            .unwrap_or_default();
+        if actual_profile != *family_profile {
+            return Err(IdentityError::Backend(
+                "custody returned a different family persona".into(),
+            ));
+        }
+        Ok((
+            family_profile.clone(),
+            encode_contact_token(&family.master_public_key()),
+        ))
+    }
+
+    /// Join only the exact profile and key shown in the staged offer. The
+    /// current Hocket key is checked too, so a replaced identity invalidates
+    /// the original consent prompt.
+    pub fn join_family(
+        &mut self,
+        profile: &str,
+        public_key: &str,
+        losing_token: &str,
+    ) -> Result<(), IdentityError> {
+        if !matches!(self.home, IdentityHome::Apart { .. }) {
+            return Err(IdentityError::Backend(
+                "this identity is already the family persona".into(),
+            ));
+        }
+        let actual_losing_token = encode_contact_token(&self.speaker.master_public_key());
+        let family = CustodyIdentity::connect_as(
+            CUSTODY_APP,
+            Some(ProfileId(profile.to_owned())),
+        )
+        .map_err(pending)?;
+        let actual_profile = family
+            .profile()
+            .map(|profile| profile.0.clone())
+            .unwrap_or_default();
+        let actual_key = encode_contact_token(&family.master_public_key());
+        let home = admit_family_offer(
             &self.data_root,
-            &FamilyConsent {
-                profile: family_profile.clone(),
-                public_key: encode_contact_token(&family.master_public_key()),
-            },
+            &self.home,
+            profile,
+            public_key,
+            losing_token,
+            &actual_profile,
+            &actual_key,
+            &actual_losing_token,
+            family.protection(),
         )?;
-        let protection = family.protection();
         self.speaker = family;
-        self.home = IdentityHome::Family {
-            profile: family_profile,
-            protection,
-        };
+        self.home = home;
         Ok(())
     }
 
@@ -384,6 +470,71 @@ mod tests {
     #[test]
     fn a_pending_identity_names_why() {
         assert!(pending("djinn is not running").to_string().contains("pending"));
+    }
+
+    #[test]
+    fn family_offer_admission_binds_target_old_key_consent_and_installed_home() {
+        let dir = tempfile::tempdir().unwrap();
+        let current = IdentityHome::Apart {
+            profile: "hocket-own".into(),
+            family_profile: "family".into(),
+        };
+        let consent_path = consent_path(dir.path());
+        std::fs::write(&consent_path, b"prior consent bytes").unwrap();
+
+        for (profile, key, losing_key) in [
+            ("other-family", "target-key", "old-key"),
+            ("family", "rotated-key", "old-key"),
+            ("family", "target-key", "replaced-old-key"),
+        ] {
+            let rejected = admit_family_offer(
+                dir.path(), &current, "family", "target-key", "old-key",
+                profile, key, losing_key, "unlocked".into(),
+            );
+            assert!(rejected.is_err(), "changed offer identity must be rejected");
+            assert_eq!(std::fs::read(&consent_path).unwrap(), b"prior consent bytes");
+            assert_eq!(
+                current,
+                IdentityHome::Apart {
+                    profile: "hocket-own".into(),
+                    family_profile: "family".into(),
+                },
+            );
+        }
+
+        let installed = admit_family_offer(
+            dir.path(), &current, "family", "target-key", "old-key",
+            "family", "target-key", "old-key", "unlocked".into(),
+        ).unwrap();
+        assert_eq!(
+            installed,
+            IdentityHome::Family {
+                profile: "family".into(),
+                protection: "unlocked".into(),
+            },
+        );
+        let saved = load_consent(dir.path()).unwrap();
+        assert_eq!(saved.profile, "family");
+        assert_eq!(saved.public_key, "target-key");
+    }
+
+    #[test]
+    fn family_offer_consent_write_failure_keeps_existing_consent() {
+        let dir = tempfile::tempdir().unwrap();
+        let current = IdentityHome::Apart {
+            profile: "hocket-own".into(),
+            family_profile: "family".into(),
+        };
+        let consent_path = consent_path(dir.path());
+        std::fs::write(&consent_path, b"prior consent bytes").unwrap();
+        std::fs::create_dir(consent_path.with_extension("json.tmp")).unwrap();
+
+        assert!(admit_family_offer(
+            dir.path(), &current, "family", "target-key", "old-key",
+            "family", "target-key", "old-key", "unlocked".into(),
+        ).is_err());
+        assert_eq!(std::fs::read(consent_path).unwrap(), b"prior consent bytes");
+        assert!(matches!(current, IdentityHome::Apart { .. }));
     }
 }
 

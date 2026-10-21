@@ -42,9 +42,9 @@ pub fn score_from_set(
     for card in &set.cards {
         {
             let bpm = card.timing.bpm.unwrap_or(fallback_bpm);
-            if !bpm.is_finite() || bpm.fract() != 0.0 || !(20.0..=400.0).contains(&bpm) {
+            if !bpm.is_finite() || bpm.fract() != 0.0 || !(1.0..=400.0).contains(&bpm) {
                 return Err(format!(
-                    "Card '{}': notation requires a whole-number tempo from 20 to 400 BPM",
+                    "Card '{}': notation requires a whole-number tempo from 1 to 400 BPM",
                     card.label
                 ));
             }
@@ -297,4 +297,82 @@ fn rests(events: &mut Vec<NoteEvent>, mut ticks: u32) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        notation::MusicDocument,
+        pitch::PitchClass,
+        rehearsal::{Setting, Timing, Touch},
+        tuning::{Instrument, Tuning},
+    };
+
+    fn resolved_set() -> (ShapeContext, Set) {
+        let context = ShapeContext {
+            tuning: Tuning::find_for("Standard", Instrument::Guitar).unwrap(),
+            fret_start: 0,
+            fret_count: 5,
+        };
+        let mut set = Set::default();
+        set.push(Card {
+            id: CardId::UNASSIGNED,
+            label: "C".into(),
+            material: Material::Chord {
+                name: "Major".into(),
+                root: PitchClass::new(0),
+            },
+            setting: Setting {
+                instrument: "Guitar".into(),
+                tuning: Some("Standard".into()),
+                voicing_idx: Some(0),
+                ..Setting::default()
+            },
+            touch: Touch::Block,
+            timing: Timing::default(),
+            from: None,
+        });
+        (context, set)
+    }
+
+    #[test]
+    fn full_written_tempo_range_round_trips_from_fallback_and_card() {
+        let (context, mut set) = resolved_set();
+        for bpm in [1, 19, 20, 400] {
+            set.cards[0].timing.bpm = None;
+            let score = score_from_set(&context, &set, "Tempo", f32::from(bpm)).unwrap();
+            assert_eq!(score.tempo, bpm);
+            assert_eq!(
+                MusicDocument::from_score(&score).unwrap().score().unwrap(),
+                score
+            );
+            set.cards[0].timing.bpm = Some(f32::from(bpm));
+            let score = score_from_set(&context, &set, "Tempo", 96.0).unwrap();
+            assert_eq!(score.tempo, bpm);
+            assert_eq!(
+                MusicDocument::from_score(&score).unwrap().score().unwrap(),
+                score
+            );
+        }
+    }
+
+    #[test]
+    fn invalid_written_tempos_are_rejected_from_fallback_and_card() {
+        let (context, mut set) = resolved_set();
+        for bpm in [-1.0, 0.0, 0.5, 1.5, 400.5, 401.0, f32::NAN, f32::INFINITY] {
+            set.cards[0].timing.bpm = None;
+            assert!(
+                score_from_set(&context, &set, "Tempo", bpm)
+                    .unwrap_err()
+                    .contains("whole-number tempo from 1 to 400 BPM")
+            );
+            set.cards[0].timing.bpm = Some(bpm);
+            assert!(
+                score_from_set(&context, &set, "Tempo", 96.0)
+                    .unwrap_err()
+                    .contains("whole-number tempo from 1 to 400 BPM")
+            );
+        }
+    }
 }

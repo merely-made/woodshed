@@ -1,0 +1,9 @@
+RESULT ok
+captured 01_reopened_bar_groups
+captured 02_reopened_narrow
+captured 03_reopened_narrow_scene
+capture 01_reopened_bar_groups 2360x2200 digest=1102721996feb68e file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v3/reopen/01_reopened_bar_groups.png
+capture 02_reopened_narrow 840x2200 digest=54ef84a6901ad202 file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v3/reopen/02_reopened_narrow.png
+capture 03_reopened_narrow_scene 840x2200 digest=ac3927fc423445f8 file=/Users/markik/Code/output/graphshell-meter-native-20261018/native-run-v3/reopen/03_reopened_narrow_scene.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 90 frames, 93 redraws, 3 unpresented redraws

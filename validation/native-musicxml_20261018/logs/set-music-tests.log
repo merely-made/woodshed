@@ -1,0 +1,138 @@
+warning: skipping duplicate package `chartulary v0.2.2 (https://github.com/merely-made/mere.git?branch=main#9b01961a)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/chartulary/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/9b01961/crates/eidetic/chartulary/Cargo.toml
+
+warning: skipping duplicate package `muniment v0.1.2 (https://github.com/merely-made/mere.git?branch=main#9b01961a)`:
+  /Users/markik/Code/worktrees/mere-vello-release-adoption/crates/eidetic/muniment/Cargo.toml
+in favor of /Users/markik/.cargo/git/checkouts/mere-9d8e871c24d9ba76/9b01961/crates/eidetic/muniment/Cargo.toml
+
+warning: patch `armillary v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/armillary)` was not used in the crate graph
+warning: patch `backstep v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/backstep)` was not used in the crate graph
+warning: patch `cambium v0.3.3 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium)` was not used in the crate graph
+warning: patch `cambium-genet-winit-host v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-genet-winit-host)` was not used in the crate graph
+warning: patch `cambium-rootstock v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-rootstock)` was not used in the crate graph
+warning: patch `cambium-winit v0.3.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-winit)` was not used in the crate graph
+warning: patch `cambium-winit-a11y v0.3.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/cambium-winit-a11y)` was not used in the crate graph
+warning: patch `chirograph v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/chirograph)` was not used in the crate graph
+warning: patch `command-menu v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/command-menu)` was not used in the crate graph
+warning: patch `document-canvas v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/document-canvas)` was not used in the crate graph
+warning: patch `eidetic v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/eidetic/eidetic-core)` was not used in the crate graph
+warning: patch `errand v0.4.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/errand)` was not used in the crate graph
+warning: patch `esp v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/intel/esp)` was not used in the crate graph
+warning: patch `gemot v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/moot/gemot)` was not used in the crate graph
+warning: patch `graphshell v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/ports/graphshell)` was not used in the crate graph
+warning: patch `graphshell-client v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graphshell/graphshell-client)` was not used in the crate graph
+warning: patch `graphshell-endpoint v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graphshell/graphshell-endpoint)` was not used in the crate graph
+warning: patch `graphshell-host v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graphshell/graphshell-host)` was not used in the crate graph
+warning: patch `illume v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/nematic/illume)` was not used in the crate graph
+warning: patch `incipit v0.2.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/incipit)` was not used in the crate graph
+warning: patch `inker v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/inker)` was not used in the crate graph
+warning: patch `knot-editor-host v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/inker/knot-editor-host)` was not used in the crate graph
+warning: patch `luggage v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/luggage)` was not used in the crate graph
+warning: patch `mere v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/mere)` was not used in the crate graph
+warning: patch `mere-alembic v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/distillery/alembic)` was not used in the crate graph
+warning: patch `mere-apparatus v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/domain/apparatus)` was not used in the crate graph
+warning: patch `mere-cartography v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/canvas/cartography)` was not used in the crate graph
+warning: patch `mere-document-lanes v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/document-lanes)` was not used in the crate graph
+warning: patch `mere-fetch v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/fetch)` was not used in the crate graph
+warning: patch `mere-fleece v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/fleece)` was not used in the crate graph
+warning: patch `mere-forme v0.2.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/forme)` was not used in the crate graph
+warning: patch `mere-kernel v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/graph/graph-kernel)` was not used in the crate graph
+warning: patch `mere-overmap v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/mere-overmap)` was not used in the crate graph
+warning: patch `mere-page-load v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/page-load)` was not used in the crate graph
+warning: patch `mere-personal-facts v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/domain/personal-facts)` was not used in the crate graph
+warning: patch `mere-proofs v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/proofs)` was not used in the crate graph
+warning: patch `mere-surface-api v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/surface-api)` was not used in the crate graph
+warning: patch `mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#bd8fe1e5)` was not used in the crate graph
+warning: patch `mere-view v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/mere-view)` was not used in the crate graph
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#bd8fe1e5)` was not used in the crate graph
+warning: patch `meristem v0.2.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/meristem)` was not used in the crate graph
+warning: patch `mesquite v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/mesquite)` was not used in the crate graph
+warning: patch `mien v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/moot/mien)` was not used in the crate graph
+warning: patch `mooting v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/moot/mooting)` was not used in the crate graph
+warning: patch `mora-cmudict v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/intel/mora-cmudict)` was not used in the crate graph
+warning: patch `murm v0.0.1 (https://github.com/merely-made/murm.git?branch=main#bd8fe1e5)` was not used in the crate graph
+warning: patch `nematic v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/nematic/nematic)` was not used in the crate graph
+warning: patch `notochord v0.1.1 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)` was not used in the crate graph
+warning: patch `numen v0.2.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/conatus/numen)` was not used in the crate graph
+warning: patch `pandect v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/pandect)` was not used in the crate graph
+warning: patch `pictograph v0.2.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/canvas/pictograph)` was not used in the crate graph
+warning: patch `reference-data v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/intel/reference-data)` was not used in the crate graph
+warning: patch `script-rhai v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/script/rhai)` was not used in the crate graph
+warning: patch `seiche v0.0.6 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/conatus/seiche)` was not used in the crate graph
+warning: patch `servitor v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/servitor)` was not used in the crate graph
+warning: patch `sprigging v0.2.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/sprigging)` was not used in the crate graph
+warning: patch `stickleback v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/stickleback)` was not used in the crate graph
+warning: patch `tabard-workshop v0.0.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/tabard-workshop)` was not used in the crate graph
+warning: patch `uxtree v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/uxtree)` was not used in the crate graph
+warning: patch `workbench v0.1.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/workbench)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+     Locking 1 package to highest compatible version
+      Adding tokio-macros v2.7.2
+   Compiling syn v3.0.6
+   Compiling getrandom v0.4.3
+   Compiling getrandom v0.3.4
+   Compiling crypto-common v0.2.2
+   Compiling uuid v1.27.0
+   Compiling digest v0.11.3
+   Compiling cipher v0.5.2
+   Compiling universal-hash v0.6.1
+   Compiling aead v0.6.1
+   Compiling poly1305 v0.9.1
+   Compiling curve25519-dalek v5.0.0
+   Compiling sha2 v0.11.0
+   Compiling chacha20 v0.10.2
+   Compiling serde_derive v1.0.229
+   Compiling ptr_meta_derive v0.3.2
+   Compiling bytecheck_derive v0.8.3
+   Compiling async-trait v0.1.92
+   Compiling rkyv_derive v0.8.18
+   Compiling tokio-macros v2.7.2
+   Compiling chacha20poly1305 v0.11.0
+   Compiling ptr_meta v0.3.2
+   Compiling tokio v1.53.2
+   Compiling ed25519-dalek v3.0.0
+   Compiling rancor v0.1.3
+   Compiling bytecheck v0.8.3
+   Compiling serde v1.0.229
+   Compiling rend v0.5.4
+   Compiling sceno v0.0.5 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/sceno)
+   Compiling slotmap v1.1.1
+   Compiling petgraph v0.8.3
+   Compiling mere-curation v0.1.1 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/curation)
+   Compiling muniment v0.1.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/eidetic/muniment)
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling tinct v0.2.0 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/tinct)
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshedding)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#cf562f47)
+   Compiling tabard v0.0.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/system/tabard)
+   Compiling scenograph v0.0.4 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenograph)
+   Compiling scenotime v0.0.4 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenotime)
+   Compiling rkyv v0.8.18
+   Compiling scenomise v0.0.5 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenomise)
+   Compiling chartulary v0.2.2 (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/eidetic/chartulary)
+warning: unused variable: `time_range`
+   --> /Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/scenes/scenomise/src/opened_link.rs:599:9
+    |
+599 |     let time_range = timeline_range(pending);
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_time_range`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshed-graph)
+warning: `scenomise` (lib) generated 1 warning (run `cargo fix --lib -p scenomise` to apply 1 suggestion)
+   Compiling woodshed-core-music-check v0.0.0 (/Users/markik/Code/output/woodshed-native-musicxml-20261018/core-check)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.77s
+     Running unittests /Users/markik/Code/worktrees/woodshed-portable-fretboard/crates/woodshed-core/src/lib.rs (/Users/markik/Code/worktrees/mere-portable-scene-backdrops/target/build/debug/deps/woodshed_core-4db1929f82f78725)
+
+running 4 tests
+test music::tests::saved_tuning_and_capo_contacts_reproduce_exact_concert_pitches ... ok
+test music::tests::unresolved_cards_fail_atomically_and_no_meter_is_explicit_full_bar_draft ... ok
+test music::tests::authored_half_chord_and_half_rest_preserve_spans ... ok
+test music::tests::cross_bar_and_incomplete_or_overlapping_spans_refuse ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 301 filtered out; finished in 0.01s
+

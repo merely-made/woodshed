@@ -46,6 +46,7 @@ mod tests {
     struct FakeAudio {
         availability: AudioAvailability,
         phase: CapturePhase,
+        poll_error: Option<String>,
         completed: Option<CaptureCompletion>,
         retired: Option<CaptureToken>,
         accepted: Option<CaptureToken>,
@@ -68,6 +69,7 @@ mod tests {
                     error: None,
                 },
                 phase: CapturePhase::Idle,
+                poll_error: None,
                 completed: None,
                 retired: None,
                 accepted: None,
@@ -92,6 +94,7 @@ mod tests {
                 phase: self.phase.clone(),
                 completed: self.completed.take(),
                 retired_capture: self.retired.take(),
+                error: self.poll_error.take(),
                 ..Default::default()
             }
         }
@@ -509,7 +512,7 @@ mod tests {
     }
 
     #[test]
-    fn failed_voice_stop_refuses_clock_commit_and_preserves_accepted_key() {
+    fn tempo_nudge_requeues_accepted_voice_without_stopping_it() {
         let mut r = Recorder::default();
         add_layer(&mut r, 0, 48_000);
         let mut a = FakeAudio::default();
@@ -517,13 +520,34 @@ mod tests {
         service(&mut r, &mut a);
         let head = r.history.head;
         let clocks = a.clocks.len();
+        let plays = a.plays.len();
         a.fail_stop = true;
         r.bpm_nudge(2.0);
         service(&mut r, &mut a);
-        assert_eq!(r.history.head, head);
-        assert_eq!(a.clocks.len(), clocks);
+        // Same-key admission replaces the engine's queued bar-boundary
+        // start. The active voice remains accepted until that boundary, so
+        // tempo changes no longer depend on a successful stop.
+        assert_ne!(r.history.head, head);
+        assert_eq!(a.clocks.len(), clocks + 1);
+        assert_eq!(a.plays.len(), plays + 1);
+        assert!(a.stops.is_empty());
+        assert!(a.stop_attempts.is_empty());
         assert_eq!(r.accepted_voice_count(), 1);
-        assert_eq!(r.session.bpm, 120.0);
+        assert_eq!(r.session.bpm, 122.0);
+    }
+
+    #[test]
+    fn recovered_poll_error_resets_status_from_healthy_availability() {
+        let mut r = Recorder::default();
+        let mut a = FakeAudio::default();
+        a.poll_error = Some("observer failed".into());
+        service(&mut r, &mut a);
+        assert_eq!(r.audio_status_label(), "observer failed");
+        assert_eq!(r.availability.error.as_deref(), Some("observer failed"));
+
+        service(&mut r, &mut a);
+        assert_eq!(r.audio_status_label(), "system audio");
+        assert!(r.availability.error.is_none());
     }
 
     #[test]
@@ -771,6 +795,8 @@ pub trait RecorderAudio {
     fn set_click(&mut self, enabled: bool) -> Result<(), String>;
     fn begin_capture(&mut self, token: CaptureToken, mode: CaptureMode) -> Result<(), String>;
     fn stop_free_capture(&mut self, token: CaptureToken) -> Result<(), String>;
+    /// Admit playback for this key. A failed same-key replacement must leave
+    /// any currently accepted voice for that key running and accepted.
     fn play_layer(
         &mut self,
         key: LayerKey,
@@ -911,12 +937,7 @@ impl Recorder {
         } else if self.availability.error.is_none()
             && (had_error || self.status == "audio unavailable")
         {
-            self.status = if self.availability.input {
-                "system audio"
-            } else {
-                "output only · input unavailable"
-            }
-            .into();
+            self.reset_status_from_availability();
         }
         if let Some(error) = &self.availability.error {
             self.status = error.clone();
@@ -933,10 +954,11 @@ impl Recorder {
             meter.update(normalized, delta_secs.clamp(0.0, 0.25));
         }
         if let Some(error) = observation.error {
-            self.status = error;
+            self.status = error.clone();
             // A failing observation cannot admit a new take in this service
             // pass. A later healthy availability/observation can recover it.
             self.availability.input = false;
+            self.availability.error = Some(error);
         }
         if let Some(completion) = observation.completed {
             if let Err(error) = self.promote(completion, audio, now_ms) {
@@ -969,12 +991,7 @@ impl Recorder {
                 Ok(()) => {
                     self.needs_sync = false;
                     if self.status.starts_with("previous capture is draining") {
-                        self.status = if self.availability.input {
-                            "system audio"
-                        } else {
-                            "output only · input unavailable"
-                        }
-                        .into();
+                        self.reset_status_from_availability();
                     }
                 },
                 Err(error) => self.status = error,
@@ -991,11 +1008,12 @@ impl Recorder {
         }
         for (track, layer, phrase) in std::mem::take(&mut self.imported_replay) {
             if let Some(index) = self.session.tracks.iter().position(|t| t.id == track) {
-                if self.track_is_audible(index)
-                    && self.session.tracks[index]
-                        .layers
-                        .get(usize::from(layer))
-                        .is_some_and(|l| l.phrase_id == phrase)
+                if self
+                    .session
+                    .tracks
+                    .get(index)
+                    .and_then(|track| track.layers.get(usize::from(layer)))
+                    .is_some_and(|occurrence| occurrence.phrase_id == phrase)
                 {
                     self.play_from_store(audio, index, usize::from(layer));
                 }
@@ -1181,9 +1199,7 @@ impl Recorder {
                 if !from {
                     self.stop_track(audio, id);
                 } else if let Some(index) = self.session.tracks.iter().position(|t| t.id == id) {
-                    if self.track_is_audible(index) {
-                        self.reconcile_track(audio, index);
-                    }
+                    self.reconcile_track(audio, index);
                 }
             },
             RecorderAction::ToggleLayerMute {
@@ -1216,9 +1232,7 @@ impl Recorder {
                 if !from {
                     self.stop_voice(audio, key);
                 } else if let Some(index) = self.session.tracks.iter().position(|t| t.id == track) {
-                    if self.track_is_audible(index) {
-                        self.play_from_store(audio, index, usize::from(layer_index));
-                    }
+                    self.play_from_store(audio, index, usize::from(layer_index));
                 }
             },
             RecorderAction::NudgeBpm(delta) => {
@@ -1239,10 +1253,6 @@ impl Recorder {
                     self.needs_sync = true;
                     return Ok(());
                 }
-                self.stop_voices(audio);
-                if !self.playing.is_empty() {
-                    return Err("previous recorder voices have not stopped".into());
-                }
                 audio.set_clock(
                     to,
                     self.session.time_signature.numerator,
@@ -1251,6 +1261,37 @@ impl Recorder {
                 )?;
                 self.history
                     .commit(Edit::SetBpm { from, to }, &mut self.session, now);
+                self.reset_status_from_availability();
+
+                // Queue same-key replacements only for accepted voices that
+                // are not already headed toward a stop. The host keeps each
+                // current voice running until its next-bar replacement;
+                // failed admission therefore leaves its accepted playback
+                // intact. Store lookup and B5 audibility policy remain in
+                // the shared playback helper below.
+                if !self.needs_sync && !self.retire_voices {
+                    for key in self
+                        .playing
+                        .iter()
+                        .copied()
+                        .filter(|key| !self.pending_stops.contains(key))
+                        .collect::<Vec<_>>()
+                    {
+                        if let Some(index) = self
+                            .session
+                            .tracks
+                            .iter()
+                            .position(|track| track.id == key.track_id)
+                        {
+                            self.play_from_store_inner(
+                                audio,
+                                index,
+                                usize::from(key.layer_index),
+                                true,
+                            );
+                        }
+                    }
+                }
             },
             RecorderAction::ToggleMasterClock => {
                 if self.is_recording() {
@@ -1332,7 +1373,7 @@ impl Recorder {
             track_id: ticket.track,
             layer_index,
         };
-        if self.track_is_audible(index) {
+        if self.occurrence_is_audible(index, usize::from(layer_index)) {
             audio.play_layer(
                 key,
                 completion.samples,
@@ -1391,31 +1432,56 @@ impl Recorder {
             self.stop_voice(audio, key);
         }
     }
-    fn track_is_audible(&self, index: usize) -> bool {
-        self.session.tracks.get(index).is_some_and(|track| {
-            !track.muted && (self.solo.is_empty() || self.solo.contains(&track.id))
-        })
+    fn reset_status_from_availability(&mut self) {
+        if self.availability.error.is_some() || !self.pending_stops.is_empty() {
+            return;
+        }
+        self.status = if self.availability.input {
+            "system audio"
+        } else {
+            "output only · input unavailable"
+        }
+        .into();
+    }
+    fn occurrence_is_audible(&self, track_index: usize, layer_index: usize) -> bool {
+        let Some(track) = self.session.tracks.get(track_index) else {
+            return false;
+        };
+        let Ok(layer_index_u16) = u16::try_from(layer_index) else {
+            return false;
+        };
+        !track.muted
+            && (self.solo.is_empty() || self.solo.contains(&track.id))
+            && track.layers.get(layer_index).is_some_and(|layer| {
+                track
+                    .playback_mode
+                    .is_layer_audible(layer_index_u16, layer.muted)
+            })
     }
     fn reconcile_all(&mut self, audio: &mut impl RecorderAudio) {
         self.stop_voices(audio);
         for index in 0..self.session.tracks.len() {
-            if !self.track_is_audible(index) {
-                continue;
-            }
             self.reconcile_track(audio, index);
         }
     }
     fn reconcile_track(&mut self, audio: &mut impl RecorderAudio, index: usize) {
         for layer in 0..self.session.tracks[index].layers.len() {
-            if self.session.tracks[index]
-                .playback_mode
-                .is_layer_audible(layer as u16, self.session.tracks[index].layers[layer].muted)
-            {
-                self.play_from_store(audio, index, layer);
-            }
+            self.play_from_store(audio, index, layer);
         }
     }
     fn play_from_store(&mut self, audio: &mut impl RecorderAudio, index: usize, li: usize) {
+        self.play_from_store_inner(audio, index, li, false);
+    }
+    fn play_from_store_inner(
+        &mut self,
+        audio: &mut impl RecorderAudio,
+        index: usize,
+        li: usize,
+        restart_accepted: bool,
+    ) {
+        if !self.occurrence_is_audible(index, li) {
+            return;
+        }
         if self.needs_sync || self.retire_voices {
             self.needs_replay = true;
             return;
@@ -1438,7 +1504,7 @@ impl Recorder {
             track_id: track.id,
             layer_index,
         };
-        if self.playing.contains(&key) {
+        if self.playing.contains(&key) && !restart_accepted {
             // Unmute/solo/replay is newer intent than a previously failed
             // ordinary stop. The already accepted voice remains audible.
             self.pending_stops.remove(&key);

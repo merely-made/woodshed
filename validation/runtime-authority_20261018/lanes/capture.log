@@ -1,0 +1,42 @@
+6e6498af7927a7a821f7c04215dddcaf0ddc25af
+bf7450caa19b35bdd88a79e8253cd7fc12aa903682a266392d433447898b44c5  crates/woodshed-audio/src/output_runtime/processor.rs
+f1f22cab94a3b3f0de0c91f41a57c06630445848ee0fe1d2d6ac9f86100da5a2  crates/woodshed-audio/src/output_runtime/tests.rs
+
+Lane: capture / B3 AUDIO-01
+Baseline: 6e6498af7927a7a821f7c04215dddcaf0ddc25af (HEAD and origin/main at start)
+Source audit locator: validation/full-source-audit_20261016/current/runtime.md, AUDIO-01
+
+Commands and exits (final checks):
+- rustfmt --edition 2024 crates/woodshed-audio/src/output_runtime/processor.rs crates/woodshed-audio/src/output_runtime/tests.rs — exit 0
+- cargo test -p woodshed-audio future_ — exit 0, 7 passed
+- cargo test -p woodshed-audio arm_after_seek_resolves_at_that_same_ordered_boundary — exit 0, 1 passed
+- cargo test -p woodshed-audio output_runtime::tests:: — exit 0, 59 passed (includes allocation-guarded callback tests and selected capture regressions)
+- cargo test -p woodshed-audio wav_matches_live_processor_across_fractional_clocks_measures_and_chunk_boundaries — exit 0, 1 passed
+- git diff --check -- crates/woodshed-audio/src/output_runtime/processor.rs crates/woodshed-audio/src/output_runtime/tests.rs — exit 0
+
+Exploratory command outcomes retained for audit:
+- cargo test -p woodshed-audio future_saved_bar_arm_survives_variable_intermediate_boundaries -- --exact — exit 0 but selected 0 tests due short name with --exact; rerun by module filter subsequently exercised it.
+- Early future-arm test iteration — exit 101 on incorrect fixture (it crossed into target and starved the feed); corrected fixture now proves exact target PCM bits and reaches valid completion.
+- Intermediate cargo test -p woodshed-audio future_ — exit 101 while fixtures were being corrected; final same filter above passes.
+- cargo test -p woodshed-audio output_runtime::selected_capture_tests:: — exit 0 but selected 0 tests because module is nested under output_runtime::tests; corrected selection was included in final 59-test module run.
+
+Final source hashes before commit:
+- crates/woodshed-audio/src/output_runtime/processor.rs 17c793b31f45179662b7dbcab0a1dffe8aae6271d48af5abca89a9f3d433e76b
+- crates/woodshed-audio/src/output_runtime/tests.rs 21a970a65944e659c3493f3e3a3972bb4399190580bdc550d274a15b4f587956
+
+Native apps/devices/residents/scenarios were not launched. No native qualification claimed. No lock/supplier changes, push, workflow/PR, or unrelated workspace edits were made by this lane. Other owners' concurrently modified files were left untouched.
+
+Commit: 5a433fac47cdd63e9fcf1b6295ce2c7757f8e92f
+Commit parent observed immediately before lane commit: 36e7ecc0e0e9e3ff8019c80204256d8f6409be3b. HEAD advanced from the requested baseline during concurrent lane work; this commit was created on the then-current HEAD without modifying or staging other owners' paths.
+Committed paths (verified with git diff HEAD^ HEAD --name-only):
+- crates/woodshed-audio/src/output_runtime/processor.rs
+- crates/woodshed-audio/src/output_runtime/tests.rs
+Post-commit source hashes match the pre-commit hashes recorded above. `git status --short --` for the two owned paths is empty. Concurrent changes in Woodshed core, genet, views, design_docs, and validation remain untouched.
+
+Follow-up simplification requested after 5a433fa:
+- Removed duplicate pending-arm compaction helper. One-shot end now checks the existing pending slice for any Arm, sets the existing invalid flag if found, and calls stop_capture() once for take retirement plus queued-arm cleanup.
+- Boundary StopRecording retained-prefix cancellation remains separate because it enforces operation order within the boundary.
+- rustfmt --edition 2024 crates/woodshed-audio/src/output_runtime/processor.rs — exit 0
+- cargo test -p woodshed-audio output_runtime::tests:: — exit 0, 59 passed; includes the one-shot unreachable-target regression and callback allocation guards
+- git diff --check -- crates/woodshed-audio/src/output_runtime/processor.rs — exit 0
+- Follow-up processor.rs SHA-256 before commit: 28a5f7f21cc4890a7f64d229c508e381265e19a75f9141e4e26f1bace3c28045

@@ -1,0 +1,9 @@
+{
+  "head": "493197eba778869f6952cfff7f023898edc72c67",
+  "source_sha256": {
+    "crates/woodshed-views/src/stage/arrangement_editor.rs": "76595e6f485365773d623495a560549b96fc4ecdcaae7821b7a151905c66457b",
+    "crates/woodshed-genet/src/arrangement.rs": "739339db38c572733998d82a52700f2c3241f511c1b582b4c0b90dc046c66faf",
+    "crates/woodshed-genet/src/scenario.rs": "5c310881114a4dc581a8f7640ad93c1a58af01f5467a8385a538b13c85bb8227"
+  },
+  "binary_sha256": "6b669cb053bddbc3d68c93a35dea8aa1047f614b6ef43efe8a56723be13360ba"
+}

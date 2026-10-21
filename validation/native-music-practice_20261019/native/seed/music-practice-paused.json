@@ -1,0 +1,70 @@
+{
+  "authoring_selection": [
+    0,
+    0
+  ],
+  "device": {
+    "active_frames": 12000,
+    "bar": 0,
+    "beat_ticks": 383,
+    "bpm": 96.0,
+    "card_frames": 12000,
+    "event": 1,
+    "native_stream_count": 0,
+    "output_frame": 36000,
+    "processing_blocks": 5,
+    "program_epoch": 1,
+    "program_revision": 0,
+    "program_status": "Paused",
+    "sample_rate": 48000
+  },
+  "kind": "woodshed-native-music-practice-output-runtime",
+  "music": {
+    "applied_canonical_xml_blake3": "bec421d42a32072a6813622af93b89712af4d638da075d5c227a602083740e08",
+    "draft_canonical_xml_blake3": "b3a85af9ff2ac254ea79f8790a484c76abf9bae907c8683391ef80cec2add489",
+    "draft_dirty": true,
+    "saved_exact_xml_blake3": "bec421d42a32072a6813622af93b89712af4d638da075d5c227a602083740e08",
+    "stored_exact_xml_blake3": "bec421d42a32072a6813622af93b89712af4d638da075d5c227a602083740e08"
+  },
+  "owner": 2,
+  "pcm": {
+    "advances": [
+      {
+        "device_frame_end": 12000,
+        "device_frame_start": 0,
+        "nonzero_samples": 23998,
+        "pcm_f32le_blake3": "2a3a82e516f890a4febfc12b9e125cd38111a0060490126735c1f377c6e4f937",
+        "processor_blocks": 2,
+        "rendered_samples": 24000,
+        "requested_frames": 12000
+      },
+      {
+        "device_frame_end": 36000,
+        "device_frame_start": 12000,
+        "nonzero_samples": 0,
+        "pcm_f32le_blake3": "fab951d069991121abd5ad10c5a361171408f280a427e9a0d0e72aa66c51da6a",
+        "processor_blocks": 3,
+        "rendered_samples": 48000,
+        "requested_frames": 24000
+      }
+    ],
+    "cumulative_blake3": "dea2045d1444dd815d9d30b3e120fa62378fd8088607f446a0955139cb652214",
+    "encoding": "f32 IEEE-754 bit patterns, little endian, interleaved stereo",
+    "frames": 36000,
+    "nonzero_samples": 23998,
+    "samples": 72000
+  },
+  "playback": {
+    "applied_revision": 0,
+    "bar": 0,
+    "bar_beat_ticks": 383,
+    "bpm": 96.0,
+    "desired_revision": 1,
+    "event": 0,
+    "owner": 2,
+    "pending_update": true,
+    "rest": false,
+    "run_epoch": 1,
+    "status": "paused"
+  }
+}
