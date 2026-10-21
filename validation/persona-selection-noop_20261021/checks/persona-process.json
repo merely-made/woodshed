@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "run_id": "persona-noop-candidate-20261021",
+  "command": [
+    "cargo",
+    "test",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "woodshed-genet",
+    "persona::"
+  ],
+  "started_at": "2026-10-21T23:14:56.995281Z",
+  "ended_at": "2026-10-21T23:15:08.862077Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-persona-selection-noop-20261021/persona.log",
+  "log_sha256": "b4eb56e8548788e3e77b89833b1d9c2ab0363c7891711109ac475b211813c33d",
+  "source_commit": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7"
+}

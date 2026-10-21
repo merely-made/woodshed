@@ -1,0 +1,653 @@
+    Updating crates.io index
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#64d47ac4)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+ Downloading crates ...
+  Downloaded midly v0.5.3
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling libc v0.2.190
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling syn v2.0.119
+   Compiling cfg-if v1.0.5
+   Compiling autocfg v1.5.1
+   Compiling libm v0.2.16
+   Compiling num-traits v0.2.19
+   Compiling bitflags v2.13.2
+   Compiling arrayvec v0.7.8
+   Compiling equivalent v1.0.2
+   Compiling objc2-encode v4.1.0
+   Compiling getrandom v0.4.3
+   Compiling rand_core v0.10.1
+   Compiling foldhash v0.2.0
+   Compiling objc2 v0.6.4
+   Compiling serde_derive v1.0.229
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling log v0.4.34
+   Compiling hashbrown v0.17.1
+   Compiling thiserror-impl v2.0.21
+   Compiling jobserver v0.1.35
+   Compiling block2 v0.6.2
+   Compiling dispatch2 v0.3.1
+   Compiling shlex v2.0.1
+   Compiling once_cell v1.21.4
+   Compiling find-msvc-tools v0.1.14
+   Compiling cc v1.6.0
+   Compiling typenum v1.20.1
+   Compiling objc2-core-foundation v0.3.2
+   Compiling sha1_smol v1.0.1
+   Compiling uuid v1.27.0
+   Compiling bytemuck_derive v1.12.1
+   Compiling smallvec v1.16.2
+   Compiling stable_deref_trait v1.2.1
+   Compiling zmij v1.0.23
+   Compiling thiserror v2.0.21
+   Compiling objc2-foundation v0.3.2
+   Compiling bytemuck v1.25.2
+   Compiling cfg_aliases v0.2.2
+   Compiling serde_json v1.0.151
+   Compiling indexmap v2.14.2
+   Compiling synstructure v0.14.0
+   Compiling zerocopy v0.8.59
+   Compiling scopeguard v1.2.0
+   Compiling parking_lot_core v0.9.12
+   Compiling zerocopy-derive v0.8.59
+   Compiling lock_api v0.4.14
+   Compiling zerofrom-derive v0.1.8
+   Compiling parking_lot v0.12.5
+   Compiling yoke-derive v0.8.4
+   Compiling zerofrom v0.1.8
+   Compiling zerovec-derive v0.11.6
+   Compiling yoke v0.8.3
+   Compiling zerovec v0.11.8
+   Compiling displaydoc v0.2.7
+   Compiling pin-project-lite v0.2.17
+   Compiling siphasher v1.0.4
+   Compiling phf_shared v0.13.1
+   Compiling euclid v0.22.14
+   Compiling hybrid-array v0.4.15
+   Compiling writeable v0.6.4
+   Compiling rustc-hash v1.1.0
+   Compiling fastrand v2.5.0
+   Compiling futures-core v0.3.34
+   Compiling phf_generator v0.13.1
+   Compiling tinystr v0.8.4
+   Compiling semver v1.0.28
+   Compiling litemap v0.8.3
+   Compiling rustc_version v0.4.1
+   Compiling potential_utf v0.1.6
+   Compiling half v2.7.1
+   Compiling crypto-common v0.2.2
+   Compiling zerotrie v0.2.5
+   Compiling icu_locale_core v2.3.0
+   Compiling unicode-width v0.2.2
+   Compiling bit-vec v0.9.1
+   Compiling bit-set v0.10.0
+   Compiling codespan-reporting v0.13.1
+   Compiling crossbeam-utils v0.8.23
+   Compiling utf8_iter v1.0.4
+   Compiling icu_provider v2.3.1
+   Compiling icu_collections v2.3.0
+   Compiling icu_properties_data v2.3.0
+   Compiling block-buffer v0.12.1
+   Compiling objc2-metal v0.3.2
+   Compiling font-types v0.12.6
+   Compiling objc2-core-graphics v0.3.2
+   Compiling static_assertions v1.1.0
+   Compiling raw-window-handle v0.6.2
+   Compiling simd-adler32 v0.3.10
+   Compiling icu_normalizer_data v2.3.0
+   Compiling read-fonts v0.41.0
+   Compiling phf_macros v0.13.1
+   Compiling naga-types v30.0.1
+   Compiling naga v30.0.1
+   Compiling profiling-procmacros v1.0.18
+   Compiling serde_bytes v0.11.19
+   Compiling adler2 v2.0.1
+   Compiling crc32fast v1.5.2
+   Compiling profiling v1.0.18
+   Compiling linebender_resource_handle v0.1.1
+   Compiling phf v0.13.1
+   Compiling objc2-quartz-core v0.3.2
+   Compiling icu_properties v2.3.0
+   Compiling icu_normalizer v2.3.0
+   Compiling miniz_oxide v0.9.1
+   Compiling wgpu-types v30.0.1
+   Compiling string_cache_codegen v0.6.1
+   Compiling phf_codegen v0.13.1
+   Compiling wgpu-hal v30.0.1
+   Compiling blake3 v1.8.7
+   Compiling allocator-api2 v0.2.21
+   Compiling new_debug_unreachable v1.0.6
+   Compiling simdutf8 v0.1.5
+   Compiling const-oid v0.10.2
+   Compiling digest v0.11.3
+   Compiling hashbrown v0.16.1
+   Compiling web_atoms v0.2.6
+   Compiling skrifa v0.44.0
+   Compiling flate2 v1.1.10
+   Compiling raw-window-metal v1.1.0
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling miniz_oxide v0.8.9
+   Compiling fdeflate v0.3.7
+   Compiling enumn v0.1.14
+   Compiling libloading v0.8.9
+   Compiling constant_time_eq v0.4.2
+   Compiling version_check v0.9.5
+   Compiling precomputed-hash v0.1.1
+   Compiling string_cache v0.9.0
+   Compiling accesskit v0.25.1
+   Compiling wgpu-core v30.0.1
+   Compiling tracing-core v0.1.36
+   Compiling tracing-attributes v0.1.31
+   Compiling polycool v0.4.0
+   Compiling cpufeatures v0.3.1
+   Compiling litrs v1.0.0
+   Compiling tracing v0.1.44
+   Compiling document-features v0.2.12
+   Compiling sha2 v0.11.0
+   Compiling kurbo v0.13.1
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling png v0.18.1
+   Compiling tendril v0.5.1
+   Compiling wgpu v30.0.1
+   Compiling color v0.3.3
+   Compiling byteorder v1.5.0
+   Compiling winnow v1.0.4
+   Compiling svg_fmt v0.4.5
+   Compiling guillotiere v0.7.0
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling peniko v0.6.1
+   Compiling markup5ever v0.39.0
+   Compiling idna_adapter v1.2.2
+   Compiling percent-encoding v2.3.2
+   Compiling form_urlencoded v1.2.2
+   Compiling idna v1.1.0
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling fnv v1.0.7
+   Compiling url v2.5.8
+   Compiling futures-intrusive v0.5.0
+   Compiling zeroize_derive v1.5.0
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling zeroize v1.9.0
+   Compiling mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling bytes v1.12.1
+   Compiling heapless v0.7.17
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling sceno v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling objc-sys v0.3.5
+   Compiling rustversion v1.0.23
+   Compiling hash32 v0.2.1
+   Compiling unicode-segmentation v1.13.3
+   Compiling either v1.18.0
+   Compiling cobs v0.3.0
+   Compiling async-trait v0.1.92
+   Compiling object v0.39.1
+   Compiling core-foundation-sys v0.8.7
+   Compiling foldhash v0.1.5
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling hashbrown v0.15.5
+   Compiling postcard v1.1.3
+   Compiling objc2 v0.5.2
+   Compiling encoding_rs v0.8.42
+   Compiling xml5ever v0.39.0
+   Compiling html5ever v0.39.0
+   Compiling command-menu v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling app_units v0.7.8
+   Compiling redb v2.6.4
+   Compiling crossbeam-epoch v0.9.21
+   Compiling icu_locale_fallback_data v2.3.0
+   Compiling slab v0.4.12
+   Compiling fixedbitset v0.5.7
+   Compiling petgraph v0.8.3
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling block2 v0.5.1
+   Compiling aho-corasick v1.1.5
+   Compiling curve25519-dalek v5.0.0
+   Compiling objc2-core-text v0.3.2
+   Compiling ptr_meta_derive v0.3.2
+   Compiling num-integer v0.1.47
+   Compiling regex-syntax v0.8.11
+   Compiling multiversion_no_op v1.0.0
+   Compiling crossbeam-deque v0.8.8
+   Compiling icu_segmenter_data v2.3.0
+   Compiling dispatch v0.2.0
+   Compiling jotdown v0.10.0
+   Compiling thiserror v1.0.69
+   Compiling objc2-foundation v0.2.2
+   Compiling regex-automata v0.4.18
+   Compiling ar_archive_writer v0.5.3
+   Compiling ptr_meta v0.3.2
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling scenograph v0.0.5 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling slotmap v1.1.1
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling inout v0.2.2
+   Compiling thiserror-impl v1.0.69
+   Compiling pkg-config v0.3.34
+   Compiling futures-sink v0.3.34
+   Compiling signature v3.0.0
+   Compiling subtle v2.6.1
+   Compiling rayon-core v1.13.0
+   Compiling cmov v0.5.4
+   Compiling pollster v1.0.1
+   Compiling vcpkg v0.2.15
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling ctutils v0.4.2
+   Compiling libz-sys v1.1.29
+   Compiling ed25519 v3.0.0
+   Compiling futures-channel v0.3.34
+   Compiling muniment v0.1.2 (https://github.com/merely-made/eidetic.git?rev=738ef15956a29a125820b2d6c2280d39a6214f8e#738ef159)
+   Compiling scenomise v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling icu_locale_fallback v2.3.0
+   Compiling rancor v0.1.3
+   Compiling psm v0.1.32
+   Compiling logos-codegen v0.16.1
+   Compiling serde_spanned v1.1.1
+   Compiling bytecheck_derive v0.8.3
+   Compiling futures-macro v0.3.34
+   Compiling memmap2 v0.9.11
+   Compiling parlance v0.1.0
+   Compiling futures-io v0.3.34
+   Compiling futures-task v0.3.34
+   Compiling alloc-no-stdlib v2.0.4
+   Compiling wuff-capi v0.2.0
+   Compiling dtoa v1.0.11
+   Compiling dtoa-short v0.3.5
+   Compiling brotli-decompressor v5.0.3
+   Compiling futures-util v0.3.34
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling bytecheck v0.8.3
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling icu_segmenter v2.3.0
+   Compiling logos-derive v0.16.1
+   Compiling ed25519-dalek v3.0.0
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling universal-hash v0.6.1
+   Compiling cipher v0.5.2
+   Compiling harfrust v0.12.0
+   Compiling parley_data v0.10.0
+   Compiling stacker v0.1.25
+   Compiling munge_macro v0.4.7
+   Compiling cssparser-macros v0.7.1
+   Compiling getrandom v0.3.4
+   Compiling quick-error v2.0.1
+   Compiling zune-core v0.5.3
+   Compiling weezl v0.1.12
+   Compiling byteorder-lite v0.1.0
+   Compiling glob v0.3.4
+   Compiling pxfm v0.1.30
+   Compiling rawpointer v0.2.1
+   Compiling color_quant v1.1.0
+   Compiling gif v0.14.2
+   Compiling fontsan v0.7.0
+   Compiling image-webp v0.2.4
+   Compiling moxcms v0.8.1
+   Compiling zune-jpeg v0.5.15
+   Compiling cssparser v0.37.0
+   Compiling munge v0.4.7
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling chacha20 v0.10.2
+   Compiling poly1305 v0.9.1
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling rayon v1.12.0
+   Compiling logos v0.16.1
+   Compiling rend v0.5.4
+   Compiling wuff v0.2.9
+   Compiling aead v0.6.1
+   Compiling sprigging v0.2.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling rkyv_derive v0.8.18
+   Compiling num-complex v0.4.6
+   Compiling anymore v1.0.0
+   Compiling genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling web-time v1.1.0
+   Compiling workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling rkyv v0.8.18
+   Compiling chacha20poly1305 v0.11.0
+   Compiling illume v0.0.3 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling image v0.25.10
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling generic-array v0.14.7
+   Compiling genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling heck v0.5.0
+   Compiling portable-atomic v1.15.0
+   Compiling strum_macros v0.28.0
+   Compiling cambium v0.4.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/eidetic.git?rev=738ef15956a29a125820b2d6c2280d39a6214f8e#738ef159)
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#d9205014)
+   Compiling tokio-macros v2.7.2
+   Compiling mio v1.2.4
+   Compiling socket2 v0.6.5
+   Compiling data-url v0.3.2
+   Compiling midly v0.5.3
+   Compiling portable-atomic-util v0.2.8
+   Compiling unicase v2.10.0
+   Compiling bitflags v1.3.2
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/audio-primitives)
+   Compiling mime_guess v2.0.5
+   Compiling audio-pattern v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/audio-pattern)
+   Compiling tokio v1.53.2
+   Compiling strum v0.28.0
+   Compiling core-foundation v0.9.4
+   Compiling foreign-types-macros v0.2.4
+   Compiling approx v0.5.1
+   Compiling matrixmultiply v0.3.11
+   Compiling hound v3.5.1
+   Compiling grid v1.0.1
+   Compiling foreign-types-shared v0.3.1
+   Compiling audio-codec-algorithms v0.8.1
+   Compiling ciborium-io v0.2.2
+   Compiling ciborium-ll v0.2.2
+   Compiling audioadapter-sample v5.2.0
+   Compiling taffy v0.11.0-experimental-cache-fix.3
+   Compiling foreign-types v0.5.0
+   Compiling audio-packs v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/audio-packs)
+   Compiling core-graphics-types v0.1.3
+   Compiling numen v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling objc2-app-kit v0.2.2
+   Compiling cfb v0.7.3
+   Compiling toml_edit v0.25.15+spec-1.1.0
+   Compiling wide v1.7.1
+   Compiling winit v0.30.13
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling num-conv v0.2.2
+   Compiling audioadapter v5.0.0
+   Compiling mime v0.3.17
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling powerfmt v0.2.1
+   Compiling deranged v0.5.8
+   Compiling coremidi-sys v3.2.1
+   Compiling winnow v0.7.15
+   Compiling time-core v0.1.9
+   Compiling time v0.3.55
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling audioadapter-buffers v5.2.0
+   Compiling simba v0.10.2
+   Compiling bevy_macro_utils v0.19.1
+   Compiling infer v0.19.0
+   Compiling ringbuf v0.5.3
+   Compiling core-graphics v0.23.2
+   Compiling mere-forme v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling ciborium v0.2.2
+   Compiling glam v0.33.12
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling num-rational v0.4.2
+   Compiling crossbeam-channel v0.5.17
+   Compiling objc2-core-audio-types v0.3.2
+   Compiling nalgebra-macros v0.3.0
+   Compiling dpi v0.1.2
+   Compiling spin v0.10.1
+   Compiling smol_str v0.2.2
+   Compiling cursor-icon v1.2.0
+   Compiling nalgebra v0.35.0
+   Compiling bevy_platform v0.19.1
+   Compiling objc2-core-audio v0.3.2
+   Compiling mere-kernel v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling digest v0.10.7
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling futures-executor v0.3.34
+   Compiling tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling core-foundation v0.10.1
+   Compiling num-complex v0.2.4
+   Compiling cpufeatures v0.2.17
+   Compiling robust v1.2.0
+   Compiling midir v0.11.0
+   Compiling thunderdome v0.6.1
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling spade v2.15.1
+   Compiling sha2 v0.10.9
+   Compiling coremidi v0.9.2
+   Compiling glamx v0.3.1
+   Compiling futures v0.3.34
+   Compiling objc2-audio-toolbox v0.3.2
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling objc2-core-bluetooth v0.2.2
+   Compiling scenotime v0.0.4 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling ena v0.14.4
+   Compiling roxmltree v0.21.1
+   Compiling num-derive v0.5.1
+   Compiling ordered-float v5.5.0
+   Compiling strength_reduce v0.2.4
+   Compiling downcast-rs v2.0.2
+   Compiling unicode-bidi v0.3.18
+   Compiling wavicle v0.1.0 (https://github.com/merely-made/wavicle.git?rev=2c5a49fd48db7a54aeab9e712804fd065411aef9#2c5a49fd)
+   Compiling option-ext v0.2.0
+   Compiling cpal v0.18.2
+   Compiling ndarray v0.13.1
+   Compiling dirs-sys v0.4.1
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling parry2d v0.31.1
+   Compiling transpose v0.2.3
+   Compiling woodshedding v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshedding)
+   Compiling ble-peripheral-rust v0.2.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/vendor/ble-peripheral-rust)
+   Compiling coreaudio-rs v0.14.2
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling hocket-model v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/hocket-model)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling armillary v0.1.1 (https://github.com/merely-made/armillary.git?rev=e67c5def1c735be047492a867bcdc8b41fba22b8#e67c5def)
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling gaz v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling matrixmultiply v0.2.4
+   Compiling primal-check v0.3.4
+   Compiling accesskit_consumer v0.39.1
+   Compiling triple_buffer v9.0.0
+   Compiling csv-core v0.1.13
+   Compiling approx v0.3.2
+   Compiling hex v0.4.3
+   Compiling base64 v0.22.1
+   Compiling dasp_sample v0.11.0
+   Compiling ryu v1.0.23
+   Compiling mach2 v0.6.0
+   Compiling anyhow v1.0.104
+   Compiling csv v1.4.0
+   Compiling chirograph v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling accesskit_macos v0.27.1
+   Compiling rustfft v6.4.1
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling hocket-project v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/hocket-project)
+   Compiling woodshed-instrument v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-instrument)
+   Compiling rapier2d v0.36.0
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling fixed-resample v0.13.0
+   Compiling objc2-core-data v0.3.2
+   Compiling objc2-core-image v0.3.2
+   Compiling objc2-cloud-kit v0.3.2
+   Compiling objc2-core-video v0.3.2
+   Compiling serde_path_to_error v0.1.20
+   Compiling rustix v1.1.5
+   Compiling objc2-app-kit v0.3.2
+   Compiling seiche v0.0.6 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling hocket-recorder v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/hocket-recorder)
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling fitting v0.3.0
+   Compiling peak_finder v1.0.1
+   Compiling woodshed-graph v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-graph)
+   Compiling dirs v5.0.1
+   Compiling mere-alembic v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling mere-cartography v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#6ef3cd37)
+   Compiling notochord v0.1.1 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/eidetic.git?rev=738ef15956a29a125820b2d6c2280d39a6214f8e#738ef159)
+   Compiling itertools v0.10.5
+   Compiling esp v0.1.0 (https://github.com/merely-made/esp.git?rev=809deb6be341d3b6eeaad9534d9d162bd3105f4a#809deb6b)
+   Compiling incipit v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling getrandom v0.2.17
+   Compiling errno v0.3.14
+   Compiling apodize v1.0.0
+   Compiling rfd v0.17.2
+   Compiling emblem v0.2.0
+   Compiling pollster v0.4.0
+   Compiling ttf-parser v0.25.1
+   Compiling woodshed-notation v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-notation)
+   Compiling woodshed-core v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-core)
+   Compiling pandect v0.1.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling pictograph v0.2.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling pitch-detector v0.3.1
+   Compiling rand_core v0.6.4
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel.git?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling hocket-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/hocket-views)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling pitch-detection v0.3.0
+   Compiling mere-persona-picker v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling audio-pack-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/audio-pack-views)
+   Compiling png v0.17.16
+   Compiling chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#0c537848)
+   Compiling mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling rtrb v0.3.5
+   Compiling light-file-dialog v3.21.3
+   Compiling cambium-genet-winit-host v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/vendor/cambium-genet-winit-host)
+   Compiling tempfile v3.27.0
+warning: unused import: `NSWindow`
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:511:25
+    |
+511 |     use objc2_app_kit::{NSWindow, NSWindowButton};
+    |                         ^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:540:46
+    |
+540 |             view.convertRect_fromView(frame, unsafe { ns_window.contentView() }.as_deref());
+    |                                              ^^^^^^ unnecessary `unsafe` block
+    |
+    = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling woodshed-audio v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-audio)
+warning: function `window_control_node` is never used
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:113:4
+    |
+113 | fn window_control_node<D>(dom: &D, root: NodeId, accessible_label: &str) -> Option<NodeId>
+    |    ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `window_control_rect` is never used
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:139:15
+    |
+139 | pub(crate) fn window_control_rect<D>(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:552:14
+    |
+552 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+552 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+552 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:600:14
+    |
+600 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+600 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+600 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:621:14
+    |
+621 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+621 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+621 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `cambium-genet-winit-host` (lib) generated 4 warnings (run `cargo fix --lib -p cambium-genet-winit-host` to apply 1 suggestion)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling graphshell-endpoint v0.0.2 (https://github.com/merely-made/mere.git?branch=main#7de937d0)
+   Compiling woodshed-views v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-views)
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-views/src/stage/music_editor/practice.rs:98:14
+   |
+98 |             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+98 -             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+98 +             .try_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+   |
+
+   Compiling directories v5.0.1
+   Compiling objc2-av-foundation v0.3.2
+warning: `woodshed-views` (lib) generated 1 warning (run `cargo fix --lib -p woodshed-views` to apply 1 suggestion)
+   Compiling woodshed-genet v0.1.0 (/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021/crates/woodshed-genet)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 20s
+     Running unittests src/main.rs (target/build/debug/deps/woodshed_genet-5b127014f4e01b07)
+
+running 1 test
+test persona::preservation_tests::same_persona_selection_keeps_dirty_practice_without_preservation_or_reset ... FAILED
+
+failures:
+
+---- persona::preservation_tests::same_persona_selection_keeps_dirty_practice_without_preservation_or_reset stdout ----
+[woodshed] could not persist settings: backend: test write refused
+
+thread 'persona::preservation_tests::same_persona_selection_keeps_dirty_practice_without_preservation_or_reset' (53631862) panicked at crates/woodshed-genet/src/persona_preservation_tests.rs:194:5:
+assertion failed: host.state().pending_persona_switch.is_none()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    persona::preservation_tests::same_persona_selection_keeps_dirty_practice_without_preservation_or_reset
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 319 filtered out; finished in 0.72s
+
+error: test failed, to rerun pass `-p woodshed-genet --bin woodshed-genet`

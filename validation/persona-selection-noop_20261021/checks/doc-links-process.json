@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "persona-noop-doc-links-20261021",
+  "command": [
+    "/Users/markik/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "validation/link-model-p6_20261016/doc_link_audit.py",
+    "--repo",
+    ".",
+    "--base",
+    "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7"
+  ],
+  "started_at": "2026-10-21T23:17:17.208089Z",
+  "ended_at": "2026-10-21T23:17:18.709505Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-persona-selection-noop-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-persona-selection-noop-20261021/doc-links.log",
+  "log_sha256": "0dcb253bb5b242bc93d8b4cba1288bb53fb7d049d714bb04d115b33486184dc0",
+  "source_commit": "6ca442f60dd0b4eeea25078cea2d5d14ce302884"
+}

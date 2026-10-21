@@ -1,0 +1,31 @@
+{
+  "base_revision": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7",
+  "captured_process_source_revision": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7",
+  "source_was_dirty": true,
+  "files": [
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "2dc68401bc904f558662a41e4cbfc0c15e0dbf6c7f7a2a323032b97630eac710"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "sha256": "228e98cd867af96f1ee52521434525a5cd8ea2a9980a164046b37cc9edad21fc"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "76721cd174e28e43404d754c0c8de4207fd1f2bd8d67341b04db4eca084327bf"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "6ad43d34d007b4cdc61c7b84f238bbe9188a82987fe78383bfaaf4155d03072d"
+    },
+    {
+      "path": "crates/woodshed-genet/Cargo.toml",
+      "sha256": "3f7062851148be84592b9de77b86d31062400852cb65d2b9a87e10d3b348d645"
+    }
+  ],
+  "passed": 28,
+  "failed": 0,
+  "ignored": 0,
+  "qualified_scope": "Device-free production persona selection and preservation tests only."
+}

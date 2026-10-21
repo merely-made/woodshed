@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-21",
+  "status": "Qualified local candidate; no publication",
+  "base_revision": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7",
+  "source_revision": "6ca442f60dd0b4eeea25078cea2d5d14ce302884",
+  "branch": "codex/persona-selection-noop-20261021",
+  "scope": "D2 current-persona selection in Woodshed; no other D1-D3 policy implementation.",
+  "no_op_admission": [
+    "Switch-purpose picker choice",
+    "Picker roster already marks the selected canonical profile chosen",
+    "An installed store exists",
+    "Installed Shared seal is Sealed to the selected canonical profile"
+  ],
+  "result": "Dismiss picker before transition-owned preservation, custody open or reset. Retain outgoing authored/runtime state. Ordinary dispatch autosave is outside this selection seam.",
+  "negative_controls": [
+    "Different canonical identity despite identical display name",
+    "Same installed identity with different family roster choice",
+    "Pending installed identity",
+    "Absent installed seal",
+    "Absent installed store"
+  ],
+  "baseline": {
+    "process_receipt": "checks/baseline-process.json",
+    "log": "checks/baseline.log",
+    "source": "checks/baseline-source.json",
+    "test_patch": "checks/baseline-tests.patch",
+    "observed_exit": 101,
+    "expected_failure": "Same persona selection still creates pending_persona_switch and attempts preservation.",
+    "counted_as_qualification": false
+  },
+  "qualification": {
+    "process_receipt": "checks/persona-process.json",
+    "log": "checks/persona.log",
+    "tested_snapshot": "checks/candidate-tested-source.json",
+    "source_patch": "checks/candidate-source.patch",
+    "passed": 28,
+    "failed": 0,
+    "ignored": 0,
+    "observed_exit": 0,
+    "new_test_cases": 2,
+    "negative_scenarios_in_second_case": 5,
+    "captured_source_commit": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7",
+    "source_was_dirty_at_execution": true,
+    "exact_tested_file_hashes_match_source_commit": true,
+    "note": "Committing did not change tested file bytes. Source/lock hashes bind the recorded dirty-source execution to the exact committed candidate; no repeat run is added to the total."
+  },
+  "source_hashes": [
+    {
+      "path": "crates/woodshed-genet/src/persona.rs",
+      "sha256": "2dc68401bc904f558662a41e4cbfc0c15e0dbf6c7f7a2a323032b97630eac710"
+    },
+    {
+      "path": "crates/woodshed-genet/src/persona_preservation_tests.rs",
+      "sha256": "228e98cd867af96f1ee52521434525a5cd8ea2a9980a164046b37cc9edad21fc"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "76721cd174e28e43404d754c0c8de4207fd1f2bd8d67341b04db4eca084327bf"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "6ad43d34d007b4cdc61c7b84f238bbe9188a82987fe78383bfaaf4155d03072d"
+    },
+    {
+      "path": "crates/woodshed-genet/Cargo.toml",
+      "sha256": "3f7062851148be84592b9de77b86d31062400852cb65d2b9a87e10d3b348d645"
+    }
+  ],
+  "review": "Coordinator reviewed production guard and real selection/preservation branches; pending transitions, Startup, Dismissed and CreateRequested retain existing paths. Common dispatches without picker work do not scan a roster.",
+  "limits": [
+    "Device-free host tests only",
+    "No native GUI/custody IPC or physical capture run",
+    "No added Reload action",
+    "No persona-store migration or Redshank recovery implementation",
+    "P5a and audio scheduling remain with their existing owner",
+    "No push"
+  ],
+  "documentation_scan": {
+    "process_receipt": "checks/doc-links-process.json",
+    "log": "checks/doc-links.log",
+    "exit_code": 0,
+    "new_findings": 0
+  }
+}
