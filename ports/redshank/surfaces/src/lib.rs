@@ -378,6 +378,12 @@ pub enum CompactCommand {
     /// One explicit, shareable note and its own body; not its recording.
     ExportNoteClip(AnnotationId),
     UpdateSettings(ListenerSettings),
+    /// Save this nonwriting recovery session to a separate store.
+    SaveRecoveryCopy,
+    /// Dismiss the recovery close decision and retain the in-memory session.
+    KeepWorking,
+    /// Explicitly abandon changes in a recovery session and close.
+    ExitWithoutSaving,
 }
 
 // ---------------------------------------------------------------------------
@@ -605,6 +611,18 @@ pub enum Mode {
     HcLight,
 }
 
+/// Facts supplied by the host after listener restoration failed. Presenting
+/// these choices does not admit writes to the original store or decide close.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RecoveryState {
+    pub error: String,
+    pub dirty: bool,
+    pub close_requested: bool,
+    pub copying: bool,
+    /// Copy progress, destination, or a refusal supplied by the host.
+    pub copy_notice: Option<String>,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct RedshankSurfaceState {
     /// The embedding owner supplies a selected-note package writer.
@@ -644,6 +662,7 @@ pub struct RedshankSurfaceState {
     pub text_editor: TextInput,
     pub feed_url_editor: TextInput,
     pub notice: Option<String>,
+    pub recovery: Option<RecoveryState>,
     pub editing_note: Option<AnnotationId>,
     /// The one row whose overflow menu is open.
     pub open_menu: Option<MenuTarget>,

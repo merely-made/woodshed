@@ -349,3 +349,12 @@ implementation remains a separate preceding local change.
 2026-10-19 publication/B6 start: primary checkout contained additional unrelated local history and remote had advanced. Applied only the four reviewed B5 commits to isolated current main; source/test bytes match original review, automatic DOC_README merge retains incoming entries, and coordination hash was refreshed. Pushed through `4fab895`, then pulled successfully. Started the requested tempo/replay and diagnostic slice with three Luna workers. Engine already supports keyed next-bar replacement while the old voice continues; use that capability rather than stop-before-clock or a new replay state store. Supplier intake and native lane remain outside ownership.
 
 2026-10-19 requested B6 completion: source `7b161a9` is scoped CPU qualified with 171 distinct passes and two existing Hocket host ignores. The isolated published Recorder control produces three expected failures with identical tests. Engine execution proves old voice continuity and latest keyed replacement; public wrapper and standalone CPU DOM tests prove status delivery and one visible owner. The failed selector compile attempt and blocked shared-view paint unit gate remain separately recorded, never counted as passing. Product source did not change after accepted recorder/wrapper/engine gates; the final host gate covers the sole receiving-test selector correction. Supplier inputs, native lane and primary source were preserved. At that boundary historical MIDI H6–H9 remained open; P9 records their later scoped CPU follow-up.
+
+
+2026-10-21 design-decision follow-up: the user accepted D3 recovery exit/copy and
+authorized direct publication. P4 current-persona no-op and its 28-case receipt
+are published at `01c4b3af`. D3 implementation and qualification live in the
+[existing preservation plan](2026-10-16_preservation_input_admission_plan.md#p5-d3-explicit-failed-recovery-exit-and-independent-copy).
+This is a separate product-policy slice after the P10 first-wave recheck; P5a
+remains with its existing owner. Persona-store migration, capture-capacity
+policy and supplier checked snapshot construction remain separate work.

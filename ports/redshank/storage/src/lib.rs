@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 
+mod recovery;
+
 use std::{
     fs::{self, OpenOptions},
     io::{self, Write},
