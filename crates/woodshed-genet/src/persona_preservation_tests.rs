@@ -1,5 +1,6 @@
 //! Exercise the production transition hook with in-memory incoming custody.
 use super::*;
+use muniment::Backend;
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::{
@@ -60,6 +61,19 @@ fn fixture_with_initial_seals(initial_seals: Vec<PracticeSeal>) -> (
     Rc<Cell<usize>>,
     muniment::MemoryBackend,
 ) {
+    fixture_with_mode(initial_seals, false)
+}
+
+fn fixture_with_mode(
+    initial_seals: Vec<PracticeSeal>,
+    selection: bool,
+) -> (
+    Rc<RefCell<Shared>>,
+    cambium_genet_winit_host::Harness<UiState, crate::sync::Logic, UiChild>,
+    Arc<AtomicBool>,
+    Rc<Cell<usize>>,
+    muniment::MemoryBackend,
+) {
     let refusing = Arc::new(AtomicBool::new(false));
     let bytes = muniment::MemoryBackend::default();
     let store = SessionStore::new(Box::new(crate::tests::SaveFailureBackend {
@@ -88,6 +102,12 @@ fn fixture_with_initial_seals(initial_seals: Vec<PracticeSeal>) -> (
     let mut hooks = crate::hooks(&shared);
     hooks.after_dispatch = Box::new(move |ctx| {
         let mut shared = transition_shared.borrow_mut();
+        if selection {
+            // Exercise the production picker settlement without the unrelated
+            // dispatch tail's ordinary autosave/audio polling.
+            after_dispatch(&mut shared, ctx);
+            return;
+        }
         resume_switch_with(&mut shared, ctx, |id| {
             assert_eq!(id.0, "incoming");
             open_count.set(open_count.get() + 1);
@@ -125,6 +145,119 @@ fn fixture_with_initial_seals(initial_seals: Vec<PracticeSeal>) -> (
         cambium_genet_winit_host::HostOptions::default(),
     );
     (shared, host, refusing, opened, bytes)
+}
+
+fn choose(ui: &mut UiState, selected: &str, family_choice: &str) {
+    let roster = Roster {
+        entries: ["outgoing", "incoming"]
+            .into_iter()
+            .map(|id| dramatis::roster::RosterEntry {
+                id: personae::ProfileId(id.into()),
+                display_name: "Work".into(),
+                slot_count: 1,
+                chosen: id == family_choice,
+            })
+            .collect(),
+        chosen: personae::ProfileId(family_choice.into()),
+        description: "test vault".into(),
+    };
+    let mut pick = PersonaPick::switch(roster);
+    pick.record(PickerEvent::Chose(personae::ProfileId(selected.into())));
+    ui.persona = Some(pick);
+}
+
+#[test]
+fn same_persona_selection_keeps_dirty_practice_without_preservation_or_reset() {
+    let (shared, mut host, refusing, _opened, bytes) = fixture_with_mode(vec![], true);
+    let epoch = host.state().audio_session.clone();
+    let seal = host.state().seal.clone();
+    let saved = ready(bytes.get("session")).unwrap();
+    refusing.store(true, Ordering::Relaxed);
+    host.update(|ui| {
+        ui.set.cards[0].label = "unsaved outgoing instruction".into();
+        ui.practice_saved = false;
+        ui.practice_save_notice = Some("existing unconfirmed save".into());
+        ui.practice_close_pending = true;
+        ui.practice_discard_close = true;
+        ui.loop_export_replace = Some((17, "outgoing.wav".into()));
+        ui.enable_practice_clock();
+        ui.event_clock = Some(|| Some(123_456));
+        choose(ui, "outgoing", "outgoing");
+    });
+    let state = serde_json::to_value(host.state().to_persisted()).unwrap();
+    host.after_dispatch();
+    assert!(host.state().persona.is_none());
+    assert!(host.state().pending_persona_switch.is_none());
+    assert!(Arc::ptr_eq(&epoch, &host.state().audio_session));
+    assert_eq!(host.state().seal, seal);
+    assert_eq!(shared.borrow().seal, seal);
+    assert_eq!(
+        serde_json::to_value(host.state().to_persisted()).unwrap(),
+        state
+    );
+    assert!(!host.state().practice_saved);
+    assert_eq!(
+        host.state().practice_save_notice.as_deref(),
+        Some("existing unconfirmed save")
+    );
+    assert!(host.state().practice_close_pending);
+    assert!(host.state().practice_discard_close);
+    assert_eq!(
+        host.state().loop_export_replace,
+        Some((17, "outgoing.wav".into()))
+    );
+    assert!(host.state().practice_clock_managed);
+    assert!(crate::capture_persistence::session_current(
+        &shared.borrow(),
+        host.state()
+    ));
+    assert_eq!(ready(bytes.get("session")).unwrap(), saved);
+    assert!(
+        shared
+            .borrow()
+            .storage
+            .as_ref()
+            .unwrap()
+            .save_problem()
+            .is_none()
+    );
+    host.update(UiState::refresh_event_time);
+    assert_eq!(host.state().now_ms, Some(123_456));
+}
+
+#[test]
+fn persona_selection_keeps_real_family_and_store_transitions_on_the_preservation_path() {
+    for case in 0..5 {
+        let (shared, mut host, refusing, _opened, _bytes) = fixture_with_mode(vec![], true);
+        refusing.store(true, Ordering::Relaxed);
+        let selected = if case == 0 { "incoming" } else { "outgoing" };
+        let family_choice = if case <= 1 { "incoming" } else { "outgoing" };
+        match case {
+            2 => {
+                shared.borrow_mut().seal = Some(PracticeSeal::Pending {
+                    reason: "locked".into(),
+                })
+            },
+            3 => shared.borrow_mut().seal = None,
+            4 => shared.borrow_mut().storage = None,
+            _ => {},
+        }
+        host.update(|ui| {
+            ui.set.cards[0].label = "retain outgoing work".into();
+            choose(ui, selected, family_choice);
+        });
+        let epoch = host.state().audio_session.clone();
+        host.after_dispatch();
+        let pending = host
+            .state()
+            .pending_persona_switch
+            .as_ref()
+            .expect("a real transition must preserve outgoing practice");
+        assert_eq!(pending.profile.0, selected);
+        assert!(pending.decision.is_none());
+        assert!(Arc::ptr_eq(&epoch, &host.state().audio_session));
+        assert_eq!(host.state().set.cards[0].label, "retain outgoing work");
+    }
 }
 
 #[test]

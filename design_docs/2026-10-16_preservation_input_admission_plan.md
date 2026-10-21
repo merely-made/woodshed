@@ -1,6 +1,6 @@
 # Preservation and input admission
 
-Date: 2026-10-16; updated 2026-10-17.
+Date: 2026-10-16; updated 2026-10-21.
 Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket and Redshank have CPU/build evidence only. No physical audio qualification is claimed.
 
 2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local commits
@@ -69,6 +69,22 @@ separate. Direct publication to `main` is authorized for this integrated work.
 Done when relevant focused tests pass, the diff and documentation are reconciled,
 and the current-source revision, publication outcome and remaining limits are
 reported.
+
+### P4 Current-persona selection
+
+2026-10-21 D2 local candidate: selecting the canonical profile that already owns
+the installed sealed store should only dismiss the switch picker when its
+roster also records that profile as the family's chosen persona. Otherwise the
+existing preservation/admission transaction must run. This keeps a selection
+from silently swallowing a genuine family-choice change. The candidate starts
+from fetched `71ac17e1` in an isolated checkout; the primary is preserved.
+
+Done when the production selection hook retains dirty practice, installed
+storage, audio-session identity, clocks and pending export/close state on the
+no-op path; different identities, pending/uninstalled stores and changed family
+choice still reach preservation; and a pre-change negative control plus the
+focused current-source gate are recorded. This slice adds no Reload action,
+capture cancellation, persona namespace migration or Redshank recovery policy.
 
 ## Findings
 
