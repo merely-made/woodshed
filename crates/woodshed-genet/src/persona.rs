@@ -82,11 +82,14 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let mut answer = None;
     let mut purpose = PickPurpose::Startup;
     let mut requested = false;
+    let mut already_chosen = false;
     ctx.runner.update(|ui| {
         requested = std::mem::take(&mut ui.persona_switch_requested);
         if let Some(pick) = ui.persona.as_mut() {
             answer = pick.outcome.take();
             purpose = pick.purpose;
+            already_chosen = matches!(answer.as_ref(), Some(PickerEvent::Chose(id))
+                if pick.roster.entries.iter().any(|entry| entry.chosen && &entry.id == id));
         }
     });
     if requested {
@@ -120,6 +123,18 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         let Some(profile) = chosen else {
             return;
         };
+        // A chosen, installed persona is a selection-only action. A different
+        // family choice still needs custody even when this process holds the
+        // selected store. Canonical identity, rather than display name, binds it.
+        if already_chosen
+            && shared.storage.is_some()
+            && matches!(shared.seal.as_ref(),
+                Some(woodshed_views::persona::PracticeSeal::Sealed { persona, .. })
+                    if persona == &profile.0)
+        {
+            ctx.runner.update(|ui| ui.persona = None);
+            return;
+        }
         ctx.runner.update(|ui| {
             ui.persona = None;
             ui.practice_close_pending = false;
