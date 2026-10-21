@@ -86,6 +86,15 @@ choice still reach preservation; and a pre-change negative control plus the
 focused current-source gate are recorded. This slice adds no Reload action,
 capture cancellation, persona namespace migration or Redshank recovery policy.
 
+Local source `6ca442f6` implements this candidate. The new production-hook
+regression first fails on the unchanged current persona implementation at the
+expected pending-transition assertion (exit 101). With the guard, all 28
+`persona::` cases pass, including five negative identity/store/family scenarios
+in the second new case. Exact source/lock bytes match the committed candidate;
+the [receipt](../validation/persona-selection-noop_20261021/README.md) preserves
+both process outcomes. Native/custody/capture acceptance and publication remain
+separate. Redshank recovery remains the next substantial proposed product slice.
+
 ## Findings
 
 2026-10-16: current persona settlement still opens incoming custody/resets the UI

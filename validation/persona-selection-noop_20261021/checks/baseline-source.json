@@ -1,0 +1,7 @@
+{
+  "base_commit": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7",
+  "production_persona_sha256": "ec2201bea656bc6f3d6bde7ca48107c76ee8f70e00ecd83fa7170cf1b1c49608",
+  "test_source_sha256": "0a41d4d39f952215a05fbbecb30fcd5c784d6ff73c2c1829001af88d37b74b2f",
+  "exit_code": 101,
+  "expected_failure": "The selected installed persona still creates pending_persona_switch and attempts preservation."
+}
