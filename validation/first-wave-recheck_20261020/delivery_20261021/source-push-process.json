@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "first-wave-source-push-20261021",
+  "command": [
+    "git",
+    "push",
+    "origin",
+    "HEAD:refs/heads/main"
+  ],
+  "started_at": "2026-10-21T19:06:40.571653Z",
+  "ended_at": "2026-10-21T19:06:42.730856Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-audit-first-wave-20261020",
+  "log": "/Users/markik/Code/testing/woodshed-first-wave-publication-20261021/source-push.log",
+  "log_sha256": "c743d763522fb930971f769b308101a02f32f27dd99fb6afa6fdbbc46272ee8f",
+  "source_commit": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
+}

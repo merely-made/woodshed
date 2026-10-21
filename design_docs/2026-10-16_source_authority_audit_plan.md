@@ -226,6 +226,14 @@ counted processes exited zero. A1 and Q1 corrections are local at `22c9900` and
 retains source/lock hashes, original process evidence, ownership and qualification
 limits. Existing native evidence is not transferred to this revision.
 
+2026-10-21 delivery: the user authorized publication and scoped cleanup. Remote
+`main` remained at `9f80bb5e`; the qualified three-commit branch fast-forwarded
+it to `cb4ed31`. Fifty repeated focused A1/Q1 checks pass and all original
+source/evidence hashes match. A fresh remote clone verifies the published source
+and retained receipt bytes. The [publication record](../validation/first-wave-recheck_20261020/publication.json)
+keeps actual process exits and the narrow cleanup scope. Native/custody/device
+acceptance, P5a and unresolved design decisions retain their existing boundaries.
+
 ## Current findings and next implementation order
 
 1. **Preservation and input admission already have implementations.** A1, A4 and

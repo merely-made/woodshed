@@ -1772,5 +1772,7 @@
   "recorder_runtime_followup": "../recorder-runtime_20261019/receipt.json",
   "first_wave_recheck_followup": "../first-wave-recheck_20261020/receipt.json",
   "first_wave_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
-  "first_wave_recheck_scope": "Only A1\u2013A5 and Q1 targeted production seams and focused CPU controls; other findings retain their earlier dated reconciliation."
+  "first_wave_recheck_scope": "Only A1\u2013A5 and Q1 targeted production seams and focused CPU controls; other findings retain their earlier dated reconciliation.",
+  "first_wave_publication_followup": "../first-wave-recheck_20261020/publication.json",
+  "first_wave_published_source_revision": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
 }

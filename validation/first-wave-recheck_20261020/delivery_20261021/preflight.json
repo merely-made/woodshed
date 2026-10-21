@@ -1,0 +1,31 @@
+{
+  "source_commit": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6",
+  "remote_main_before": "9f80bb5eabc4b513e057b22af6f80d83ecb8e9ac",
+  "integration": "Remote main is an ancestor; exact qualified source tree requires no rebase or merge.",
+  "original_receipt_sha256": "1798057d8b4a8d0629376689887ee7cd266872fec54c5c6a7fdd1a2d15dc1060",
+  "original_totals": {
+    "passed": 1020,
+    "failed": 0,
+    "ignored": 9
+  },
+  "original_nested_children": {
+    "passed": 5,
+    "failed": 0,
+    "ignored": 0,
+    "invocations": 5
+  },
+  "source_and_evidence_hashes": "all match",
+  "ignored_paths": [
+    "!! ports/hocket/target/",
+    "!! ports/redshank/target/",
+    "!! target/",
+    "!! validation/__pycache__/",
+    "!! validation/link-model-p6_20261016/__pycache__/"
+  ],
+  "ignored_disposition": "Only Cargo target directories and Python bytecode caches; reproducible disposable build/cache data. All required source notes, receipts and raw logs are tracked.",
+  "authorization": {
+    "thread": "01a14181-bec3-7042-b812-77738b0f7e95",
+    "observed_human_message": "Alright, let\u2019s triage, commit, push/pull/merge, prune on both these macs."
+  },
+  "scope": "Only this first-wave branch/worktree and direct remote main publication. Primary, iMac, historical branches, other worktrees and stashes excluded."
+}
