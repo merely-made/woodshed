@@ -1,0 +1,16 @@
+diff --git a/crates/cambium/cambium-rootstock/src/input.rs b/crates/cambium/cambium-rootstock/src/input.rs
+index f5790ce1a..d0ab8bdac 100644
+--- a/crates/cambium/cambium-rootstock/src/input.rs
++++ b/crates/cambium/cambium-rootstock/src/input.rs
+@@ -580,6 +580,11 @@ where
+             self.move_focused_text_visual(press, base);
+         }
+         self.after_dispatch();
++        // Key handlers and after-dispatch hooks can insert or remove controls.
++        // Apply those DOM mutations before a focus restyle walks the new tree;
++        // otherwise newly inserted elements have no computed style yet.
++        let (width, height) = self.s.layout_size;
++        self.relayout(width, height);
+         // Focus may have moved (Tab, or a handler's `set_focus`): refresh the
+         // `:hover` / `:focus` restyle. Cheap — it returns early unless the
+         // hovered/focused pair actually changed.

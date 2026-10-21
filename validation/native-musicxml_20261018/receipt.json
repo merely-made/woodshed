@@ -1,0 +1,78 @@
+{
+  "date_utc": "2026-10-18T18:01:36.540032+00:00",
+  "status": "pass",
+  "scope": "Native Woodshed notation prototype; actual-source local Mere supplier cohort, two sealed native processes; not canonical-lock integration, general import, third-party engraving, full-piece playback, hardware audio, or full suites.",
+  "native_binary_sha256": "ae01825d8cd0518ed983dee148e124b13490532868773cc42b00f959ec480be9",
+  "stable_source_inputs": 955,
+  "checks": {
+    "preview_does_not_author": true,
+    "cards_preserved": true,
+    "inactive_set_preserved": true,
+    "exact_musicxml_reopened": true,
+    "musical_reading_reopened": true,
+    "exact_native_export_matches_save": true,
+    "native_export_xsd": true,
+    "native_export_independent_reader": true,
+    "source_ledger_unchanged_across_build_and_run": true
+  },
+  "focused_test_counts": {
+    "model-final.log": 9,
+    "renderer-final.log": 7,
+    "music-view-final.log": 17,
+    "set-music-tests.log": 4,
+    "native-music-test-final.log": 1,
+    "native-legacy-final.log": 3,
+    "native-persona-final.log": 19
+  },
+  "focused_total": 60,
+  "captures": {
+    "seed/01_progression_chart.png": "e2d51644ac2a182e243d2f0b3fa63300a49ec69214e6e7a21714c1b50f0cc9af",
+    "seed/02_progression_score.png": "1978f0cbff04731544fec18a922e0fc773ae4fc1b014ce2a23479885a224fe61",
+    "seed/03_progression_tab.png": "3f387a759ce9be8202a27ca7fafb9a471532991f0a329ef50c6f916fdc6598cc",
+    "seed/04_picking_preview.png": "069c82b5680f29466e5dc650d14a6375fb914cd87c9aff566f2bef4679d425a0",
+    "seed/05_rhythm_score.png": "7186713334b5ad0c5aece39b3d4c9d5a794a1b024d610a78aa362d33e7f7f699",
+    "seed/06_rhythm_tab.png": "b5bbfc8d6f458db31b8f9f16c1142dc08014f6a285ddb940a047ac18867cf080",
+    "seed/07_narrow_music.png": "45fd55432279fb9e501596289b89b9e2a0f68c6c64bcdca9b874c47a1698dd56",
+    "seed/08_narrow_fretboard.png": "cf7b0e65338f95f2bf4a604c6e934c1b0a98f841a5cc2b935320a05c1c85b343",
+    "reopen/01_reopened_score.png": "a1e16398d3a576e6de9ab1f03880da2f68e8348d7ab654cb275ac7682fec0e93",
+    "reopen/02_reopened_narrow.png": "0525091be95010928ce0e0b1aaf97bb44cf6f8c14e51263e3555063773be6cf5",
+    "reopen/03_reopened_fretboard.png": "39818126f6a9eacef301d4449b5d0f9744b04f725d724b2483d7b8653a7084a4",
+    "reopen/04_reopened_wide.png": "5a8c462641a892c6652204c5bfed1b180752f5f567250ef4affe97665960f4de"
+  },
+  "native_export_sha256": "ee62262466e515c7913b5a1e2d576d94055f93bd346fa6aabb595b816ba6554c",
+  "fixture_export_checks": {
+    "xsd": 6,
+    "independent_reader": 6,
+    "semantic_fixture_checks": 6,
+    "pitched_staff_pairs": 90,
+    "rest_staff_pairs": 1,
+    "measures": 22
+  },
+  "native_export_semantic_checks": {
+    "xsd": 1,
+    "independent_reader": 1,
+    "semantic_fixture_checks": 1,
+    "pitched_staff_pairs": 11,
+    "rest_staff_pairs": 2,
+    "measures": 2
+  },
+  "reviewed_capture_count": 12,
+  "checkpoints": {
+    "progression-initial": "88430ffd3cd8c236ed5ce299c02ab998918082ba8e353ed5cbdad68b1eb213d8",
+    "progression-preview": "88430ffd3cd8c236ed5ce299c02ab998918082ba8e353ed5cbdad68b1eb213d8",
+    "progression-picked": "6c4399bc68319103efa20b33af0be0d8c85b8ee3c6baafceb7eabbb3e7eadb5b",
+    "rhythm-initial": "951d6972d00f038124ecfcfe83ea72fe6d5a45956457d082aee999349e608539",
+    "rhythm-edited": "a93418c846a70b26065336e61646b566fda4468b6308ce9d1baa8ed88c4e523e",
+    "final": "a93418c846a70b26065336e61646b566fda4468b6308ce9d1baa8ed88c4e523e",
+    "reopened": "a93418c846a70b26065336e61646b566fda4468b6308ce9d1baa8ed88c4e523e"
+  },
+  "inputs": {
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/verify_native.py": "f19e97ed0b5818fde0b3ceddea0da35a81542a9bbd89aaf5a3828cfcd3b747a8",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/frozen/native_musicxml_editing.scn": "4372a3dbbcfd464c63c0beb4a87d1b3d17c7f1e4af344b6a5286909f2518611d",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/frozen/native_musicxml_reopen.scn": "a69de96f71ee70117e5b31fe246f27c2d810d61629a76fab7727b71c527a0eaa",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/launch_native.py": "5466e520231f82f6de4ab83bfd2f83f60b88815bf5d41f824a6c781d5c699699",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/sources-before-build.json": "57b9698bb7cf9d9d71d24923d0013e7d931c4ab5e980576afa249cec85f9300a",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/sources-after-build.json": "57b9698bb7cf9d9d71d24923d0013e7d931c4ab5e980576afa249cec85f9300a",
+    "/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/sources-after-run.json": "57b9698bb7cf9d9d71d24923d0013e7d931c4ab5e980576afa249cec85f9300a"
+  }
+}

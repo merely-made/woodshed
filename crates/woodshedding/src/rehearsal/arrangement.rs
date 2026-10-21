@@ -4,6 +4,9 @@ use super::CardId;
 use crate::progression::ChordRole;
 use serde::{Deserialize, Serialize};
 
+pub mod bars;
+pub use bars::{Bar, BarGroup, TimeSignatureChange};
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Span {
@@ -38,6 +41,10 @@ pub struct ProgressionArrangement {
     pub role_spans: Vec<Span>,
     pub cards: Vec<CardAlignment>,
     pub rests: Vec<ArrangementRest>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub time_signatures: Vec<TimeSignatureChange>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bar_groups: Vec<BarGroup>,
 }
 /// Capture the musical template and inherited neck setup, so navigation or
 /// catalog reordering cannot reinterpret the attached alignment or voicings.

@@ -1,3 +1,5 @@
+- [Native MusicXML arrangement editing](2026-07-11_stage_set_tools_plan.md#native-notation-led-music-editing-2026-10-18) — Bounded native Chart/Tab/Score and linked fretboard, click/add and drag/move, explicit picking previews, Set save/reopen and MusicXML export. Qualified on the local supplier cohort: 60 focused cases, two native processes, 12 reviewed captures, seven schema/reader/semantic export checks and exact saved-source reopening. Canonical supplier integration remains open. [Receipt](../validation/native-musicxml_20261018/README.md).
+
 - [Independent progression document blocks](2026-07-11_stage_set_tools_plan.md#shared-scene-prototype-review-2026-10-17) — Current-source second-consumer proof for the shared Djot scene-document codec: real Card/rest/voicing facts round-trip without changing a Set, and Graphshell receives the actual export. Local supplier cohort only; native Woodshed block authoring and canonical dependency integration remain separate. [Receipt](../validation/document-blocks_20261017/receipt.json).
 
 # design_docs Index

@@ -662,7 +662,7 @@ pub(crate) fn preserve_request(shared: &mut Shared, ui: &mut UiState) -> Preserv
     if !session_current(shared, ui) {
         return Preservation::Blocked("Wait for this practice session to finish restoring, then retry saving.".into());
     }
-    if ui.arrangement_editor.dirty() {
+    if ui.arrangement_drafts_dirty() {
         return Preservation::Blocked("Save arrangement drafts before switching, or explicitly discard the outgoing changes.".into());
     }
     if shared.backend.as_ref().is_some_and(AudioBackend::loop_capture_busy) {

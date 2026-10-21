@@ -8532,6 +8532,7 @@ dependencies = [
  "tabard-workshop",
  "taproot",
  "tinct",
+ "ttf-parser",
  "woodshed-core",
  "woodshedding",
  "workbench",
@@ -8557,6 +8558,7 @@ dependencies = [
 name = "woodshedding"
 version = "0.1.0"
 dependencies = [
+ "roxmltree",
  "serde",
  "serde_json",
 ]

@@ -409,6 +409,9 @@ pub struct Set {
     /// Missing Cards or changed catalogs remain retained for explicit repair.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub progression_arrangement: Option<arrangement::SavedProgressionArrangement>,
+    /// Authored notation, saved/exported as MusicXML and independent of Card-order playback.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub music: Option<crate::notation::MusicDocument>,
     /// Index of the card on the stage. Meaningless when `cards` is empty;
     /// clamped on mutation. Order is authoritative while the product is
     /// linear, so the cursor stays an index; identity-addressed callers use
@@ -593,6 +596,7 @@ impl Set {
             }
         }
         copy.progression_arrangement = arrangement;
+        copy.music = source.music;
         copy.cursor = source.cursor.min(copy.cards.len().saturating_sub(1));
         copy.loop_mode = source.loop_mode;
         *self = copy;
@@ -881,12 +885,20 @@ mod tests {
         source.cards[1].id = source.cards[0].id;
         source.cards[2].id = CardId::UNASSIGNED;
         let before = serde_json::to_value(&source).unwrap();
-        assert!(source.admit_card_ids().unwrap_err().contains("Duplicate Card identity"));
+        assert!(
+            source
+                .admit_card_ids()
+                .unwrap_err()
+                .contains("Duplicate Card identity")
+        );
         assert_eq!(serde_json::to_value(&source).unwrap(), before);
         let mut destination = set_of(&["Existing"]);
         let destination_before = serde_json::to_value(&destination).unwrap();
         assert!(destination.copy_instructions_from(&source).is_err());
-        assert_eq!(serde_json::to_value(destination).unwrap(), destination_before);
+        assert_eq!(
+            serde_json::to_value(destination).unwrap(),
+            destination_before
+        );
     }
 
     #[test]
@@ -898,7 +910,10 @@ mod tests {
         set.last_card_id = 50;
         set.cursor = 2;
         set.admit_card_ids().unwrap();
-        assert_eq!(set.cards.iter().map(|card| card.id.0).collect::<Vec<_>>(), [40, 51, 52]);
+        assert_eq!(
+            set.cards.iter().map(|card| card.id.0).collect::<Vec<_>>(),
+            [40, 51, 52]
+        );
         assert_eq!(set.cursor_id(), Some(CardId(52)));
         let wire = serde_json::to_value(&set).unwrap();
         set.admit_card_ids().unwrap();
@@ -922,7 +937,10 @@ mod tests {
             set.last_card_id = mint;
             set.cards = ids
                 .into_iter()
-                .map(|id| Card { id: CardId(id), ..card("Input") })
+                .map(|id| Card {
+                    id: CardId(id),
+                    ..card("Input")
+                })
                 .collect();
             let before = serde_json::to_value(&set).unwrap();
             assert!(set.admit_card_ids().is_err());
@@ -962,7 +980,11 @@ mod tests {
         destination.last_card_id = u64::MAX - 2;
         destination.admit_card_ids().unwrap();
         let before = serde_json::to_value(&destination).unwrap();
-        assert!(destination.copy_instructions_from(&set_of(&["One", "Two"])).is_err());
+        assert!(
+            destination
+                .copy_instructions_from(&set_of(&["One", "Two"]))
+                .is_err()
+        );
         assert_eq!(serde_json::to_value(&destination).unwrap(), before);
         destination.admit_card_ids().unwrap();
     }
@@ -990,6 +1012,8 @@ mod tests {
                     role: None,
                 }],
                 rests: vec![],
+                time_signatures: vec![],
+                bar_groups: vec![],
             },
         });
         source.admit_card_ids().unwrap();

@@ -97,6 +97,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             vec![]
         },
+        time_signatures: vec![],
+        bar_groups: vec![],
     };
     let doc = arrangement_scene(&stage, &set, &arrangement, "ii-V-I-study")?;
     let bytes = if args[1].ends_with(".djot") {

@@ -146,6 +146,23 @@ pub(crate) fn seed_example(ui: &mut UiState) {
         .unwrap();
     ui.activate_workspace_panel(WorkspacePanel::Practice);
 }
+/// Explicit synthetic 4/4 Set fixture shared with the Graphshell block study.
+/// Only the scenario lane invokes it; starting an ordinary arrangement still
+/// authors no meter. Subsequent grouping must use the native form controls.
+pub(crate) fn seed_bar_example(ui: &mut UiState) {
+    seed_example(ui);
+    let value: serde_json::Value = serde_json::from_str(include_str!(
+        "../../../support/scene-editing/progression-set.json"
+    )).expect("portable Set fixture");
+    let set: woodshedding::rehearsal::Set = serde_json::from_value(value["set"].clone())
+        .expect("typed portable Set fixture");
+    woodshed_core::saved_arrangements::saved_arrangement_stage(&set)
+        .expect("fixture source still resolves in Woodshed");
+    ui.set = set;
+    ui.activate_workspace_panel(WorkspacePanel::Arrangement);
+    ui.sync_arrangement_scene();
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -161,6 +178,7 @@ mod tests {
         h.after_dispatch();
         h.layout_at(1180.0, 1100.0);
         assert!(h.click_on(&Selector::class("workspace-panel").containing("Arrangement")));
+        assert!(h.click_on(&Selector::class("music-legacy")));
         assert!(h.click_on(&Selector::class("arrangement-start")));
         assert!(h.click_on(&Selector::class("arrangement-place-order")));
         let before = serde_json::to_value(&h.state().set.cards).unwrap();
@@ -195,7 +213,7 @@ mod tests {
         );
         h.with_dom(|dom| {
             assert_eq!(
-                taproot::matching(dom, &Selector::class("arrangement-error")).len(),
+                taproot::matching_classes(dom, &Selector::class("arrangement-error")).len(),
                 1
             );
         });
@@ -242,7 +260,7 @@ mod tests {
             let selector = Selector::class("arrangement-scene");
             // Scrolling to the actual custom leaf uses the same path as native clicks.
             assert!(h.click_on(&selector));
-            let node = h.with_dom(|dom| taproot::matching(dom, &selector)[0]);
+            let node = h.with_dom(|dom| taproot::matching_classes(dom, &selector)[0]);
             let (x, y, w, height) = h.painted_rect(node).unwrap();
             let (at, beat) = {
                 let surfaces = h.state().arrangement_editor.surfaces.borrow();
@@ -358,7 +376,7 @@ mod tests {
             );
             h.set_modifiers(Default::default());
             let move_selector = Selector::class("arrangement-span-edit").containing("Move earlier");
-            let move_node = h.with_dom(|dom| taproot::matching(dom, &move_selector)[0]);
+            let move_node = h.with_dom(|dom| taproot::matching_classes(dom, &move_selector)[0]);
             assert!(h.click_on(&move_selector));
             assert_eq!(
                 h.state()
@@ -410,20 +428,50 @@ mod tests {
         for width in [1180.0, 420.0] {
             let mut ui = UiState::new();
             seed_example(&mut ui);
-            ui.set_viewport_width(width);
+            let initial_width = if width < 1000.0 { 1180.0 } else { width };
+            ui.set_viewport_width(initial_width);
             ui.activate_workspace_panel(WorkspacePanel::Arrangement);
             ui.start_arrangement();
             ui.place_arrangement_cards_in_order();
             let sheet = crate::appearance::stylesheet(&ui);
             let logic: crate::sync::Logic = Box::new(woodshed_views::stage::stage_root);
             let mut h = cambium_genet_winit_host::Harness::new(sheet, ui, logic);
-            h.layout_at(width, 1100.0);
+            h.layout_at(initial_width, 1100.0);
+            if width != initial_width {
+                h.update(|ui| {
+                    ui.set_viewport_width(width);
+                });
+                h.layout_at(width, 1100.0);
+            }
             let dom = h.runner().dom();
             let dom = dom.borrow();
-            let nodes = taproot::matching(&dom, &Selector::class("arrangement-preview"));
+            let nodes = taproot::matching_classes(&dom, &Selector::class("arrangement-preview"));
             assert_eq!(nodes.len(), 1);
             let (_, _, w, _) = h.painted_rect(nodes[0]).unwrap();
             assert!(w <= width, "preview {w} exceeds viewport {width}");
+            drop(dom);
+
+            let leaf_selector = Selector::class("arrangement-scene");
+            let viewport_selector = Selector::class("arrangement-scene-scroll");
+            assert!(h.click_on(&leaf_selector), "scene leaf should scroll into view at {width}");
+            let (leaf, viewport) = h.with_dom(|dom| {
+                (
+                    taproot::matching_classes(dom, &leaf_selector)[0],
+                    taproot::matching_classes(dom, &viewport_selector)[0],
+                )
+            });
+            let leaf_rect = h.painted_rect(leaf).unwrap();
+            let viewport_rect = h.painted_rect(viewport).unwrap();
+            let leaf_visible = h.visible_rect(leaf).unwrap();
+            assert_eq!(leaf_rect.3, 300.0, "leaf keeps its declared height at {width}");
+            assert_eq!(
+                viewport_rect.3, 300.0,
+                "scene viewport must not collapse at {width}: {viewport_rect:?}"
+            );
+            assert_eq!(
+                leaf_visible.3, 300.0,
+                "full scene leaf should be vertically visible at {width}: {leaf_visible:?}"
+            );
         }
     }
 }

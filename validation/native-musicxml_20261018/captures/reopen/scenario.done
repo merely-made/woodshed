@@ -1,0 +1,11 @@
+RESULT ok
+captured 01_reopened_score
+captured 02_reopened_narrow
+captured 03_reopened_fretboard
+captured 04_reopened_wide
+capture 01_reopened_score 2360x2200 digest=9981e84bccfa5317 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/reopen/01_reopened_score.png
+capture 02_reopened_narrow 840x2200 digest=972c058800161ebf file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/reopen/02_reopened_narrow.png
+capture 03_reopened_fretboard 840x2200 digest=d7eac337fe6e7ca7 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/reopen/03_reopened_fretboard.png
+capture 04_reopened_wide 2360x2200 digest=1b5090f1b499bff6 file=/Users/markik/Code/output/woodshed-native-musicxml-20261018/native-run-v2/reopen/04_reopened_wide.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 57 frames, 60 redraws, 3 unpresented redraws
