@@ -1,0 +1,37 @@
+{
+  "schema": "woodshed.integration-publication/v1",
+  "date": "2026-10-21",
+  "upstream_before": "196d50ecdd1c5664ed2fbbf21cdd6c24260a7362",
+  "snapshot": "9207a034366174c32c80ce1c7f0616ce75680646",
+  "merged_and_remote_verified": "b77c53371d207c4a8640f29baeab447e2252241c",
+  "primary": {
+    "path": "/Users/markik/Code/repos/woodshed",
+    "branch": "preserved/ringdown-pre-sync-20261021",
+    "head": "0452bcea1ff227924631ac190744e2bd9282fba5",
+    "unchanged_source_paths": 1011,
+    "status_unchanged": true,
+    "index_preserved": true
+  },
+  "main": {
+    "path": "/Users/markik/Code/worktrees/woodshed-ringdown-sync",
+    "branch": "main",
+    "upstream": "origin/main",
+    "working_tree_clean_before_publication_record": true
+  },
+  "checks": {
+    "woodshed_desktop_compile": "pass",
+    "hocket_desktop_compile": "pass",
+    "desktop_midi_diagnostic_cases_passed": 43,
+    "hocket_lock_resolution": "pass",
+    "ringdown_locked_resolution": "pass",
+    "same_upstream_git_sources": true
+  },
+  "native_windows_linux_diagnostic_acceptance": "pending; no claim added by integration",
+  "guitar_used": false,
+  "retention": {
+    "integration_worktree_owner": "Ringdown diagnostic acceptance, kept for current-main continuation",
+    "shared_target": "/Users/markik/Code/repos/woodshed/target",
+    "isolated_cargo_homes_created": false
+  },
+  "publication_record_note": "This record is committed after the verified implementation merge; its final commit is checked against remote main separately."
+}
