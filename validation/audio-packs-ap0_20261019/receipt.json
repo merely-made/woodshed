@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-19",
+  "scope": "AP0 bounded embedding assessment; no product implementation",
+  "baseline": "9ab3f6be29027321725b385961e8b323a2bba2c0",
+  "tools": {
+    "native_rustc": "rustc 1.99.0 (b940084d7 2026-09-28) (Homebrew)",
+    "native_cargo": "cargo 1.99.0 (5f94df478 2026-08-27) (Homebrew)",
+    "host": "Darwin x86_64"
+  },
+  "firewheel_rev": "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",
+  "source_imports": "portable sources compile original sequencer.rs, sound.rs and samples.rs via path imports; @WOODSHED_ROOT@ is substituted only in the probe wrapper",
+  "gates": {
+    "native_portable_run": "passed: four meters/subdivisions, synthetic single-lane note map",
+    "native_runtime_run": "passed: exact product OutputRuntime and disposable Firewheel candidate nodes",
+    "wasm_candidate_core_compile": "passed: explicit rustup Rust 1.99.1, wasm32-unknown-unknown",
+    "msrv_portable_and_candidates_compile": "passed: explicit rustup Rust 1.97.1; not full woodshed-audio MSRV gate",
+    "windows_native": "not run",
+    "linux_native": "not run",
+    "browser_audio": "not run",
+    "physical_audio": "not run",
+    "guitar_midi_acceptance": "not run"
+  },
+  "closures": {
+    "portable": {
+      "unique_packages_including_subject": 15,
+      "native_or_ecs_packages": []
+    },
+    "candidates": {
+      "unique_packages_including_subject": 47,
+      "native_or_ecs_packages": []
+    },
+    "midly": {
+      "unique_packages_including_subject": 1,
+      "native_or_ecs_packages": []
+    },
+    "rustysynth": {
+      "unique_packages_including_subject": 1,
+      "native_or_ecs_packages": []
+    },
+    "fundsp": {
+      "unique_packages_including_subject": 34,
+      "native_or_ecs_packages": []
+    },
+    "firewheel": {
+      "unique_packages_including_subject": 59,
+      "native_or_ecs_packages": [
+        "cpal v0.18.2",
+        "firewheel-cpal v0.14.0"
+      ]
+    },
+    "runtime": {
+      "unique_packages_including_subject": 125,
+      "native_or_ecs_packages": [
+        "cpal v0.18.2",
+        "firewheel-cpal v0.14.0",
+        "midir v0.11.1"
+      ]
+    }
+  },
+  "caveats": [
+    "Callback allocation counts cover the rendering thread and measured fixtures only, not a complete real-time audit.",
+    "RustySynth used original synthetic SF2, 16 voices, effects off, aligned note on/off, 40-note burst and all-notes-off.",
+    "FunDSP exercised a dynamic sine-and-gain unit; arbitrary effects/graphs are not qualified.",
+    "Preparation/render timings are unoptimized instrumented observations, not performance benchmarks.",
+    "First wasm attempt used Homebrew rustc without target libraries; explicit rustup compiler corrected it.",
+    "Probe workspace lock includes optional packages; normal dependency trees, not lock presence, determine active closure."
+  ]
+}

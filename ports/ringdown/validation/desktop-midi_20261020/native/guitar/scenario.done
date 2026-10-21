@@ -1,0 +1,22 @@
+RESULT ok
+waited 28 frames
+captured 01_advertising
+waited 95 frames
+captured 02_first_connection
+waited 695 frames
+captured 03_receiver_disconnected
+waited 478 frames
+captured 04_receiver_reconnected
+captured 05_desktop_closed
+waited 709 frames
+captured 06_desktop_reconnected
+captured 07_closed
+capture 01_advertising 2360x1960 digest=df8ca312a1f6e2df file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/01_advertising.png
+capture 02_first_connection 2360x1960 digest=170b8c809c55b48d file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/02_first_connection.png
+capture 03_receiver_disconnected 2360x1960 digest=a81e318b044c9d5a file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/03_receiver_disconnected.png
+capture 04_receiver_reconnected 2360x1960 digest=cd87ccc62e7d3c88 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/04_receiver_reconnected.png
+capture 05_desktop_closed 2360x1960 digest=c469181241731d79 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/05_desktop_closed.png
+capture 06_desktop_reconnected 2360x1960 digest=4d20f00e6b02da4a file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/06_desktop_reconnected.png
+capture 07_closed 2360x1960 digest=9ae6bffda9a06aed file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/guitar-r2/run/07_closed.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 2080 frames, 2083 redraws, 3 unpresented redraws

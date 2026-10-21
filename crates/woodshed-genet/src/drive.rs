@@ -27,7 +27,8 @@ pub fn wall_time_ms() -> Option<u64> {
 /// audio, transport, calibration, and MIDI surfaces still need their ordinary
 /// frame updates while the pointer is held.
 pub fn requires_live_frame(shared: &Shared, ui: &UiState) -> bool {
-    ui.tuner.enabled
+    (ui.midi.diagnostics.recording && ui.section == woodshed_core::storage::AppSection::Settings)
+        || ui.tuner.enabled
         || ui.song_playing
         || ui.rehearsal_running
         || ui.stage.arpeggio_playing
@@ -117,6 +118,9 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     let midi_in_connected = shared.midi.connected_input().is_some();
     let midi_clock_bpm = shared.midi.clock_bpm();
     let midi_events = shared.midi.recent_events();
+    ui.midi.diagnostics = shared.midi.diagnostics_status();
+    animating |=
+        ui.midi.diagnostics.recording && ui.section == woodshed_core::storage::AppSection::Settings;
     // Refresh frame observations from the host clock. Interaction handlers
     // independently sample the injected event clock, since an idle view may
     // have no intervening frames for a long pause.
@@ -125,9 +129,10 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     let Some(backend) = shared.backend.as_mut() else {
         if ui.practice_clock_managed && ui.rehearsal_running {
             ui.stop_rehearsal();
-            ui.card_timing_notice = Some("Audio output is unavailable. Run requires an active output clock.".into());
+            ui.card_timing_notice =
+                Some("Audio output is unavailable. Run requires an active output clock.".into());
         }
-        return false;
+        return animating;
     };
 
     if ui.tuner.enabled {
@@ -174,7 +179,8 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     // Device-originated Card starts/completions can arrive without an input
     // dispatch. Publish their history/cursor through the ordinary guarded save
     // path, including the final completion after the user presses Next.
-    if ui.practice_history.len() != previous_history || ui.rehearsal_set().cursor != previous_cursor {
+    if ui.practice_history.len() != previous_history || ui.rehearsal_set().cursor != previous_cursor
+    {
         crate::capture_persistence::persist(shared, ui);
     }
     animating
@@ -215,16 +221,28 @@ fn refresh_rehearsal_clock(
 
 /// Explicit control-side preview admission; no fallback to the void audio API.
 pub(crate) trait CardPreviewAdmission: AudioBackend {
-    fn admit_card(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String>;
-    fn admit_audition(&mut self, _preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+    fn admit_card(
+        &mut self,
+        preview: &woodshed_core::card_timing::CardPreview,
+    ) -> Result<(), String>;
+    fn admit_audition(
+        &mut self,
+        _preview: &woodshed_core::card_timing::CardPreview,
+    ) -> Result<(), String> {
         Err("This host cannot confirm audition admission.".into())
     }
 }
 impl CardPreviewAdmission for crate::audio::CpalBackend {
-    fn admit_card(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+    fn admit_card(
+        &mut self,
+        preview: &woodshed_core::card_timing::CardPreview,
+    ) -> Result<(), String> {
         self.admit_card_preview(preview)
     }
-    fn admit_audition(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+    fn admit_audition(
+        &mut self,
+        preview: &woodshed_core::card_timing::CardPreview,
+    ) -> Result<(), String> {
         self.admit_audition_preview(preview)
     }
 }
@@ -246,11 +264,19 @@ fn service_card_requests(ui: &mut UiState, backend: &mut impl CardPreviewAdmissi
     loop {
         match ui.audio_requests.first() {
             Some(woodshed_core::audio::AudioRequest::Audition(_)) => {
-                let woodshed_core::audio::AudioRequest::Audition(request) = ui.audio_requests.remove(0) else { unreachable!() };
+                let woodshed_core::audio::AudioRequest::Audition(request) =
+                    ui.audio_requests.remove(0)
+                else {
+                    unreachable!()
+                };
                 service_audition_request(ui, backend, &request);
             },
             Some(woodshed_core::audio::AudioRequest::CardPreview(_)) => {
-                let woodshed_core::audio::AudioRequest::CardPreview(request) = ui.audio_requests.remove(0) else { unreachable!() };
+                let woodshed_core::audio::AudioRequest::CardPreview(request) =
+                    ui.audio_requests.remove(0)
+                else {
+                    unreachable!()
+                };
                 if ui.card_preview_is_current(&request) {
                     let result = backend.admit_card(&request.preview);
                     ui.finish_card_preview_admission(&request, result);
@@ -279,18 +305,29 @@ fn rehearsal_dwell(
         *last = None;
         return false;
     }
-    if ui.rehearsal_pending { *last = None; return true; }
-    let resolved = ui.rehearsal_card().map(|card| woodshed_core::card_dwell(card, ui.transport.bpm));
+    if ui.rehearsal_pending {
+        *last = None;
+        return true;
+    }
+    let resolved = ui
+        .rehearsal_card()
+        .map(|card| woodshed_core::card_dwell(card, ui.transport.bpm));
     let dwell = match resolved {
         Some(Ok(Some(dwell))) => dwell,
-        Some(Ok(None)) => { *last = None; return true; }, // admitted Manual
+        Some(Ok(None)) => {
+            *last = None;
+            return true;
+        }, // admitted Manual
         Some(Err(error)) => {
             ui.stop_rehearsal();
             ui.card_timing_notice = Some(error.to_string());
             *last = None;
             return false;
         },
-        None => { *last = None; return false; },
+        None => {
+            *last = None;
+            return false;
+        },
     };
     match last {
         Some(t) if now.duration_since(*t) >= dwell => {
@@ -364,7 +401,10 @@ mod tests {
     }
 
     impl CardPreviewAdmission for RecordedAudio {
-        fn admit_card(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+        fn admit_card(
+            &mut self,
+            preview: &woodshed_core::card_timing::CardPreview,
+        ) -> Result<(), String> {
             self.admissions += 1;
             if self.refuse_on_admission == Some(self.admissions) {
                 return Err("PCM frame budget exceeded".into());
@@ -411,7 +451,8 @@ mod tests {
             card.setting.marked = vec![(0, 0)];
         }
         let owner = ui.working_sets.active_id;
-        ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+        ui.toggle_rehearsal();
+        crate::tests::acknowledge_card_preview_fixture(&mut ui);
         let expected_sound = ui.rehearsal_sounding_pitches().unwrap().unwrap();
         let observation_started = ui.card_started_ms;
         let observations = ui.practice_history.len();
@@ -442,10 +483,14 @@ mod tests {
         refresh_rehearsal_clock(&mut last, &mut instruction, &ui);
         assert_eq!(last, Some(began));
         assert_eq!(ui.rehearsal_owner, Some(owner));
-        assert_eq!(ui.rehearsal_sounding_pitches().unwrap().unwrap(), expected_sound);
+        assert_eq!(
+            ui.rehearsal_sounding_pitches().unwrap().unwrap(),
+            expected_sound
+        );
         assert_ne!(
             ui.stage
-                .card_sounding_pitches_at_tempo(ui.rehearsal_card().unwrap(), ui.transport.bpm).unwrap(),
+                .card_sounding_pitches_at_tempo(ui.rehearsal_card().unwrap(), ui.transport.bpm)
+                .unwrap(),
             expected_sound,
         );
 
@@ -523,15 +568,26 @@ mod tests {
         assert_eq!(ui.set.cards[ui.set.cursor].id, rejected);
         assert_eq!(ui.practice_history.len(), initial_history + 2);
         assert!(ui.practice_history.recent(20).iter().any(|event| {
-            event.provenance.as_ref().is_some_and(|p| p.occurrence_id == first)
+            event
+                .provenance
+                .as_ref()
+                .is_some_and(|p| p.occurrence_id == first)
                 && event.kind == woodshed_core::history::EngagementKind::Completed
                 && event.provenance.as_ref().and_then(|p| p.working_set_id) == Some(owner)
         }));
         assert!(!ui.practice_history.recent(20).iter().any(|event| {
-            event.provenance.as_ref().is_some_and(|p| p.occurrence_id == rejected)
+            event
+                .provenance
+                .as_ref()
+                .is_some_and(|p| p.occurrence_id == rejected)
                 && event.kind.is_practice()
         }));
-        assert!(ui.card_timing_notice.as_deref().unwrap().contains("PCM frame budget exceeded"));
+        assert!(
+            ui.card_timing_notice
+                .as_deref()
+                .unwrap()
+                .contains("PCM frame budget exceeded")
+        );
 
         // Retrying the same owner and current Card after the transient host
         // refusal succeeds; it does not skip ahead or inherit a foreign Set.
@@ -551,11 +607,22 @@ mod tests {
         assert_eq!(ui.set.cursor, 1);
         assert_eq!(ui.set.cards[ui.set.cursor].id, rejected);
         assert_eq!(backend.admissions, 3);
-        let retried = ui.practice_history.recent(20).into_iter().find(|event| {
-            event.provenance.as_ref().is_some_and(|p| p.occurrence_id == rejected)
-                && event.kind.is_practice()
-        }).expect("successful retry opens an observation for the current Card");
-        assert_eq!(retried.kind, woodshed_core::history::EngagementKind::Rehearsed);
+        let retried = ui
+            .practice_history
+            .recent(20)
+            .into_iter()
+            .find(|event| {
+                event
+                    .provenance
+                    .as_ref()
+                    .is_some_and(|p| p.occurrence_id == rejected)
+                    && event.kind.is_practice()
+            })
+            .expect("successful retry opens an observation for the current Card");
+        assert_eq!(
+            retried.kind,
+            woodshed_core::history::EngagementKind::Rehearsed
+        );
         assert_eq!(retried.provenance.unwrap().working_set_id, Some(owner));
     }
 

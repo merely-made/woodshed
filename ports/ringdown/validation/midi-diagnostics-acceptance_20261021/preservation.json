@@ -1,0 +1,12 @@
+{
+  "tracked_changes_outside_scope": [],
+  "snapshotted_source_changes_outside_scope": [],
+  "cargo_manifest_and_lock_unchanged": true,
+  "frozen_packets_matching_files": {
+    "pedal-input-acceptance_20261020": 134,
+    "pedal-previous-diagnostics_20261021": 77,
+    "midi-diagnostics-ui_20261021": 9
+  },
+  "before_snapshot": "/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/before.hashes.json",
+  "task_patch": "task.patch"
+}

@@ -1,0 +1,12 @@
+{
+  "attempted": 0,
+  "accepted": 0,
+  "failed": 0,
+  "guitar_disconnect_observed": true,
+  "guitar_reconnect_observed": true,
+  "desktop_close_reopen_observed": true,
+  "final_output_closed": true,
+  "clock_always_disabled": true,
+  "disconnect_display_updated_without_input": true,
+  "desktop_reopen_needed_owner_midi_off_on": true
+}

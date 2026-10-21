@@ -12,11 +12,17 @@ readme = "../../README.md"
 keywords = ["audio", "tuner", "metronome", "pitch-detection", "guitar"]
 categories = ["multimedia::audio"]
 
+[features]
+default = ["ble-midi"]
+ble-midi = ["woodshed-instrument/ble-midi"]
+
 [dependencies]
 # Shared pure-DSP primitives — onset/tempo cores, latency estimation,
 # click synthesis. The driver layers (OnsetAnalyzer, CalibrationSession,
 # Sound::Click voice) in this crate are built on top of these.
 audio-primitives = { workspace = true }
+audio-pattern.workspace = true
+audio-packs.workspace = true
 cpal = { workspace = true }
 firewheel = { workspace = true }
 rtrb = { workspace = true }
@@ -24,7 +30,7 @@ audioadapter-buffers = { workspace = true }
 pitch-detector = { workspace = true }
 pitch-detection = { workspace = true }
 hound = { workspace = true }
-midir = { workspace = true }
+woodshed-instrument = { path = "../woodshed-instrument", default-features = false, features = ["midi"] }
 serde = { workspace = true }
 
 [dev-dependencies]

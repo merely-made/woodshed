@@ -1,0 +1,30 @@
+{
+  "host_count": 1,
+  "host": {
+    "id": "path+file:///Users/markik/Code/repos/woodshed/vendor/cambium-genet-winit-host#0.1.0",
+    "source": null,
+    "manifest": "/Users/markik/Code/repos/woodshed/vendor/cambium-genet-winit-host/Cargo.toml"
+  },
+  "sources": [
+    {
+      "name": "cambium",
+      "version": "0.3.3",
+      "source": "git+https://github.com/merely-made/mere.git?branch=main#d1a200b1877223f5b6ced7f5fbaca3671c10f5dd"
+    },
+    {
+      "name": "cambium-rootstock",
+      "version": "0.1.0",
+      "source": "git+https://github.com/merely-made/mere.git?branch=main#d1a200b1877223f5b6ced7f5fbaca3671c10f5dd"
+    },
+    {
+      "name": "genet-winit-host",
+      "version": "0.2.0",
+      "source": "git+https://github.com/merely-made/genet.git?branch=main#917f88e6004d17e1eff19598468e12d9b3c5ab5b"
+    },
+    {
+      "name": "woodshed-genet",
+      "version": "0.1.0",
+      "source": null
+    }
+  ]
+}

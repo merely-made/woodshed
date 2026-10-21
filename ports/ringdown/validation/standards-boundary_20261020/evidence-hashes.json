@@ -1,0 +1,82 @@
+[
+  {
+    "path": "builds.json",
+    "sha256": "892a5da3ac24b36ba6408896af34d74a65318a084dba119ef4dd04bc552386fb"
+  },
+  {
+    "path": "combined-check.log",
+    "sha256": "95d3cd2e53b19477470f43c3c87cf6063ba1eb2604266a1ee330f0d108a500a7"
+  },
+  {
+    "path": "midi-compiler-inputs.d",
+    "sha256": "517f0a90eeacc5e0573f953426d963b1ef282ed53c6d97f1b4736f1fb0f9ded2"
+  },
+  {
+    "path": "midi-linux.json",
+    "sha256": "8ef5ebd1233506520fab0d46f58b1047399733e882608255015567b43f5c4cc9"
+  },
+  {
+    "path": "midi-macos.json",
+    "sha256": "3c9f0dd2d35b5c958f23f502c74c45341e2b4f803dd3fe382d3205af7c1cbc89"
+  },
+  {
+    "path": "midi-release-build.log",
+    "sha256": "0f48d685a7c7e5eb21302c535ff8582ec6a812000fcb0e4ab9915435c8e1eeb4"
+  },
+  {
+    "path": "midi-windows.json",
+    "sha256": "2a6eaf6c11dd4d5e932cc355641a75686f1102c42f582c8279cfa61e72b322c0"
+  },
+  {
+    "path": "offline-check.log",
+    "sha256": "a155b5276487df6982d5d253fc9c4e642d5266a8663366147f47a289b9761ce7"
+  },
+  {
+    "path": "offline-compiler-inputs.d",
+    "sha256": "2e18c33dec534a553f1b589b26d422c88aead4f25dbb756619ba8b6b34352927"
+  },
+  {
+    "path": "offline-linux.json",
+    "sha256": "c5632240684bee4e8ece6b3cd4c12fba947a00aa0ffe2a60f62d318ac3454d94"
+  },
+  {
+    "path": "offline-macos.json",
+    "sha256": "d07a02483b265977f30c09ee5f35e24c538d90191063b5332021449acfe8bfd3"
+  },
+  {
+    "path": "offline-release-build.log",
+    "sha256": "30d449a80f972588035d8c1e421358d259065a9a49314096eb32ca98b73e6da2"
+  },
+  {
+    "path": "offline-windows.json",
+    "sha256": "d83ec11a576f3ba1bf584f5bde3e51cc55d825657ed0c9290540c85ad50b84b8"
+  },
+  {
+    "path": "packetlogger-check.log",
+    "sha256": "26dbc8379e1e65798f54899adb442fa04cf87e76fd04c557e8459d5d1f6b4829"
+  },
+  {
+    "path": "private-example-check.log",
+    "sha256": "c92508a29848820f033cd2ea015c85dde0953c88b07cc967ce34b7c08f610549"
+  },
+  {
+    "path": "receipt.json",
+    "sha256": "ba0099b41168e6e5e21a6fa41d3a43d1b94847b693aac9ba42f1e3ece1bba147"
+  },
+  {
+    "path": "rpc-check.log",
+    "sha256": "5f9619891b9b4f2da2d3a6231424877bdee4e6926af462df8cd79ca22e5c4d8e"
+  },
+  {
+    "path": "source-hashes.json",
+    "sha256": "1328627806b37d75a93a6abde1b643e3b915055194420c6e30e63381267d8924"
+  },
+  {
+    "path": "woodshed-audio-check.log",
+    "sha256": "a84a94afda1757fa5e1324d4803397ddf623f4f0c4f492c4a63c20cdd6941562"
+  },
+  {
+    "path": "woodshed-audio-macos.json",
+    "sha256": "64e888289b3a9c115b22fd2dc971790bccf4b44eca05af8aa65d773c82b433ca"
+  }
+]

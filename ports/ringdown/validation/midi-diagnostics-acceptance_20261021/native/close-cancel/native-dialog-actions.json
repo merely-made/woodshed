@@ -1,0 +1,26 @@
+[
+  {
+    "observation": "close-dialog",
+    "exit": 0
+  },
+  {
+    "observation": "close-held",
+    "exit": 0
+  },
+  {
+    "host_window_command_close_deferred": true,
+    "ui_notice": "Finish or cancel diagnostic export before closing."
+  },
+  {
+    "action": "native-cancel-after-close",
+    "script": "tell application \"System Events\" to tell process \"product-6b741282c705\"\nset frontmost to true\nkey code 53\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "closed_after_export": true,
+    "process": 52736,
+    "phase": "close-cancel"
+  }
+]

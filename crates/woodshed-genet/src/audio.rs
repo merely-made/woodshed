@@ -155,6 +155,7 @@ pub struct CpalBackend {
     native_output: bool,
     heartbeat: Option<OutputHeartbeat>,
     last_metronome: Option<TransportState>,
+    pack_pattern: Option<(String, SequencerPattern)>,
     song_transport_requested: bool,
     /// Opened only when an input feature is requested; retained across
     /// disabling features so all analyzers keep sharing one cpal stream.
@@ -536,6 +537,7 @@ impl CpalBackend {
             native_output,
             heartbeat: None,
             last_metronome: None,
+            pack_pattern: None,
             song_transport_requested: false,
             input: None,
             input_admission: input_admission::Worker::new(),
@@ -660,6 +662,22 @@ impl CpalBackend {
         Ok(())
     }
 
+    /// The existing click lane consumes the same hydrated pattern as export.
+    pub(crate) fn sync_pack(&mut self, selection: Option<&audio_packs::PackSelection>, transport: TransportState) -> Result<(), String> {
+        let revision = selection.map(audio_packs::PackSelection::revision);
+        if self.pack_pattern.as_ref().map(|p| &p.0) == revision.as_ref() { return Ok(()); }
+        if self.loop_capture_busy() { return Err("Stop recording / armed capture before updating the drum kit.".into()); }
+        let mut pattern = match selection {
+            Some(selection) => selection.hydrated_pattern().map_err(|e| e.to_string())?,
+            None => click_pattern(transport.bpm),
+        };
+        pattern.bpm = transport.bpm;
+        self.with_output(|output| if selection.is_some() { output.set_pack_pattern_playing(pattern.clone(), transport.playing) } else { output.set_click_pattern_playing(pattern.clone(), transport.playing) })?;
+        self.pack_pattern = revision.map(|revision| (revision, pattern));
+        self.last_metronome = Some(transport);
+        Ok(())
+    }
+
     /// End a calibration run: disable onset detection and restore the
     /// ordinary click lane, stopped. A refused restoration leaves the cache
     /// invalid so ordinary synchronization retries the full pattern/state.
@@ -679,11 +697,14 @@ impl AudioBackend for CpalBackend {
             return;
         }
         let restore_pattern = self.last_metronome.is_none();
+        let mut pattern = self.pack_pattern.as_ref().map(|p| p.1.clone()).unwrap_or_else(|| click_pattern(transport.bpm));
+        pattern.bpm = transport.bpm;
+        let packed = self.pack_pattern.is_some();
         if self
             .with_output(|output| {
                 if restore_pattern {
-                    output
-                        .set_click_pattern_playing(click_pattern(transport.bpm), transport.playing)
+                    if packed { output.set_pack_pattern_playing(pattern, transport.playing) }
+                    else { output.set_click_pattern_playing(pattern, transport.playing) }
                 } else {
                     output.set_metronome(transport.bpm, transport.playing)
                 }

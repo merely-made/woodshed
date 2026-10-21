@@ -1,5 +1,30 @@
 # Initial Plan
 
+**Pack follow-up (2026-10-20): AP3 bounded native/project acceptance passed.** The
+[shared audio-pack work](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+owns sequencer reuse, pack admission and shared controls. Hocket now wires the
+same kit/step panel into its existing recorder view and file work into its
+correlated project actor. A local editable kit draft (pattern plus exact asset
+snapshot) is retained in the project manifest and included in dirty/save/reopen
+state. Add loop renders at the session tempo and matching meter, then calls the
+existing recorder import: ordinary layers, playback, media custody and history
+commits. The current native view exposes no Undo button; pack notices describe
+actual recorder audition and mute controls.
+Draft controls themselves are local project metadata, outside recorder history.
+Handoff deliberately carries rendered media and omits the local draft, so peers
+need no optional pack engine. Editable pack handoff remains later work.
+Mere's quantized span operation supplies revision-qualified one-step hit moves;
+richer rhythm scenes, typed routing and a FunDSP vocabulary remain planned.
+[AP3 evidence](../../../validation/audio-packs-ap3_20261020/README.md) covers
+actual controls, native Save/Open/export and a fresh process after the kit
+installation moved away: exact editable draft/assets and rendered media,
+identical MIDI/WAV exports, and nonzero graph playback with click muted.
+Two engine regressions now preserve playback/stop servicing during input loss
+and prevent indefinitely queued starts when UI ticks miss bar wraps, using
+Firewheel's existing DSP clock. Slow debug frames still lose input; live
+performance latency, Windows/Linux and two-peer handoff remain unqualified.
+
+
 Scaffold the workspace, then incrementally build a Deeler-inspired
 collaborative loop recorder. Feature targets are ordered by
 *unblocking* — each lights up capabilities the next depends on. No
@@ -61,13 +86,18 @@ this section (not the FTs) when direction changes.
 - **The current `SequencerEngine` wrap is a placeholder.** Survives
   from FT1's click engine. **Replaced at FT3b-prime** (not FT3b) —
   pivot now, before FT3b hardens around the Woodshed engine boundary.
-- **No plugin hosting for v1.** No CLAP, no VST3, no LV2, no AU, no
-  plugin GUI hosting. Hocket v1 ships curated **first-party Rust
-  devices** on Firewheel nodes, with **schema-driven UI** generated
-  from parameter metadata. firewheel-extra's CLAP host is marked
-  TODO in Firewheel's own design doc; CLAP isn't possible in WASM
-  anyway; plugin hosting drags DAW-shaped product gravity Hocket
-  shouldn't have. See `memory/project_hocket_no_clap_doctrine.md`.
+- **Rust devices and data-defined packs (updated 2026-10-19).** Curated Rust
+  suppliers run through Firewheel nodes, with controls generated from parameter
+  metadata. Bundled and user-installed TOML/JSON packs can configure devices,
+  compose supported operations and carry kits/patterns/assets through one
+  shared admission path. This extends the earlier first-party-only definition
+  policy. CLAP/VST3/LV2/AU and plugin GUI hosting remain outside v1.
+  Hocket's consumer target is creating loop material under the existing
+  session/history and local transport. Reuse the Woodshed sequencer; assess
+  its portable extraction and suppliers under shared AP0 before implementation.
+  AP2 owns the editable-definition versus rendered-layer handoff decision,
+  including asset custody and behavior on a peer without a required operation.
+  Recorder durability, export and handoff work retain their existing gates.
 - **Web is gated, not free.** `firewheel-web-audio` needs wasm
   threading/atomics, nightly + `build-std`, and COOP/COEP deploy
   headers. Real, but a proof gate — flagged for FT11.

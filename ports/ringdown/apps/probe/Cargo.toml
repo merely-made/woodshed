@@ -7,15 +7,32 @@ rust-version = "1.97.1"
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Phase 1 control run: connect to a HyVibe guitar and confirm the recovered protocol against hardware."
+description = "Shared Beats MIDI-file export and standard MIDI control; private RPC diagnostics require explicit features."
 publish = false
 
 [[bin]]
 name = "ringdown-probe"
 path = "src/main.rs"
 
+[features]
+default = ["midi", "ble-midi"]
+midi = ["dep:woodshed-instrument"]
+ble-midi = ["midi", "woodshed-instrument/ble-midi"]
+hyvibe-rpc = ["dep:ringdown", "dep:ringdown-ble", "dep:serde_json", "dep:tokio"]
+packetlogger = ["dep:ringdown", "dep:serde_json"]
+
 [dependencies]
-ringdown = { workspace = true }
-ringdown-ble = { path = "../../crates/ringdown-ble" }
-serde_json = { version = "1", features = ["preserve_order"] }
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+audio-packs = { path = "../../../../crates/audio-packs" }
+woodshed-instrument = { path = "../../../../crates/woodshed-instrument", default-features = false, features = ["midi"], optional = true }
+ringdown = { workspace = true, optional = true }
+ringdown-ble = { path = "../../crates/ringdown-ble", optional = true }
+serde_json = { version = "1", features = ["preserve_order"], optional = true }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"], optional = true }
+
+[dev-dependencies]
+serde_json = "1"
+midly = { version = "=0.5.3", default-features = false, features = ["std", "strict"] }
+
+# A receiving virtual port is a test fixture, not another product MIDI driver.
+[target.'cfg(any(target_os = "macos", target_os = "linux"))'.dev-dependencies]
+midir = "0.11"

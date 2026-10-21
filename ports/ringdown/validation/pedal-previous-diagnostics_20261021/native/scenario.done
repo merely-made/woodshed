@@ -1,0 +1,15 @@
+RESULT ok
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 01_note_and_keyboard
+waited 0 frames
+waited 0 frames
+captured 02_repeat_comparison
+waited 21 frames
+captured 03_closed
+capture 01_note_and_keyboard 2360x2100 digest=b52b197bbcb2df7e file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/native-r1/run/01_note_and_keyboard.png
+capture 02_repeat_comparison 2360x2100 digest=e3ffc620ef8bdf75 file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/native-r1/run/02_repeat_comparison.png
+capture 03_closed 2360x2100 digest=e61dcbf8cb057428 file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/native-r1/run/03_closed.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 73 frames, 76 redraws, 3 unpresented redraws

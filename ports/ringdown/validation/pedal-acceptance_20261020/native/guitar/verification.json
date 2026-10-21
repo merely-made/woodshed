@@ -1,0 +1,39 @@
+{
+  "success": true,
+  "guitar_actions": {
+    "date": "2026-10-20",
+    "path": "Actual Woodshed desktop output selected through native UI; actions through --midi-pedal-stdio and its existing writer",
+    "security": "Explicit previously approved unencrypted compatibility",
+    "bindings_confirmed_after_clear": true,
+    "effect_next": {
+      "channel": 1,
+      "cc": 67,
+      "press": 127,
+      "release": 0,
+      "owner_report": "once",
+      "musical_result": "advanced exactly once"
+    },
+    "effect_previous": {
+      "channel": 1,
+      "cc": 66,
+      "press": 127,
+      "release": 0,
+      "owner_report": "yep",
+      "musical_result": "moved back exactly once"
+    },
+    "instrument_files_written": false,
+    "rpc_used": false,
+    "midi_off_confirmed": true,
+    "midi_on_confirmed": true
+  },
+  "messages_attempted": 4,
+  "messages_accepted_by_os": 4,
+  "messages_failed": 0,
+  "disconnects": 1,
+  "subscription_generations": [
+    1,
+    2
+  ],
+  "reconnect_replay": false,
+  "final_output_closed": true
+}

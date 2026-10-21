@@ -656,6 +656,7 @@ impl OutputRuntime {
             data: Some(OwnedGc::new(data)),
             bpm,
             playing: None,
+            backing_rhythm: false,
         })?;
         self.metronome.0 = bpm;
         Ok(())
@@ -666,13 +667,17 @@ impl OutputRuntime {
         pattern: SequencerPattern,
         playing: bool,
     ) -> Result<(), OutputError> {
+        self.set_rhythm_pattern(pattern, playing, false)
+    }
+    /// A pack uses the existing metronome and backing lanes; prepared sample
+    /// steps are admitted together, without callback decoding or a second clock.
+    pub fn set_pack_pattern_playing(&mut self, pattern: SequencerPattern, playing: bool) -> Result<(), OutputError> {
+        self.set_rhythm_pattern(pattern, playing, true)
+    }
+    fn set_rhythm_pattern(&mut self, pattern: SequencerPattern, playing: bool, backing_rhythm: bool) -> Result<(), OutputError> {
         let bpm = pattern.bpm;
         let data = PreparedClick::prepare(&pattern, self.rate)?;
-        self.send(Command::ClickPattern {
-            data: Some(OwnedGc::new(data)),
-            bpm,
-            playing: Some(playing),
-        })?;
+        self.send(Command::ClickPattern { data: Some(OwnedGc::new(data)), bpm, playing: Some(playing), backing_rhythm })?;
         self.metronome = (bpm, playing);
         Ok(())
     }

@@ -1,0 +1,353 @@
+--- a/crates/woodshed-genet/src/scenario.rs
++++ b/crates/woodshed-genet/src/scenario.rs
+@@ -258,6 +258,7 @@
+     practice_clock_wait: RefCell<Option<practice_clock::Wait>>,
+     physical_dwell: RefCell<Option<physical_audio::Dwell>>,
+     midi_wait: RefCell<Option<(&'static str, bool, std::time::Instant)>>,
++    diagnostic_gate: RefCell<Option<(std::path::PathBuf, std::time::Instant)>>,
+     midi_count: std::cell::Cell<u64>,
+     midi_dwell_until: std::cell::Cell<Option<std::time::Instant>>,
+ }
+@@ -284,6 +285,7 @@
+                 practice_clock_wait: RefCell::new(None),
+                 physical_dwell: RefCell::new(None),
+                 midi_wait: RefCell::new(None),
++                diagnostic_gate: RefCell::new(None),
+                 midi_count: std::cell::Cell::new(0),
+                 midi_dwell_until: std::cell::Cell::new(None),
+             },
+@@ -350,6 +352,14 @@
+         snapshot = snapshot.with_field(
+             "midi-clock-enabled",
+             ctx.runner.state().midi.clock_out.to_string(),
++        );
++        snapshot = snapshot.with_field(
++            "diagnostic-gate-released",
++            self.diagnostic_gate
++                .borrow()
++                .as_ref()
++                .is_none_or(|(path, _)| path.exists())
++                .to_string(),
+         );
+         snapshot = pedal_inputs::snapshot(snapshot, ctx.runner.state());
+         guided_rehearsal::extend_snapshot(
+@@ -459,6 +469,13 @@
+             self.midi_dwell_until
+                 .get()
+                 .is_some_and(|until| std::time::Instant::now() < until)
++                || self
++                    .diagnostic_gate
++                    .borrow()
++                    .as_ref()
++                    .is_some_and(|(path, started)| {
++                        !path.exists() && started.elapsed().as_secs() < 180
++                    })
+                 || midi_wait
+                 || physical_wait
+                 || take_wait
+@@ -517,6 +534,25 @@
+             )));
+             return true;
+         }
++        if label == "diagnostic-request-close" {
++            ctx.window_commands.close();
++            return true;
++        }
++        // External acceptance driver may observe real native dialogs before
++        // releasing the next scenario step. This gate cannot alter app state.
++        if let Some(name) = label.strip_prefix("diagnostic-await ") {
++            if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
++                return false;
++            }
++            let Some(dir) = std::env::var_os("WOODSHED_CAPTURE_DIR") else {
++                return false;
++            };
++            self.diagnostic_gate.replace(Some((
++                std::path::PathBuf::from(dir).join(format!("gate-{name}")),
++                std::time::Instant::now(),
++            )));
++            return true;
++        }
+         if let Some(name) = label.strip_prefix("midi-checkpoint ") {
+             if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+                 return false;
+@@ -530,6 +566,17 @@
+                 "bindings":ctx.runner.state().app_settings.audio_midi.midi_pedal,
+                 "pedal":self.shared.borrow().midi.pedal_report(),
+                 "ui_pedal":ctx.runner.state().midi.pedal_report,
++                "diagnostics": {"recording":ctx.runner.state().midi.diagnostics.recording,
++                    "available":ctx.runner.state().midi.diagnostics.available,
++                    "history_available":ctx.runner.state().midi.diagnostics.history_available,
++                    "retained_events":ctx.runner.state().midi.diagnostics.retained_events,
++                    "capacity":ctx.runner.state().midi.diagnostics.capacity,
++                    "overwritten":ctx.runner.state().midi.diagnostics.overwritten,
++                    "truncated_events":ctx.runner.state().midi.diagnostics.truncated_events,
++                    "recent_events":ctx.runner.state().midi.diagnostics.recent_events,
++                    "busy":ctx.runner.state().midi.diagnostics_export_busy,
++                    "notice":ctx.runner.state().midi.diagnostics_notice,
++                    "show_history":ctx.runner.state().midi.diagnostics_show_history},
+                 "input":pedal_inputs::observation(ctx.runner.state()),
+                 "saved_settings":self.shared.borrow().storage.as_ref().and_then(|store|store.load_settings()).and_then(|raw|serde_json::from_str::<serde_json::Value>(&raw).ok())});
+             return std::fs::write(
+--- a/crates/woodshed-genet/src/midi_diagnostics.rs
++++ b/crates/woodshed-genet/src/midi_diagnostics.rs
+@@ -131,3 +131,60 @@
+     });
+     Some(cambium_genet_winit_host::CloseDisposition::KeepVisible)
+ }
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use cambium_genet_winit_host::CloseRequest;
++
++    #[test]
++    fn pending_export_defers_native_close_until_cancel_save_or_failure_is_observed() {
++        for result in [
++            Ok(None),
++            Ok(Some(std::path::PathBuf::from("captured.json"))),
++            Err("write refused".to_string()),
++        ] {
++            let store = woodshed_core::storage::SessionStore::new(Box::new(
++                muniment::MemoryBackend::default(),
++            )
++                as crate::storage::HostBackend);
++            let (shared, mut host) = crate::tests::save_close_harness(store);
++            let (tx, rx) = mpsc::channel();
++            shared.borrow_mut().midi_diagnostics.job = Some(rx);
++            host.request_close(CloseRequest::Native);
++            assert!(!host.close_requested());
++            assert!(shared.borrow().midi_diagnostics.close_after);
++            assert_eq!(
++                host.state().midi.diagnostics_notice.as_deref(),
++                Some("Finish or cancel diagnostic export before closing.")
++            );
++            tx.send(result).unwrap();
++            host.wake().wake();
++            assert!(host.process_wake());
++            assert!(host.close_requested());
++            assert!(shared.borrow().midi_diagnostics.job.is_none());
++            assert!(!host.state().midi.diagnostics_export_busy);
++        }
++    }
++
++    #[test]
++    fn cancelled_or_failed_job_releases_busy_state_and_keeps_ui_history() {
++        for result in [Ok(None), Err("write refused".to_string())] {
++            let mut ui = UiState::new();
++            ui.midi.diagnostics.retained_events = 7;
++            ui.midi.diagnostics.history_available = true;
++            ui.midi.diagnostics_export_busy = true;
++            let (tx, rx) = mpsc::channel();
++            let mut export = DiagnosticExport {
++                job: Some(rx),
++                ..Default::default()
++            };
++            tx.send(result).unwrap();
++            export.poll(&mut ui);
++            assert!(!ui.midi.diagnostics_export_busy);
++            assert_eq!(ui.midi.diagnostics.retained_events, 7);
++            assert!(ui.midi.diagnostics.history_available);
++            assert!(export.job.is_none());
++        }
++    }
++}
+--- a/crates/woodshed-instrument/src/midi/diagnostics.rs
++++ b/crates/woodshed-instrument/src/midi/diagnostics.rs
+@@ -13,7 +13,7 @@
+ 
+ pub const CAPACITY: usize = 512;
+ 
+-#[derive(Clone, Debug, Serialize)]
++#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+ pub struct Event {
+     pub sequence: u64,
+     pub elapsed_micros: u64,
+@@ -26,7 +26,7 @@
+     pub truncated: bool,
+ }
+ 
+-#[derive(Clone, Debug, Serialize)]
++#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+ pub struct Snapshot {
+     pub recording: bool,
+     pub capacity: usize,
+--- a/crates/woodshed-instrument/tests/diagnostics.rs
++++ b/crates/woodshed-instrument/tests/diagnostics.rs
+@@ -0,0 +1,69 @@
++// SPDX-License-Identifier: MPL-2.0
++//! A dedicated test process isolates the process-local recording opt-in from
++//! unrelated transport tests running concurrently in the library test binary.
++use woodshed_instrument::midi::diagnostics::*;
++
++#[test]
++fn runtime_opt_in_stop_retains_and_restart_appends_without_off_capture() {
++    // Run in a fresh process without the explicit startup opt-in.
++    assert_ne!(
++        std::env::var("INSTRUMENT_MIDI_DIAGNOSTICS").as_deref(),
++        Ok("1")
++    );
++    assert_eq!(revision(), (false, None));
++    assert!(snapshot().is_none());
++    record("off", None, None, None, &[], || {
++        panic!("off must remain lazy")
++    });
++    set_recording(false);
++    assert!(snapshot().is_none());
++    set_recording(true);
++    set_recording(true);
++    record(
++        "sample",
++        Some(4),
++        Some(2),
++        Some(7),
++        &[0xb0, 66, 127],
++        || "first".into(),
++    );
++    set_recording(false);
++    let stopped = snapshot().unwrap();
++    assert!(!stopped.recording);
++    assert_eq!(stopped.events.len(), 3);
++    assert_eq!(stopped.events[0].stage, "recording-start");
++    assert_eq!(stopped.events[2].stage, "recording-stop");
++    set_recording(false);
++    record("off-again", None, None, None, &[], || {
++        panic!("stopped must remain lazy")
++    });
++    assert_eq!(snapshot().unwrap(), stopped);
++    set_recording(true);
++    record("resumed", None, None, None, &[], || "second".into());
++    set_recording(false);
++    let resumed = snapshot().unwrap();
++    assert_eq!(resumed.events.len(), 6);
++    assert_eq!(resumed.events[3].stage, "recording-start");
++    assert_eq!(resumed.events[4].stage, "resumed");
++    assert_eq!(resumed.events[5].sequence, 6);
++    assert_eq!(resumed.overwritten, 0);
++    // Stop while an already-admitted producer is constructing its detail.
++    set_recording(true);
++    let (entered_tx, entered_rx) = std::sync::mpsc::channel();
++    let (resume_tx, resume_rx) = std::sync::mpsc::channel();
++    let producer = std::thread::spawn(move || {
++        record("racing-stop", None, None, None, &[], || {
++            entered_tx.send(()).unwrap();
++            resume_rx.recv().unwrap();
++            "must not append after stop".into()
++        });
++    });
++    entered_rx
++        .recv_timeout(std::time::Duration::from_secs(2))
++        .unwrap();
++    set_recording(false);
++    let stopped = snapshot().unwrap();
++    resume_tx.send(()).unwrap();
++    producer.join().unwrap();
++    assert_eq!(snapshot().unwrap(), stopped);
++}
+--- a/ports/ringdown/design_docs/2026-09-02_client_surface_plan.md
++++ b/ports/ringdown/design_docs/2026-09-02_client_surface_plan.md
+@@ -605,7 +605,7 @@
+ 
+ ### Desktop diagnostic controls (2026-10-21)
+ 
+-**Status: implemented; compile-qualified, UI/file-dialog runtime not yet exercised.**
++**Status: implemented; bounded macOS controls, export and reopen acceptance pass.**
+ The existing Audio and MIDI pedal panel gains Record/Stop, Show/Hide latest
+ events and Export MIDI diagnostics controls. The one existing journal now allows
+ runtime opt-in. A normal process starts recording off; the explicit startup
+@@ -630,11 +630,35 @@
+ MIDI seam provides unsupported-host defaults; no native dependency enters the
+ core or views, and no new dependency or platform driver was added.
+ 
+-Mac desktop build, portable-core compilation and Windows/Linux shared-instrument
+-BLE compilation pass. No automated tests or native UI/save-dialog/hardware trial
+-were run for this implementation pass. Earlier test/device receipts retain
+-their original source and do not qualify these new controls. Implementation and
+-build evidence: [desktop diagnostics](../validation/midi-diagnostics-ui_20261021/README.md).
++The separate [desktop acceptance packet](../validation/midi-diagnostics-acceptance_20261021/README.md)
++records 39 passing focused cases and a native macOS controls/save-dialog cohort.
++Starting/stopping through the retained controls captures ten events; an actual
++send while stopped reaches the independent receiver without changing history.
++Restart appends to 20 events, with zero overwritten/truncated entries. The
++latest-event disclosure and counts agree with Status. Native Cancel retains
++history and releases busy state. Native Save creates a JSON whose complete
++`status` equals scripting Status without its request id. Six messages reach the
++independent receiver through the existing desktop writer. Exiting while
++recording is on and reopening the same saved profile starts off with no history;
++the saved bindings survive and no diagnostic preference enters saved settings.
++
++Both pending-close branches pass in the headed app: an acceptance command uses
++the existing host `WindowCommands::close`, observes the production guard's
++keep-visible notice, then real native Cancel or Save wakes that guard and allows
++normal process exit. Save completes an exact Status snapshot before exit;
++neither close cohort attempts MIDI. This qualifies the real host command and
++worker/wake paths, not an OS mouse click. Separately, macOS Quit while its save
++panel is modal returns User canceled (-128); after cancelling that panel, the
++app remains open and a fresh native Quit exits normally. The windowless host
++regression also covers worker failure. These are distinct close observations.
++
++The initial interrupted save attempt and superseded driver attempts are retained
++as such. A later complete cohort passes with native folder navigation and Save.
++Mac desktop compilation passes. Portable-core and Windows/Linux shared-instrument
++compilation remain recorded in the earlier implementation packet; Windows/Linux
++native controls/dialogs are not qualified here. No guitar was used or needed.
++Earlier device evidence stays tied to its original source. See the separate
++[implementation/build packet](../validation/midi-diagnostics-ui_20261021/README.md).
+ 
+ ### Pedal acceptance (2026-10-20)
+ 
+@@ -1505,13 +1529,22 @@
+ 
+ ## Progress
+ 
++- **2026-10-21 — Desktop diagnostic acceptance complete.** Thirty-nine focused
++  cases and native controls/save-dialog/reopen checks pass. Stop retains history,
++  restart appends, off-time writer delivery does not record, and exported JSON
++  equals Status. Same-profile reopen starts off. Real dialog completion releases
++  pending host-command closes in both Cancel and Save branches; native macOS
++  Quit's modal refusal is documented separately. See the acceptance packet above.
++  The existing journal/status/writer/dialog owners remain the integration points.
++
++
+ - **2026-10-21 — Desktop diagnostic toggle/history/export implemented.** Added
+   session-only runtime opt-in and capture boundary markers to the existing
+   journal, shared one Status projection between scripting/export, and composed
+   existing settings buttons/readouts with a bounded recent-event view. New-file
+   JSON export uses the established background dialog/wake/close flow. Mac build,
+-  portable core and Windows/Linux shared-instrument compile; UI/file-dialog
+-  runtime is not yet qualified and no test suite was run in this pass.
++  portable core and Windows/Linux shared-instrument compile. That implementation
++  pass ran no tests; the later desktop acceptance entry above owns runtime results.
+ 
+ - **2026-10-21 — Previous input comparison complete; historical miss not reproduced.**
+   Added default-off bounded diagnostics through the shared instrument seam and
+--- a/ports/ringdown/design_docs/DOC_README.md
++++ b/ports/ringdown/design_docs/DOC_README.md
+@@ -96,7 +96,11 @@
+ [Desktop diagnostics](2026-09-02_client_surface_plan.md#desktop-diagnostic-controls-2026-10-21)
+ add session-only recording controls, recent event visibility and versioned JSON
+ export through the same status/history owner. Mac/core/shared Windows/Linux
+-compilation passes; the new UI/save-dialog flow has not been runtime-qualified.
++compilation passes. The separate [diagnostic acceptance packet](../validation/midi-diagnostics-acceptance_20261021/README.md)
++records 39 focused passing cases and native macOS controls/dialog/reopen results:
++retained history, default-off reopen, full Status/export equality and both pending
++host-command close branches. Native Quit's modal refusal is a separate observation;
++Windows/Linux dialog runtime remains unqualified.
+ 
+ 
+ Earlier device session: [Q-PC MIDI pedal experiment](../validation/midi-pedal_20261017/README.md)
+--- a/design_docs/DOC_README.md
++++ b/design_docs/DOC_README.md
+@@ -361,8 +361,10 @@
+   The historical miss did not reproduce and remains unexplained.
+   [Desktop diagnostic controls](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-diagnostic-controls-2026-10-21)
+   expose default-off session recording, recent history and full JSON snapshot
+-  export using that same status path. Build checks pass; new UI/runtime remains
+-  separately unqualified.
++  export using that same status path. The separate [diagnostic acceptance](../ports/ringdown/validation/midi-diagnostics-acceptance_20261021/README.md)
++  records 39 passing cases, native Cancel/Save, exact Status parity, default-off
++  same-profile reopen and both pending host-command close branches. Native macOS
++  Quit's modal refusal is recorded separately; Windows/Linux dialogs remain unqualified.
+ 
+ - [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — Current visual
+   reference; its product/navigation framing is superseded by Stage/Set/Tools.

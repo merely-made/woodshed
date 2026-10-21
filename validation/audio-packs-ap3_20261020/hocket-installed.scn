@@ -1,0 +1,56 @@
+settle 2
+assert snap project-dirty == false
+click role:button @data-action=pack-bundled
+settle 1
+assert snap pack-loaded == true
+click role:button @data-action=pack-import
+wait 6000
+assert text AP3 local drums
+click role:button backbeat
+click role:button @aria-label=Mute Hat
+click role:button @aria-label=Unmute Hat
+click role:button @aria-label=Sample level − Snare
+click role:button @aria-label=Move Kick step 1 →
+click role:button @data-action=pack-step-0-1
+click role:button @data-action=pack-step-0-1
+click role:button @data-action=pack-step-0-1
+click role:button alternate
+click role:button backbeat
+click role:button @aria-label=Increase tempo
+assert snap bpm == 122
+click role:switch @aria-label=Click
+click role:switch @aria-label=Arm track 1
+wheel 0 1800 px on .audio-pack-panel
+settle 1
+click role:button @data-action=pack-add-loop
+act await-drum-output
+wait 16000
+assert snap phrases == 1
+assert snap media == 1
+assert snap playing-voices == 1
+assert snap click-enabled == false
+assert snap drum-output-observed == true
+act checkpoint-project rendered
+capture 01_rendered_layer
+click role:button @aria-label=Stop all loops
+settle 1
+assert snap playing-voices == 0
+click role:button @aria-label=Save project
+wait 6000
+assert snap project-dirty == false
+act checkpoint-project saved
+capture 02_saved
+click role:button @aria-label=Export current loop mix as WAV
+wait 6000
+wheel 0 1800 px on .audio-pack-panel
+settle 1
+click role:button @data-action=pack-export-midi
+wait 6000
+wheel 0 -1800 px on .audio-pack-panel
+settle 1
+click role:button @data-action=pack-import
+wait 6000
+assert text samples/kick.wav
+assert snap project-dirty == false
+act checkpoint-project failed-replacement-retained
+capture 03_failed_replacement_retained

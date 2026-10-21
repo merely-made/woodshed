@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 43, in <module>
+    checkpoint('retained');gate('retained');checkpoint('cancel-dialog');pid,name=process();panel(pid,'cancel-panel')
+                                                                                           ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 30, in panel
+    assert time.monotonic()<end;time.sleep(.05)
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError

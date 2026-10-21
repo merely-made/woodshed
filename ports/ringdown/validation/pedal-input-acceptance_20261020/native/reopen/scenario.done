@@ -1,0 +1,20 @@
+RESULT ok
+captured 01_reopened_preparation
+waited 0 frames
+waited 1 frames
+waited 1 frames
+waited 1 frames
+waited 3 frames
+waited 2 frames
+captured 02_restored_mappings_work
+waited 4 frames
+captured 03_busy_refusal_visible
+waited 3 frames
+captured 04_clear_reassign_saved
+waited 1 frames
+capture 01_reopened_preparation 2360x2100 digest=2c5b7068d052e2b9 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/reopen/run/01_reopened_preparation.png
+capture 02_restored_mappings_work 2360x2100 digest=12474c45346b9d3d file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/reopen/run/02_restored_mappings_work.png
+capture 03_busy_refusal_visible 2360x2100 digest=0968fab088ae295e file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/reopen/run/03_busy_refusal_visible.png
+capture 04_clear_reassign_saved 2360x2100 digest=cb51765c844f5d34 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/reopen/run/04_clear_reassign_saved.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 92 frames, 95 redraws, 3 unpresented redraws

@@ -1,0 +1,20 @@
+{
+  "Cargo.lock": "5b464d68d090ce208edd8650339e8f2373b56f27b546d9554e09e2a921dba0ab",
+  "ports/ringdown/Cargo.lock": "5011ad21e2f4673966cb040fb3d190b4d8d804451c62f781ff6bdb0e4a8b1dd8",
+  "crates/woodshed-instrument/src/pedal.rs": "bb2c922537ef4e8828fd0e00f3b6b2c25fe5bce3999f1d485626a52064043dc9",
+  "crates/woodshed-instrument/src/midi.rs": "82b6769cac5dccd747b07674025ac984052e65273f30a4ccd86bdb093843898a",
+  "crates/woodshed-instrument/src/midi/ble.rs": "26c3986000bc48e45cc3255f1c23a4e71c667fca849f306e0d3fee7ffc6a5997",
+  "crates/woodshed-core/src/settings.rs": "c7568918fe439707f85f79532fb2afaef0e4f4e275db717c30e74dff595a1bb5",
+  "crates/woodshed-core/src/midi.rs": "02fcf59c9ccb17f44644a3269fa4429f87d1887d299f87ee152172465c9916f0",
+  "crates/woodshed-views/src/stage.rs": "cc7aa9671700d497ac4f82321da74db40790e5a5dea77ff05a581117201314e2",
+  "crates/woodshed-views/src/stage/settings.rs": "06bb0f454df44b3d1c98e69df2b1dc478f877bc342f5832e90a79ca7d18bcfb0",
+  "crates/woodshed-genet/src/main.rs": "f646e6d962f5e6481ac1222e9b1d466380c2e202ed9df6d35d5001426ddd3cb9",
+  "crates/woodshed-genet/src/midi.rs": "22e9b38d371fb6592c0053dc103ed555e86b70179980609832db8f082f87cc32",
+  "crates/woodshed-genet/src/midi/pedal.rs": "e1c8a727ff0fdf145ee5ec8dc4c970db3bb401ee028c9e794fc8acbc313f2189",
+  "crates/woodshed-genet/src/midi/stdio.rs": "42d04ab21524b1168793bec1ebc484c9f49c624a49bab9e54d60d6103b500a45",
+  "crates/woodshed-genet/src/midi/worker.rs": "c756e54cafe04a04cff2833f83d84a979095a7769597f02c0ba4658bb993576c",
+  "crates/woodshed-genet/src/midi/worker/tests.rs": "bc468d7b1a0281a9a25f0b67fd90b693c82eb91d42ebfcd9440b0ebd6be93fe1",
+  "crates/woodshed-genet/src/scenario.rs": "893557c2e95c1fb3b8298eae2cd177f95b465aec8b776d405369fe517118e259",
+  "crates/woodshed-instrument/examples/midi_capture.rs": "820abdb314bf91820beedd450a048a93df16050fb63ed6faf7b2265f57335828",
+  "scripts/run-macos-scenario.py": "600cbd415d69bd6003f80af98cfb899963b3b88e2fe1fcce7b3b7ea5c974f6b5"
+}

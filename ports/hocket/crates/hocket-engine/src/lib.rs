@@ -237,9 +237,11 @@ struct TempoResync {
 const TEMPO_RESYNC_MAX_TICKS: u8 = 3;
 
 /// Internal: a layer playback queued to start at a bar boundary.
-/// Same wrap-detection technique as `PendingCapture::Waiting`.
+/// Bar-phase observation handles frequent ticks; the DSP clock deadline also
+/// handles hosts that tick too slowly to observe a wrap.
 struct PendingLayer {
     countdown: BarCountdown,
+    start_deadline_frame: Option<i64>,
     key: LayerKey,
     samples: Vec<f32>,
     sample_rate: u32,
@@ -377,24 +379,32 @@ impl Engine {
         if let Some(error) = stream_error {
             return Err(EngineError::Tick(format!("audio device: {error}")));
         }
-        if self.reader_state.overflow_occurred() {
+        let input_error = if self.reader_state.overflow_occurred() {
             let rejected = self
                 .reader_state
                 .stats()
                 .map_or(0, |stats| stats.rejected_source_frames);
-            // A live capture cannot retry the missing input. Abort rather than
-            // promote a phrase with an undisclosed gap in source time.
+            // A live capture cannot retry missing input. Its failure must not
+            // starve independent playback, stops or queued graph changes.
             self.abort_incomplete_capture();
             self.input_scratch.clear();
             self.reader_state.discard_frames();
-            return Err(EngineError::InputOverflow(rejected));
-        }
+            Some(EngineError::InputOverflow(rejected))
+        } else {
+            None
+        };
         self.step_tempo_resync();
-        self.drain_and_advance_capture();
+        if input_error.is_none() {
+            self.drain_and_advance_capture();
+        }
         self.advance_pending_layers()?;
         self.cx
             .update()
-            .map_err(|e| EngineError::Tick(format!("{e:?}")))
+            .map_err(|e| EngineError::Tick(format!("{e:?}")))?;
+        match input_error {
+            Some(error) => Err(error),
+            None => Ok(()),
+        }
     }
 
     /// The mic samples drained on the most recent `tick`. Empty if
@@ -678,6 +688,13 @@ impl Engine {
             .ok_or_else(|| EngineError::Graph("click bar-phase unavailable".into()))?;
         let pending = PendingLayer {
             countdown: BarCountdown::new(1, last_in_bar_phase),
+            start_deadline_frame: self.tempo_resync.is_none().then(|| {
+                self.cx.heartbeat().saturating_add(
+                    self.samples_per_bar()
+                        .saturating_sub(last_in_bar_phase)
+                        .max(1) as i64,
+                )
+            }),
             key,
             samples,
             sample_rate,
@@ -822,13 +839,23 @@ impl Engine {
             Some(p) => p,
             None => return Ok(()),
         };
+        let audio_frame = self.cx.heartbeat();
         let mut ready: Vec<PendingLayer> = Vec::new();
         let mut still_pending: Vec<PendingLayer> = Vec::new();
         for mut layer in std::mem::take(&mut self.pending_layers) {
-            if layer
+            let wrapped = layer
                 .countdown
-                .observe(cur_in_bar, bar_samples, self.suppress_wraps)
-            {
+                .observe(cur_in_bar, bar_samples, self.suppress_wraps);
+            let deadline_reached = if self.suppress_wraps {
+                layer.start_deadline_frame = None;
+                false
+            } else {
+                let deadline = layer.start_deadline_frame.get_or_insert_with(|| {
+                    audio_frame.saturating_add(bar_samples.saturating_sub(cur_in_bar).max(1) as i64)
+                });
+                audio_frame >= *deadline
+            };
+            if wrapped || deadline_reached {
                 ready.push(layer);
             } else {
                 still_pending.push(layer);
@@ -989,6 +1016,9 @@ impl Engine {
             last_seen: self.click_in_bar_phase(),
             ticks: 0,
         });
+        for layer in &mut self.pending_layers {
+            layer.start_deadline_frame = None;
+        }
         Ok(())
     }
 
@@ -1015,6 +1045,11 @@ impl Engine {
     /// `stop_layer` to clean up explicitly.
     pub fn is_layer_assigned(&self, key: LayerKey) -> bool {
         self.voice_nodes.contains_key(&key)
+    }
+
+    /// Accepted layer starts still waiting for a bar boundary.
+    pub fn pending_layer_count(&self) -> usize {
+        self.pending_layers.len()
     }
 
     /// Number of voices currently playing.

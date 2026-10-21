@@ -1,0 +1,31 @@
+{
+  "unrelated_tracked_diff_changes": [],
+  "manifests_and_lock_unchanged": true,
+  "existing_host_supplier_files_unchanged": 16,
+  "changed_existing_task_paths": [
+    "design_docs/2026-05-15_midi_design.md",
+    "design_docs/DOC_README.md",
+    "scripts/run-macos-scenario.py",
+    "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+    "ports/ringdown/design_docs/DOC_README.md",
+    "crates/woodshed-views/src/stage.rs",
+    "crates/woodshed-genet/src/midi.rs",
+    "crates/woodshed-genet/src/sync.rs",
+    "crates/woodshed-genet/src/pedal_inputs.rs",
+    "crates/woodshed-genet/src/scenario.rs",
+    "crates/woodshed-core/src/midi.rs",
+    "crates/woodshed-instrument/src/midi.rs",
+    "crates/woodshed-instrument/src/pedal/input.rs"
+  ],
+  "new_product_or_fixture_paths": [
+    "crates/woodshed-genet/src/midi/controller.rs",
+    "crates/woodshed-genet/src/scenario/pedal_inputs.rs",
+    "crates/woodshed-instrument/examples/midi_controller.rs"
+  ],
+  "before_snapshot": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020",
+  "staged_committed_pushed": false,
+  "guitar_files_written": false,
+  "private_rpc_used": false,
+  "active_trial_processes": "owned guitar app, virtual input and synthetic keeper exited; both MIDI connections closed",
+  "current_binary_sha256": "47c741623ff705f01edad848465d23adb74b95fcb99d39dae218ac4b844393be"
+}

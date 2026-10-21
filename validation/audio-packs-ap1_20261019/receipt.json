@@ -1,0 +1,253 @@
+{
+  "date": "2026-10-19",
+  "scope": "AP1 shared file/API implementation; builds and fresh-process demonstrations; no suites added or run",
+  "baseline_head": "9ab3f6be29027321725b385961e8b323a2bba2c0",
+  "working_tree": "local uncommitted; pre-existing AP0/planning work preserved",
+  "host": {
+    "os": "macOS 15.8.1",
+    "build": "24H32",
+    "architecture": "x86_64"
+  },
+  "builds": [
+    {
+      "name": "native",
+      "cwd": "/tmp",
+      "env": {
+        "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc"
+      },
+      "args": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/markik/Code/repos/woodshed/Cargo.toml",
+        "-p",
+        "audio-packs",
+        "-p",
+        "woodshed-audio",
+        "--bin",
+        "audio-pack",
+        "--example",
+        "drum_pack",
+        "--target-dir",
+        "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target",
+        "--config",
+        "profile.dev.debug=0"
+      ],
+      "exit_code": 0,
+      "log": "logs/native.log"
+    },
+    {
+      "name": "wasm",
+      "cwd": "/tmp",
+      "env": {
+        "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc"
+      },
+      "args": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/markik/Code/repos/woodshed/Cargo.toml",
+        "--lib",
+        "-p",
+        "audio-pattern",
+        "-p",
+        "audio-packs",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--target-dir",
+        "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target-wasm",
+        "--config",
+        "profile.dev.debug=0"
+      ],
+      "exit_code": 0,
+      "log": "logs/wasm.log"
+    },
+    {
+      "name": "msrv-compiler",
+      "cwd": "/tmp",
+      "env": {
+        "RUSTC": "/Users/markik/.rustup/toolchains/1.97.1-x86_64-apple-darwin/bin/rustc"
+      },
+      "args": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/markik/Code/repos/woodshed/Cargo.toml",
+        "--lib",
+        "-p",
+        "audio-pattern",
+        "-p",
+        "audio-packs",
+        "--target-dir",
+        "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target-msrv",
+        "--config",
+        "profile.dev.debug=0"
+      ],
+      "exit_code": 0,
+      "log": "logs/msrv-compiler.log"
+    },
+    {
+      "name": "msrv-older-cargo",
+      "cwd": "/tmp",
+      "env": {
+        "RUSTC": "/Users/markik/.rustup/toolchains/1.97.1-x86_64-apple-darwin/bin/rustc"
+      },
+      "args": [
+        "/Users/markik/.rustup/toolchains/1.97.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "/Users/markik/Code/repos/woodshed/Cargo.toml",
+        "--lib",
+        "-p",
+        "audio-pattern",
+        "-p",
+        "audio-packs",
+        "--target-dir",
+        "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target-msrv",
+        "--config",
+        "profile.dev.debug=0"
+      ],
+      "exit_code": 101,
+      "log": "logs/msrv-cargo-1.97.1.log"
+    }
+  ],
+  "lock_review": {
+    "changed_prior_package_blocks_after_new_local_edges_removed": [],
+    "added_packages": [
+      [
+        "audio-packs",
+        "0.1.0",
+        ""
+      ],
+      [
+        "audio-pattern",
+        "0.1.0",
+        ""
+      ],
+      [
+        "midly",
+        "0.5.3",
+        "registry+https://github.com/rust-lang/crates.io-index"
+      ]
+    ],
+    "port_locks": {
+      "ports/hocket/Cargo.lock": {
+        "sha256": "934fb64b6d8c93efe0ef32866a9045f25f21bb707e4a7f9f481fe977b9675e45",
+        "unchanged_from_head": true
+      },
+      "ports/redshank/Cargo.lock": {
+        "sha256": "9e975dd1fb546a2b31291a20764cfe78b4f76fb76e2703f4a6e8147c0b557ba8",
+        "unchanged_from_head": true
+      },
+      "ports/ringdown/Cargo.lock": {
+        "sha256": "9c1b9afdd823e02effcade345140463f20185b9a79b83e8844d3109df395f6c0",
+        "unchanged_from_head": true
+      }
+    }
+  },
+  "extraction_review": {
+    "sequencer_body_unchanged": true,
+    "sound_body_unchanged": true
+  },
+  "source_hashes": "source-hashes.json",
+  "file_commands": "commands.json",
+  "observations": "observations.json",
+  "artifacts": {
+    "snapshot.wav": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/snapshot.wav",
+      "sha256": "1d976cd097c6caba8cb8f7190c60b37347094123f2da101b61a894770f2cdc58",
+      "bytes": 512068
+    },
+    "user.pack.json": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.pack.json",
+      "sha256": "9a75f276cd0eb6ea28049e17619382446064bf483f50504a476d39753cdca506",
+      "bytes": 148935
+    },
+    "bundled.wav": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/bundled.wav",
+      "sha256": "5f85d9bf15fa96953aae36ebb0f5149b3238a894c93162cbaf359bde8c6f27c8",
+      "bytes": 460868
+    },
+    "user.wav": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.wav",
+      "sha256": "1d976cd097c6caba8cb8f7190c60b37347094123f2da101b61a894770f2cdc58",
+      "bytes": 512068
+    },
+    "snapshot.mid": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/snapshot.mid",
+      "sha256": "780ad8f78ebda8d093585aade9f89a0231aa6ec5a91157cfd99cd1534ea17d86",
+      "bytes": 137
+    },
+    "toml.pack.json": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.pack.json",
+      "sha256": "33dafee9a1a6450f265c1c21cd8a72890bfc45f5255f61a820b60075f0f4f934",
+      "bytes": 142390
+    },
+    "bundled.mid": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/bundled.mid",
+      "sha256": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+      "bytes": 137
+    },
+    "user.mid": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/user.mid",
+      "sha256": "780ad8f78ebda8d093585aade9f89a0231aa6ec5a91157cfd99cd1534ea17d86",
+      "bytes": 137
+    },
+    "bundled.pack.json": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/bundled.pack.json",
+      "sha256": "22b2fab2bfe87cceee140c24d08c73fe2f9c18e301b4100f3457e9b885d796cc",
+      "bytes": 148955
+    },
+    "toml.wav": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.wav",
+      "sha256": "1d976cd097c6caba8cb8f7190c60b37347094123f2da101b61a894770f2cdc58",
+      "bytes": 512068
+    },
+    "directory.mid": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/directory.mid",
+      "sha256": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+      "bytes": 137
+    },
+    "toml.mid": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/toml.mid",
+      "sha256": "780ad8f78ebda8d093585aade9f89a0231aa6ec5a91157cfd99cd1534ea17d86",
+      "bytes": 137
+    },
+    "directory.wav": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/final-current/directory.wav",
+      "sha256": "5f85d9bf15fa96953aae36ebb0f5149b3238a894c93162cbaf359bde8c6f27c8",
+      "bytes": 460868
+    },
+    "user-example.toml": {
+      "path": "user-example.toml",
+      "sha256": "79b780b8f0318678d622003cdb32ba2c3caa02fc93168deeac6a21c9659b57c9"
+    }
+  },
+  "binaries": {
+    "audio-pack": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/audio-pack",
+      "sha256": "1ced97a59ebcfa4cbeb12ccee0e6dcfb2b14beff7633158deadd5436f243bac0"
+    },
+    "drum_pack": {
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap1_20261019/target/debug/examples/drum_pack",
+      "sha256": "896a5d5993b024716e273a2f51c735920267886168cd8bd6139f30192e8168a6"
+    }
+  },
+  "limits": [
+    "Existing product GUI/project formats do not yet consume packs; AP2 integration remains.",
+    "No Windows/Linux execution, browser audio, native GUI or physical/guitar playback qualification.",
+    "Wasm is library compilation only; filesystem APIs need an appropriate host.",
+    "MSRV compiler pass uses Cargo 1.99.1; Cargo 1.97.1 with --locked refuses workspace lock rewrite.",
+    "No callback allocation measurement or test suite execution in AP1.",
+    "MIDI contains events, not sample assets, sound gain, tuning or effects.",
+    "Format 1 has a fixed sample-to-mono route; generic routing and FunDSP definitions remain planned."
+  ]
+}

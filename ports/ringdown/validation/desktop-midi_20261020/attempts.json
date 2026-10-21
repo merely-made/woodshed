@@ -1,0 +1,27 @@
+[
+  {
+    "cohort": "clock-r1",
+    "result": "fail",
+    "cause": "Output menu None hit underlying clock button; 154 accepted/received but disconnect assertions failed. Row stacking fixed."
+  },
+  {
+    "cohort": "clock-r2",
+    "result": "not final interval qualification",
+    "cause": "Picker/rearm assertions passed (94 accepted/received); generic wait was idle wait, not a wall-clock dwell."
+  },
+  {
+    "cohort": "hotplug-r1",
+    "result": "fail",
+    "cause": "Removed endpoint still accepted OS sends: 123 accepted versus 42 received. Added original endpoint identity/liveness validation; final rerun uses explicit elapsed-time dwell."
+  },
+  {
+    "cohort": "guitar-r1",
+    "result": "fail",
+    "cause": "Readiness observation action lacked following scenario wait; it never established subscription. Zero messages sent; corrected wait and held native session for owner checkpoints."
+  },
+  {
+    "cohort": "build preparation",
+    "result": "corrected",
+    "cause": "One redundant own build was interrupted to reuse warm /tmp invocation artifacts; two relative-path edits from /tmp failed before writing and were repeated with absolute paths."
+  }
+]

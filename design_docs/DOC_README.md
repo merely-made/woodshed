@@ -21,6 +21,38 @@ before any other doc in this directory.
 
 - [Shared notation readings in Graphshell](2026-07-11_stage_set_tools_plan.md#adr-shared-notation-readings-in-graphshell-2026-10-19) — Accepted pure-model/shared-leaf boundary; canonical main source integration, explicit MusicXML creation, and selectable Chart/Tab/Score. Qualification and publication limits are recorded with the implementation.
 
+- [Shared data-defined audio packs](2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+  — **AP1/AP2 implemented; AP3 bounded macOS/guitar acceptance (2026-10-20).** Shared
+  `audio-pattern`/`audio-packs`, midly export, original drum kit, common bundled/
+  directory admission and exact-source snapshots work through CLI and the
+  production runtime. [AP1 evidence](../validation/audio-packs-ap1_20261019/README.md)
+  covers AP1 file/reopen/render and Wasm/MSRV checks.
+  [AP2 evidence](../validation/audio-packs-ap2_20261020/README.md) records locked
+  product compilation and retained edited-selection file work. AP2 adds shared kit controls,
+  retained edited selections and existing runtime/project paths.
+  [AP3 evidence](../validation/audio-packs-ap3_20261020/README.md) adds actual
+  native controls/save/reopen without installed kits, exact MIDI/WAV parity,
+  701 selected tests and owner-observed custom guitar beat playback through a
+  power cycle. The target
+  desktop matrix, latency and broader instrument qualification remain open. Mere composition and FunDSP patch directions stay
+  in the plan; [AP0](../validation/audio-packs-ap0_20261019/README.md) retains the
+  earlier supplier assessment.
+  [Adapter provenance/terms assessment](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
+  records standards-based compatibility and the implemented default MIDI/Beats
+  build boundary with opt-in private diagnostics,
+  unresolved publication evidence and a local unsent vendor outreach draft. The
+  [split acceptance](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#split-acceptance-2026-10-20)
+  adds bounded real-CLI/release tests, native virtual MIDI capture, default
+  artifact exclusion and a read-only live guitar status check. The
+  [shared BLE-MIDI transport](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
+  reuses MidiOut and the desktop output path, with three-platform compiler
+  evidence and one owner-observed Mac guitar trigger; native Windows/Linux
+  and timing qualification remain open. [Desktop/reconnect acceptance](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-path-and-reconnect-qualification-2026-10-20)
+  adds actual picker/clock controls, exact receiver parity, explicit hotplug
+  refusal/rearm, and a zero-message guitar lifecycle check (36 focused cases,
+  fourteen native captures).
+
+
 - [Source authority audit and remediation](2026-10-16_source_authority_audit_plan.md) — Frozen collective read complete: 937 files / 231,190 lines, plus separate 33-file P5a overlay. All 93 raw finding entries reconciled against later work with qualification limits; remediation remains open. [Audit record](../validation/full-source-audit_20261016/README.md). Coordination closure published through `8204688`.
 
 
@@ -308,7 +340,32 @@ before any other doc in this directory.
   — Material and Touch reframe for the Stage/Set model; design direction, not a
   standalone implementation plan.
 - [2026-05-15_midi_design.md](2026-05-15_midi_design.md) — Current MIDI
-  transport and clock-sync reference for the landed audio implementation.
+  transport and clock-sync reference for the landed audio implementation;
+  shared Effect Next/Previous bindings, retained preparation, existing-worker
+  triggers and same-owner JSONL scripting have bounded macOS/native/guitar
+  acceptance and 57 focused software cases. The [pedal contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#software-pedal-controls-and-scripting-2026-10-20)
+  and [acceptance receipt](../ports/ringdown/validation/pedal-acceptance_20261020/README.md)
+  retain native-platform, radio-fault and timing limits. Saved keyboard/Note/CC
+  mappings now feed that same dispatcher with focused input checks; the
+  [input contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
+  records the shared-host synthesized-press correction and native input limits.
+  [Input acceptance](../ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
+  records render-independent callback admission, explicit input reconnect repair
+  and 48 focused cases/35 exact native messages across saved/Clear/reassign
+  reopenings. Separate real-key/guitar checks finish with quiet reconnect/holds,
+  five observed single changes and one unresolved Note-triggered no-change.
+  The [Previous comparison](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#previous-source-diagnostics-2026-10-21)
+  adds opt-in bounded input/writer/BLE history and a separate keyboard-versus-Note
+  investigation through the existing owner: 38 focused cases, eight exact native
+  receiver messages, and owner-confirmed real P/sparse Note/held Note Rev → Off.
+  The historical miss did not reproduce and remains unexplained.
+  [Desktop diagnostic controls](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-diagnostic-controls-2026-10-21)
+  expose default-off session recording, recent history and full JSON snapshot
+  export using that same status path. The separate [diagnostic acceptance](../ports/ringdown/validation/midi-diagnostics-acceptance_20261021/README.md)
+  records 39 passing cases, native Cancel/Save, exact Status parity, default-off
+  same-profile reopen and both pending host-command close branches. Native macOS
+  Quit's modal refusal is recorded separately; Windows/Linux dialogs remain unqualified.
+
 - [2026-06-15_redesign_plan.md](2026-06-15_redesign_plan.md) — Current visual
   reference; its product/navigation framing is superseded by Stage/Set/Tools.
 - [2026-05-21_arpeggio_lens_plan.md](2026-05-21_arpeggio_lens_plan.md) — Partial
@@ -397,6 +454,10 @@ section whenever a durable working insight emerges from a session.
   identify material, realize it on an instrument, arrange it into
   progressions/exercises/practice sets, and feed app shells that rehearse
   it.
+- **A MIDI send trace is not a guitar acknowledgement**: keep opt-in bounded
+  input/admission/writer/transport observations separate from owner-observed
+  effect changes. Later success does not explain an earlier unobserved action;
+  diagnostics must not add hot-path file I/O, retries or a second writer.
 - **Pure core, thin shell**: `crates/woodshedding` must remain pure data
   + math — no I/O, no UI, no audio. It may model the portable operations
   required for woodshedding, but app-specific rehearsal UI, persistence,
@@ -433,6 +494,11 @@ section whenever a durable working insight emerges from a session.
 - **Tools project shared state**: Fretboard, Metronome, and Tuner have
   standalone homes and contextual forms. Settings owns their durable
   configuration; contextual controls edit that same canonical state.
+- **Audio packs share existing owners**: bundled and user-installed data
+  definitions plus assets use one shared admission contract. Reuse the existing
+  sequencer and assess embeddable Rust suppliers before building more. Product
+  state remains authoritative and Firewheel projects prepared runtime state;
+  MIDI-file export does not require audio-device or graph ownership.
 - **Desktop first, mobile later**: ship to itch.io / Gumroad for desktop
   before attempting mobile. Mobile is a shell around the web build (see the
   genet-host plan's M track); building toward it is part of the project's

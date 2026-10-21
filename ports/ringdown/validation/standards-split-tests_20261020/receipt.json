@@ -1,0 +1,133 @@
+{
+  "recorded_at_utc": "2026-10-20T23:58:32.850737+00:00",
+  "status": "bounded split acceptance passed, including native virtual MIDI and read-only live RPC status",
+  "head": "0452bcea1ff227924631ac190744e2bd9282fba5",
+  "checkout": "local dirty AP1/AP2/AP3/audit/split work preserved; no commit or publication",
+  "test_summary": "test-summary.json",
+  "passed_test_executions": 284,
+  "failed": 0,
+  "ignored": 0,
+  "counts_note": "Repeated feature-profile/release CLI cases are counted as executions, not unique tests.",
+  "groups": {
+    "shared_MIDI_library": 11,
+    "pattern_pack_libraries": 48,
+    "private_core_client_BLE_libraries": 162,
+    "CLI_feature_profiles": 50,
+    "preserved_release_CLI_profiles": 13
+  },
+  "profiles": "profile-tests.json",
+  "initial_commands": [
+    {
+      "name": "default",
+      "command": "cargo test --locked --offline -p ringdown-probe",
+      "cwd": "ports/ringdown",
+      "log": "default-tests.log",
+      "exit_code": 0
+    },
+    {
+      "name": "instrument",
+      "command": "cargo test --locked --offline -p woodshed-instrument --lib",
+      "cwd": ".",
+      "log": "instrument-tests.log",
+      "exit_code": 0
+    },
+    {
+      "name": "packs",
+      "command": "cargo test --locked --offline -p audio-pattern -p audio-packs --lib",
+      "cwd": ".",
+      "log": "pack-library-tests.log",
+      "exit_code": 0
+    }
+  ],
+  "MIDI": {
+    "fixture": "Native CoreMIDI virtual receiving input; real child CLI sends via existing midir owner",
+    "expected_bytes": [
+      [
+        176,
+        67,
+        127
+      ],
+      [
+        176,
+        67,
+        0
+      ],
+      [
+        159,
+        127,
+        127
+      ],
+      [
+        143,
+        127,
+        0
+      ],
+      [
+        192,
+        0
+      ],
+      [
+        207,
+        127
+      ]
+    ],
+    "verified_in": [
+      "default CLI integration",
+      "combined-feature CLI integration",
+      "preserved default release CLI"
+    ],
+    "native_guitar_MIDI_trigger_tested": false
+  },
+  "Beats_file_export": {
+    "receipt": "export-inspection.json",
+    "library_owner": "existing audio-pattern/audio-packs",
+    "installed_kit_removal_and_retained_reopen": true,
+    "preserves_existing_output": true,
+    "independent_parser": "existing AP3 inspect_midi.py",
+    "format": 0,
+    "tracks": 1,
+    "PPQ": 480,
+    "paired_notes": 12,
+    "end_tick": 1920,
+    "release_profiles_byte_identical": true,
+    "new_guitar_file_installation": false
+  },
+  "composition": {
+    "graphs": "graph-checks.json",
+    "positive_target_graphs": 6,
+    "private_feature_negative_controls": 2,
+    "native_build_commands_are_plain_default_member_selection": true,
+    "artifacts": "artifacts.json",
+    "private_modules_absent_from_standard_compiler_inputs": true,
+    "no_native_MIDI_in_offline_artifact": true
+  },
+  "live_RPC": {
+    "receipt": "live-rpc.json",
+    "log": "live-rpc-redacted.log",
+    "scope": "Banner and GetStatus only",
+    "result": "exit 0, banner parsed, status answered, disconnect requested",
+    "device": "H2S",
+    "firmware_DSP": "V2.4.0",
+    "firmware_connectivity": "V1.3.0",
+    "settings_or_guitar_files_changed": false
+  },
+  "source_changes": "Permanent CLI integration cases and dev-only fixture/parser dependencies; no production behavior fix needed.",
+  "source_hashes": "source-hashes.json",
+  "limits": [
+    "Native execution is macOS only; Windows/Linux have dependency-graph evidence.",
+    "Virtual MIDI proves the OS-port command path, not a production BLE-MIDI peripheral or a new physical guitar pedal trigger.",
+    "No new physical Beats playback or loop-rule trial; earlier AP3 instrument receipts remain scoped separately.",
+    "Existing probe ignores the disconnect result; its final line is not an independently verified disconnect acknowledgement.",
+    "GetStatus does not qualify every private RPC command.",
+    "Whole source repository still contains private research modules; binary composition is the qualified isolation boundary.",
+    "No legal/license clearance, vendor outreach, commit or publication."
+  ],
+  "verification": {
+    "source_hashes": 56,
+    "acceptance_links": 2,
+    "diff_check_passed": true,
+    "source_MIDI_implementation_unchanged": true,
+    "rustfmt_check_passed": true,
+    "live_log_identifier_redaction_verified": true
+  }
+}

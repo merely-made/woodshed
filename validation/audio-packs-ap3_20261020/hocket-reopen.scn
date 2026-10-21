@@ -1,0 +1,27 @@
+settle 2
+assert snap project-dirty == false
+click role:button @aria-label=Open project
+wait 6000
+assert snap project-dirty == false
+assert snap pack-loaded == true
+assert snap phrases == 1
+assert snap media == 1
+act checkpoint-project reopened-without-installation
+capture 01_reopened_without_kit
+click role:button alternate
+click role:button backbeat
+click role:button @data-action=pack-step-0-1
+assert snap project-dirty == true
+click role:button @data-action=pack-step-0-1
+click role:button @data-action=pack-step-0-1
+assert snap project-dirty == false
+act checkpoint-project editable-without-installation
+wheel 0 1800 px on .audio-pack-panel
+settle 1
+click role:button @data-action=pack-export-midi
+wait 6000
+click role:button @aria-label=Export current loop mix as WAV
+wait 6000
+click role:button @aria-label=Stop all loops
+settle 1
+capture 02_exported_without_kit

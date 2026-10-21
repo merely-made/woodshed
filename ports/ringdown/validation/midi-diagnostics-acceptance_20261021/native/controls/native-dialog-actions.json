@@ -1,0 +1,51 @@
+[
+  {
+    "observation": "default",
+    "exit": 0
+  },
+  {
+    "observation": "stopped",
+    "exit": 0
+  },
+  {
+    "observation": "off-send",
+    "exit": 0
+  },
+  {
+    "observation": "retained",
+    "exit": 0
+  },
+  {
+    "observation": "cancel-dialog",
+    "exit": 0
+  },
+  {
+    "action": "native-cancel",
+    "script": "tell application \"System Events\" to tell process \"product-879e77ee2e91\"\nset frontmost to true\nkey code 53\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "observation": "cancelled",
+    "exit": 0
+  },
+  {
+    "observation": "save-dialog",
+    "exit": 0
+  },
+  {
+    "action": "native-save-navigate",
+    "script": "tell application \"System Events\" to tell process \"product-879e77ee2e91\"\nset frontmost to true\nkeystroke \"g\" using {command down, shift down}\ndelay 0.4\nkeystroke \"/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r3\"\ndelay 0.2\nkey code 36\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "action": "native-save-confirm",
+    "script": "tell application \"System Events\" to tell process \"product-879e77ee2e91\"\nset frontmost to true\nkey code 36\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

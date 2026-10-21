@@ -1,0 +1,21 @@
+RESULT ok
+waited 197 frames
+captured 01_armed
+waited 291 frames
+waited 548 frames
+captured 02_keyboard_previous
+waited 202 frames
+waited 245 frames
+captured 03_sparse_note_previous
+waited 616 frames
+waited 243 frames
+captured 04_held_note_previous
+waited 73 frames
+captured 05_closed
+capture 01_armed 2360x2100 digest=e7ed9da56632872e file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/guitar-r2/run/01_armed.png
+capture 02_keyboard_previous 2360x2100 digest=0458ecd25f82b3ce file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/guitar-r2/run/02_keyboard_previous.png
+capture 03_sparse_note_previous 2360x2100 digest=e7761a8817237909 file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/guitar-r2/run/03_sparse_note_previous.png
+capture 04_held_note_previous 2360x2100 digest=6d174f52d04e448e file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/guitar-r2/run/04_held_note_previous.png
+capture 05_closed 2360x2100 digest=d530cd6fa8e98670 file=/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021/guitar-r2/run/05_closed.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 2478 frames, 2481 redraws, 3 unpresented redraws

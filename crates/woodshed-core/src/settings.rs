@@ -332,8 +332,8 @@ impl Default for MetronomeSettings {
     }
 }
 
-// These routes do not own durable knobs yet. Empty typed subsections make that
-// boundary explicit without inventing settings the runtimes do not implement.
+// Routes without durable knobs keep empty typed subsections. MIDI preparation
+// is durable; its live connections, actions and outcomes remain host-owned.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TunerSettings {}
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -341,7 +341,10 @@ pub struct RehearsalSettings {}
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LooperSettings {}
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct AudioMidiSettings {}
+#[serde(default)]
+pub struct AudioMidiSettings {
+    pub midi_pedal: crate::midi::PedalBindings,
+}
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct AccessibilitySettings {
@@ -419,6 +422,81 @@ pub struct AppSettings {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn pedal_preparation_defaults_and_round_trip_without_live_commands() {
+        use crate::midi::{
+            ControllerBinding, ControllerKind, PedalAction, PedalBinding, PedalMessageKind,
+            PedalShortcut,
+        };
+        let mut settings: AppSettings = serde_json::from_str("{}").unwrap();
+        assert!(!settings.audio_midi.midi_pedal.effect_next.enabled);
+        assert_eq!(settings.audio_midi.midi_pedal.inputs, Default::default());
+        settings.audio_midi.midi_pedal.inputs.effect_next.keyboard = Some(PedalShortcut {
+            key: "n".into(),
+            shift: true,
+            alt: false,
+        });
+        settings
+            .audio_midi
+            .midi_pedal
+            .inputs
+            .effect_previous
+            .controller = Some(ControllerBinding {
+            channel: 16,
+            kind: ControllerKind::ControlChange,
+            number: 127,
+        });
+        *settings
+            .audio_midi
+            .midi_pedal
+            .get_mut(PedalAction::EffectNext) = PedalBinding {
+            enabled: true,
+            channel: 16,
+            kind: PedalMessageKind::NoteOn,
+            number: 127,
+            value: 64,
+            release: Some(0),
+        };
+        *settings
+            .audio_midi
+            .midi_pedal
+            .get_mut(PedalAction::EffectPrevious) = PedalBinding {
+            enabled: true,
+            channel: 1,
+            kind: PedalMessageKind::ProgramChange,
+            number: 0,
+            value: 0,
+            release: None,
+        };
+        let encoded = serde_json::to_value(&settings).unwrap();
+        assert!(encoded.get("midi_pedal").is_some());
+        for key in [
+            "pedal_request",
+            "pedal_report",
+            "connected_out",
+            "output_ready",
+            "inputs_armed",
+            "learn_key",
+            "learn_controller",
+            "controller_edges",
+            "pedal_target",
+            "pedal_request_target",
+        ] {
+            assert!(encoded.get(key).is_none());
+        }
+        let reopened: AppSettings = serde_json::from_value(encoded).unwrap();
+        assert_eq!(reopened.audio_midi, settings.audio_midi);
+        assert_eq!(
+            reopened
+                .audio_midi
+                .midi_pedal
+                .effect_next
+                .messages()
+                .unwrap(),
+            [vec![0x9f, 127, 64], vec![0x8f, 127, 0]]
+        );
+    }
 
     #[test]
     fn appearance_keeps_legacy_names_and_round_trips_shared_choices() {

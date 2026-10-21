@@ -1,0 +1,19 @@
+{
+  "clock_enabled": false,
+  "output": {
+    "accepted": 0,
+    "attempted": 0,
+    "connected": "Bluetooth MIDI pedal (no encryption)",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": 1,
+    "last_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "status": "MIDI receiver subscribed (unencrypted compatibility) · OS accepted 0; refused/uncertain 0"
+  },
+  "playing": false,
+  "selected_index": 3,
+  "ui_notice": "MIDI receiver subscribed (unencrypted compatibility) · OS accepted 0; refused/uncertain 0"
+}

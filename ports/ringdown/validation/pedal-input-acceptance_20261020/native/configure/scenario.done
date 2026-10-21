@@ -1,0 +1,49 @@
+RESULT ok
+waited 2 frames
+waited 4 frames
+waited 4 frames
+captured 01_learned_no_sends
+waited 1 frames
+waited 0 frames
+waited 1 frames
+waited 0 frames
+captured 02_shortcuts_hold_once
+waited 4 frames
+waited 4 frames
+waited 4 frames
+waited 4 frames
+waited 5 frames
+captured 03_controller_holds_once
+waited 3 frames
+waited 4 frames
+waited 3 frames
+waited 4 frames
+captured 04_input_disconnect
+waited 2 frames
+waited 0 frames
+waited 2 frames
+waited 3 frames
+waited 3 frames
+waited 4 frames
+captured 05_partial_release_retained
+waited 2 frames
+waited 2 frames
+waited 0 frames
+waited 0 frames
+captured 06_output_reconnect_no_replay
+waited 0 frames
+waited 0 frames
+waited 2 frames
+captured 07_fresh_actions
+waited 0 frames
+captured 08_closed_saved
+capture 01_learned_no_sends 2360x2100 digest=a16790d7289e700e file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/01_learned_no_sends.png
+capture 02_shortcuts_hold_once 2360x2100 digest=1d22c8e7655134f5 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/02_shortcuts_hold_once.png
+capture 03_controller_holds_once 2360x2100 digest=daba56ecbc0f2d01 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/03_controller_holds_once.png
+capture 04_input_disconnect 2360x2100 digest=98b255c356dbe0de file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/04_input_disconnect.png
+capture 05_partial_release_retained 2360x2100 digest=0a02af49b3e9eecb file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/05_partial_release_retained.png
+capture 06_output_reconnect_no_replay 2360x2100 digest=5580fcc1f344d1d5 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/06_output_reconnect_no_replay.png
+capture 07_fresh_actions 2360x2100 digest=ee6e84aad33cfc2d file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/07_fresh_actions.png
+capture 08_closed_saved 2360x2100 digest=b895ebab9497b5c8 file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/configure/run/08_closed_saved.png
+frames: 8 captured, 0 blank, 8 distinct digests
+presentation: 460 frames, 463 redraws, 3 unpresented redraws

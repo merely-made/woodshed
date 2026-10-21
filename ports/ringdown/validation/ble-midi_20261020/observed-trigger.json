@@ -1,0 +1,51 @@
+{
+  "binary_sha256": "d4f7665e913849bef9558db40de53d7e6a257095a8f195687c337ca651e08464",
+  "source_hashes": {
+    "crates/woodshed-instrument/src/midi.rs": "79e25ac8e335b727775d0f23bde7d54e66e1c38d2aee11dab7f35191370c7c92",
+    "crates/woodshed-instrument/src/midi/ble.rs": "99fc74f4cef6e64d4c7b239169e53fafb394c05463a2e850c7a7e70d0237a3a5",
+    "ports/ringdown/apps/probe/src/main.rs": "2be47bc33778111016e7f3e2ed841e36f8c9555ae78f8b659d9223394d260f0a",
+    "vendor/ble-peripheral-rust/src/error.rs": "67ab0081b0bf21ef07a05a0c06aacef26f45fe4e55f575f76ed62b12c6a9ef49",
+    "vendor/ble-peripheral-rust/src/lib.rs": "36061bdf0a26f3ee6b21a81770b5eaf269692e2ce5531f40dba40854368ee23e",
+    "vendor/ble-peripheral-rust/src/uuid.rs": "d59dc2a6e56fcd167057bfbce45161b503193bf0d9fdfdac7f6f01c273e653d0",
+    "vendor/ble-peripheral-rust/src/gatt/characteristic.rs": "e9e3d0d3425b6fab82dc3dee86afeaa1b38d97afe75f5052a14668ec5bc8418f",
+    "vendor/ble-peripheral-rust/src/gatt/properties.rs": "31bd0ebf7a1ae5c3dd4fa7520763107952d15df195a3797ca8497367eb091bbf",
+    "vendor/ble-peripheral-rust/src/gatt/peripheral_event.rs": "5d3f2e436d45d9b35c0de901b646b1553e31ee5d6a6eedf8d20680ea8cc1f229",
+    "vendor/ble-peripheral-rust/src/gatt/descriptor.rs": "8db971252e493d6065365ac79c78e391ed13d63f685d3a07eb448739d8a1d047",
+    "vendor/ble-peripheral-rust/src/gatt/service.rs": "e96ce7fca4c9961bbe08ab66cfb9885867d37c57c9fdfe076a0106ae66922081",
+    "vendor/ble-peripheral-rust/src/gatt/mod.rs": "cba861d0dc6ca92c31febfb83a83e2d40f487a35ee7c2823f26e49911c832439",
+    "vendor/ble-peripheral-rust/src/peripheral/mod.rs": "b97f223e8e6110d6270b1a752f790c2b978d739ae183a07884882635e2e51948",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/peripheral_delegate.rs": "51d817d9455c42684e008c19c7a5a259a0f82ea8e5bbb47dd11eed83ce4bd736",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/error.rs": "97681b33e4c2386ae584bcfc6cdd7977034c6dc2a3d2c763f63298a639e8eaaa",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/mac_utils.rs": "bfb72c6afc96cb131e92b6d68d858a25eacde2b4d83cc35e5effae8cd020767d",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/mod.rs": "b62215678bbc4d51d2168dd4e5b2c102ec08d623dd93d3137a48b503390c0af7",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/peripheral_manager.rs": "81ee066ca23daff4f5b3275770f54015c6871a9b5a7da079b0f03a9f829f4bde",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/mac_extensions.rs": "878dfa515c196a7cf87d31d10c17f2f9af3a26ebcf55e031bd801d1391203397",
+    "vendor/ble-peripheral-rust/src/peripheral/corebluetooth/characteristic_utils.rs": "c84cd2dd20aad6547cc752acf69ff84d86789f04f4e7da0c531957fba9fa59d5",
+    "vendor/ble-peripheral-rust/src/peripheral/bluez/bluez_utils.rs": "2381d8d54254f0ce8ea5b9a5d0184f35c7c0133ce17f9d0d31c0b6b0f54d2312",
+    "vendor/ble-peripheral-rust/src/peripheral/bluez/mod.rs": "225959b0a972827678d4fee254a6abdd9daf0b6b39626c226a75d358ef7a53ed",
+    "vendor/ble-peripheral-rust/src/peripheral/bluez/characteristic_utils.rs": "1e360294502448ace34d3669f5f984012b799a17fcf7afa22bb9a568217f08d6",
+    "vendor/ble-peripheral-rust/src/peripheral/winrt/error.rs": "e2b3ed7912a803beae7e40ae9f3fa7fb6fccbe5fcae50f4ad6f60e2246f55ce0",
+    "vendor/ble-peripheral-rust/src/peripheral/winrt/mod.rs": "f08838771b1eb533b6f75ed826916d22e2bbc709b51d0e1a77265bcb9fbc54c2",
+    "vendor/ble-peripheral-rust/src/peripheral/winrt/win_utils.rs": "978f76def9da9197291cfbc9f5fb5192ea56d1136ed8cb9e01f4308adcd4cea1",
+    "vendor/ble-peripheral-rust/src/peripheral/winrt/win_event_handler.rs": "1d7191e69fa76e3ed68ade1518ca7ea0581572945bfcd08d89210bf0403e5276",
+    "vendor/ble-peripheral-rust/src/peripheral/winrt/peripheral_manager.rs": "97cf840acb1ce8605c4b81652c7097d71125046aea39ab4523ba468769f36548",
+    "vendor/ble-peripheral-rust/src/peripheral/winrt/characteristic_utils.rs": "69abea74959656e07fd0163a4ef7e986186dc78ac2bfe7a3d5bd3640e09b84fb"
+  },
+  "security": "UnencryptedCompatibility",
+  "subscription_generation": 2,
+  "messages": [
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ]
+  ],
+  "os_accepted": 2,
+  "owner_observation": "one effect advance",
+  "first_attempt": "OS accepted both messages; owner had not configured Effect Next, so no musical conclusion. Owner explicitly requested a second attempt."
+}

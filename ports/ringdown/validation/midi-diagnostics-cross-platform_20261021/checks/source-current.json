@@ -1,0 +1,5 @@
+{
+  "source_files": 1137,
+  "mismatches": [],
+  "scope": "Current local source versus snapshot staged for native Windows/Linux builds; new acceptance packet excluded by source snapshot construction"
+}

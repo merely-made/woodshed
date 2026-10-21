@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-20",
+  "status": "bounded acceptance passes",
+  "source": "Existing dirty working tree; baseline files, status and tracked patch preserved in scratch; no commit/staging/push/stash/reset/publication",
+  "scratch": "/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020",
+  "toolchain": "1.99.1-x86_64-apple-darwin",
+  "environment": {
+    "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc",
+    "RUSTDOC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustdoc",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "4"
+  },
+  "linux_environment": {
+    "PKG_CONFIG_ALLOW_CROSS": "1",
+    "PKG_CONFIG_SYSROOT_DIR": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/linux-sysroot",
+    "PKG_CONFIG_LIBDIR": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/linux-sysroot/usr/lib/x86_64-linux-gnu/pkgconfig"
+  },
+  "checks": [
+    {
+      "scope": "host/admission/stdio/worker/selection/key policy",
+      "command": "cargo test --manifest-path /Users/markik/Code/repos/woodshed/Cargo.toml --locked --offline -p woodshed-genet midi -- --nocapture",
+      "cwd": "/tmp",
+      "passed": 28,
+      "log": "host-qualified.log",
+      "exit_code": 0
+    },
+    {
+      "scope": "shared instrument and BLE faults",
+      "command": "cargo test --manifest-path /Users/markik/Code/repos/woodshed/Cargo.toml --locked --offline -p woodshed-instrument --features ble-midi",
+      "cwd": "/tmp",
+      "passed": 21,
+      "log": "instrument-final.log",
+      "exit_code": 0
+    },
+    {
+      "scope": "settings preparation round trip",
+      "command": "cargo test --manifest-path /Users/markik/Code/repos/woodshed/Cargo.toml --locked --offline -p woodshed-core pedal -- --nocapture",
+      "cwd": "/tmp",
+      "passed": 1,
+      "log": "settings-final.log",
+      "exit_code": 0
+    },
+    {
+      "scope": "existing CLI regression",
+      "command": "cargo test --locked --offline -p ringdown-probe --test standards_cli",
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "passed": 7,
+      "log": "cli-tests.log",
+      "exit_code": 0
+    },
+    {
+      "scope": "native macOS desktop build",
+      "command": "cargo build --manifest-path /Users/markik/Code/repos/woodshed/Cargo.toml --locked --offline -p woodshed-genet",
+      "cwd": "/tmp",
+      "log": "build-qualified-final.log",
+      "exit_code": 0
+    },
+    {
+      "scope": "Windows shared instrument BLE target",
+      "command": "cargo check --manifest-path /Users/markik/Code/repos/woodshed/Cargo.toml --locked --offline -p woodshed-instrument --features ble-midi --target x86_64-pc-windows-gnu",
+      "cwd": "/tmp",
+      "log": "windows-check.log",
+      "exit_code": 0
+    },
+    {
+      "scope": "Linux shared instrument BLE target",
+      "command": "cargo check --manifest-path /Users/markik/Code/repos/woodshed/Cargo.toml --locked --offline -p woodshed-instrument --features ble-midi --target x86_64-unknown-linux-gnu",
+      "cwd": "/tmp",
+      "log": "linux-check.log",
+      "exit_code": 0
+    }
+  ],
+  "focused_case_executions": 57,
+  "new_cases": 21,
+  "native": {
+    "cohort": "native-r4",
+    "processes": 2,
+    "captures": 7,
+    "accepted_messages": [
+      4,
+      9
+    ],
+    "independently_received_messages": 13,
+    "exact_byte_parity": true,
+    "receiver_epochs": 2,
+    "saved_bindings_reopened_exactly": true,
+    "live_state_reopened_empty": true,
+    "partial_result": "uncertain; one OS-accepted press; release cancelled before writer; no replay",
+    "closed_readout_retains_partial": true,
+    "binary_sha256": "87f8248cd253b9d2a36633ff3648927dea8dc093cfd990db9ce4d15ab1695976"
+  },
+  "guitar": {
+    "cohort": "guitar-r2",
+    "processes": 1,
+    "captures": 4,
+    "accepted_messages": 4,
+    "failed_messages": 0,
+    "owner_observed": "Next exactly once; Previous moved back exactly once",
+    "bindings": {
+      "next": "channel 1 / CC67 / 127 then 0",
+      "previous": "channel 1 / CC66 / 127 then 0"
+    },
+    "subscription_generations": [
+      1,
+      2
+    ],
+    "reconnect_replay": false,
+    "final_output_closed": true,
+    "security": "previously approved explicit unencrypted compatibility",
+    "binary_sha256": "a4aabed915b4f68954c92c8165b8159b30fdc54073693e81ad67720b89d705de",
+    "source_boundary": "Hardware binary precedes final closed-output readout repair in OutputState::closed_status, Clock::retire and Connect(None). No change to encoding, admission, action scheduling, writer or BLE delivery after hardware run. Final virtual/native cohort and regression qualify that readout-only delta."
+  },
+  "reviewed_final_captures": [
+    "native/reopen/run/02_partial_release_visible.png",
+    "native/reopen/run/04_script_results.png",
+    "native/guitar/run/05_reconnected_no_replay.png"
+  ],
+  "repairs": [
+    "Accepted-message count in visible report",
+    "One retained uncertain-pedal report survives transport failure, refusal, reconnect and later successful actions",
+    "Shared closed-status formatting survives explicit None selection",
+    "Terminal stdin I/O error stops the lane after one report"
+  ],
+  "scope_limits": [
+    "native Windows/Linux full desktop and adapters",
+    "physical BLE congestion or partial delivery",
+    "latency, jitter, phase and performance budget",
+    "encrypted guitar interoperability",
+    "other instruments/firmware/actions",
+    "no new firmware/RPC read during standard-MIDI trial"
+  ],
+  "historical_receipts": "Unchanged. Failed fixtures and earlier passes remain in scratch and attempts.json. No vendor data, normal profile or custody secrets included."
+}

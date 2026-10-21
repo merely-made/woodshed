@@ -564,6 +564,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1254ebf6529f3763c491acfb5ab6e960809e3c75a38584cc664f8c5667fb7107"
 
 [[package]]
+name = "audio-pack-views"
+version = "0.1.0"
+dependencies = [
+ "audio-packs",
+ "audio-pattern",
+ "cambium",
+ "scenomise",
+]
+
+[[package]]
+name = "audio-packs"
+version = "0.1.0"
+dependencies = [
+ "audio-pattern",
+ "blake3",
+ "hound",
+ "serde",
+ "serde_json",
+ "toml",
+]
+
+[[package]]
+name = "audio-pattern"
+version = "0.1.0"
+dependencies = [
+ "audio-primitives",
+ "midly",
+ "serde",
+]
+
+[[package]]
 name = "audio-primitives"
 version = "0.1.0"
 
@@ -3032,6 +3063,8 @@ name = "hocket-genet"
 version = "0.2.0"
 dependencies = [
  "armillary",
+ "audio-pack-views",
+ "audio-packs",
  "audio-primitives",
  "cambium",
  "cambium-genet-winit-host",
@@ -3074,6 +3107,7 @@ dependencies = [
 name = "hocket-model"
 version = "0.1.0"
 dependencies = [
+ "audio-packs",
  "ciborium",
  "serde",
  "uuid",
@@ -3099,6 +3133,7 @@ dependencies = [
 name = "hocket-recorder"
 version = "0.1.0"
 dependencies = [
+ "audio-packs",
  "audio-primitives",
  "hocket-model",
  "hocket-project",
@@ -4035,6 +4070,12 @@ dependencies = [
  "serde_json",
  "taproot",
 ]
+
+[[package]]
+name = "midly"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "207d755f4cb882d20c4da58d707ca9130a0c9bc5061f657a4f299b8e36362b7a"
 
 [[package]]
 name = "mime"

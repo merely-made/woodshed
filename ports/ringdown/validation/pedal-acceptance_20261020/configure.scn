@@ -1,0 +1,191 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .neck-step @aria-label=Effect Previous Number increase
+click .t-btn @aria-label=Effect Previous binding enabled
+click .t-btn @aria-label=Effect Previous release
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .neck-step @aria-label=Effect Next Number increase
+click .t-btn @aria-label=Effect Next binding enabled
+click .t-btn @aria-label=Effect Next release
+click .t-btn @aria-label=Effect Previous message type
+click .t-btn @aria-label=Effect Previous message type
+click .t-btn @aria-label=Effect Previous message type
+click .t-btn @aria-label=Effect Previous message type
+click .t-btn @aria-label=Effect Previous release
+click .neck-step @aria-label=Effect Previous Channel decrease
+click .neck-step @aria-label=Effect Previous Channel increase
+click .neck-step @aria-label=Effect Previous Channel decrease
+click .neck-step @aria-label=Effect Previous Value increase
+click .neck-step @aria-label=Effect Previous Value decrease
+click .neck-step @aria-label=Effect Previous Value increase
+click .neck-step @aria-label=Effect Previous Release value increase
+click .neck-step @aria-label=Effect Previous Release value decrease
+click .t-btn @aria-label=Effect Next message type
+click .t-btn @aria-label=Effect Next message type
+click .t-btn @aria-label=Effect Next message type
+click .t-btn @aria-label=Effect Next message type
+click .t-btn @aria-label=Effect Next release
+click .neck-step @aria-label=Effect Next Channel decrease
+click .neck-step @aria-label=Effect Next Channel increase
+click .neck-step @aria-label=Effect Next Channel decrease
+click .neck-step @aria-label=Effect Next Value increase
+click .neck-step @aria-label=Effect Next Value decrease
+click .neck-step @aria-label=Effect Next Value increase
+click .neck-step @aria-label=Effect Next Release value increase
+click .neck-step @aria-label=Effect Next Release value decrease
+assert snap midi-attempted == 0
+act midi-checkpoint configured
+capture 01_configured_no_sends
+click role:combobox @aria-label=MIDI output
+click role:option Pedal acceptance receiver
+act midi-dwell 300
+wait 100000
+assert snap midi-ready == true
+click .t-btn Trigger Effect Next
+act midi-dwell 400
+wait 100000
+assert snap pedal-outcome == accepted
+assert snap midi-accepted == 2
+click .t-btn Trigger Effect Previous
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 4
+act midi-checkpoint ui-triggers
+capture 02_ui_triggers
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint closed
+capture 03_closed_saved

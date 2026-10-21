@@ -1,0 +1,1348 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "diagnostics": {
+    "capacity": 512,
+    "events": [
+      {
+        "bytes": [],
+        "detail": "ready=true; previous_generation=None; previous_ready=false",
+        "elapsed_micros": 7,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 1,
+        "stage": "writer-lifetime",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "key=p; repeat=false; action=EffectPrevious",
+        "elapsed_micros": 1171796,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 2,
+        "stage": "keyboard-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectPrevious; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 66, value: 127, release: Some(0) }",
+        "elapsed_micros": 1255023,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 3,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious",
+        "elapsed_micros": 1255037,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 4,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious",
+        "elapsed_micros": 1255039,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 5,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Previous #1: Queued \u00b7 0 message(s) accepted by OS \u00b7 Admitted for the current receiver only",
+        "elapsed_micros": 1255060,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 6,
+        "stage": "desktop-decision",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious; due_late_us=4109",
+        "elapsed_micros": 1259169,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 7,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; os_accepted=true; error=None",
+        "elapsed_micros": 1259391,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 8,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious; due_late_us=275",
+        "elapsed_micros": 1309679,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 9,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; os_accepted=true; error=None",
+        "elapsed_micros": 1309869,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 10,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Previous #1: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+        "elapsed_micros": 1309879,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 11,
+        "stage": "terminal",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOff { channel: 2, note: 36, velocity: 64 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2150812,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 12,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 110 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2150913,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 13,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectPrevious; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 66, value: 127, release: Some(0) }",
+        "elapsed_micros": 2150936,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 14,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious",
+        "elapsed_micros": 2150947,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 15,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious",
+        "elapsed_micros": 2150949,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 16,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "input=ControllerEvent { binding: ControllerBinding { channel: 3, kind: Note, number: 36 }, value: 110 }; Effect Previous #2: Queued \u00b7 0 message(s) accepted by OS \u00b7 Admitted for the current receiver only",
+        "elapsed_micros": 2150973,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 17,
+        "stage": "controller-decision",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2150987,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 18,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2157175,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 19,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious; due_late_us=8854",
+        "elapsed_micros": 2159821,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 20,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; os_accepted=true; error=None",
+        "elapsed_micros": 2159935,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 21,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2162444,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 22,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2167682,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 23,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2172793,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 24,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2179082,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 25,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2184338,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 26,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2190691,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 27,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2197091,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 28,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2203415,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 29,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2208988,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 30,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious; due_late_us=197",
+        "elapsed_micros": 2210142,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 31,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; os_accepted=true; error=None",
+        "elapsed_micros": 2210274,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 32,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Previous #2: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+        "elapsed_micros": 2210284,
+        "generation": null,
+        "request_id": 2,
+        "revision": 1,
+        "sequence": 33,
+        "stage": "terminal",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2215399,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 34,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2221432,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 35,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2226449,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 36,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2232816,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 37,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2239158,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 38,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2244248,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 39,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2250429,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 40,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2256749,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 41,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2261817,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 42,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2267978,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 43,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2274381,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 44,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2280734,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 45,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2287145,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 46,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2293011,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 47,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2298398,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 48,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2304156,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 49,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2309391,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 50,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2315465,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 51,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2321848,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 52,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2327251,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 53,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 2333605,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 54,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "key=p; repeat=false; action=EffectPrevious",
+        "elapsed_micros": 3783700,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 55,
+        "stage": "keyboard-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectPrevious; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 66, value: 127, release: Some(0) }",
+        "elapsed_micros": 3863520,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 56,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious",
+        "elapsed_micros": 3863534,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 57,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious",
+        "elapsed_micros": 3863536,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 58,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Previous #3: Queued \u00b7 0 message(s) accepted by OS \u00b7 Admitted for the current receiver only",
+        "elapsed_micros": 3863552,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 59,
+        "stage": "desktop-decision",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious; due_late_us=12569",
+        "elapsed_micros": 3876121,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 60,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; os_accepted=true; error=None",
+        "elapsed_micros": 3876269,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 61,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious; due_late_us=936",
+        "elapsed_micros": 3927221,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 62,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; os_accepted=true; error=None",
+        "elapsed_micros": 3927445,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 63,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Previous #3: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+        "elapsed_micros": 3927456,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 64,
+        "stage": "terminal",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOff { channel: 2, note: 36, velocity: 64 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4768290,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 65,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 110 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4768399,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 66,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectPrevious; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 66, value: 127, release: Some(0) }",
+        "elapsed_micros": 4768421,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 67,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious",
+        "elapsed_micros": 4768441,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 68,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious",
+        "elapsed_micros": 4768449,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 69,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "input=ControllerEvent { binding: ControllerBinding { channel: 3, kind: Note, number: 36 }, value: 110 }; Effect Previous #4: Queued \u00b7 0 message(s) accepted by OS \u00b7 Admitted for the current receiver only",
+        "elapsed_micros": 4768491,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 70,
+        "stage": "controller-decision",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4768508,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 71,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4774592,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 72,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; action=EffectPrevious; due_late_us=8126",
+        "elapsed_micros": 4776602,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 73,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          127
+        ],
+        "detail": "index=0; os_accepted=true; error=None",
+        "elapsed_micros": 4776768,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 74,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4780954,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 75,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4786974,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 76,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4792976,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 77,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4799155,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 78,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4804229,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 79,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4810065,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 80,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4816403,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 81,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4822708,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 82,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; action=EffectPrevious; due_late_us=501",
+        "elapsed_micros": 4827281,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 83,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          66,
+          0
+        ],
+        "detail": "index=1; os_accepted=true; error=None",
+        "elapsed_micros": 4827422,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 84,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Previous #4: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+        "elapsed_micros": 4827436,
+        "generation": null,
+        "request_id": 4,
+        "revision": 1,
+        "sequence": 85,
+        "stage": "terminal",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4828169,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 86,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4834580,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 87,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4840911,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 88,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4847014,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 89,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4852933,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 90,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4859156,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 91,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4865544,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 92,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4871000,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 93,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4877330,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 94,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4883275,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 95,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4888380,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 96,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4893744,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 97,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4900072,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 98,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4906162,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 99,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4911920,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 100,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4917964,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 101,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4923575,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 102,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4929427,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 103,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4934667,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 104,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4941058,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 105,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4947324,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 106,
+        "stage": "controller-input",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "NoteOn { channel: 2, note: 36, velocity: 100 }; source_epoch=1; active_epoch=1; armed=true",
+        "elapsed_micros": 4953445,
+        "generation": null,
+        "request_id": null,
+        "revision": 1,
+        "sequence": 107,
+        "stage": "controller-input",
+        "truncated": false
+      }
+    ],
+    "overwritten": 0
+  },
+  "id": "native-final",
+  "output": {
+    "accepted": 8,
+    "attempted": 8,
+    "connected": "Previous receiver ef3d1c04",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "revision": 1,
+    "status": "OS MIDI output open \u00b7 OS accepted 8; refused/uncertain 0"
+  },
+  "pedal": {
+    "accepted_messages": 2,
+    "action": "effect-previous",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 4,
+    "outcome": "accepted"
+  }
+}

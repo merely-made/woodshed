@@ -1,0 +1,13 @@
+RESULT ok
+waited 329 frames
+captured 01_installed_edited
+waited 0 frames
+captured 02_playing
+waited 385 frames
+waited 357 frames
+captured 03_failed_replacement_retained
+capture 01_installed_edited 2360x1960 digest=e93403530f52b44b file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final/run-1/01_installed_edited.png
+capture 02_playing 2360x1960 digest=6db27625b0276e3a file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final/run-1/02_playing.png
+capture 03_failed_replacement_retained 2360x1960 digest=403a6b8768050a7b file=/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/woodshed-final/run-1/03_failed_replacement_retained.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 1139 frames, 1142 redraws, 3 unpresented redraws

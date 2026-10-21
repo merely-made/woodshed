@@ -1,0 +1,25 @@
+settle 90
+assert snap practice-saved == true
+click .pill Tools
+settle 4
+click .lens Metronome
+settle 4
+click role:button @data-action=pack-bundled
+settle 30
+assert snap pack-loaded == true
+capture 01_bundled
+click role:button @data-action=pack-step-0-1
+settle 5
+click role:button @aria-label=Move Kick step 1 →
+settle 5
+assert snap pack-notice == Move needs an existing hit and an empty destination
+capture 02_occupied_refused
+click role:button @data-action=pack-step-0-1
+click role:button @data-action=pack-step-0-1
+settle 5
+click role:button @aria-label=Move Kick step 1 →
+settle 5
+click .t-btn +5
+settle 10
+act checkpoint-pack bundled-edited
+capture 03_edited

@@ -1,0 +1,11 @@
+[woodshed] practice sealed to persona "default" (Passphrase (held by djinn))
+[cambium-winit] accessibility Installed, 287 nodes projected
+woodshed-genet: waited 13 frames
+woodshed-genet: waited 74 frames
+woodshed-genet: captured 01_hotplug_failure_visible
+woodshed-genet: waited 11 frames
+woodshed-genet: captured 02_no_replay_after_hotplug
+woodshed-genet: waited 6 frames
+woodshed-genet: waited 6 frames
+woodshed-genet: captured 03_failure_history_retained
+woodshed-genet: RESULT ok (177 frames, 3 captures)

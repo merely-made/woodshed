@@ -1,0 +1,7 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+assert snap midi-attempted == 0
+assert snap pedal-input-armed == false
+act midi-checkpoint reopened
+capture 01_reopened_cleared_mappings

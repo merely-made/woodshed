@@ -1,0 +1,47 @@
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -71,6 +71,8 @@
+ pub use windows_snap::SnapLayoutBridge;
+ #[cfg(target_os = "linux")]
+ mod x11_frame;
++
++mod key_admission;
+ 
+ pub use cambium_rootstock::{
+     HOST_WHEEL_LINE_PX, AppCtx, AppFrameInsets, AppHook, AppRegion, CaptureFn, CaptureFrame, CloseDisposition,
+@@ -1209,7 +1211,13 @@
+                 self.wheel(dx, dy);
+             },
+             WindowEvent::Ime(ime) => self.ime(cambium_winit::composition_from_winit(&ime)),
+-            WindowEvent::KeyboardInput { event, .. } => match event.state {
++            WindowEvent::KeyboardInput {
++                event,
++                is_synthetic,
++                ..
++            } => match event.state {
++                // Focus snapshots describe held state, not a fresh gesture.
++                ElementState::Pressed if !key_admission::fresh_key_press(is_synthetic) => {},
+                 ElementState::Pressed => {
+                     let press = key_press_from_winit(&event, self.core.s.modifiers);
+                     self.key(&press);
+--- /dev/null
++++ b/src/key_admission.rs
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: MPL-2.0
++
++/// Winit synthesizes held-key snapshots on native focus transitions. Those
++/// presses must not enter editing, button activation or application shortcuts.
++pub(crate) fn fresh_key_press(is_synthetic: bool) -> bool {
++    !is_synthetic
++}
++
++#[cfg(test)]
++mod focus_snapshot_tests {
++    #[test]
++    fn synthetic_held_key_snapshots_never_enter_application_dispatch() {
++        assert!(super::fresh_key_press(false));
++        for _ in 0..64 {
++            assert!(!super::fresh_key_press(true));
++        }
++    }
++}

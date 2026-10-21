@@ -1,0 +1,37 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+assert snap midi-attempted == 0
+act midi-checkpoint reopened
+capture 01_reopened_bindings
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Pedal acceptance receiver
+act midi-dwell 300
+wait 100000
+assert snap midi-ready == true
+act midi-checkpoint script-ready
+act midi-dwell 9000
+wait 100000
+act midi-checkpoint after-loss
+capture 02_partial_release_visible
+act midi-dwell 2500
+wait 100000
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Pedal acceptance receiver
+act midi-dwell 500
+wait 100000
+act midi-checkpoint fresh-ready
+capture 03_reconnected_no_replay
+act midi-dwell 6000
+wait 100000
+act midi-checkpoint script-final
+capture 04_script_results
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint final

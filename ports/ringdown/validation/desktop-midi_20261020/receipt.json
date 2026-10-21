@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-20",
+  "status": "bounded native macOS desktop and guitar lifecycle qualification complete",
+  "source": "Existing dirty working tree; no commit/staging/push/stash/reset/publication. Baseline source copies and tracked patch retained in scratch.",
+  "frozen_native_binary_sha256": "888c90987fe32627798edffd24427db37a6051a6b214270379e2554d82173fec",
+  "cohorts": {
+    "clock": {
+      "os_accepted": 293,
+      "received": 293,
+      "start": 3,
+      "stop": 3,
+      "clock": 287,
+      "idle_reopen_replayed": 0,
+      "playing_reopen_replayed": 0,
+      "explicit_wall_clock_dwells": true,
+      "native_result": "ok"
+    },
+    "hotplug": {
+      "os_accepted": 131,
+      "received": 131,
+      "disconnects": 1,
+      "start": 2,
+      "stop": 1,
+      "reconnect_replayed": 0,
+      "failure_history_retained": true
+    },
+    "guitar": {
+      "attempted": 0,
+      "accepted": 0,
+      "failed": 0,
+      "guitar_disconnect_observed": true,
+      "guitar_reconnect_observed": true,
+      "desktop_close_reopen_observed": true,
+      "final_output_closed": true,
+      "clock_always_disabled": true,
+      "disconnect_display_updated_without_input": true,
+      "desktop_reopen_needed_owner_midi_off_on": true
+    }
+  },
+  "captures": 14,
+  "tests": {
+    "host_and_selection": 12,
+    "shared_instrument": 17,
+    "real_cli": 7,
+    "total_executions": 36,
+    "new_regressions": 18,
+    "scope": "Focused owning-package cases, not whole workspace suite"
+  },
+  "compile": {
+    "native_desktop": "pass",
+    "windows_shared_transport_target": "pass",
+    "linux_shared_transport_target": "pass; same Debian development sysroot as prior BLE assessment"
+  },
+  "guitar": {
+    "security": "Explicit UnencryptedCompatibility",
+    "musical_messages_attempted": 0,
+    "clock_enabled": false,
+    "normal_profile_used": false,
+    "persistent_guitar_writes": false,
+    "private_rpc_used": false,
+    "closed": true
+  },
+  "behavior": "No automatic replay; failed/uncertain sends and observed disconnects retained; new subscription generation and selection revision required for fresh output; reopened playback needs explicit rearm.",
+  "limits": [
+    "MIDI OS acceptance is not an application-level device acknowledgement; arbitrary radio loss cannot be ruled out",
+    "No physical guitar message/congestion/sleep/radio-loss fault trial",
+    "No new guitar CC action UI or guessed MIDI Clock/Beats capability",
+    "No latency or phase guarantee",
+    "No Windows/Linux native runtime or GUI qualification",
+    "Bounded last-failure report and counters, not an unlimited delivery journal"
+  ],
+  "historical_receipts": "Unchanged; final sources and failed attempts stored separately",
+  "default_build_graphs": "pass on macOS, Windows GNU and Linux GNU; private RPC/btleplug excluded"
+}

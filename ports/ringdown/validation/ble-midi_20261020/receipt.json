@@ -1,0 +1,142 @@
+{
+  "date": "2026-10-20",
+  "source": "Existing dirty primary checkout; no commit/stage/push/reset/stash/publication. Pre-existing AP and split work retained.",
+  "implementation": "One MidiOut connection variant using one maintained peripheral supplier; existing desktop picker/clock worker/status and CLI; no private RPC dependency or parallel sequencer/session.",
+  "supplier": {
+    "name": "ble-peripheral-rust",
+    "version": "0.2.0",
+    "upstream": "https://github.com/rohitsangwan01/ble-peripheral-rust",
+    "commit": "3135b029bd9f3e57c871039b087080bf511f6fe3",
+    "license": "MIT",
+    "bluer": {
+      "version": "0.17.4",
+      "license": "BSD-2-Clause",
+      "cargo_vcs_info": {
+        "git": {
+          "sha1": "8072d9cc6d034f1bfc464dda338d19a14f9badaf"
+        },
+        "path_in_vcs": "bluer"
+      },
+      "registry_package_sha256": "af68112f5c60196495c8b0eea68349817855f565df5b04b2477916d09fb1a901",
+      "changed_files": [
+        "src/gatt/mod.rs",
+        "src/gatt/local.rs"
+      ]
+    }
+  },
+  "qualification": [
+    {
+      "name": "native Mac CLI build",
+      "command": "cargo build --locked --offline -p ringdown-probe",
+      "exit_code": 0
+    },
+    {
+      "name": "native Woodshed desktop check",
+      "command": "cargo check --locked --offline -p woodshed-genet",
+      "exit_code": 0
+    },
+    {
+      "name": "RPC opt-in check",
+      "command": "cargo check --locked --offline -p ringdown-probe --features hyvibe-rpc",
+      "exit_code": 0
+    },
+    {
+      "name": "final-windows-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--target",
+        "x86_64-pc-windows-gnu"
+      ],
+      "exit_code": 0,
+      "environment": {}
+    },
+    {
+      "name": "final-linux-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--target",
+        "x86_64-unknown-linux-gnu"
+      ],
+      "exit_code": 0,
+      "environment": {
+        "PKG_CONFIG_ALLOW_CROSS": "1",
+        "PKG_CONFIG_SYSROOT_DIR": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/linux-sysroot",
+        "PKG_CONFIG_LIBDIR": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/linux-sysroot/usr/lib/x86_64-linux-gnu/pkgconfig"
+      }
+    },
+    {
+      "name": "file-only-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features"
+      ],
+      "exit_code": 0,
+      "environment": {}
+    },
+    {
+      "name": "os-midi-only-check",
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features",
+        "--features",
+        "midi"
+      ],
+      "exit_code": 0,
+      "environment": {}
+    }
+  ],
+  "final_mac_binary": {
+    "path": "ports/ringdown/target/debug/ringdown-probe",
+    "sha256": "7099a7b94a4722168eb543c2b2e1ebeaafabd227b4a0c7cfad134ac0a2fc27b1",
+    "difference_from_trigger": "CLI adds explicit reopen command; shared MIDI and Mac supplier source hashes match observed-trigger.json. Windows-only refinements compiled separately."
+  },
+  "hardware": {
+    "host": "Q-PC / macOS",
+    "device": "Owners HyVibe; prior H2S DSP V2.4.0 ESP V1.3.0 baseline not re-read in this MIDI-only session.",
+    "usb": "OFF",
+    "security": "Explicit UnencryptedCompatibility",
+    "action": "Owner-configured Effect Next, channel 1 CC 67, values 127 then 0",
+    "observation": "Owner reports exactly one advance",
+    "attempts": 2,
+    "first_attempt": "OS accepted messages before binding configured; no musical conclusion. Owner explicitly requested send again.",
+    "writes": "No persistent guitar writes by software; owner configured the binding.",
+    "closed": true,
+    "same_process_reopen": "Explicit reopen returns advertising with accepted_messages=0; quit exit 0. No MIDI replayed.",
+    "not_qualified": [
+      "latency/jitter/phase",
+      "other actions/channels/values",
+      "encrypted guitar compatibility",
+      "MIDI Clock reception",
+      "Beats start/stop",
+      "native GUI guitar interaction"
+    ]
+  },
+  "platform_limits": {
+    "macos": "CLI live compatibility trigger/lifecycle only; no signed package or new GUI execution.",
+    "linux": "Rust target check with real Debian development sysroot; no Linux link/runtime/pairing, BlueZ version minimum unknown; native SSH unavailable.",
+    "windows": "Rust GNU target check only, not MSVC link/runtime/pairing; encrypted registration refuses because notification-security enforcement is not established through this API; OS controls advertised name."
+  },
+  "automated_tests": "No new automated test suites added or run. Earlier 284 split executions remain separate historical evidence.",
+  "packaging": "Existing scripts updated for Bluetooth usage metadata and supplier notices; no release archive or signing run.",
+  "publication": "None; outreach draft remains unsent."
+}

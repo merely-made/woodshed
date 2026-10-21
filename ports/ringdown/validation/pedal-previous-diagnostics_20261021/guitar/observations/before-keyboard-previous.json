@@ -1,0 +1,324 @@
+{
+  "sampled_at_utc": "2026-10-21T05:30:05.519058+00:00",
+  "command": {
+    "command": "status",
+    "id": "before-keyboard-previous"
+  },
+  "response": {
+    "bindings": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "capacity": 512,
+      "events": [
+        {
+          "bytes": [],
+          "detail": "ready=false; previous_generation=None; previous_ready=false",
+          "elapsed_micros": 8,
+          "generation": 0,
+          "request_id": null,
+          "revision": 1,
+          "sequence": 1,
+          "stage": "writer-lifetime",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "subscribed_event=true; subscribers=1",
+          "elapsed_micros": 23004780,
+          "generation": 1,
+          "request_id": null,
+          "revision": null,
+          "sequence": 2,
+          "stage": "ble-subscription",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "ready=true; previous_generation=Some(0); previous_ready=false",
+          "elapsed_micros": 23014472,
+          "generation": 1,
+          "request_id": null,
+          "revision": 1,
+          "sequence": 3,
+          "stage": "writer-lifetime",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "ControlChange { channel: 1, controller: 20, value: 0 }; source_epoch=1; active_epoch=1; armed=true",
+          "elapsed_micros": 63883018,
+          "generation": 1,
+          "request_id": null,
+          "revision": 1,
+          "sequence": 4,
+          "stage": "controller-input",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "ControlChange { channel: 1, controller: 20, value: 127 }; source_epoch=1; active_epoch=1; armed=true",
+          "elapsed_micros": 63883325,
+          "generation": 1,
+          "request_id": null,
+          "revision": 1,
+          "sequence": 5,
+          "stage": "controller-input",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "action=EffectNext; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 67, value: 127, release: Some(0) }",
+          "elapsed_micros": 63883354,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 6,
+          "stage": "admission",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            127
+          ],
+          "detail": "index=0; action=EffectNext",
+          "elapsed_micros": 63883364,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 7,
+          "stage": "planned-message",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            0
+          ],
+          "detail": "index=1; action=EffectNext",
+          "elapsed_micros": 63883367,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 8,
+          "stage": "planned-message",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "input=ControllerEvent { binding: ControllerBinding { channel: 2, kind: ControlChange, number: 20 }, value: 127 }; Effect Next #1: Queued \u00b7 0 message(s) accepted by OS \u00b7 Admitted for the current receiver only",
+          "elapsed_micros": 63883394,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 9,
+          "stage": "controller-decision",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            127
+          ],
+          "detail": "index=0; action=EffectNext; due_late_us=20323",
+          "elapsed_micros": 63903717,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 10,
+          "stage": "writer-send-start",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            179,
+            159,
+            176,
+            67,
+            127
+          ],
+          "detail": "midi=[176, 67, 127]; OS notification submission, not device acknowledgement",
+          "elapsed_micros": 63903816,
+          "generation": 1,
+          "request_id": null,
+          "revision": null,
+          "sequence": 11,
+          "stage": "ble-notify-start",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            127
+          ],
+          "detail": "Ok(()); OS result, not device acknowledgement",
+          "elapsed_micros": 63904190,
+          "generation": 1,
+          "request_id": null,
+          "revision": null,
+          "sequence": 12,
+          "stage": "ble-notify-result",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            127
+          ],
+          "detail": "index=0; os_accepted=true; error=None",
+          "elapsed_micros": 63904234,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 13,
+          "stage": "writer-send-result",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            0
+          ],
+          "detail": "index=1; action=EffectNext; due_late_us=432",
+          "elapsed_micros": 63954679,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 14,
+          "stage": "writer-send-start",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            179,
+            210,
+            176,
+            67,
+            0
+          ],
+          "detail": "midi=[176, 67, 0]; OS notification submission, not device acknowledgement",
+          "elapsed_micros": 63954754,
+          "generation": 1,
+          "request_id": null,
+          "revision": null,
+          "sequence": 15,
+          "stage": "ble-notify-start",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            0
+          ],
+          "detail": "Ok(()); OS result, not device acknowledgement",
+          "elapsed_micros": 63954969,
+          "generation": 1,
+          "request_id": null,
+          "revision": null,
+          "sequence": 16,
+          "stage": "ble-notify-result",
+          "truncated": false
+        },
+        {
+          "bytes": [
+            176,
+            67,
+            0
+          ],
+          "detail": "index=1; os_accepted=true; error=None",
+          "elapsed_micros": 63955004,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 17,
+          "stage": "writer-send-result",
+          "truncated": false
+        },
+        {
+          "bytes": [],
+          "detail": "Effect Next #1: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+          "elapsed_micros": 63955014,
+          "generation": 1,
+          "request_id": 1,
+          "revision": 1,
+          "sequence": 18,
+          "stage": "terminal",
+          "truncated": false
+        }
+      ],
+      "overwritten": 0
+    },
+    "id": "before-keyboard-previous",
+    "output": {
+      "accepted": 2,
+      "attempted": 2,
+      "connected": "Bluetooth MIDI pedal (no encryption)",
+      "disconnects": 0,
+      "error": null,
+      "failed": 0,
+      "generation": 1,
+      "last_failure": null,
+      "pedal_failure": null,
+      "ready": true,
+      "rearm_required": false,
+      "revision": 1,
+      "status": "MIDI receiver subscribed (unencrypted compatibility) \u00b7 OS accepted 2; refused/uncertain 0"
+    },
+    "pedal": {
+      "accepted_messages": 2,
+      "action": "effect-next",
+      "detail": "All messages accepted by OS; musical result unobserved",
+      "id": 1,
+      "outcome": "accepted"
+    }
+  }
+}

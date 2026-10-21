@@ -1,0 +1,249 @@
+{
+  "status": "bounded software/native/guitar comparison complete; earlier miss not reproduced or retrospectively explained",
+  "focused_cases": {
+    "midi_worker_dispatcher_controller": 31,
+    "retained_input_controls_diagnostics_enabled": 5,
+    "diagnostic_journal": 2,
+    "total_distinct": 38,
+    "new_cases": 3
+  },
+  "builds": {
+    "macos_app_fixtures": "pass",
+    "windows_gnu_shared_instrument_ble": "pass",
+    "linux_gnu_shared_instrument_ble": "pass"
+  },
+  "diagnostics": {
+    "opt_in_environment": "INSTRUMENT_MIDI_DIAGNOSTICS=1",
+    "capacity": 512,
+    "hot_path_file_io": false,
+    "new_writer_or_retry": false,
+    "status_snapshot_through_existing_stdio": true
+  },
+  "historical_observation": "The original OS-accepted Note-triggered Previous with no owner-observed change remains unresolved.",
+  "prior_packet_frozen": "../pedal-input-acceptance_20261020",
+  "test_fixture_correction": "The first new comparison test omitted the optional release in its fixture. Explicit release=0 corrected the fixture; production behavior was not changed.",
+  "limits": [
+    "Earlier missed Note-triggered Previous remains unexplained; these passing comparisons do not prove its cause.",
+    "No raw radio capture or device acknowledgement.",
+    "No native Windows/Linux app runtime or encrypted guitar interoperability qualification.",
+    "Diagnostic timings describe these runs and are not latency guarantees."
+  ],
+  "native": {
+    "success": true,
+    "independent_received_messages": 8,
+    "writer_matches_receiver": true,
+    "keyboard_requests": [
+      1,
+      3
+    ],
+    "note_requests": [
+      2,
+      4
+    ],
+    "release_gaps_micros": [
+      50510,
+      50321,
+      51100,
+      50679
+    ],
+    "journal_events": 107,
+    "overwritten": 0,
+    "guitar_used": false,
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": true,
+      "elapsed_seconds": 25.507,
+      "binary_sha256": "5b9f65eb284ac9bde8974f1075a4db9c4a40bf5a4d28c289c88bfb8facf60807",
+      "scenario_sha256": "20cd729ae9a95463a61a407102ca816cb8bdce20352e3a8286ecd7883ce10563",
+      "receipt": "scenario.done",
+      "captures": 3
+    },
+    "visually_reviewed": [
+      "native/01_note_and_keyboard.png"
+    ]
+  },
+  "guitar": {
+    "success": true,
+    "historical_miss_reproduced": false,
+    "historical_cause_established": false,
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": true,
+      "elapsed_seconds": 349.437,
+      "binary_sha256": "5b9f65eb284ac9bde8974f1075a4db9c4a40bf5a4d28c289c88bfb8facf60807",
+      "scenario_sha256": "7737a1143e012279dd3adc24fb3deb17623c93dea3e6a30470cb9332ad8523c3",
+      "receipt": "scenario.done",
+      "captures": 5
+    },
+    "attempted_messages": 12,
+    "os_accepted_messages": 12,
+    "writer_send_events": 12,
+    "ble_submission_events": 12,
+    "controller_input_packets": 42,
+    "controller_input_events": 42,
+    "controller_admitted_actions": 5,
+    "real_keyboard_p_actions": 1,
+    "owner_confirmed_effect_changes": 6,
+    "previous_comparison": [
+      {
+        "source": "real keyboard P",
+        "request_id": 2,
+        "raw_midi": [
+          [
+            176,
+            66,
+            127
+          ],
+          [
+            176,
+            66,
+            0
+          ]
+        ],
+        "writer_press_release_gap_micros": 50428,
+        "ble_packets": [
+          [
+            141,
+            136,
+            176,
+            66,
+            127
+          ],
+          [
+            141,
+            186,
+            176,
+            66,
+            0
+          ]
+        ],
+        "ble_timestamp_gap_millis": 50,
+        "ble_submission_durations_micros": [
+          220,
+          208
+        ],
+        "generation": 1,
+        "owner_effect_before": "Rev",
+        "owner_effect_after": "Off"
+      },
+      {
+        "source": "sparse Note",
+        "request_id": 4,
+        "raw_midi": [
+          [
+            176,
+            66,
+            127
+          ],
+          [
+            176,
+            66,
+            0
+          ]
+        ],
+        "writer_press_release_gap_micros": 50491,
+        "ble_packets": [
+          [
+            176,
+            212,
+            176,
+            66,
+            127
+          ],
+          [
+            177,
+            134,
+            176,
+            66,
+            0
+          ]
+        ],
+        "ble_timestamp_gap_millis": 50,
+        "ble_submission_durations_micros": [
+          219,
+          215
+        ],
+        "generation": 1,
+        "owner_effect_before": "Rev",
+        "owner_effect_after": "Off"
+      },
+      {
+        "source": "held Note plus 32 repeats",
+        "request_id": 6,
+        "raw_midi": [
+          [
+            176,
+            66,
+            127
+          ],
+          [
+            176,
+            66,
+            0
+          ]
+        ],
+        "writer_press_release_gap_micros": 50526,
+        "ble_packets": [
+          [
+            141,
+            212,
+            176,
+            66,
+            127
+          ],
+          [
+            142,
+            134,
+            176,
+            66,
+            0
+          ]
+        ],
+        "ble_timestamp_gap_millis": 50,
+        "ble_submission_durations_micros": [
+          195,
+          290
+        ],
+        "generation": 1,
+        "owner_effect_before": "Rev",
+        "owner_effect_after": "Off"
+      }
+    ],
+    "subscriber_generations": [
+      1
+    ],
+    "disconnects": 0,
+    "journal_events": 124,
+    "overwritten": 0,
+    "truncated_events": 0,
+    "input_output_closed": true,
+    "clock_output_enabled": false,
+    "independent_radio_capture": false,
+    "guitar_file_writes": false,
+    "private_rpc": false,
+    "limits": "Only this instrument, explicit unencrypted compatibility output and observed session. Traced OS submission is not an air capture or device acknowledgement; owner separately observed the effect names.",
+    "cohort": "guitar-r2",
+    "owner_observations": "guitar/owner-observations.json"
+  },
+  "setup_attempts": [
+    {
+      "cohort": "guitar-r1",
+      "result": "Rebuilt temporary app required owner Bluetooth consent; startup timed out, output stayed closed, zero action attempts. Restarted same binary after consent and checked live readiness before sending."
+    }
+  ],
+  "evidence_captures": {
+    "native": 3,
+    "guitar": 5,
+    "selected_visual_review": [
+      "native/01_note_and_keyboard.png",
+      "guitar/02_keyboard_previous.png",
+      "guitar/04_held_note_previous.png",
+      "guitar/05_closed.png"
+    ]
+  },
+  "desktop_released": true
+}

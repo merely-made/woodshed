@@ -1,5 +1,8 @@
 [workspace]
 resolver = "3"
+# An ordinary build ships the standards-based CLI. Workspace-wide builds are
+# explicit research builds and also select the private protocol members.
+default-members = ["apps/probe"]
 members = [
     "crates/ringdown",
     "crates/ringdown-client",

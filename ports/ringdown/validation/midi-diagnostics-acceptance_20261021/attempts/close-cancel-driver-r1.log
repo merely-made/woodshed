@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 54, in <module>
+    apple('tell application id "made.merely.woodshed.diagnostics.acceptance" to quit','native-quit-request')
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 22, in apple
+    r=subprocess.run(['osascript'],input='with timeout of 10 seconds\n'+script+'\nend timeout\n',capture_output=True,text=True,timeout=15);log.append({'action':label,'script':script,'exit':r.returncode,'stdout':r.stdout,'stderr':r.stderr});(b/'native-dialog-actions.json').write_text(json.dumps(log,indent=2)+'\n');assert r.returncode==0,r.stderr
+                                                                                                                                                                                                                                                                                                                                  ^^^^^^^^^^^^^^^
+AssertionError: 96:100: execution error: MesquiteAcceptance got an error: User canceled. (-128)
+

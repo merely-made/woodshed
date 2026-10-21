@@ -1,0 +1,222 @@
+{
+  "format": 1,
+  "id": "user.quiet-drums",
+  "version": "1.0.1",
+  "name": "Basic drums",
+  "license": "MPL-2.0",
+  "requires": [
+    "sample.mono.v1",
+    "step.one_bar.v1",
+    "midi.smf0.v1"
+  ],
+  "parameters": {
+    "gain": {
+      "label": "Level",
+      "unit": "linear",
+      "min": 0.0,
+      "max": 4.0,
+      "default": 1.0
+    },
+    "accent_gain": {
+      "label": "Accent level",
+      "unit": "linear",
+      "min": 0.0,
+      "max": 4.0,
+      "default": 1.15
+    },
+    "pitch_semitones": {
+      "label": "Tuning",
+      "unit": "semitones",
+      "min": -24.0,
+      "max": 24.0,
+      "default": 0.0
+    }
+  },
+  "voices": {
+    "kick": {
+      "sample": "samples/kick.wav",
+      "attribution": "Woodshed contributors; original synthesized sample (generate.py)",
+      "midi": {
+        "channel": 10,
+        "note": 36,
+        "velocity": 88,
+        "accent_velocity": 112,
+        "gate_percent": 50
+      }
+    },
+    "snare": {
+      "sample": "samples/snare.wav",
+      "attribution": "Woodshed contributors; original synthesized sample (generate.py)",
+      "midi": {
+        "channel": 10,
+        "note": 38,
+        "velocity": 90,
+        "accent_velocity": 116,
+        "gate_percent": 50
+      }
+    },
+    "hat": {
+      "sample": "samples/hat.wav",
+      "attribution": "Woodshed contributors; original synthesized sample (generate.py)",
+      "midi": {
+        "channel": 10,
+        "note": 42,
+        "velocity": 62,
+        "accent_velocity": 85,
+        "gate_percent": 50
+      }
+    }
+  },
+  "patterns": {
+    "backbeat": {
+      "bpm": 90.0,
+      "time_signature": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "subdivision": {
+        "divisions_per_beat": 4
+      },
+      "tracks": [
+        {
+          "name": "Kick",
+          "steps": [
+            {
+              "Active": {
+                "accent": true
+              }
+            },
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty"
+          ],
+          "sound": {
+            "Sample": {
+              "id": "kick",
+              "gain": 0.8,
+              "accent_gain": 1.15,
+              "pitch_semitones": 0.0
+            }
+          },
+          "muted": false
+        },
+        {
+          "name": "Snare",
+          "steps": [
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            {
+              "Active": {
+                "accent": true
+              }
+            },
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            "Empty",
+            {
+              "Active": {
+                "accent": true
+              }
+            },
+            "Empty",
+            "Empty",
+            "Empty"
+          ],
+          "sound": {
+            "Sample": {
+              "id": "snare",
+              "gain": 0.4,
+              "accent_gain": 1.15,
+              "pitch_semitones": 0.0
+            }
+          },
+          "muted": false
+        },
+        {
+          "name": "Hat",
+          "steps": [
+            {
+              "Active": {
+                "accent": true
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": true
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty",
+            {
+              "Active": {
+                "accent": false
+              }
+            },
+            "Empty"
+          ],
+          "sound": {
+            "Sample": {
+              "id": "hat",
+              "gain": 0.55,
+              "accent_gain": 1.15,
+              "pitch_semitones": 0.0
+            }
+          },
+          "muted": false
+        }
+      ]
+    }
+  }
+}

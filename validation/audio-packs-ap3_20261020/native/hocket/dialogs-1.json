@@ -1,0 +1,47 @@
+[
+  {
+    "panel": "Open",
+    "before": "Open, Hocket, New Folder, Cancel, Open, missing value, missing value, missing value, missing value,",
+    "choice": {
+      "kind": "folder",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/installed-kit"
+    },
+    "selected": true
+  },
+  {
+    "panel": "Save",
+    "before": "Save, Hocket, Cancel, Save, missing value, missing value, missing value, untitled, ,",
+    "choice": {
+      "kind": "save",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final.hock"
+    },
+    "selected": true
+  },
+  {
+    "panel": "Save",
+    "before": "Save, Hocket, Cancel, Save, missing value, missing value, missing value, hocket-final-mix.wav, ,",
+    "choice": {
+      "kind": "save",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-before.wav"
+    },
+    "selected": true
+  },
+  {
+    "panel": "Save",
+    "before": "Save, Hocket, Cancel, Save, missing value, missing value, missing value, rhythm.mid, ,",
+    "choice": {
+      "kind": "save",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-before.mid"
+    },
+    "selected": true
+  },
+  {
+    "panel": "Open",
+    "before": "Open, Hocket, New Folder, Cancel, Open, missing value, missing value, missing value, missing value,",
+    "choice": {
+      "kind": "folder",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/missing-kit"
+    },
+    "selected": true
+  }
+]

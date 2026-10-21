@@ -1,0 +1,156 @@
+{
+  "recorded_at_utc": "2026-10-20T20:17:37.339623+00:00",
+  "checks": [
+    {
+      "name": "offline-check",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "offline-check.log"
+    },
+    {
+      "name": "rpc-check",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features",
+        "--features",
+        "hyvibe-rpc"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "rpc-check.log"
+    },
+    {
+      "name": "packetlogger-check",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features",
+        "--features",
+        "packetlogger"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "packetlogger-check.log"
+    },
+    {
+      "name": "combined-check",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features",
+        "--all-features"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "combined-check.log"
+    },
+    {
+      "name": "private-example-check",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "ringdown-ble",
+        "--example",
+        "metronome_link"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "private-example-check.log"
+    },
+    {
+      "name": "woodshed-audio-check",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "woodshed-audio",
+        "--lib"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed",
+      "exit_code": 0,
+      "log": "woodshed-audio-check.log"
+    },
+    {
+      "name": "midi-release-build",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--release",
+        "-p",
+        "ringdown-probe"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "midi-release-build.log"
+    },
+    {
+      "name": "offline-release-build",
+      "command": [
+        "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--release",
+        "-p",
+        "ringdown-probe",
+        "--no-default-features"
+      ],
+      "cwd": "/Users/markik/Code/repos/woodshed/ports/ringdown",
+      "exit_code": 0,
+      "log": "offline-release-build.log"
+    }
+  ],
+  "artifacts": [
+    {
+      "profile": "midi",
+      "path": "/Users/markik/Code/testing/woodshed/ringdown-standards_20261020/midi/ringdown-probe",
+      "sha256": "567ef7eab9d6d42a12a2c971bf30a6ecad367cbe963d6c9ad79dd7ef4554c0d3",
+      "bytes": 1696744,
+      "compiler_inputs": "midi-compiler-inputs.d",
+      "private_compiler_inputs": [],
+      "target": "x86_64-apple-darwin",
+      "executed": false
+    },
+    {
+      "profile": "offline",
+      "path": "/Users/markik/Code/testing/woodshed/ringdown-standards_20261020/offline/ringdown-probe",
+      "sha256": "83ae2f63f60d4d37e276f8c4a2b11c39773e9ec45ec7736cc19867ed613e460f",
+      "bytes": 1662864,
+      "compiler_inputs": "offline-compiler-inputs.d",
+      "private_compiler_inputs": [],
+      "target": "x86_64-apple-darwin",
+      "executed": false
+    }
+  ],
+  "tests_run": false,
+  "device_access": false
+}

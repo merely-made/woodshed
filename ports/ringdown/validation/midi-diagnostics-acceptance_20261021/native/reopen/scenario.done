@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_reopened_default_off
+waited 0 frames
+capture 01_reopened_default_off 2800x2300 digest=3326a02000c8a9c0 file=/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/reopen-r2/run/01_reopened_default_off.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 17 frames, 20 redraws, 3 unpresented redraws

@@ -166,6 +166,7 @@ impl Shared {
 pub(super) struct PreparedBar {
     duration: u64,
     beat: u64,
+    beat_unit: u8,
     measure: u64,
     lead: u64,
     beats: u64,
@@ -324,6 +325,7 @@ impl PreparedBacking {
             bars.push(PreparedBar {
                 duration,
                 beat: beat.max(1),
+                beat_unit: if bar.legacy_clock { 4 } else { bar.time_signature.denominator },
                 measure,
                 lead: bar.count_in_frames(rate),
                 beats,
@@ -547,6 +549,7 @@ pub(super) enum Command {
         data: Option<OwnedGc<PreparedClick>>,
         bpm: f32,
         playing: Option<bool>,
+        backing_rhythm: bool,
     },
     Metronome {
         bpm: f32,
@@ -686,6 +689,7 @@ impl AudioNode for OutputNode {
                 .expect("program transition processor constructed once"),
             backing: None,
             click: None,
+            backing_rhythm: false,
             feed: None,
             take: None,
             completed: None,
@@ -751,6 +755,7 @@ struct Processor {
     program_transitions: rtrb::Producer<ProgramTransition>,
     backing: Option<OwnedGc<PreparedBacking>>,
     click: Option<OwnedGc<PreparedClick>>,
+    backing_rhythm: bool,
     feed: Option<OwnedGc<CaptureFeedConsumer>>,
     take: Option<OwnedGc<Recording>>,
     completed: Option<CompletedRecording>,
@@ -1397,10 +1402,16 @@ impl Processor {
         self.trigger_program_events();
         if self.click_playing {
             if let Some(click) = self.click.as_ref() {
-                let ticks_per_step =
-                    (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1);
-                let beat_ticks = (self.program_tick_phase_q32 >> 32) as u64;
-                let step = beat_ticks / ticks_per_step;
+                let step = if self.backing_rhythm {
+                    // Program ticks count quarter notes. Keep the kit's meter
+                    // and subdivisions rational, including non-divisors of 960.
+                    (self.program_tick_phase_q32 * u128::from(click.beat_unit)
+                        * u128::from(click.divisions)
+                        / (u128::from(super::clock::PROGRAM_TICKS_PER_BEAT) * 4 << 32)) as u64
+                } else {
+                    let ticks_per_step = (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1);
+                    ((self.program_tick_phase_q32 >> 32) as u64) / ticks_per_step
+                };
                 if self.program_click_last_step != Some(step) {
                     let index = (step % click.steps.len() as u64) as usize;
                     if let Some(pcm) = &click.steps[index] {
@@ -1556,7 +1567,7 @@ impl Processor {
             .and_then(|program| program.cards.get(self.program_card_index));
         let card_token = current_card.map(|card| card.token);
         let click_subdivision_ticks = self.click.as_ref().map_or(0, |click| {
-            (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1)
+            (super::clock::PROGRAM_TICKS_PER_BEAT * 4 / (if self.backing_rhythm { u64::from(click.beat_unit) } else { 4 } * u64::from(click.divisions.max(1)))).max(1)
         });
         ProgramSnapshot {
             epoch: self.program_epoch,
@@ -1620,7 +1631,21 @@ impl Processor {
                 let bar = &self.backing.as_ref().unwrap().bars[self.cursor.bar_idx];
                 let beat = self.cursor.sample_in_bar / bar.beat;
                 let measure = self.cursor.sample_in_bar / bar.measure;
-                if self.backing.as_ref().unwrap().click && self.song_last_beat != Some(beat) {
+                if self.backing_rhythm && self.backing.as_ref().unwrap().click {
+                    if let Some(rhythm) = &self.click {
+                        // Position comes from the admitted backing bar, never
+                        // the UI clock. Scale its notated beat to the kit unit.
+                        let unit = u128::from(bar.beat).saturating_mul(u128::from(bar.beat_unit)).max(1);
+                        let step = (self.cursor.sample_in_bar as u128 * u128::from(rhythm.divisions)
+                            * u128::from(rhythm.beat_unit) / unit) as u64;
+                        if self.song_last_beat != Some(step) {
+                            if let Some(pcm) = &rhythm.steps[step as usize % rhythm.steps.len()] {
+                                trigger(&mut self.song_voices, pcm.clone());
+                            }
+                            self.song_last_beat = Some(step);
+                        }
+                    }
+                } else if self.backing.as_ref().unwrap().click && self.song_last_beat != Some(beat) {
                     let accent = beat.is_multiple_of(bar.beats);
                     self.click_trigger(accent, true);
                     self.song_last_beat = Some(beat);
@@ -1768,7 +1793,10 @@ impl AudioNodeProcessor for Processor {
                             self.start_playing(*playing);
                         }
                     },
-                    Command::ClickPattern { data, bpm, playing } => {
+                    Command::ClickPattern { data, bpm, playing, backing_rhythm } => {
+                        self.backing_rhythm = *backing_rhythm;
+                        self.song_last_beat = None;
+                        self.program_click_last_step = None;
                         std::mem::swap(data, &mut self.click);
                         self.bpm = *bpm;
                         if let Some(playing) = playing {
@@ -2007,9 +2035,13 @@ impl AudioNodeProcessor for Processor {
                     | ProgramStatus::Refused
             ) {
             self.click.as_ref().map_or(0, |click| {
-                let step_ticks =
-                    (super::clock::PROGRAM_TICKS_PER_BEAT / click.divisions.max(1) as u64).max(1);
-                ((program.beat_ticks / step_ticks) % click.steps.len().max(1) as u64) as usize
+                let step = if self.backing_rhythm {
+                    (self.program_tick_phase_q32 * u128::from(click.beat_unit) * u128::from(click.divisions)
+                        / (u128::from(super::clock::PROGRAM_TICKS_PER_BEAT) * 4 << 32)) as u64
+                } else {
+                    program.beat_ticks / (super::clock::PROGRAM_TICKS_PER_BEAT / u64::from(click.divisions.max(1))).max(1)
+                };
+                (step % click.steps.len().max(1) as u64) as usize
             })
         } else {
             self.click.as_ref().map_or(0, |c| {

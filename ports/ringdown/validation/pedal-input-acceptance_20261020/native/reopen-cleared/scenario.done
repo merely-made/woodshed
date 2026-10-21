@@ -1,0 +1,5 @@
+RESULT ok
+captured 01_reopened_cleared_mappings
+capture 01_reopened_cleared_mappings 2360x2100 digest=6f752cf7de6d2ffa file=/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r4/reopen-cleared/run/01_reopened_cleared_mappings.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 16 frames, 19 redraws, 3 unpresented redraws

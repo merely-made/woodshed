@@ -1,0 +1,28 @@
+{
+  "baseline": "/Users/markik/Code/testing/woodshed/pedal-previous-diagnostics_20261021",
+  "outside_task_tracked_deltas": [],
+  "cargo_manifests_and_locks_unchanged": true,
+  "prior_packet_manifest_unchanged_files": 134,
+  "changed_existing_task_paths": [
+    "crates/woodshed-instrument/src/midi.rs",
+    "crates/woodshed-instrument/src/midi/ble.rs",
+    "crates/woodshed-genet/src/midi.rs",
+    "crates/woodshed-genet/src/midi/pedal.rs",
+    "crates/woodshed-genet/src/midi/worker.rs",
+    "crates/woodshed-genet/src/midi/controller.rs",
+    "crates/woodshed-genet/src/midi/stdio.rs",
+    "crates/woodshed-genet/src/midi/worker/tests.rs",
+    "crates/woodshed-genet/src/pedal_inputs.rs",
+    "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+    "ports/ringdown/design_docs/DOC_README.md",
+    "design_docs/2026-05-15_midi_design.md",
+    "design_docs/DOC_README.md"
+  ],
+  "new_production_module": "crates/woodshed-instrument/src/midi/diagnostics.rs",
+  "guitar_file_writes": false,
+  "private_rpc": false,
+  "extra_writer_or_retry": false,
+  "staged_committed_pushed": false,
+  "both_trial_connections_closed": true,
+  "desktop_explicitly_released": true
+}

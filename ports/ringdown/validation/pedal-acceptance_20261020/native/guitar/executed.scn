@@ -1,0 +1,30 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+assert snap midi-attempted == 0
+act midi-checkpoint restored
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Bluetooth MIDI pedal (no encryption)
+act midi-await-open
+wait 100000
+act midi-checkpoint advertising
+capture 01_advertising
+act midi-await-ready
+wait 100000
+act midi-checkpoint subscribed
+capture 02_subscribed
+act midi-await-disconnected
+wait 100000
+act midi-checkpoint disconnected
+capture 04_disconnected
+act midi-await-ready
+wait 100000
+act midi-dwell 1500
+wait 100000
+act midi-checkpoint reconnected
+capture 05_reconnected_no_replay
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint final

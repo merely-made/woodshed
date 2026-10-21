@@ -1,0 +1,18 @@
+[package]
+name = "audio-packs"
+version = "0.1.0"
+description = "Shared admission and immutable asset snapshots for data-defined audio packs."
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version = "1.97.1"
+publish = false
+
+[dependencies]
+audio-pattern.workspace = true
+blake3.workspace = true
+hound.workspace = true
+serde = { workspace = true, features = ["rc"] }
+serde_json.workspace = true
+toml.workspace = true

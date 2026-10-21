@@ -1,0 +1,10 @@
+warning: function `fresh_key_press` is never used
+ --> /Users/markik/Code/repos/woodshed/vendor/cambium-genet-winit-host/src/key_admission.rs:5:15
+  |
+5 | pub(crate) fn fresh_key_press(is_synthetic: bool) -> bool {
+  |               ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: 1 warning emitted
+

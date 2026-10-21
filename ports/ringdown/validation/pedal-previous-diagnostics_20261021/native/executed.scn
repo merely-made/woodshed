@@ -1,0 +1,40 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI input
+click role:option Previous input ef3d1c04
+click role:combobox @aria-label=MIDI output
+click role:option Previous receiver ef3d1c04
+act midi-await-ready
+wait 100000
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act pedal-input-key p
+act midi-await-count 2
+wait 100000
+assert snap midi-accepted == 2
+act midi-checkpoint note-ready-1
+act midi-await-count 4
+wait 100000
+assert snap midi-accepted == 4
+capture 01_note_and_keyboard
+act pedal-input-key p
+act midi-await-count 6
+wait 100000
+assert snap midi-accepted == 6
+act midi-checkpoint note-ready-2
+act midi-await-count 8
+wait 100000
+assert snap midi-accepted == 8
+act midi-checkpoint compared
+capture 02_repeat_comparison
+act midi-dwell 3000
+wait 100000
+click role:combobox @aria-label=MIDI input
+click role:option None
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint final
+capture 03_closed

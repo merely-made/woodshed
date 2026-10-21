@@ -1,0 +1,29 @@
+[
+  {
+    "panel": "Open",
+    "before": "Open, Hocket, Cancel, Open, missing value, missing value, missing value, missing value,",
+    "choice": {
+      "kind": "open",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final.hock"
+    },
+    "selected": true
+  },
+  {
+    "panel": "Save",
+    "before": "Save, Hocket, Cancel, Save, missing value, missing value, missing value, rhythm, ,",
+    "choice": {
+      "kind": "save",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-after.mid"
+    },
+    "selected": true
+  },
+  {
+    "panel": "Save",
+    "before": "Save, Hocket, Cancel, Save, missing value, missing value, missing value, hocket-final-mix.wav, ,",
+    "choice": {
+      "kind": "save",
+      "path": "/Users/markik/Code/testing/woodshed/audio-packs-ap3_20261020/hocket-final-after.wav"
+    },
+    "selected": true
+  }
+]

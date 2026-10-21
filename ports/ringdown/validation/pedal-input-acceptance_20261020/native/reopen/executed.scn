@@ -1,0 +1,67 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+assert snap midi-attempted == 0
+assert snap pedal-input-armed == false
+assert snap pedal-input-connected == null
+assert snap pedal-input-learn_key == null
+assert snap pedal-input-learn_controller == null
+act midi-checkpoint reopened
+capture 01_reopened_preparation
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI input
+click role:option Pedal input source 07102fbb
+click role:combobox @aria-label=MIDI output
+click role:option Pedal input receiver 07102fbb
+act midi-dwell 400
+wait 100000
+assert snap midi-ready == true
+assert snap pedal-input-armed == false
+act pedal-input-key n
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 0
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act pedal-input-key n
+act midi-dwell 400
+wait 100000
+act pedal-input-key p
+act midi-dwell 400
+wait 100000
+assert snap midi-accepted == 4
+act midi-checkpoint reopen-held
+act midi-dwell 700
+wait 100000
+assert snap midi-accepted == 4
+act midi-checkpoint reopen-fresh
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 8
+act midi-checkpoint restored-actions
+capture 02_restored_mappings_work
+act midi-checkpoint busy-burst
+act midi-dwell 900
+wait 100000
+assert snap midi-accepted == 10
+act midi-checkpoint busy-refusal
+capture 03_busy_refusal_visible
+click .t-btn @aria-label=Effect Previous clear keyboard
+click .t-btn @aria-label=Effect Previous clear MIDI
+assert snap pedal-input-armed == false
+act pedal-input-key p
+click .t-btn @aria-label=Effect Previous learn keyboard
+act pedal-input-key q
+act midi-checkpoint cleared-input
+act midi-dwell 700
+wait 100000
+assert snap midi-accepted == 10
+act midi-checkpoint cleared
+capture 04_clear_reassign_saved
+click role:combobox @aria-label=MIDI input
+click role:option None
+click role:combobox @aria-label=MIDI output
+click role:option None
+act midi-dwell 400
+wait 100000
+act midi-checkpoint closed

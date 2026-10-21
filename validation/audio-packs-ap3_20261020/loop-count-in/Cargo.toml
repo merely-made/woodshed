@@ -1,0 +1,9 @@
+[package]
+name = "ap3-loop-count-in-prep"
+version = "0.0.0"
+edition = "2024"
+[dependencies]
+midly = { version = "=0.5.3", default-features = false, features = ["std", "strict"] }
+audio-packs = { path = "/Users/markik/Code/repos/woodshed/crates/audio-packs" }
+audio-pattern = { path = "/Users/markik/Code/repos/woodshed/crates/audio-pattern" }
+hound = "=3.5.1"

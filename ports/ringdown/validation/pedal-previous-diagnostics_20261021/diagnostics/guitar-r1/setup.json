@@ -1,0 +1,75 @@
+{
+  "sampled_at_utc": "2026-10-21T05:26:42.199441+00:00",
+  "command": {
+    "command": "status",
+    "id": "setup"
+  },
+  "response": {
+    "bindings": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "capacity": 512,
+      "events": [],
+      "overwritten": 0
+    },
+    "id": "setup",
+    "output": {
+      "accepted": 0,
+      "attempted": 0,
+      "connected": null,
+      "disconnects": 0,
+      "error": "MIDI open failed: BLE-MIDI transport: BLE-MIDI service/advertising startup timed out",
+      "failed": 0,
+      "generation": null,
+      "last_failure": "MIDI open failed: BLE-MIDI transport: BLE-MIDI service/advertising startup timed out",
+      "pedal_failure": null,
+      "ready": false,
+      "rearm_required": false,
+      "revision": 0,
+      "status": "MIDI open failed: BLE-MIDI transport: BLE-MIDI service/advertising startup timed out"
+    },
+    "pedal": null
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-20",
+  "status": "input-implementation-and-focused-checks",
+  "toolchain": "1.99.1-x86_64-apple-darwin",
+  "cwd": "/tmp",
+  "manifest": "woodshed/Cargo.toml",
+  "environment": {
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_BUILD_JOBS": "4",
+    "RUSTC": "explicit Rust 1.99.1 binary",
+    "RUSTDOC": "explicit Rust 1.99.1 binary for tests"
+  },
+  "focused_tests": {
+    "instrument": 10,
+    "desktop": 4,
+    "settings": 1,
+    "total": 16,
+    "new_cases": 11,
+    "extended_cases": 1,
+    "shared_host_gate": 1
+  },
+  "commands": {
+    "instrument-tests": "cargo test --locked --offline -p woodshed-instrument pedal",
+    "settings-tests": "cargo test --locked --offline -p woodshed-core pedal_preparation",
+    "windows-check": "cargo check --locked --offline -p woodshed-instrument --features ble-midi --target x86_64-pc-windows-gnu",
+    "linux-check": "cargo check --locked --offline -p woodshed-instrument --features ble-midi --target x86_64-unknown-linux-gnu",
+    "desktop-tests-patched-host": "cargo test --locked --offline -p woodshed-genet pedal_inputs",
+    "build-patched-host": "cargo build --locked --offline -p woodshed-genet",
+    "host-focus-tests-final": "rustc --edition=2024 --test vendor/cambium-genet-winit-host/src/key_admission.rs -o SCRATCH/host-key-admission; SCRATCH/host-key-admission --nocapture",
+    "host-gate-cross": "rustc --edition=2024 --crate-type lib --target TARGET vendor/cambium-genet-winit-host/src/key_admission.rs"
+  },
+  "native_new_inputs": false,
+  "guitar_trial": false,
+  "shared_host_focus_gap_resolved": true,
+  "dependency_changes": {
+    "cambium-genet-winit-host": "same 0.1.0 package, provenance-pinned local source patch",
+    "other_package_versions_changed": false
+  },
+  "native_focus_qualified": false
+}

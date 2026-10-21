@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 49, in <module>
+    checkpoint('save-dialog');panel(pid,'save-panel');save(name);gate('save-dialog');assert not checkpoint('saved')['diagnostics']['busy'];gate('saved')
+                                                      ~~~~^^^^^^
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 43, in save
+    wait(b/'midi-diagnostics.json',15);time.sleep(.4)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/markik/Code/repos/woodshed/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/native_dialogs.py", line 8, in wait
+    assert time.monotonic()<end,'timeout '+str(path);time.sleep(.05)
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: timeout /Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021/controls-r2/midi-diagnostics.json

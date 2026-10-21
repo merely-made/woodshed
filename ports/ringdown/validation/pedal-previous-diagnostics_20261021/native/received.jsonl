@@ -1,0 +1,9 @@
+{"event":"open","epoch":1}
+{"event":"packet","epoch":1,"micros":15886382,"bytes":[176, 66, 127]}
+{"event":"packet","epoch":1,"micros":15936850,"bytes":[176, 66, 0]}
+{"event":"packet","epoch":1,"micros":16786910,"bytes":[176, 66, 127]}
+{"event":"packet","epoch":1,"micros":16837237,"bytes":[176, 66, 0]}
+{"event":"packet","epoch":1,"micros":18503249,"bytes":[176, 66, 127]}
+{"event":"packet","epoch":1,"micros":18554402,"bytes":[176, 66, 0]}
+{"event":"packet","epoch":1,"micros":19403742,"bytes":[176, 66, 127]}
+{"event":"packet","epoch":1,"micros":19454393,"bytes":[176, 66, 0]}

@@ -1,0 +1,11 @@
+[
+  {
+    "stage": "first-real-keyboard-next",
+    "observation": "No change",
+    "instruction": "Click Woodshed outside a text field; hold N about two seconds, release; leave P untouched",
+    "captured_at": "2026-10-21T04:52:29.249115+00:00",
+    "accepted_checkpoint_before_gesture": 0,
+    "outcome": "unresolved; inspect current send and key-delivery evidence before any retry",
+    "diagnosis": "After a receiver disconnect/resubscribe, the current checkpoint shows inputs disarmed, zero attempted/accepted, and no pedal report. No MIDI action was sent."
+  }
+]

@@ -1,0 +1,83 @@
+{
+  "checked_utc": "2026-10-20T19:03:10.616382+00:00",
+  "source_hashes_unchanged": 34,
+  "ledger_files": 16,
+  "ledger_lines": 9919,
+  "new_audit_links_checked": [
+    {
+      "from": "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+      "target": "../validation/provenance-terms_20261020/receipt.json"
+    },
+    {
+      "from": "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+      "target": "../validation/provenance-terms_20261020/file-ledger.json"
+    },
+    {
+      "from": "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+      "target": "../validation/provenance-terms_20261020/sources.json"
+    },
+    {
+      "from": "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+      "target": "../validation/provenance-terms_20261020/dependency-licenses.json"
+    },
+    {
+      "from": "ports/ringdown/design_docs/2026-08-27_ringdown_founding.md",
+      "target": "2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20"
+    },
+    {
+      "from": "ports/ringdown/design_docs/DOC_README.md",
+      "target": "2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20"
+    },
+    {
+      "from": "ports/ringdown/README.md",
+      "target": "design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20"
+    },
+    {
+      "from": "design_docs/2026-09-09_audio_ports_rehome_plan.md",
+      "target": "../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20"
+    },
+    {
+      "from": "design_docs/2026-08-27_smart_instrument_plan.md",
+      "target": "../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20"
+    },
+    {
+      "from": "design_docs/DOC_README.md",
+      "target": "../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20"
+    }
+  ],
+  "git_diff_check": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md",
+      "ports/ringdown/design_docs/2026-08-27_ringdown_founding.md",
+      "ports/ringdown/design_docs/DOC_POLICY.md",
+      "ports/ringdown/design_docs/DOC_README.md",
+      "ports/ringdown/README.md",
+      "design_docs/2026-09-09_audio_ports_rehome_plan.md",
+      "design_docs/2026-08-27_smart_instrument_plan.md",
+      "design_docs/DOC_README.md"
+    ],
+    "exit": 0
+  },
+  "package_metadata": {
+    "packages": 124,
+    "missing_license_declarations": 0,
+    "gpl_declarations": 0
+  },
+  "test_suites_run": false,
+  "builds_run": false,
+  "no_external_message_or_draft_created": true,
+  "current_doc_hashes": {
+    "ports/ringdown/design_docs/2026-09-02_client_surface_plan.md": "cf559c229f4a6d041125ff75a1e1f64d99c79bea6eb8a910715d8d68daf7cffe",
+    "ports/ringdown/design_docs/2026-08-27_ringdown_founding.md": "01d041c963864466c3693f974cdc2a3361c817eeaaf116b23f01e2859eafc699",
+    "ports/ringdown/design_docs/DOC_POLICY.md": "f3ff1a58d2fd9902c6ed0f9a4298cd32af66effedc9cd86e0620ab9877b52fef",
+    "ports/ringdown/design_docs/DOC_README.md": "c945c1d5172b91782ae8ed89f08dc6a0b89e6c45e042064e34c010a3f31a9d2e",
+    "ports/ringdown/README.md": "dd0ed7bd91a8606822ccc4c244c4c5daceb72ee079b0f30ae130de531fb41f08",
+    "design_docs/2026-09-09_audio_ports_rehome_plan.md": "4f1c454f17c9080e284c4a3db2024e8468e3500344ff1582ae18c5c3b5d8a18e",
+    "design_docs/2026-08-27_smart_instrument_plan.md": "4096ba28b5da45f81d7f4caa0e7ca9bbefbc81740b5eb3aaaa1917080935212f",
+    "design_docs/DOC_README.md": "5102ca2ace4016686d3c0ffe22c8b5dad7db64dd2531efde0d1afb6c3fbf8242"
+  }
+}

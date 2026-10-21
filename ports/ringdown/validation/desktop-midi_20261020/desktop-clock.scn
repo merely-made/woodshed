@@ -1,0 +1,77 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Desktop MIDI qualification
+settle 2
+assert snap midi-ready == true
+assert snap midi-attempted == 0
+click .t-btn Send clock: off
+assert snap midi-clock-enabled == true
+act midi-checkpoint selected
+capture 01_selected_no_messages
+click .pill Tools
+click .lens Metronome
+click .t-btn Play
+act midi-dwell 1800
+wait 100000
+assert snap midi-failed == 0
+click .t-btn Stop
+act midi-dwell 500
+wait 100000
+act midi-checkpoint first-stopped
+click .pill Settings
+click .side-item Audio and MIDI
+capture 02_stopped
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+assert snap midi-ready == false
+act midi-checkpoint disconnected
+click role:combobox @aria-label=MIDI output
+click role:option Desktop MIDI qualification
+settle 2
+assert snap midi-ready == true
+act midi-checkpoint reconnected-idle
+click .t-btn Refresh ports
+settle 2
+assert snap midi-connected == Desktop MIDI qualification
+click .pill Tools
+click .lens Metronome
+click .t-btn Play
+act midi-dwell 1800
+wait 100000
+click .pill Settings
+click .side-item Audio and MIDI
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint disconnected-playing
+click role:combobox @aria-label=MIDI output
+click role:option Desktop MIDI qualification
+act midi-dwell 1200
+wait 100000
+assert snap midi-rearm_required == true
+act midi-checkpoint reconnect-blocked
+capture 03_reconnect_requires_arm
+click .t-btn Send clock: on
+click .t-btn Send clock: off
+act midi-dwell 1000
+wait 100000
+assert snap midi-rearm_required == false
+act midi-checkpoint explicit-rearm
+click .pill Tools
+click .lens Metronome
+click .t-btn Stop
+act midi-dwell 400
+wait 100000
+click .pill Settings
+click .side-item Audio and MIDI
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+assert snap midi-ready == false
+assert snap midi-failed == 0
+act midi-checkpoint final
+capture 04_closed

@@ -1,0 +1,79 @@
+[
+  {
+    "stage": "starting-effect",
+    "owner_observation": "current effect is off"
+  },
+  {
+    "stage": "connection-correction-before-any-send",
+    "owner_observations": [
+      "allowed but not connected, no midi flag",
+      "there, turned off and on, now connected"
+    ],
+    "live_status_after_correction": {
+      "generation": 1,
+      "attempted": 0,
+      "accepted": 0,
+      "ready": true
+    },
+    "at_utc": "2026-10-21T05:29:37.688312+00:00"
+  },
+  {
+    "stage": "anchor-1-next",
+    "before_effect": "off",
+    "owner_observation": "Rev.",
+    "after_effect": "Rev.",
+    "accepted_messages": 2,
+    "pedal_id": 1,
+    "at_utc": "2026-10-21T05:30:05.580786+00:00"
+  },
+  {
+    "stage": "keyboard-previous",
+    "before_effect": "Rev.",
+    "owner_observation": "Off.",
+    "after_effect": "Off.",
+    "accepted_messages": 4,
+    "pedal_id": 2,
+    "at_utc": "2026-10-21T05:30:59.268836+00:00"
+  },
+  {
+    "stage": "anchor-2-next",
+    "before_effect": "Off.",
+    "owner_observation": "rev",
+    "after_effect": "rev",
+    "accepted_messages": 6,
+    "pedal_id": 3,
+    "at_utc": "2026-10-21T05:31:32.805116+00:00"
+  },
+  {
+    "stage": "sparse-note-previous",
+    "before_effect": "rev",
+    "owner_observations": [
+      "none",
+      "or off, rather",
+      "It now displays None/Off"
+    ],
+    "after_effect": "Off",
+    "accepted_messages": 8,
+    "pedal_id": 4,
+    "at_utc": "2026-10-21T05:32:58.137977+00:00"
+  },
+  {
+    "stage": "anchor-3-next",
+    "before_effect": "Off",
+    "owner_observation": "Rev",
+    "after_effect": "Rev",
+    "accepted_messages": 10,
+    "pedal_id": 5,
+    "at_utc": "2026-10-21T05:33:31.198255+00:00"
+  },
+  {
+    "stage": "held-note-previous",
+    "before_effect": "Rev",
+    "owner_observation": "Off",
+    "after_effect": "Off",
+    "accepted_messages": 12,
+    "pedal_id": 6,
+    "held_repeats": 32,
+    "at_utc": "2026-10-21T05:34:23.848888+00:00"
+  }
+]

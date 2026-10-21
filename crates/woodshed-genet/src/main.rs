@@ -27,12 +27,15 @@ mod arrangement;
 mod audio;
 mod capture_persistence;
 mod drive;
-mod fonts;
 mod fold_receipt;
+mod fonts;
 #[cfg(test)]
 mod layout_tests;
 mod leaves;
 mod midi;
+mod midi_diagnostics;
+mod pack_io;
+mod pedal_inputs;
 mod persona;
 mod scenario;
 mod session;
@@ -126,16 +129,45 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
     });
     let persona_decision = ui.pending_persona_switch.as_ref().map(|pending| {
         use woodshed_views::persona::SwitchDecision;
-        el("section", (
-            el("h3", text_node("Keep outgoing practice before switching persona")),
-            el("p", text_node(pending.notice.clone())),
-            clickable(el("button", text_node("Retry save and switch")).attr("class", "t-btn persona-save-retry"),
-                |ui: &mut UiState, _| if let Some(pending) = &mut ui.pending_persona_switch { pending.decision = Some(SwitchDecision::Retry); }),
-            clickable(el("button", text_node("Discard unsaved changes and switch")).attr("class", "t-btn persona-save-discard"),
-                |ui: &mut UiState, _| if let Some(pending) = &mut ui.pending_persona_switch { pending.decision = Some(SwitchDecision::Discard); }),
-            clickable(el("button", text_node("Cancel switch")).attr("class", "t-btn persona-save-cancel"),
-                |ui: &mut UiState, _| if let Some(pending) = &mut ui.pending_persona_switch { pending.decision = Some(SwitchDecision::Cancel); }),
-        )).attr("class", "practice-close-panel").attr("role", "alert")
+        el(
+            "section",
+            (
+                el(
+                    "h3",
+                    text_node("Keep outgoing practice before switching persona"),
+                ),
+                el("p", text_node(pending.notice.clone())),
+                clickable(
+                    el("button", text_node("Retry save and switch"))
+                        .attr("class", "t-btn persona-save-retry"),
+                    |ui: &mut UiState, _| {
+                        if let Some(pending) = &mut ui.pending_persona_switch {
+                            pending.decision = Some(SwitchDecision::Retry);
+                        }
+                    },
+                ),
+                clickable(
+                    el("button", text_node("Discard unsaved changes and switch"))
+                        .attr("class", "t-btn persona-save-discard"),
+                    |ui: &mut UiState, _| {
+                        if let Some(pending) = &mut ui.pending_persona_switch {
+                            pending.decision = Some(SwitchDecision::Discard);
+                        }
+                    },
+                ),
+                clickable(
+                    el("button", text_node("Cancel switch"))
+                        .attr("class", "t-btn persona-save-cancel"),
+                    |ui: &mut UiState, _| {
+                        if let Some(pending) = &mut ui.pending_persona_switch {
+                            pending.decision = Some(SwitchDecision::Cancel);
+                        }
+                    },
+                ),
+            ),
+        )
+        .attr("class", "practice-close-panel")
+        .attr("role", "alert")
     });
     let draft_close = commands.clone();
     let draft_decision = ui.arrangement_editor.close_pending.then(|| {
@@ -166,7 +198,13 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
     Box::new(
         el(
             "div",
-            (desktop_chrome(commands), decision, persona_decision, draft_decision, stage_root(ui)),
+            (
+                desktop_chrome(commands),
+                decision,
+                persona_decision,
+                draft_decision,
+                stage_root(ui),
+            ),
         )
         .attr("class", "desktop-frame"),
     )
@@ -183,7 +221,8 @@ fn prepare_close(
         return CloseDisposition::KeepVisible;
     }
     if ctx.runner.state().arrangement_editor.dirty() {
-        ctx.runner.update(|ui| ui.arrangement_editor.close_pending = true);
+        ctx.runner
+            .update(|ui| ui.arrangement_editor.close_pending = true);
         return CloseDisposition::KeepVisible;
     }
     if !ctx.runner.state().practice_discard_close {
@@ -198,7 +237,10 @@ fn prepare_close(
     if pending {
         return CloseDisposition::KeepVisible;
     }
-    wav_export::close_request(shared, ctx).unwrap_or_else(|| appearance::close_request(ctx))
+    midi_diagnostics::close_request(shared, ctx)
+        .or_else(|| pack_io::close_request(shared, ctx))
+        .or_else(|| wav_export::close_request(shared, ctx))
+        .unwrap_or_else(|| appearance::close_request(ctx))
 }
 
 /// Every product-requested exit, including scenario completion after a frame,
@@ -206,8 +248,7 @@ fn prepare_close(
 fn guard_requested_close(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     if *ctx.close {
         *ctx.close = false;
-        *ctx.close = prepare_close(shared, ctx)
-            == cambium_genet_winit_host::CloseDisposition::Exit;
+        *ctx.close = prepare_close(shared, ctx) == cambium_genet_winit_host::CloseDisposition::Exit;
     }
 }
 
@@ -229,6 +270,8 @@ fn boot_state(
     let mut ui = UiState::new();
     ui.enable_practice_clock();
     shared.wav_export.set_wake(wake.callback());
+    shared.pack_io.set_wake(wake.callback());
+    shared.midi_diagnostics.set_wake(wake.callback());
     shared.capture_persistence.set_wake(wake.callback());
     ui.event_clock = Some(drive::wall_time_ms);
     let (size_w, size_h) = window.inner_size();
@@ -313,6 +356,26 @@ fn sync_viewport(ctx: &mut Ctx<'_>) -> bool {
 /// caret. Named rather than inline so a test drives the shipping decision
 /// instead of a copy of it.
 fn escape_policy(runner: &mut Runner<UiState, Logic, UiChild>, press: &KeyPress) -> bool {
+    if pedal_inputs::keyboard(runner, press) {
+        return true;
+    }
+    // A held Enter/Space must not repeatedly fire a performance action.
+    if press.repeat && matches!(press.key, Key::Named(NamedKey::Enter | NamedKey::Space)) {
+        use layout_dom_api::{LayoutDom as _, LocalName, Namespace};
+        if runner.focus().is_some_and(|node| {
+            runner
+                .dom()
+                .borrow()
+                .attribute(
+                    node,
+                    &Namespace::from(""),
+                    &LocalName::from("data-midi-pedal-trigger"),
+                )
+                .is_some()
+        }) {
+            return true;
+        }
+    }
     if !matches!(press.key, Key::Named(NamedKey::Escape)) {
         return false;
     }
@@ -408,7 +471,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             shared
                 .drag_frame_metrics
                 .note_viewport(phase.elapsed(), viewport_rebuilt);
-            let mut animating = false;
+            let mut animating = pedal_inputs::poll(&mut shared, ctx);
             let phase = std::time::Instant::now();
             let drive_rebuilt =
                 !drag_active || drive::requires_live_frame(&shared, ctx.runner.state());
@@ -417,7 +480,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                     // The native text seam can update a field between ordinary
                     // dispatch tails. Refresh derived scenes before binding them.
                     ui.sync_arrangement_scene();
-                    animating = drive::frame(&mut shared, ui)
+                    animating |= drive::frame(&mut shared, ui)
                         | ui.tick_overview_dynamics()
                         | ui.tick_overview_atmosphere();
                 });
@@ -426,7 +489,11 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 .drag_frame_metrics
                 .note_drive(phase.elapsed(), drive_rebuilt);
             let (out_enabled, out_playing, out_bpm) = drive::clock_out(ctx.runner.state());
+            shared
+                .midi
+                .set_pedal_bindings(&ctx.runner.state().app_settings.audio_midi.midi_pedal);
             shared.midi.set_clock_out(out_enabled, out_playing, out_bpm);
+            sync::poll_midi_state(&mut shared, ctx);
             let phase = std::time::Instant::now();
             if drag_active && !drive_rebuilt {
                 leaves::sync_set_graph(&mut shared, ctx.runner.state(), ctx.leaves);
@@ -467,6 +534,8 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
         after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = wake_shared.borrow_mut();
             wav_export::poll(&mut shared, ctx);
+            pack_io::poll(&mut shared, ctx);
+            midi_diagnostics::poll(&mut shared, ctx);
             if *ctx.close {
                 return;
             }
@@ -497,6 +566,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             persona::resume_switch(&mut shared, ctx);
             if wake_close_requested.get()
                 && !shared.capture_persistence.preparation_busy()
+                && midi_diagnostics::close_request(&mut shared, ctx).is_none()
                 && wav_export::close_request(&mut shared, ctx).is_none()
             {
                 let disposition = prepare_close(&mut shared, ctx);
@@ -517,6 +587,9 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
 
 fn main() {
     let shared = Shared::boot();
+    if std::env::args_os().any(|arg| arg == "--midi-pedal-stdio") {
+        shared.borrow().midi.enable_pedal_stdio();
+    }
     let init_shared = shared.clone();
     let initial_geometry = initial_window_geometry(&shared);
     let options = HostOptions {
@@ -542,13 +615,90 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn midi_pedal_real_controls_suppress_key_repeat_and_refuse_disabled_or_disconnected() {
+        use woodshed_core::midi::PedalAction;
+        let mut ui = UiState::new();
+        ui.section = woodshed_core::storage::AppSection::Settings;
+        ui.app_settings.page = woodshed_core::settings::SettingsPage::AudioMidi;
+        ui.midi.output_ready = true;
+        ui.app_settings.audio_midi.midi_pedal.effect_next.enabled = true;
+        ui.app_settings
+            .audio_midi
+            .midi_pedal
+            .effect_previous
+            .enabled = true;
+        let mut host = cambium_genet_winit_host::Harness::with_command_init(
+            move |commands| {
+                let commands = commands.clone();
+                Init {
+                    sheet: appearance::stylesheet(&ui),
+                    state: ui,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+                    fonts: vec![],
+                    images: vec![],
+                }
+            },
+            HostHooks {
+                key_intercept: Box::new(escape_policy),
+                ..cambium_genet_winit_host::inert_hooks()
+            },
+            HostOptions::default(),
+        );
+        host.layout_at(1180.0, 1050.0);
+        for action in [PedalAction::EffectNext, PedalAction::EffectPrevious] {
+            host.update(|ui| ui.midi.pedal_request = None);
+            assert!(
+                host.click_on(
+                    &taproot::Selector::class("t-btn")
+                        .containing(format!("Trigger {}", action.label()))
+                )
+            );
+            assert_eq!(host.state().midi.pedal_request, Some(action));
+            for key in [NamedKey::Enter, NamedKey::Space] {
+                host.update(|ui| ui.midi.pedal_request = None);
+                let mut press = KeyPress::new(Key::Named(key));
+                press.repeat = true;
+                for _ in 0..8 {
+                    host.press_key(&press);
+                    assert_eq!(host.state().midi.pedal_request, None);
+                }
+                press.repeat = false;
+                host.press_key(&press);
+                assert_eq!(host.state().midi.pedal_request, Some(action));
+            }
+        }
+        host.update(|ui| {
+            ui.midi.pedal_request = None;
+            ui.app_settings
+                .audio_midi
+                .midi_pedal
+                .effect_previous
+                .enabled = false;
+        });
+        host.press_key(&KeyPress::new(Key::Named(NamedKey::Enter)));
+        assert!(host.state().midi.pedal_request.is_none());
+        host.update(|ui| {
+            ui.app_settings
+                .audio_midi
+                .midi_pedal
+                .effect_previous
+                .enabled = true;
+            ui.midi.output_ready = false;
+        });
+        host.press_key(&KeyPress::new(Key::Named(NamedKey::Space)));
+        assert!(host.state().midi.pedal_request.is_none());
+    }
+
     /// These layout/persistence fixtures model an accepted host operation;
     /// actual runtime refusal and bound command routing have separate tests.
     pub(crate) fn acknowledge_card_preview_fixture(ui: &mut woodshed_views::stage::UiState) {
         let requests = ui.audio_requests.clone();
         for request in requests {
             if let woodshed_core::audio::AudioRequest::CardPreview(request) = request {
-                if request.run_epoch.is_some() { ui.finish_card_preview_admission(&request, Ok(())); }
+                if request.run_epoch.is_some() {
+                    ui.finish_card_preview_admission(&request, Ok(()));
+                }
             }
         }
     }
@@ -654,14 +804,26 @@ mod tests {
         host.relayout();
         assert!(!host.close_requested());
         assert!(host.state().practice_close_pending);
-        assert_eq!(serde_json::to_value(&host.state().set.cards).unwrap(), cards);
-        assert_eq!(shared.borrow().storage.as_ref().unwrap().load().unwrap(), original);
+        assert_eq!(
+            serde_json::to_value(&host.state().set.cards).unwrap(),
+            cards
+        );
+        assert_eq!(
+            shared.borrow().storage.as_ref().unwrap().load().unwrap(),
+            original
+        );
         assert!(host.click_on(&taproot::Selector::class("practice-close-retry")));
         assert!(!host.close_requested());
-        assert_eq!(serde_json::to_value(&host.state().set.cards).unwrap(), cards);
+        assert_eq!(
+            serde_json::to_value(&host.state().set.cards).unwrap(),
+            cards
+        );
         assert!(host.click_on(&taproot::Selector::class("practice-close-discard")));
         assert!(host.close_requested());
-        assert_eq!(shared.borrow().storage.as_ref().unwrap().load().unwrap(), original);
+        assert_eq!(
+            shared.borrow().storage.as_ref().unwrap().load().unwrap(),
+            original
+        );
     }
 
     #[test]
@@ -880,13 +1042,15 @@ mod tests {
         let mut h = appearance_harness();
         for (width, height) in [(1180.0, 800.0), (640.0, 800.0)] {
             h.layout_at(width, height);
-            let bar =
-                h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("cambium-title-bar"))[0]);
+            let bar = h.with_dom(|dom| {
+                taproot::matching_classes(dom, &Selector::class("cambium-title-bar"))[0]
+            });
             let (x, y, w, _) = h.painted_rect(bar).unwrap();
             assert!(x.abs() < 1.0 && y.abs() < 1.0);
             assert!((w - width).abs() < 1.0, "titlebar {w} viewport {width}");
-            let editor =
-                h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]);
+            let editor = h.with_dom(|dom| {
+                taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]
+            });
             let (_, top, _, _) = h.painted_rect(editor).unwrap();
             assert!(top >= 36.0);
         }

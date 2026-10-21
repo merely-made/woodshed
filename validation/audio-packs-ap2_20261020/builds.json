@@ -1,0 +1,71 @@
+[
+  {
+    "name": "root",
+    "args": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/Cargo.toml",
+      "-p",
+      "woodshed-genet",
+      "--target-dir",
+      "/Users/markik/Code/repos/woodshed/target",
+      "--config",
+      "profile.dev.debug=0",
+      "-j4"
+    ],
+    "cwd": "/tmp",
+    "env": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc"
+    },
+    "exit_code": 0
+  },
+  {
+    "name": "hocket",
+    "args": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/ports/hocket/Cargo.toml",
+      "-p",
+      "hocket-genet",
+      "--target-dir",
+      "/Users/markik/Code/repos/woodshed/target",
+      "--config",
+      "profile.dev.debug=0",
+      "-j4"
+    ],
+    "cwd": "/tmp",
+    "env": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc"
+    },
+    "exit_code": 0
+  },
+  {
+    "name": "ringdown",
+    "args": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "--manifest-path",
+      "/Users/markik/Code/repos/woodshed/ports/ringdown/Cargo.toml",
+      "-p",
+      "ringdown-probe",
+      "--target-dir",
+      "/Users/markik/Code/repos/woodshed/target",
+      "--config",
+      "profile.dev.debug=0",
+      "-j4"
+    ],
+    "cwd": "/tmp",
+    "env": {
+      "RUSTC": "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/rustc"
+    },
+    "exit_code": 0
+  }
+]

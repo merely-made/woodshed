@@ -11,6 +11,17 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Shared data-defined audio packs](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+  — **AP3 bounded native/project acceptance (2026-10-20).** Shared kit/step controls,
+  a retained local draft in project saves, MIDI export and worker-rendered drum
+  layers use existing app/recorder paths. Handoff carries rendered media;
+  Mere's quantized span operation serves hit moves.
+  [AP3 receipt](../../../validation/audio-packs-ap3_20261020/README.md) records
+  actual controls, click-muted graph playback and installation-absent fresh
+  reopen with identical MIDI/WAV. Cross-desktop and latency qualification
+  remain open; richer composition and FunDSP stay planned.
+
+
 - [2026-10-16_native_project_handoff_plan.md](2026-10-16_native_project_handoff_plan.md) — Accepted bounded native save/open/export and self-addressed handoff workflow: two processes, seven reviewed captures, exact project/history/media reopening and WAV parity. Physical audio and two-peer transport remain separate.
 
 - [2026-10-16_project_worker_correlation_plan.md](2026-10-16_project_worker_correlation_plan.md) — Implemented and CPU/build qualified: request/session-scoped admission, explicit busy state and stale-reply rejection; 116 tests, all-target checks and desktop build pass. Native self-addressed handoff follow-through is recorded in the native project plan above.
@@ -221,11 +232,13 @@ section whenever a durable working insight emerges from a session.
   Session truth lives in the model; the audio graph plays the
   *projected state*. Don't let runtime concerns leak back into the
   model (no transport-dominance, no graph topology bleed-through).
-- **No plugin hosting for v1.** No CLAP, no VST3, no LV2, no AU, no
-  plugin GUI hosting. Curated first-party Rust devices on Firewheel
-  nodes with schema-driven UI generated from parameter metadata.
-  Drags DAW-shaped product gravity if we say yes; preserves
-  loop-recorder identity if we say no. v1 says no.
+- **Reuse suppliers and admit data packs (2026-10-19).** Assess existing Rust
+  components and reuse the Woodshed sequencer before adding DSP or authoring.
+  Bundled and user-installed TOML/JSON definitions plus assets compose supported
+  devices through Firewheel, with parameter-generated controls. The
+  [shared plan](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+  owns the assessment and admission contract. CLAP/VST3/LV2/AU and plugin GUI
+  hosting remain outside v1; session/history remains Hocket's authority.
 - **Layers are primary.** A track is an append-only stack of captured layers.
   Looper sessions sum unmuted layers; the Deeler profile selects one existing
   layer. Do not introduce a second variation-slot data structure.

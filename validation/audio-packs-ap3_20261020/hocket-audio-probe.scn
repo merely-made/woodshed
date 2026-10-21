@@ -1,0 +1,15 @@
+settle 2
+click role:button @data-action=pack-bundled
+settle 1
+click role:switch @aria-label=Click
+click role:switch @aria-label=Arm track 1
+wheel 0 1800 px on .audio-pack-panel
+settle 1
+click role:button @data-action=pack-add-loop
+act await-drum-output
+wait 16000
+act checkpoint-project audio-probe
+capture 01_audio_probe
+click role:button @aria-label=Save project
+wait 6000
+assert snap project-dirty == false

@@ -11,6 +11,19 @@ orchestrating the current-source Firewheel migration and family consolidation
 assessment. The implementation sequence and lane gates are recorded below;
 the original history-preserving rehome remains landed.
 
+**Audio-pack status (2026-10-20): AP0 ASSESSED; AP1/AP2 IMPLEMENTED.**
+The [assessment results](#ap0-assessment-results-2026-10-19) select sequencer
+extraction/reuse, midly for MIDI files and FunDSP as the preferred programmable
+DSP supplier within Firewheel. Device-free probes establish embedding routes;
+AP1 implements portable extraction, midly export and first sample-kit
+admission/snapshots, with working bundled/directory/TOML/reopen demonstrations.
+AP2 connects shared controls, retained edited selections and existing app
+runtime/project paths. Its Mere span-binding increment is concrete; larger
+composition surfaces remain planned. Build/file evidence is scoped below;
+AP3 now has bounded macOS control/save/reopen evidence and owner-observed
+guitar playback. Windows/Linux, performance latency and broader instrument
+qualification remain open.
+
 ## Ruling
 
 `ports/` is the home for independently named audio and instrument products
@@ -676,3 +689,474 @@ association, live project replacement and staged incoming data from late replies
 The [port plan](../ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md)
 owns implementation and CPU evidence; native project/handoff qualification,
 physical audio and signed turn operations remain separately gated.
+
+## Shared data-defined audio packs (2026-10-19)
+
+### Direction and ownership
+
+Mark approved bundled modules and user-installed extensions expressed as
+TOML/JSON plus assets. A pack can describe a drum kit, rhythm, instrument or
+effect composition using the host's supported building blocks. Bundled and
+installed packs use one admission path. Definitions may configure existing
+devices and compose supported sample, oscillator, envelope, filter and routing
+operations; a new DSP algorithm requires an implemented Rust supplier. The
+initial vocabulary and file layout remain assessment outputs, not frozen APIs.
+
+This section owns the shared work. Product plans link here and own their
+consumer behavior. Shared portable code belongs in root `crates/`; runtime
+adapters use the existing standalone Firewheel foundation. Preserve each
+product's model, history, clock and independent workspace. Reuse existing
+Cambium views and parameter metadata for controls. No new device stream,
+transport master or port-to-port dependency follows from adding a pack.
+
+Pattern generation and MIDI-file writing work without an audio device or
+Firewheel. Auditioning projects those same musical events into the existing
+audio runtime. MIDI export describes notes and timing; it does not carry a
+sample kit's sound or make an arbitrary synthesis patch playable on a guitar.
+
+### AP0 — Assess existing owners and embeddable Rust suppliers
+
+**Status (2026-10-19): bounded assessment complete.** Source/dependency review,
+isolated embedding probes and target gaps are recorded below. AP1 is next;
+these observations do not qualify arbitrary patches or physical playback.
+
+Done-conditions:
+
+- Trace `woodshed-audio::sequencer::{SequencerPattern, Track, Step,
+  Subdivision, TimeSignature}`, `Sound`, `SampleBank`, offline rendering and
+  current processor consumers. Reuse that sequencer and its timing semantics.
+  Identify required additions such as MIDI note mapping, velocity, duration
+  and multi-bar patterns; do not create a second pattern model. If Hocket or
+  Ringdown cannot consume its current crate without device dependencies,
+  extract the existing portable owner with adapted callers in one slice.
+- Produce a supplier decision in this section: embed, adapt, defer or reject,
+  with exact revisions/features, license and asset requirements, dependency
+  closure, supported targets, API fit, preparation cost and real-time behavior.
+  Examine the existing sampler first; evaluate
+  [midly](https://crates.io/crates/midly) for MIDI files,
+  [RustySynth](https://crates.io/crates/rustysynth) for SoundFont audition,
+  [FunDSP](https://crates.io/crates/fundsp) for synthesis/effect primitives and
+  [Phosphor's pattern module](https://docs.rs/phosphor-core/latest/phosphor_core/pattern/)
+  for reusable sequencing logic only where it fills a verified gap. Check
+  Phosphor's containing engine dependencies before adopting it. This shortlist
+  is research, not a dependency selection or claim of working integration.
+- Inspect Isocosm's manifest/asset admission and retained authoring approach
+  (`isocosm/crates/isometry-system/src/sys/generator.rs` and
+  `isocosm/design_docs/2026-10-17_private_pack_authoring_plan.md`). Reuse proven
+  mechanisms where ownership fits; establish audio-specific semantics here.
+  Do not acquire a game-system dependency to reuse its packaging pattern.
+- Record bounded embedding evidence separately from source inspection:
+  device-free pattern-to-MIDI, candidate sound rendering through the existing
+  graph, allocation/lifecycle findings and Windows/Linux/macOS support or
+  explicit gaps. Browser support is separately qualified. Choose a smallest
+  useful kit slice and list what still needs implementation before proceeding.
+
+### AP1 — Admit portable definitions and assets
+
+**Status (2026-10-19): shared file/API slice implemented, bounded demonstration complete.**
+`audio-pattern` owns the moved existing
+sequencer/sound modules and byte-oriented MIDI export. `audio-packs` owns shared
+WAV loading, bounded TOML/JSON admission and retained exact-source/asset snapshots.
+Woodshed's audio facade re-exports those owners; runtime preparation remains in
+its existing processor. No application views or guitar writes are added here.
+
+**Implemented slice:** extract the existing portable pattern/sound
+owner and adapt its current callers together; retain host WAV loading and
+production runtime preparation at their existing boundaries. Add midly export
+and one bounded one-bar sample-kit definition using the existing sampler.
+Support both bundled and externally installed kit directories through that
+same path. A later FunDSP-backed synth/effect definition extends the operation
+vocabulary after the first kit establishes identity, assets and admission.
+Do not build a second sequencer, general patch editor or alternate graph host.
+
+Done when a versioned TOML/JSON definition names stable pack/device identities,
+required operation capabilities, parameter metadata, patterns and referenced
+assets. One bundled kit and one externally installed kit use the same loader.
+Validate paths, graph connections, numeric ranges and bounded resource needs;
+report unsupported operations and missing assets before activation. Parse,
+decode and prepare outside the audio callback, then admit a prepared replacement
+through the existing runtime lifecycle. Failed edits retain the active pack.
+
+Product saves bind the exact definition and asset versions they used. Resolve
+asset custody, attribution, reopen, replacement and uninstall behavior before
+claiming portable projects; a mutable installation path cannot be a session's
+only identity. Assess existing media/storage owners before adding packaging
+infrastructure. Richer node composition follows evidence from the first kit.
+
+Implementation and evidence:
+
+- `crates/audio-pattern` owns the moved `sequencer.rs` and `sound.rs`, retaining
+  their existing wire representation/kernels. It adds checked authored-pattern
+  admission and a midly format-0 byte export, with integral musical timing,
+  channel/note/velocity mapping, note endings and an explicit final bar tick.
+- `crates/audio-packs` owns the moved `SampleBank` and WAV decoder. Format 1
+  admits sample voices, their MIDI assignments, parameter metadata and existing
+  patterns. Bundled bytes, installed directories and retained snapshots share
+  the same final admission/decoding path. The fixed sample-to-mono route uses
+  the existing runtime; variable patch graphs remain later vocabulary work.
+- Pack snapshots retain original TOML/JSON source and encoded assets under a
+  versioned content digest. Captured packs do not read their installation again;
+  replacement/uninstall cannot alter them. Future/corrupt snapshots, unsupported
+  capabilities, invalid ranges, missing assets and unsafe references return
+  errors before preparing a replacement. Source bounds and normalized finite
+  sample PCM keep decoding/preparation bounded; no callback parsing or I/O.
+- `assets/audio-packs/basic-drums` contains one original generated kick/snare/hat
+  kit and a backbeat. `audio-pack` exports MIDI/snapshots without any device or
+  Firewheel dependency. `woodshed-audio --example drum_pack` renders through the
+  actual production processor with no device opened. Its facade re-exports the
+  shared types, so existing callers retain one implementation.
+- [AP1 receipt](../validation/audio-packs-ap1_20261019/README.md): macOS builds
+  and fresh-process file workflows, equal bundled/directory MIDI and WAV bytes,
+  edited user-kit snapshot reopening after its source directory moved, and
+  equivalent TOML/JSON musical output. Shared libraries compile for Wasm on
+  Rust 1.99.1 and natively with rustc 1.97.1 (Cargo 1.99.1). Cargo 1.97.1
+  requests a workspace lock rewrite under `--locked`; that invocation is not
+  qualified. The root lock adds only the two local
+  packages and midly; existing external versions/edges and port locks remain.
+
+This AP1 slice established portable pack saves and runtime consumption through
+the shared file/API workflow. AP2 below adopts the snapshot into application
+saves and controls. Native GUI, Windows/Linux execution, browser audio and
+physical/guitar playback were not qualified by AP1. No test suites were added
+or run in that slice.
+
+### AP2 — Share authoring, audition and MIDI export
+
+**Status (2026-10-20): implemented; compilation and file workflow evidence.** The shared controls project
+the existing sequencer pattern retained with its exact pack snapshot. Woodshed
+adopts it into the metronome/backing runtime and sealed practice save; Hocket
+keeps a local editable kit draft in its project manifest and commits rendered
+material through the existing recorder import/history path. Hocket handoff
+ships normal rendered media, so a receiving peer needs no pack operation.
+The kit draft itself is project metadata; contributed layers use the recorder
+history path. The current native view has no exposed Undo control, so kit copy
+must not promise one. Draft edits remain outside recorder history. Ringdown adds an offline branch to its existing
+probe command using the same file workflow; it performs no instrument writes.
+
+Shared Cambium buttons serve step/rest/accent, mute, level, pattern selection
+and MIDI export. One-step hit moves use Scenomise's existing quantized span
+operation and a revision-qualified music edit. This advances the Mere binding
+seam without creating a graph editor or making scene layout the audio clock.
+File loading, MIDI export and Hocket rendering run off dispatch/audio callbacks;
+job completion checks the requesting session and frozen source/clock/target.
+
+Implementation details and scope:
+
+- `audio-packs::PackSelection` retains the edited current pattern and inactive
+  pattern drafts beside the immutable snapshot. Switching patterns preserves
+  edits. A skipped prepared-sample cache avoids decoding on ordinary controls;
+  deserialized selections are admitted before product adoption. App tempo is
+  projected explicitly into both audio and MIDI; sample gain/assets are audio
+  data, while MIDI uses the kit's note/velocity mapping.
+- `audio-pack-views` supplies the same Cambium buttons to Woodshed's Metronome
+  page and Hocket's recorder view. Existing app transports remain the clock
+  controls. Edits return checked replacements and cannot redirect stale views.
+- Woodshed saves the selection in its existing sealed practice session. A
+  session-qualified file worker loads kits/exports MIDI; the existing output
+  processor admits sample steps for metronome, practice-program and backing
+  playback. Backing uses its accepted bar clock; count-in retains its existing
+  conventional click. Looper WAV export freezes the same selection into its
+  existing worker and uses the same prepared backing rhythm. Closing waits for
+  requested kit file work to finish.
+- Hocket's existing correlated project actor loads kits, exports MIDI and
+  renders a complete phrase at project tempo. A frozen session/source/clock/
+  track check precedes the existing recorder import and history commit.
+  Project manifests retain the local editable draft and exact assets, including
+  dirty/save acknowledgements and reopening. Handoff omits the local draft and
+  carries normal rendered media under existing session/history custody.
+- Ringdown's existing probe returns from `--audio-pack` before discovery,
+  reusing the portable file command. No pack/audio dependency enters its
+  sans-io protocol core and no guitar file is written.
+- The existing pure offline renderer moved into `audio-pattern::render`, with
+  the old runtime API re-exported. Hocket renders exact frame counts through
+  that same implementation; there is no new sequencer or runtime clock.
+
+[AP2 receipt](../validation/audio-packs-ap2_20261020/README.md) records source,
+locked compilation and an edited retained-selection file workflow, including
+pattern switching and source-absent reopening. Native UI/project dialogs,
+sealed-project/`.hock` fresh-process interaction, Windows/Linux execution,
+browser audio and physical/guitar playback are not qualified by this slice.
+No test suites were added or run. AP3 owns those acceptance boundaries.
+
+Done when the reused sequencer drives audition and MIDI export from the same
+admitted pattern, with explicit meter, tempo, accents/velocity, note endings
+and loop boundaries. Any random generation has a retained seed or resolved
+events so the exported rhythm agrees with the audition. Reopen preserves the
+authored definition, pattern and assets. Shared Cambium controls serve the
+product's existing state owner; define no separate editor-owned song document.
+
+Woodshed uses packs for its existing Metronome, Rehearsal and Set-derived
+backing. Hocket uses them to audition and create loop material under its
+session/history and local transport. Specify whether a contribution retains
+editable definitions or a rendered layer, including assets needed by a peer;
+preserve handoff behavior when that peer lacks an optional operation.
+Ringdown consumes portable authoring/export and instrument-specific validation;
+its protocol core remains sans-io and does not require a local audio engine.
+
+### AP3 — Qualify product and instrument paths
+
+**2026-10-20: bounded macOS and guitar acceptance passed; target matrix open.**
+[AP3 evidence](../validation/audio-packs-ap3_20261020/README.md) records actual
+controls and native file dialogs in private synthetic profiles. Remove the
+installed kit before fresh-process reopen; compare exact edited selections,
+MIDI output and retained/rendered media. Keep Windows/Linux and timing claims
+separate from this x86_64 macOS acceptance run.
+
+Both actual native application paths pass, each across two processes with
+native file dialogs and reviewed captures. Woodshed's sealed practice save
+retains exact edited selection/assets and reproduces MIDI bytes without the
+installation. Hocket's `.hock` reopens its kit drafts and ordinary rendered
+media, reproducing both MIDI and nonzero stereo WAV bytes exactly. Bad kit
+replacement preserves the accepted project. Selected owning-package tests:
+701 passed, zero failed, two existing display tests ignored; thirteen new
+regressions. All three lockfiles retain the AP2 hashes. Product changes remain
+cross-platform Rust/shared controls; Mac-specific scripts are acceptance tools.
+
+AP3 found two Hocket playback faults with slow native UI frames: input overflow
+returned before servicing output graph changes, and phase-only pending-layer
+observation could miss every bar wrap. Playback/stops now continue while input
+loss still aborts incomplete capture and reports its error. Pending playback
+also reads a deadline from Firewheel's existing DSP clock, invalidated on tempo
+restart; capture's existing wrap policy is unchanged. This prevents indefinite
+queuing and does not establish sample-accurate or low-latency performance.
+Shared control labels/layout and Hocket panel bounds were repaired during
+actual control trials. Hocket's kit notice now describes the exposed controls
+without promising an Undo button.
+
+**Guitar result (user-observed).** The owner approved one additive file,
+`11-Ringdown_AP3.mid`, after reviewing the artifact. It was copied exactly,
+all ten factory beat hashes were unchanged, and storage was safely ejected.
+The owner reports: “It appears and plays repeatedly.” The candidate repeats
+an actual Woodshed-app-authored bar five times, at PPQ 480 / 4/4 / channel 10,
+using kick 36, snare 38 and hat 42. This proves custom-file discovery and
+repeated physical playback on this guitar. Five identical bars cannot identify
+the precise loop region or count-in semantics. After a power cycle with USB
+OFF, the owner confirmed: “It still appears and plays after restarting.”
+Reboot persistence is now qualified on this instrument. Complete voicing,
+other firmware and Beats RPC/pedal control remain separate checks.
+No factory beat or configuration was written by the assistant.
+
+**Loop/count-in follow-up (2026-10-20): baseline physical trial complete.**
+The owner-requested
+[AP3 diagnostic](../validation/audio-packs-ap3_20261020/README.md#distinguishable-bar-loopcount-in-trial)
+reuses shared patterns/export/render for five distinguishable bars. After
+explicit approval, exact readback, unchanged prior file hashes and safe
+ejection, the owner heard A–E once and B–E repeating. Stop/wait/start replayed
+A once before the same B–E loop. Playback began directly with A; the owner
+found no separate count-in setting. Thus this five-bar 4/4 file supplies its
+own one-bar lead-in, followed by a four-bar repeat body. No extra generated
+click count-in was reported. A post-copy extra directory entry remains
+unidentified in the write receipt.
+
+Ringdown's guitar-specific export profile should explicitly separate that
+lead-in from the intended loop body, preserving generic shared MIDI export.
+This is a planned consumer adaptation, not implemented export behavior.
+Qualify other file lengths/meters and firmware/settings before generalizing;
+heard bar order does not establish sample-accurate phase or latency.
+
+
+Done when bundled/installable pack loading, editing, missing-asset refusal,
+replacement and fresh-process reopening have scoped evidence on the target
+desktops, and audible playback is qualified independently of file export.
+Ringdown separately establishes the guitar's accepted file format, note map,
+discovery rules and loop behavior, then offers a reviewable MIDI artifact before
+an explicitly approved persistent-device trial. Existing USB file observations
+do not prove custom playback. AP0–AP2 can progress with the guitar off.
+
+### Publication and standards boundary (2026-10-20)
+
+The [Ringdown provenance/terms and standards assessment](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
+owns the adapter audit, evidence frontier and unsent vendor outreach. Generic
+pattern/audio/SMF work retains its own rights and assets. Documented MIDI
+messages plus owner bindings can support a standards-based controller path;
+broader file discovery/intro-loop coverage still needs device qualification.
+Detailed app RPC uses custom methods, GATT identifiers, framing and compression.
+
+A public-standard envelope or an offline execution branch does not establish
+permission or artifact isolation. The subsequent
+[build isolation](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#standards-based-midi-and-beats-build-isolation-2026-10-20)
+uses the existing CLI with private features disabled by default. MIDI moved to
+`woodshed-instrument`; `woodshed-audio` re-exports its one implementation.
+The private session/example moved to `ringdown-ble::instrument`, removing even
+optional private dependencies from the shared MIDI crate. Target graph and
+host compiler evidence are scoped in the linked receipt. Subsequent
+[split acceptance](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#split-acceptance-2026-10-20)
+adds native OS MIDI capture, actual CLI/release exports and kit removal/reopen,
+negative dependency controls and read-only live RPC status. Source archive and
+other-platform release qualification remain separate.
+The subsequent [BLE-MIDI peripheral integration](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
+adds a connection variant on that same writer and reuses the desktop picker,
+clock worker/status and CLI. One supplier covers all three native APIs; Mac
+has one observed guitar trigger, with Windows/Linux target compilation and
+native runtime qualification still separate. The private RPC exclusion holds.
+Original synthetic kit assets remain the default; imported
+packs and retained snapshots need appropriate asset redistribution rights.
+Larger adaptive-audio work can proceed independently of a supported private
+RPC adapter. Neither standards conformance nor physical playback is a legal
+clearance. Publication review remains scoped to the real artifacts, terms,
+provenance and distribution jurisdictions in the canonical adapter assessment.
+
+### Findings
+
+- **2026-10-19, source-inspected:** `crates/woodshed-audio/src/sequencer.rs`
+  already has serializable multi-track steps, accents, subdivisions and meter;
+  `sound.rs` separates serialized sample IDs from prepared PCM, and
+  `offline.rs` renders patterns. These are reuse inputs, not a qualified pack
+  loader or complete MIDI note model. Missing sample buffers currently render
+  silence; pack admission must expose missing-asset failures to the player.
+- **2026-10-19, upstream documentation inspected:** midly supplies MIDI
+  parsing/writing; RustySynth supplies pure Rust SoundFont synthesis; FunDSP
+  supplies composable DSP. Phosphor documents a pattern-to-MIDI module.
+  No candidate was built, integrated, benchmarked or selected in this pass.
+  This entry describes the initial planning pass; the subsequent AP0 probes
+  and decisions below supersede its unbuilt/unselected status.
+
+### AP0 assessment results (2026-10-19)
+
+**Decision:** reuse the existing sequencer and sound/sample behavior, embed
+midly for portable MIDI serialization, adapt FunDSP inside Firewheel for
+programmable instruments/effects, retain RustySynth as an optional SoundFont
+adapter, and reject a direct Phosphor-core dependency. These select integration
+directions; product dependencies and adapters remain unimplemented.
+
+[Receipt, probe sources and reproducible scratch setup](../validation/audio-packs-ap0_20261019/README.md)
+retain exact supplier checksums, feature closures, source hashes and command
+logs. They distinguish successful evidence from initial toolchain failures.
+
+| Piece | Decision and fit | Dependencies, preparation and limits |
+|---|---|---|
+| Existing `SequencerPattern`, `Step`, `Track`, `Subdivision`, `TimeSignature` | **Adapt/extract existing owner.** Original modules compile in isolation. Preserve existing serialized data and notated-beat subdivisions; adapt current consumers in the extraction slice. | Current `woodshed-audio` unconditionally brings CPAL, midir, pitch detection and Firewheel. Its portable modules need Serde, existing DSP helpers and, for `SampleBank`, Hound. Keep file loading outside a pure pattern API; `audio-primitives` retains its dependency-free/I/O-free boundary. |
+| Existing `Sound`, `SampleBank`, `PreparedClick`, Firewheel sampler | **Reuse/adapt for first kit.** Float32 WAV loading, rehydration, exact production-graph playback, stop and restart passed. Hocket already uses `SamplerNode`; add no audio backend. | Root prepares mixed step PCM off callback; eight overlapping step envelopes are bounded. It pre-mixes simultaneous tracks, so independent note-off/choke and velocity layers are future capabilities. Current samples are mono with linear interpolation; missing buffers silently produce no voice. Admission needs path/size/finite-value checks and explicit missing-asset errors. |
+| [midly 0.5.3](https://crates.io/crates/midly/0.5.3), Unlicense | **Embed for MIDI import/export.** Existing patterns exported and parsed back at PPQ 480 for 4/4, 3/8, 7/8 and triplets. | `default-features=false`, `features=["std","strict"]`; zero normal transitive dependencies, no Rayon. Parse/write allocations belong on the control side. Probe note map, velocity and gate choices are illustrative, not a production or guitar profile. |
+| [FunDSP 0.23.0](https://crates.io/crates/fundsp/0.23.0), MIT OR Apache-2.0 | **Adapt; preferred programmable DSP supplier.** Dynamic `AudioUnit` rendered within a disposable node on the owned Firewheel fork. Reuse its oscillators/envelopes/filters where existing Firewheel factories do not cover the operation. | `default-features=false`, `features=["std"]`; measured normal closure 34 packages including FunDSP, without CPAL, Symphonia or FFT-convolver. Prepare rate/buffers with `allocate` off callback. Block API accepts at most 64 frames; use bounded chunking or its block adapter. The probe used per-sample sine/gain, not arbitrary graphs. Keep its optional graph/sequencer under the device boundary; Firewheel remains the product runtime. |
+| [RustySynth 1.3.7](https://crates.io/crates/rustysynth/1.3.7), MIT | **Adapt optionally for SoundFont instruments.** Synthetic SF2 rendered through the same Firewheel node interface, with note-on/off, voice pressure and all-notes-off. First WAV kit needs no SF2 dependency. | No normal dependencies beyond std. Parse SF2 and preallocate voices/effects off callback; caller supplies equal stereo buffers. Probe: 16 voices, effects off. Internal block size defaults to 64; arbitrary-offset MIDI timing needs qualification. Asset size/format validation and each SoundFont's provenance remain host concerns. |
+| [Phosphor-core 0.3.97](https://crates.io/crates/phosphor-core/0.3.97), MIT | **Reject direct dependency for this slice.** Its position-derived events/pending-note-off design is useful reference material; our sequencer remains the musical owner. | Published core unconditionally depends on CPAL 0.15, audio-thread priority, Phosphor MIDI/plugin crates and channels. Its pattern file also refers to `transport::Transport::PPQ`. Taking the whole engine or copying a parallel pattern model adds ownership without filling the first kit's gap. Not compiled in AP0. |
+
+**Runtime and portability evidence.** Original source imports plus midly run
+on x86_64 macOS with Rust 1.99.0. Four candidate-node runs each render 65,536
+finite/non-silent frames (FunDSP and RustySynth, 44.1/48 kHz). The actual
+`OutputRuntime` renders 96,000 sample-kit frames; its sixteen onsets match MIDI
+positions after accounting for the sample's one-frame initial zero. Measured
+render calls observe zero allocating/reallocating/freeing operations on their
+thread. Candidate preparation/destruction and graph servicing stay outside
+that measured callback region. This is bounded evidence, not a complete
+real-time or performance audit.
+
+The isolated portable package with midly, FunDSP and RustySynth compiles for
+`wasm32-unknown-unknown` on Rust 1.99.1 and checks natively on MSRV 1.97.1.
+Windows/Linux execution, browser audio-host integration and physical playback
+remain explicit gaps. The combined runtime probe deliberately links the actual
+native `woodshed-audio` crate but opens no devices. No guitar was used.
+
+**Existing-owner gaps.** `offline::render_pattern` is a historical allocating
+voice mixer; native playback uses `output_runtime::PreparedClick`. Its sibling
+`offline::song_export` uses the production runtime, so importing the entire
+offline module is not a portable renderer extraction. Add one shared validated
+musical-event projection for audition/export instead of elevating the old
+mixer into another runtime. Current patterns have one-bar length and boolean
+accents, without explicit MIDI note/channel, arbitrary velocity/gate or choke
+groups. Add only the first kit's mapping requirements to the reused owner;
+broader composition follows later. Hocket's current Phrase/MediaRef and
+`hocket-project` already carry rendered loop layers: use that existing handoff
+route first, with editable patch/pattern retention remaining an explicit follow-up.
+
+**Isocosm reuse.** Its manifest-before-assets validation, canonical-root
+containment, immutable authored revisions and conflict-aware explicit save
+are useful mechanisms. Its loader reads text assets and its private authoring
+tool retains game-specific schema/runtime dependencies; it is not a drop-in
+binary audio asset loader or reusable audio editor. Reuse the pattern and
+existing storage owners; do not import its game-system crate or private parser
+fork merely for packaging.
+
+**FunDSP maintenance.** Mark favors midly and FunDSP and accepts an owned fork
+if needed. Registry release 0.23.0 is dated 2026-01-07; upstream `master` was
+last pushed 2026-03-03 at `559584043aa3369e92d5aad12a5e3b003cfacfd5`, inspected
+2026-10-19. The current release passed these probes without a patch. An owned
+mirror/fork is a viable supply decision when integration starts; inactivity
+alone has not established a technical fork requirement. Preserve the package's
+MIT OR Apache-2.0 notices and record any future patch/revision separately.
+
+### Mere and composition surfaces (2026-10-19 assessment)
+
+Mere can project and edit disclosed musical and routing data through an audio
+domain binding. Its scene nodes/relationships describe presentation and
+interaction; Firewheel nodes schedule audio processing, while FunDSP units
+implement signal processing within that runtime. Keep those contracts explicit
+when mapping one view to another. A scene's geometry can be authored content
+where the music binding defines time/pitch; generic layout movement does not
+implicitly edit timing or reconnect DSP ports.
+
+There is an existing seam: Woodshed's arrangement editor consumes
+`scenomise::span_edit::{SpanEdit, SpanEditIntent}` for source/revision-qualified
+move/resize proposals, then validates its own Set draft. Reuse that approach
+for rhythm lanes or phrase spans. Other candidates are a typed patch-cable
+view for pack routing, relationships between patterns/variations/instruments,
+and explicit performance mappings from scene gestures to musical controls.
+
+Scene dynamics may generate control-rate proposals when the player deliberately
+enables that binding; the music owner validates/quantizes/timestamps them for a
+bounded audio command path. Retain resolved events or a reproducible seed for
+export. Audio-rate oscillators/modulation remain in DSP, and audio sample time
+remains the scheduling authority; a GUI frame or force solver cannot set its
+deadline. `scenograph::DynamicsSlot` is an opaque physics-spec carrier whose
+binding host interprets it, not an existing audio-patch execution contract.
+
+Shared references: `mere/crates/cambium/scenes/scenomise/src/span_edit.rs`,
+`mere/crates/cambium/scenes/scenomise/src/template.rs`,
+`mere/crates/cambium/scenes/scenograph/src/dynamics.rs`, and
+`mere/design_docs/2026-08-12_family_composition_thesis_brief.md` (identity,
+content, arrangement and dynamics ownership). These are source-inspected
+opportunities, not newly qualified music surfaces. A generic graph patch
+editor or generative-dynamics instrument does not block the first kit slice.
+
+**AP2 increment (2026-10-20):** shared kit controls now call the existing
+`SpanEdit::Move` operation for one-step musical hit proposals. The music owner
+checks the current revision, source hit, grid bounds and destination before
+adoption. Next, project those existing tracks/hits into a source-qualified
+Scenomise rhythm/phrase scene and route captured gestures through the same
+`PackEdit` boundary. Specify gate/duration semantics before enabling resize.
+That scene remains a view of retained musical data; typed DSP routing and
+deliberately bound dynamics follow as later vocabulary work.
+
+### Progress
+
+- **2026-10-19:** Shared direction and AP0–AP3 recorded at Mark's request.
+  AP0 remains open. Hocket and Ringdown link to this owner; this is a planning
+  change with no new schema, dependencies, code or hardware qualification.
+- **2026-10-19 — AP0 bounded assessment complete.** Recorded supplier decisions,
+  actual-source MIDI/render probes, callback allocation observations, Wasm and
+  MSRV checks, and explicit platform/physical gaps. AP1's first sample-kit slice
+  is now concrete. Mark's midly/FunDSP preference and Mere composition question
+  are incorporated; no shipping implementation or owned supplier fork was added.
+- **2026-10-19 — AP1 shared file/API implemented.** Extracted the sequencer and
+  sound kernels, moved/reused sample loading, added midly export and bounded
+  data-pack admission/snapshots. Demonstrated bundled and user-installed JSON
+  and TOML kits, production-graph WAV rendering and source-absent snapshot
+  reopening. Wasm/MSRV library checks pass. AP2 GUI/project adoption and Mere
+  composition surfaces remain planned; no guitar or physical playback trial.
+- **2026-10-20 — AP2 implemented.** Shared controls, retained edited selections,
+  Woodshed session/runtime adoption, Hocket project-worker/material adoption
+  and Ringdown offline export are connected. Pattern drafts survive switching;
+  Hocket handoff uses normal rendered layers. Mere's existing span operation
+  supplies the first musical edit binding. Compilation/file receipts are scoped
+  separately from AP3 GUI, project interaction, cross-desktop and device work.
+
+- **2026-10-20 — AP3 bounded acceptance.** Two native processes per app pass
+  real controls/dialogs and installation-absent saves/reopens. Exact edited
+  selections, inactive drafts, assets, MIDI and Hocket rendered-media/WAV bytes
+  survive. Shared view and Hocket playback faults were fixed; 701 selected
+  tests pass (two existing ignored). The owner confirms an explicitly approved
+  custom MIDI file appears and plays repeatedly on the guitar. Cross-desktop,
+  debug-host latency/capture, precise guitar loop behavior and remote Beats
+  qualification remain open. No commit or publication occurred.
+
+- **2026-10-20 — Distinguishable-bar guitar trial complete.** The owner confirms
+  first authored bar once, bars 2–5 repeating, and intro replay after stop/start.
+  Playback starts directly with the file; no separate count-in setting found.
+  Record an explicit lead-in/body split for future guitar-specific export,
+  with other lengths/meters and firmware still requiring qualification.
+
+- **2026-10-20 — Adapter provenance/terms follow-up linked.** Ringdown owns the
+  bounded standards/private-profile audit and unsent outreach. Keep generic
+  authoring/audio and original assets independently releasable; demonstrate
+  actual artifact isolation before calling a future controller standards-only.

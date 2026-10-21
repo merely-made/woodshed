@@ -1,0 +1,115 @@
+[
+  {
+    "cohort": "native-r1",
+    "reason": "Product defect: frame-polled history expired learning events; downstream mapping/action assertions failed.",
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": false,
+      "elapsed_seconds": 140.232,
+      "binary_sha256": "ac04a93204b99e8a39dd220b58b00055a5bbeeaf694dd7388baadecbe029911d",
+      "scenario_sha256": "6d58200527f6a9135a70ffde3aa3911a1da64c8976dd3b9bcf4b0f8022ba8715",
+      "receipt": "scenario.done",
+      "captures": 8
+    },
+    "observed_inputs": {
+      "effect_next": {
+        "controller": null,
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": null,
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    },
+    "input_notice": "Stale MIDI controller input discarded; inputs disarmed",
+    "raw_output": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r1"
+  },
+  {
+    "cohort": "native-r2",
+    "reason": "Product defect: explicit None input intent was skipped after source disappearance; reopened source remained unconnected, so later packet/count faults were downstream.",
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": false,
+      "elapsed_seconds": 128.801,
+      "binary_sha256": "951ab29756df8b654781af3bba0e30093dae491a1a0a18c8edd5df9daf6a1cf6",
+      "scenario_sha256": "1848b195bc546d2828e81d6f1e07d34009481616224a6290f72a359da5f86244",
+      "receipt": "scenario.done",
+      "captures": 8
+    },
+    "observed_inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    },
+    "input_notice": "Effect Previous controller: Ch 3 \u00b7 Note 36. Release it, then arm inputs.",
+    "raw_output": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r2"
+  },
+  {
+    "cohort": "native-r3",
+    "reason": "Intermediate successful 33-message cohort; superseded by final native-r4 with explicit visible busy-refusal case. Counts are not combined.",
+    "raw_output": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/native-r3"
+  },
+  {
+    "cohort": "guitar-r1",
+    "reason": "Qualification setup error before product launch: synthetic keeper fixture requires a new root. Corrected launcher to create a new synthetic fixture; no product or guitar action.",
+    "raw_output": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r1",
+    "attempted_messages": 0
+  },
+  {
+    "cohort": "guitar-r2",
+    "reason": "Saved mappings restored; BLE startup timed out while the temporary acceptance bundle waited on macOS Bluetooth permission. Owner later allowed and reopened output, but the ready/count barriers had expired. Stopped only this owned app and restarted cleanly; zero action attempts in recorded checkpoints.",
+    "raw_output": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r2",
+    "attempted_messages_at_startup": 0,
+    "process": {
+      "launch_method": "LaunchServices temporary application bundle",
+      "launcher_exit": 0,
+      "timeout": false,
+      "success": false,
+      "elapsed_seconds": 1210.09,
+      "binary_sha256": "47c741623ff705f01edad848465d23adb74b95fcb99d39dae218ac4b844393be",
+      "scenario_sha256": "646d49718eda9e8930148c919a978e03cde401457f92ffd399da28df3bbae75b",
+      "receipt": null,
+      "captures": 4
+    }
+  },
+  {
+    "cohort": "guitar-r3",
+    "reason": "Owner reports no change for first real N. Current checkpoint after its deadline shows an intervening receiver disconnect/resubscribe (generation 2), inputs disarmed, zero attempted/accepted and no pedal report. Restarted clean count cohort with existing host key trace enabled; no action was retried automatically.",
+    "owner_observation": "No change",
+    "snapshot": "midi-keyboard-next.json",
+    "raw_output": "/Users/markik/Code/testing/woodshed/pedal-input-acceptance_20261020/guitar-r3"
+  }
+]

@@ -1,0 +1,174 @@
+{
+  "independent_inspector": "validation/audio-packs-ap3_20261020/inspect_midi.py",
+  "byte_identical_across_profiles": true,
+  "exports": [
+    {
+      "profile": "default",
+      "command_stdout": "woodshed.basic-drums 1.0.0 [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]: backbeat, 12 notes, PPQ 480, 1920 ticks\n",
+      "path": "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/exports-nyhqr5l2/default.mid",
+      "saved_rhythm": "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/exports-nyhqr5l2/default.rhythm.json",
+      "inspection": {
+        "file": "default.mid",
+        "sha256": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+        "bytes": 137,
+        "format": 0,
+        "tracks": 1,
+        "ppq": 480,
+        "end_ticks": [
+          1920
+        ],
+        "end_quarters": [
+          4.0
+        ],
+        "tempos": [
+          {
+            "tick": 0,
+            "microseconds_per_quarter": 600000
+          }
+        ],
+        "meters": [
+          {
+            "tick": 0,
+            "numerator": 4,
+            "denominator": 4
+          }
+        ],
+        "notes": [
+          {
+            "channel": 10,
+            "note": 36,
+            "on": 2,
+            "off": 2
+          },
+          {
+            "channel": 10,
+            "note": 38,
+            "on": 2,
+            "off": 2
+          },
+          {
+            "channel": 10,
+            "note": 42,
+            "on": 8,
+            "off": 8
+          }
+        ],
+        "first_note_tick": 0,
+        "last_note_on_tick": 1680,
+        "last_note_off_tick": 1740,
+        "note_bar_counts": {
+          "36": {
+            "0": 2
+          },
+          "38": {
+            "0": 2
+          },
+          "42": {
+            "0": 8
+          }
+        },
+        "controllers": [],
+        "message_kinds": {
+          "0x9": 12,
+          "0x8": 12
+        },
+        "meta_types": {
+          "0x51": 1,
+          "0x58": 1,
+          "0x2f": 1
+        },
+        "notes_on": 12,
+        "unmatched_offs": 0,
+        "unterminated_notes": 0,
+        "gate_ticks_range": [
+          60,
+          60
+        ]
+      }
+    },
+    {
+      "profile": "offline",
+      "command_stdout": "woodshed.basic-drums 1.0.0 [a920d521b50ec65e4f842382c9036e995e5ec2e69af9eada26cac2a38baafc9a]: backbeat, 12 notes, PPQ 480, 1920 ticks\n",
+      "path": "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/exports-nyhqr5l2/offline.mid",
+      "saved_rhythm": "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/exports-nyhqr5l2/offline.rhythm.json",
+      "inspection": {
+        "file": "offline.mid",
+        "sha256": "f6eb455bf85379704cd7e24db32974ee42ee9aed1cfe20c4317039a20e3e6410",
+        "bytes": 137,
+        "format": 0,
+        "tracks": 1,
+        "ppq": 480,
+        "end_ticks": [
+          1920
+        ],
+        "end_quarters": [
+          4.0
+        ],
+        "tempos": [
+          {
+            "tick": 0,
+            "microseconds_per_quarter": 600000
+          }
+        ],
+        "meters": [
+          {
+            "tick": 0,
+            "numerator": 4,
+            "denominator": 4
+          }
+        ],
+        "notes": [
+          {
+            "channel": 10,
+            "note": 36,
+            "on": 2,
+            "off": 2
+          },
+          {
+            "channel": 10,
+            "note": 38,
+            "on": 2,
+            "off": 2
+          },
+          {
+            "channel": 10,
+            "note": 42,
+            "on": 8,
+            "off": 8
+          }
+        ],
+        "first_note_tick": 0,
+        "last_note_on_tick": 1680,
+        "last_note_off_tick": 1740,
+        "note_bar_counts": {
+          "36": {
+            "0": 2
+          },
+          "38": {
+            "0": 2
+          },
+          "42": {
+            "0": 8
+          }
+        },
+        "controllers": [],
+        "message_kinds": {
+          "0x9": 12,
+          "0x8": 12
+        },
+        "meta_types": {
+          "0x51": 1,
+          "0x58": 1,
+          "0x2f": 1
+        },
+        "notes_on": 12,
+        "unmatched_offs": 0,
+        "unterminated_notes": 0,
+        "gate_ticks_range": [
+          60,
+          60
+        ]
+      }
+    }
+  ]
+}

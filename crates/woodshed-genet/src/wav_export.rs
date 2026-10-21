@@ -11,7 +11,9 @@ use cambium_genet_winit_host::CloseDisposition;
 use muniment::blob::Hash;
 use tempfile::NamedTempFile;
 use woodshed_audio::Song;
-use woodshed_audio::offline::{SongExportReport, export_song_wav_to};
+use woodshed_audio::offline::{SongExportReport, export_song_wav_with_pattern_to};
+#[cfg(test)]
+use woodshed_audio::offline::export_song_wav_to;
 use woodshed_core::loop_plan::LooperSource;
 use woodshed_views::stage::{LoopExportRequest, UiState};
 
@@ -329,6 +331,7 @@ fn publish(
 }
 
 fn render(
+    pack: Option<audio_packs::PackSelection>,
     song: Song,
     rate: u32,
     path: PathBuf,
@@ -341,7 +344,8 @@ fn render(
         .prefix(".woodshed-wav-")
         .tempfile_in(parent)
         .map_err(|e| e.to_string())?;
-    let report = export_song_wav_to(&song, rate, file.as_file_mut()).map_err(|e| e.to_string())?;
+    let pattern = pack.map(|p| p.hydrated_pattern()).transpose().map_err(|e| e.to_string())?;
+    let report = export_song_wav_with_pattern_to(&song, rate, pattern.as_ref(), file.as_file_mut()).map_err(|e| e.to_string())?;
     file.as_file().sync_all().map_err(|e| e.to_string())?;
     publish(
         Artifact {
@@ -503,6 +507,7 @@ fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
     choose: Option<&mut F>,
 ) -> Result<(), String> {
     let (song, rate) = snapshot(shared, ctx.runner.state())?;
+    let pack = ctx.runner.state().audio_pack.clone();
     let session = ctx.runner.state().audio_session.clone();
     let name = format!(
         "{}.wav",
@@ -519,6 +524,7 @@ fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
     // before AppKit enters its nested modal event loop.
     let Some(choose) = choose else {
         start_dialog(
+            pack,
             &mut shared.wav_export,
             session,
             song,
@@ -548,7 +554,7 @@ fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
     let protection = Protection::current();
     let path = protection.check(&path)?;
     shared.wav_export.spawn(session, move |cancelled| {
-        render(song, rate, path, protection, &cancelled)
+        render(pack, song, rate, path, protection, &cancelled)
     })?;
     ctx.runner.update(|ui| {
         ui.loop_export_busy = true;
@@ -571,6 +577,7 @@ fn wav_path(mut path: PathBuf) -> Result<PathBuf, String> {
 }
 
 fn start_dialog(
+    pack: Option<audio_packs::PackSelection>,
     exporter: &mut WavExport,
     session: Arc<()>,
     song: Song,
@@ -587,7 +594,7 @@ fn start_dialog(
         // Recheck after the modal choice; a profile change can revoke this job
         // while the native panel is open. Final publication checks the gate too.
         drop(commit_permit(&cancelled)?);
-        render(song, rate, wav_path(path)?, protection, &cancelled)
+        render(pack, song, rate, wav_path(path)?, protection, &cancelled)
     })
 }
 
@@ -631,6 +638,7 @@ mod tests {
         let mut exporter = WavExport::default();
         let mut ui = UiState::new();
         start_dialog(
+            None,
             &mut exporter,
             ui.audio_session.clone(),
             song(0.1),
@@ -655,6 +663,7 @@ mod tests {
         let (entered, ready) = mpsc::channel();
         let (release, blocked) = mpsc::channel();
         start_dialog(
+            None,
             &mut exporter,
             ui.audio_session.clone(),
             song(0.1),
@@ -951,6 +960,7 @@ mod tests {
         let gate = Mutex::new(true);
         assert!(
             render(
+                None,
                 song(0.1),
                 48_000,
                 path.clone(),
@@ -963,6 +973,7 @@ mod tests {
         fs::write(&path, b"keep").unwrap();
         let (artifact, hash) = collision(
             render(
+                None,
                 song(0.1),
                 48_000,
                 path.clone(),
@@ -1014,6 +1025,7 @@ mod tests {
         fs::write(&path, b"original").unwrap();
         let (artifact, hash) = collision(
             render(
+                None,
                 song(0.25),
                 48_000,
                 path.clone(),
@@ -1038,6 +1050,7 @@ mod tests {
 
         let (artifact, hash) = collision(
             render(
+                None,
                 song(0.5),
                 48_000,
                 path.clone(),
@@ -1064,6 +1077,7 @@ mod tests {
         fs::write(&path, b"keep").unwrap();
         let (artifact, _) = collision(
             render(
+                None,
                 song(0.1),
                 48_000,
                 path.clone(),
@@ -1078,6 +1092,7 @@ mod tests {
         bad.bars[0].audio_buffer = Some(SampleBuffer::new(vec![f32::NAN; 96_000], 48_000));
         assert!(
             render(
+                None,
                 bad,
                 48_000,
                 path.clone(),
@@ -1090,6 +1105,7 @@ mod tests {
         assert_eq!(fs::read_dir(dir.path()).unwrap().count(), 1);
         assert!(
             render(
+                None,
                 song(0.1),
                 48_000,
                 dir.path().join("absent").join("take.wav"),
@@ -1167,6 +1183,7 @@ mod tests {
         fs::write(&path, b"keep").unwrap();
         let (artifact, fingerprint) = collision(
             render(
+                None,
                 song(0.1),
                 48_000,
                 path.clone(),

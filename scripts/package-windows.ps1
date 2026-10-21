@@ -36,6 +36,10 @@ Copy-Item -LiteralPath (Join-Path $root "README.md") -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root "LICENSE") -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root "Cargo.lock") -Destination $stage
 
+$notices = Join-Path $stage "THIRD-PARTY"
+New-Item -ItemType Directory -Path $notices | Out-Null
+Copy-Item -LiteralPath (Join-Path $root "vendor/ble-peripheral-rust/LICENSE") -Destination (Join-Path $notices "ble-peripheral-rust-MIT.txt")
+
 @"
 Woodshed $Version — Windows x86_64 portable build
 
@@ -44,7 +48,9 @@ data directory. It needs an available audio output device; microphone access is
 only used when you turn the tuner or latency calibration on.
 
 This is a portable ZIP, not an installer. Windows SmartScreen may warn because
-the binary is not code-signed yet.
+the binary is not code-signed yet. Bluetooth MIDI output requires a peripheral
+capable Bluetooth adapter and driver. Windows controls its advertised device
+name. THIRD-PARTY includes the Bluetooth supplier's retained MIT notice.
 
 The root LICENSE (MPL-2.0) and Cargo.lock dependency inventory are included in
 the repository: https://github.com/merely-made/woodshed

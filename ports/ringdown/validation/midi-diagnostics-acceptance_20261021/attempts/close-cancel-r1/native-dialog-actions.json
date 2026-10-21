@@ -1,0 +1,16 @@
+[
+  {
+    "action": "native-quit-request",
+    "script": "tell application id \"made.merely.woodshed.diagnostics.acceptance\" to quit",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "96:100: execution error: MesquiteAcceptance got an error: User canceled. (-128)\n"
+  },
+  {
+    "action": "native-cancel-after-close",
+    "script": "tell application \"System Events\" to tell process \"product-507a38de435a\"\nset frontmost to true\nkey code 53\nend tell",
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

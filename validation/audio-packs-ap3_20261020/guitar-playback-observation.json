@@ -1,0 +1,25 @@
+{
+  "recorded_utc": "2026-10-20T05:32:50.268543+00:00",
+  "observer": "Human user at physical HYVIBE guitar",
+  "trial_file": "11-Ringdown_AP3.mid",
+  "usb_storage_safely_ejected_before_trial": true,
+  "prompt": "After USB OFF, select trial in Beats and start at comfortable tempo. Does it appear and play a repeating kick/snare/hi-hat rhythm?",
+  "user_report": "It appears and plays repeatedly",
+  "discovery_confirmed": true,
+  "repeated_playback_confirmed": true,
+  "reboot_replay": "confirmed by owner",
+  "limits": [
+    "Five identical bars do not establish exact loop range, count-in or bar-count semantics.",
+    "Trial uses note 36/38/42; complete instrument mapping and dynamic response remain unqualified.",
+    "No Beats start/stop MIDI binding was present in earlier observed pedal action list."
+  ],
+  "reboot_persistence_confirmed": true,
+  "power_cycle_observation": {
+    "recorded_utc": "2026-10-20T05:54:43.105429+00:00",
+    "observer": "Human user at physical HYVIBE guitar",
+    "procedure": "Stop Beats; turn guitar off and on with USB mode OFF; select the saved Ringdown trial again.",
+    "user_report": "It still appears and plays after restarting",
+    "discovery_after_restart_confirmed": true,
+    "playback_after_restart_confirmed": true
+  }
+}

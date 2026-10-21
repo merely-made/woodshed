@@ -139,16 +139,18 @@ Three rules follow from that origin and hold here specifically:
   interfaces* — UUIDs, field names, wire formats, state machines — and
   paraphrase behaviour, citing class names for provenance only; they never
   paste vendor source. The vendor's firmware binaries are never redistributed
-  here. The line this draws is the one copyright itself draws: interfaces and
-  functional facts are not protectable expression, the vendor's actual code is.
+  here. This is an engineering/provenance boundary, not a jurisdiction-independent
+  legal clearance. Record the source and necessity of interface facts separately
+  from implementation expression; contracts, patents, specification rights and
+  publication permissions require their own assessment.
 - **Say "reverse-engineered", not "clean-room".** These are different claims and
   the stronger one is not ours. True clean-room requires a personnel split — one
   party reads the original and writes a spec, a *separate* party implements from
   that spec having never seen the original. Ringdown's protocol map was written
   by the same party that read the decompiled app, so the work is ordinary
-  reverse engineering for interoperability. That is a well-supported footing on
-  its own and needs no embellishment; claiming clean-room without the split
-  would be an overclaim in the one place accuracy matters most. If a genuine
+  reverse engineering for interoperability. Its legal treatment depends on the
+  applicable facts, terms and jurisdiction; claiming clean-room without the split
+  would overstate the provenance. If a genuine
   split is ever wanted, the Findings section is already the spec: hand it to an
   implementer who never opens the teardown, and record that separation here.
 

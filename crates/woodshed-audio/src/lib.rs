@@ -35,14 +35,14 @@ pub mod chord_audio;
 pub mod engine;
 pub mod input;
 pub mod looper;
-pub mod midi;
+pub use woodshed_instrument::midi;
 pub mod offline;
 pub mod onset;
 pub mod output_runtime;
-pub mod samples;
-pub mod sequencer;
+// These modules have one shared owner; keep the runtime's public audio facade.
+pub use audio_packs::samples;
+pub use audio_pattern::{sequencer, sound};
 pub mod song;
-pub mod sound;
 
 pub use backing_phrase::{BackingEvent, BackingPhrase};
 pub use calibration::{CalibrationOutcome, CalibrationSession, estimate_latency_from_pairs};

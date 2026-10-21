@@ -1,0 +1,19 @@
+{
+  "clock_enabled": false,
+  "output": {
+    "accepted": 0,
+    "attempted": 0,
+    "connected": "Bluetooth MIDI pedal (no encryption)",
+    "disconnects": 1,
+    "error": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+    "failed": 0,
+    "generation": 2,
+    "last_failure": "MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement",
+    "ready": true,
+    "rearm_required": false,
+    "status": "MIDI receiver subscribed (unencrypted compatibility) · OS accepted 0; refused/uncertain 0 · Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement"
+  },
+  "playing": false,
+  "selected_index": 3,
+  "ui_notice": "MIDI receiver subscribed (unencrypted compatibility) · OS accepted 0; refused/uncertain 0 · Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement"
+}

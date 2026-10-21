@@ -1,0 +1,59 @@
+[
+  {
+    "profile": "default",
+    "target": "x86_64-apple-darwin",
+    "expected_exit": 0,
+    "actual_exit": 0
+  },
+  {
+    "profile": "offline",
+    "target": "x86_64-apple-darwin",
+    "expected_exit": 0,
+    "actual_exit": 0
+  },
+  {
+    "profile": "default",
+    "target": "x86_64-pc-windows-msvc",
+    "expected_exit": 0,
+    "actual_exit": 0
+  },
+  {
+    "profile": "offline",
+    "target": "x86_64-pc-windows-msvc",
+    "expected_exit": 0,
+    "actual_exit": 0
+  },
+  {
+    "profile": "default",
+    "target": "x86_64-unknown-linux-gnu",
+    "expected_exit": 0,
+    "actual_exit": 0
+  },
+  {
+    "profile": "offline",
+    "target": "x86_64-unknown-linux-gnu",
+    "expected_exit": 0,
+    "actual_exit": 0
+  },
+  {
+    "profile": "hyvibe-rpc",
+    "expected_exit": "nonzero",
+    "actual_exit": 1,
+    "private_dependencies": [
+      "btleplug",
+      "ringdown",
+      "ringdown-ble",
+      "ringdown-client"
+    ],
+    "stderr": "Private dependencies selected: btleplug, ringdown, ringdown-ble, ringdown-client\n"
+  },
+  {
+    "profile": "packetlogger",
+    "expected_exit": "nonzero",
+    "actual_exit": 1,
+    "private_dependencies": [
+      "ringdown"
+    ],
+    "stderr": "Private dependencies selected: ringdown\n"
+  }
+]

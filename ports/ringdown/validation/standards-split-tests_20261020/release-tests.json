@@ -1,0 +1,37 @@
+[
+  {
+    "profile": "default",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--test",
+      "standards_cli"
+    ],
+    "binary": "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/default/ringdown-probe",
+    "sha256": "567ef7eab9d6d42a12a2c971bf30a6ecad367cbe963d6c9ad79dd7ef4554c0d3",
+    "exit_code": 0,
+    "log": "default-release-cli-tests.log"
+  },
+  {
+    "profile": "offline",
+    "command": [
+      "/Users/markik/.rustup/toolchains/1.99.1-x86_64-apple-darwin/bin/cargo",
+      "test",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--test",
+      "standards_cli",
+      "--no-default-features"
+    ],
+    "binary": "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/offline/ringdown-probe",
+    "sha256": "83ae2f63f60d4d37e276f8c4a2b11c39773e9ec45ec7736cc19867ed613e460f",
+    "exit_code": 0,
+    "log": "offline-release-cli-tests.log"
+  }
+]

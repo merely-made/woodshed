@@ -1,0 +1,42 @@
+{
+  "result": "bounded-acceptance-passed",
+  "date": "2026-10-21",
+  "platform": {
+    "os": "macOS",
+    "version": "15.8.1",
+    "arch": "x86_64"
+  },
+  "focused_cases": {
+    "desktop": 36,
+    "journal": 2,
+    "isolated_lifecycle": 1,
+    "total": 39
+  },
+  "native_binary_sha256": "e339a1f58edd13880e36f19a1c05b1206eb3b37bd02e96b30c1a314720edf34c",
+  "accepted_native_runs": {
+    "controls-r3": "e339a1f58edd13880e36f19a1c05b1206eb3b37bd02e96b30c1a314720edf34c",
+    "reopen-r2": "e339a1f58edd13880e36f19a1c05b1206eb3b37bd02e96b30c1a314720edf34c",
+    "close-cancel-r2": "e339a1f58edd13880e36f19a1c05b1206eb3b37bd02e96b30c1a314720edf34c",
+    "close-save-r1": "e339a1f58edd13880e36f19a1c05b1206eb3b37bd02e96b30c1a314720edf34c"
+  },
+  "current_rebuild_identical_to_native": true,
+  "controls_and_reopen": "native/controls/verification.json",
+  "native_close_cancel": "native/close-cancel/native-dialog-actions.json",
+  "native_close_save": "native/close-save/native-dialog-actions.json",
+  "native_close_delivery": "existing WindowCommands::close in headed host; not an OS pointer-close delivery claim",
+  "native_dialog_delivery": "actual macOS save panel via native keyboard",
+  "native_quit_observation": "attempts/close-cancel-r1/native-dialog-actions.json",
+  "guitar_used": false,
+  "midi_output": "existing writer to independent virtual receiver; six matching messages; close cohorts attempted zero",
+  "runtime_platform_limit": "Windows and Linux native UI/dialogs not exercised",
+  "source": "source.sha256",
+  "preservation": "preservation.json",
+  "scratch": "/Users/markik/Code/testing/woodshed/midi-diagnostics-acceptance_20261021",
+  "window_inventory_helper": {
+    "path": "/Users/markik/Code/output/turnstone-gui-native-20261020/window_info",
+    "sha256": "78a4cda5267032f734e2c9158c88aca7bef14fdce6bbe40ba5ca625e15e95ce8",
+    "source_sha256": "ed7caa404615136cb32c268fb9e31fb0d1f4d1e6b68728d910668774f9f87fae"
+  },
+  "profile_custody": "synthetic keeper and encrypted fixture settings only; no normal user profile or guitar writes",
+  "desktop_released": true
+}

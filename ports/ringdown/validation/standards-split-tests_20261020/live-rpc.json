@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/Users/markik/Code/testing/woodshed/ringdown-split-tests_20261020/rpc/ringdown-probe",
+    "--rpc",
+    "--scan-secs",
+    "10",
+    "--timeout",
+    "5"
+  ],
+  "binary_sha256": "7b19152da215d22b62d8822513ba324712e2ed6ab77215a8c26871d236dc39d3",
+  "started_at_utc": "235549",
+  "exit_code": 0,
+  "timed_out": false,
+  "raw_log": "/Users/markik/Code/testing/ringdown/captures/2026-10-20_split-rpc/235549-status.log",
+  "raw_log_sha256": "fe4c2ddc0e0800911970e217f6bda1f44b4fa5612d4dc6f3d26b373a477304f5",
+  "public_log": "live-rpc-redacted.log",
+  "scope": "Service discovery, version banner and GetStatus only; no settings or files changed",
+  "banner_confirmed": true,
+  "status_answered": true,
+  "disconnect_requested": true,
+  "limits": "Existing probe discards disconnect result; its printed disconnect line proves the call returned, not a verified disconnect acknowledgement. GetStatus does not qualify other RPC methods.",
+  "device": "H2S",
+  "firmware_esp": "V1.3.0",
+  "firmware_stm": "V2.4.0"
+}

@@ -1,0 +1,54 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+assert snap midi-clock-enabled == false
+click role:combobox @aria-label=MIDI output
+click role:option Bluetooth MIDI pedal (no encryption)
+settle 3
+act midi-await-open
+wait 100000
+act midi-checkpoint advertising
+capture 01_advertising
+act midi-await-ready
+wait 100000
+assert snap midi-ready == true
+assert snap midi-attempted == 0
+act midi-checkpoint first-connected
+capture 02_first_connection
+act midi-await-disconnected
+wait 100000
+assert snap midi-ready == false
+assert snap midi-attempted == 0
+act midi-checkpoint receiver-disconnected
+capture 03_receiver_disconnected
+act midi-await-ready
+wait 100000
+assert snap midi-ready == true
+assert snap midi-attempted == 0
+act midi-checkpoint receiver-reconnected
+capture 04_receiver_reconnected
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+assert snap midi-ready == false
+act midi-checkpoint desktop-disconnected
+capture 05_desktop_closed
+click role:combobox @aria-label=MIDI output
+click role:option Bluetooth MIDI pedal (no encryption)
+settle 3
+act midi-checkpoint desktop-reopened
+act midi-await-ready
+wait 100000
+assert snap midi-ready == true
+assert snap midi-attempted == 0
+act midi-checkpoint desktop-reconnected
+capture 06_desktop_reconnected
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+assert snap midi-ready == false
+assert snap midi-attempted == 0
+assert snap midi-failed == 0
+act midi-checkpoint final
+capture 07_closed

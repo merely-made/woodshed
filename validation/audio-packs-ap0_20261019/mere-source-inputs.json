@@ -1,0 +1,9 @@
+{
+  "head": "77d820026ff0c1c5fa08b12eee7039f49206a028",
+  "files": {
+    "crates/cambium/scenes/scenomise/src/span_edit.rs": "fc2b29eaa900d5e15cc407e9ce432c61bb04515e38943d652d5415f6bb90b4b9",
+    "crates/cambium/scenes/scenomise/src/template.rs": "f7bd9a70c26a6db1509967ca068d57dd192431e4be25309d5bfbe4c4677ebc1e",
+    "crates/cambium/scenes/scenograph/src/dynamics.rs": "c17ae42e3383598120b4d112d04929078e8bc3b160f83004cfa891a4fa4d407b"
+  },
+  "qualification": "source inspection only; no Mere edits or new native run"
+}

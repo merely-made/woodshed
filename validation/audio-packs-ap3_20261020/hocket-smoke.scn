@@ -1,0 +1,25 @@
+settle 1
+click role:button @data-action=pack-bundled
+settle 1
+assert snap pack-loaded == true
+capture 01_bundled
+click role:button @data-action=pack-step-0-1
+settle 1
+click role:button @aria-label=Move Kick step 1 →
+settle 1
+assert snap pack-notice == Move needs an existing hit and an empty destination
+capture 02_occupied_refused
+click role:button @data-action=pack-step-0-1
+click role:button @data-action=pack-step-0-1
+settle 1
+click role:button @aria-label=Move Kick step 1 →
+settle 1
+click role:switch @aria-label=Arm track 1
+wheel 0 1800 px on .audio-pack-panel
+settle 3
+click role:button @data-action=pack-add-loop
+settle 2
+assert snap phrases == 1
+assert snap media == 1
+act checkpoint-project rendered
+capture 03_rendered

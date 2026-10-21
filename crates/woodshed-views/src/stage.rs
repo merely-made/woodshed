@@ -934,6 +934,13 @@ impl ViewportClass {
 /// the host realizes them through the `MidiBackend` seam. Transient (not
 /// persisted — port availability is session-dependent).
 pub struct MidiUiState {
+    pub diagnostics: woodshed_core::midi::MidiDiagnosticsStatus,
+    pub diagnostics_record_request: Option<bool>,
+    pub diagnostics_export_requested: bool,
+    pub diagnostics_export_busy: bool,
+    pub diagnostics_notice: Option<String>,
+    pub diagnostics_show_history: bool,
+
     /// Available ports, host-populated on startup + refresh.
     pub input_ports: Vec<String>,
     pub output_ports: Vec<String>,
@@ -949,6 +956,18 @@ pub struct MidiUiState {
     /// Host-populated connection status.
     pub connected_in: Option<String>,
     pub connected_out: Option<String>,
+    pub output_notice: Option<String>,
+    /// Live command admission; never persisted or restored on reconnect.
+    pub output_ready: bool,
+    pub pedal_request: Option<woodshed_core::midi::PedalAction>,
+    pub pedal_request_target: Option<woodshed_core::midi::PedalTarget>,
+    pub pedal_target: Option<woodshed_core::midi::PedalTarget>,
+    pub inputs_armed: bool,
+    pub learn_key: Option<woodshed_core::midi::PedalAction>,
+    pub learn_controller: Option<woodshed_core::midi::PedalAction>,
+    pub learn_controller_flush: bool,
+    pub input_notice: Option<String>,
+    pub pedal_report: Option<woodshed_core::midi::PedalReport>,
     /// Host-polled recent-events readout (newest last).
     pub events: Vec<String>,
     /// One-shot: re-scan the port lists. Host consumes after dispatch.
@@ -956,17 +975,57 @@ pub struct MidiUiState {
 }
 
 impl MidiUiState {
+    pub fn disarm_inputs(&mut self) {
+        self.inputs_armed = false;
+        self.learn_key = None;
+        self.learn_controller = None;
+        if self.pedal_request_target.is_some() {
+            self.pedal_request = None;
+        }
+        self.pedal_request_target = None;
+        self.learn_controller_flush = false;
+    }
+    pub fn request_from_input(&mut self, action: woodshed_core::midi::PedalAction) {
+        if !self.inputs_armed {
+            return;
+        }
+        if self.pedal_request.is_some() {
+            self.input_notice = Some("Input action refused: another request is pending".into());
+            return;
+        }
+        if let Some(target) = self.pedal_target {
+            self.pedal_request = Some(action);
+            self.pedal_request_target = Some(target);
+        }
+    }
     pub fn new() -> Self {
         Self {
+            diagnostics: Default::default(),
+            diagnostics_record_request: None,
+            diagnostics_export_requested: false,
+            diagnostics_export_busy: false,
+            diagnostics_notice: None,
+            diagnostics_show_history: false,
             input_ports: Vec::new(),
             output_ports: Vec::new(),
-            input_dd: SelectState::new(0),
-            output_dd: SelectState::new(0),
+            input_dd: SelectState::new(0).with_label("MIDI input"),
+            output_dd: SelectState::new(0).with_label("MIDI output"),
             clock_slave: false,
             clock_out: false,
             clock_bpm: None,
             connected_in: None,
             connected_out: None,
+            output_notice: None,
+            output_ready: false,
+            pedal_request: None,
+            pedal_request_target: None,
+            pedal_target: None,
+            inputs_armed: false,
+            learn_key: None,
+            learn_controller: None,
+            learn_controller_flush: false,
+            input_notice: None,
+            pedal_report: None,
             events: Vec::new(),
             refresh_requested: false,
         }
@@ -1021,6 +1080,10 @@ pub enum PersonalRelationIntent {
 
 /// Runner state: the portable core slice plus view-layer widget state.
 pub struct UiState {
+    pub audio_pack: Option<audio_packs::PackSelection>,
+    pub pack_actions: Vec<audio_pack_views::PackAction>,
+    pub pack_busy: bool,
+    pub pack_notice: String,
     /// Host-reflected recorder projection; PCM stays shared and never enters Session.
     pub recorder_observation: looper::RecorderObservation,
     pub stage: StageState,
@@ -1390,6 +1453,10 @@ impl UiState {
             latest_audition: None,
             card_shape_notice: None,
             song: SongDoc::default(),
+            audio_pack: None,
+            pack_actions: Vec::new(),
+            pack_busy: false,
+            pack_notice: String::new(),
             looper: LooperConfig::default(),
             recorder_observation: Default::default(),
             loop_captures: Default::default(),
@@ -2459,6 +2526,7 @@ impl UiState {
             &self.song,
             &self.practice_history,
         );
+        session.audio_pack = self.audio_pack.clone();
         session.retained_sets = self.retained_sets.clone();
         session.working_sets = self.working_sets.clone();
         session.looper = self.looper.clone();
@@ -2491,6 +2559,10 @@ impl UiState {
         app_settings: AppSettings,
     ) -> Option<crate::workspace::WorkspaceSnapshotError> {
         session.restore(&mut self.stage, &app_settings);
+        self.audio_pack = session.audio_pack.clone();
+        self.pack_actions.clear();
+        self.pack_busy = false;
+        self.pack_notice.clear();
         self.arrangement_editor = Default::default();
         self.set = session.set.clone();
         self.retained_sets = session.retained_sets.clone();

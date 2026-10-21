@@ -1,0 +1,20 @@
+ap0-portable v0.0.0 (/Users/markik/Code/testing/woodshed/audio-packs-ap0_20261019/portable)
+audio-primitives v0.1.0 (/Users/markik/Code/repos/woodshed/crates/audio-primitives)
+hound v3.5.1
+midly v0.5.3
+serde v1.0.229
+serde_core v1.0.229
+serde_derive v1.0.229 (proc-macro)
+proc-macro2 v1.0.107
+unicode-ident v1.0.27
+quote v1.0.47
+proc-macro2 v1.0.107 (*)
+syn v3.0.9
+proc-macro2 v1.0.107 (*)
+quote v1.0.47 (*)
+unicode-ident v1.0.27
+serde_json v1.0.154
+itoa v1.0.18
+memchr v2.8.3
+serde_core v1.0.229
+zmij v1.0.23

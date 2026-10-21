@@ -1,0 +1,14 @@
+RESULT ok
+waited 13 frames
+waited 74 frames
+captured 01_hotplug_failure_visible
+waited 11 frames
+captured 02_no_replay_after_hotplug
+waited 6 frames
+waited 6 frames
+captured 03_failure_history_retained
+capture 01_hotplug_failure_visible 2360x1960 digest=d56cc62b43b72560 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/hotplug-r2/run/01_hotplug_failure_visible.png
+capture 02_no_replay_after_hotplug 2360x1960 digest=b9a590167bf2fad3 file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/hotplug-r2/run/02_no_replay_after_hotplug.png
+capture 03_failure_history_retained 2360x1960 digest=8a79c115a599504e file=/Users/markik/Code/testing/woodshed/desktop-midi_20261020/hotplug-r2/run/03_failure_history_retained.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 177 frames, 180 redraws, 3 unpresented redraws

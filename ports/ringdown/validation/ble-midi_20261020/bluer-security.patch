@@ -1,0 +1,43 @@
+--- registry-bluer/src/gatt/mod.rs
++++ maintained-bluer/src/gatt/mod.rs
+@@ -37,6 +37,10 @@
+     write ("write"),
+     /// If set allows the client to use the Handle Value Notification operation.
+     notify ("notify"),
++    /// Require encryption when enabling notifications (BlueZ server flag).
++    encrypt_notify ("encrypt-notify"),
++    /// Require encryption when enabling indications (BlueZ server flag).
++    encrypt_indicate ("encrypt-indicate"),
+     /// If set allows the client to use the Handle Value Indication/Confirmation operation.
+     indicate ("indicate"),
+     /// If set allows clients to use the Signed Write Without Response procedure.
+--- registry-bluer/src/gatt/local.rs
++++ maintained-bluer/src/gatt/local.rs
+@@ -371,6 +371,10 @@
+ pub struct CharacteristicNotify {
+     /// If set allows the client to use the Handle Value Notification operation.
+     pub notify: bool,
++    /// Require encryption for the notification subscription.
++    pub encrypt_notify: bool,
++    /// Require encryption for the indication subscription.
++    pub encrypt_indicate: bool,
+     /// If set allows the client to use the Handle Value Indication/Confirmation operation.
+     ///
+     /// Confirmations will only be provided when this is [true] and [notify](Self::notify) is [false].
+@@ -384,6 +388,8 @@
+ impl CharacteristicNotify {
+     fn set_characteristic_flags(&self, f: &mut CharacteristicFlags) {
+         f.notify = self.notify;
++        f.encrypt_notify = self.encrypt_notify;
++        f.encrypt_indicate = self.encrypt_indicate;
+         f.indicate = self.indicate;
+     }
+ }
+@@ -855,6 +861,7 @@
+                             indicate,
+                             notify,
+                             _non_exhaustive: (),
++                            ..
+                         }) => {
+                             let (stop_notify_tx, stop_notify_rx) = mpsc::channel(1);
+                             let (confirm_tx, confirm_rx) = if *indicate && !*notify {

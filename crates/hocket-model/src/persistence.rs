@@ -45,6 +45,9 @@ pub struct ProjectBundle {
     pub format_version: u16,
     pub session: Session,
     pub history: History,
+    /// Local editable kit draft; handoff playback uses rendered recorder media.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub audio_pack: Option<audio_packs::PackSelection>,
 }
 
 #[derive(Debug)]
@@ -79,6 +82,7 @@ impl ProjectBundle {
             format_version: Self::FORMAT_VERSION,
             session,
             history,
+            audio_pack: None,
         }
     }
 
@@ -88,6 +92,7 @@ impl ProjectBundle {
         if self.format_version != Self::FORMAT_VERSION {
             return Err(PersistenceError::UnsupportedVersion(self.format_version));
         }
+        if let Some(pack) = &self.audio_pack { pack.validate().map_err(|e| PersistenceError::Decode(format!("audio pack: {e}")))?; }
         self.history.validate().map_err(PersistenceError::History)
     }
 

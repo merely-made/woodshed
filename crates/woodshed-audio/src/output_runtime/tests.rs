@@ -1546,3 +1546,27 @@ fn exact_card_preview_preserves_short_duration_and_refuses_unrepresentable_outpu
 
 #[path = "selected_capture_tests.rs"]
 mod selected_capture_tests;
+
+#[test]
+fn prepared_pack_swap_and_backing_steps_render_without_callback_allocation() {
+    let selection = audio_packs::files::load(std::path::Path::new("bundled"), None).unwrap();
+    let mut r = OutputRuntime::offline(48_000).unwrap();
+    render(&mut r, 1);
+    r.service().unwrap();
+    r.set_pack_pattern_playing(selection.hydrated_pattern().unwrap(), true).unwrap();
+    r.service().unwrap();
+    assert!(render(&mut r, 120_000).iter().any(|v| v.abs() > 0.05));
+    let changed = selection.edit(&selection.revision(), audio_packs::PackEdit::MoveHit {track:0, from:0, to:1}).unwrap();
+    r.set_pack_pattern_playing(changed.hydrated_pattern().unwrap(), false).unwrap();
+    r.service().unwrap();
+    let mut backing = Song::new();
+    backing.click_enabled = true;
+    backing.playing = true;
+    backing.bars = vec![Bar { bpm:90.0, time_signature:TimeSignature::new(4,4), ..Default::default() }];
+    r.set_song(backing).unwrap();
+    r.rewind().unwrap();
+    r.service().unwrap();
+    let samples = render(&mut r, 256_000);
+    assert!(samples.iter().any(|v| v.abs() > 0.05));
+    assert!(samples.iter().all(|v| v.is_finite()));
+}

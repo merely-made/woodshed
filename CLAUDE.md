@@ -45,6 +45,15 @@ crates/
   audio-primitives/  Pure-std DSP helpers (click synth, onset/tempo,
                      latency, waveform projection, meter ballistics).
                      Shared cross-repo with hocket.
+  audio-pattern/     Shared existing step/sound model and MIDI-file bytes;
+                     no file I/O, devices, UI or Firewheel.
+  audio-packs/       Shared bounded kit/asset admission and immutable snapshots;
+                     host WAV loading, no device/runtime or product authority.
+  audio-pack-views/  Shared Cambium controls over product-owned kit selections;
+                     source-qualified musical edits, no I/O or transport.
+  woodshed-instrument/ Standard MIDI ports/messages/clock and optional BLE
+                     peripheral output on the same writer; no private protocol
+                     dependencies. Consumed by woodshed-audio and Ringdown.
   hocket-model/     Shared recorder Session/History/Phrase/Layer authority.
   hocket-project/   Portable recorder media, projects, export and handoff.
   hocket-recorder/  Device-free recorder transitions and host audio seams.
@@ -65,7 +74,9 @@ ports/
 ```
 
 Keep `woodshedding` and `audio-primitives` pure: no `cpal`, no UI, no file
-I/O. Audio-coupled code belongs in `woodshed-audio`, product composition in
+I/O. Portable pattern/sound kernels belong in `audio-pattern`; pack admission
+and sample-file I/O belong in `audio-packs`. Device-coupled runtime code stays
+in `woodshed-audio`, product composition in
 `woodshed-views`, host and native concerns in `woodshed-genet`. Do not
 re-add direct deps on genet-layout, genet-winit-host, netrender, or the
 paint-list crates; the shared host owns that assembly and they arrive
@@ -75,6 +86,19 @@ Each directory under `ports/` is a nested Cargo workspace, not a member of the
 root workspace. Keep its lockfile, versions, product host, release tags, and
 validation commands independent. Shared libraries belong in root `crates/`;
 repository proximity does not authorize direct port-to-port dependencies.
+
+The instrument seam defaults to standard MIDI. Optional BLE-MIDI is another
+MidiOut connection using the single maintained supplier under vendor/; do not
+add a platform driver, clock worker or private protocol dependency beside it.
+Only explicit output selection opens the radio. Never silently downgrade a
+notification-encryption requirement or replay commands after reconnect.
+`woodshed-audio` re-exports
+that one MIDI implementation. Keep private protocol dependencies out of the
+shared crate, including optional dependencies. The private connection/session
+implementation and its metronome example live in `ringdown-ble::instrument`.
+Ringdown's default member is its standards-based CLI; `hyvibe-rpc` and
+`packetlogger` are separate, explicit research opt-ins. `--workspace` or
+`--all-features` is not a standards-only shipping configuration.
 
 ## General Guidelines
 

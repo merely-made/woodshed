@@ -1,0 +1,4 @@
+    Blocking waiting for file lock on build directory
+    Checking woodshed-instrument v0.1.0 (/Users/markik/Code/repos/woodshed/crates/woodshed-instrument)
+    Checking ringdown-probe v0.0.1 (/Users/markik/Code/repos/woodshed/ports/ringdown/apps/probe)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.09s

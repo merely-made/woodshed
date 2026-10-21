@@ -9,6 +9,8 @@
 //! hocket-recorder; this wrapper supplies native audio, project actors, identity,
 //! clipboard, updater, appearance and window policy.
 
+mod packs;
+
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 use std::time::Instant;
@@ -77,14 +79,15 @@ struct ProjectRevision {
 impl ProjectRevision {
     fn current(recorder: &Recorder) -> Self {
         Self {
-            bundle: ProjectBundle::new(recorder.session.clone(), recorder.history.clone()),
+            bundle: recorder.project_bundle(),
             media_count: recorder.store.len(),
             missing_media: recorder.missing_media.clone(),
         }
     }
 
     fn matches(&self, recorder: &Recorder) -> bool {
-        self.bundle.session == recorder.session
+        self.bundle.audio_pack == recorder.audio_pack
+            && self.bundle.session == recorder.session
             && self.bundle.history == recorder.history
             && self.media_count == recorder.store.len()
             && self.missing_media == recorder.missing_media
@@ -100,6 +103,7 @@ enum Preservation {
 }
 
 pub struct AppState {
+    pub(crate) pack_notice: String,
     pub appearance: crate::appearance::AppearanceState,
     pub window_commands: cambium_genet_winit_host::WindowCommands,
     pub recorder: Recorder,
@@ -213,6 +217,7 @@ impl AppState {
             window_commands: cambium_genet_winit_host::WindowCommands::new(),
             recorder,
             audio,
+            pack_notice: String::new(),
             last_meter_tick: Instant::now(),
             project_path: None,
             saved_revision,
@@ -273,6 +278,8 @@ impl AppState {
             .map(|name| name.to_string_lossy().into_owned())
             .unwrap_or_else(|| "untitled".to_string())
     }
+
+    pub(crate) fn audio_probe(&self) -> serde_json::Value { self.audio.output_probe() }
 
     pub fn project_status_label(&self) -> String {
         match &self.project_status {
@@ -523,8 +530,10 @@ impl AppState {
                 return;
             },
         };
-        let bundle =
-            ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
+        let mut bundle = self.recorder.project_bundle();
+        // Peers receive normal rendered layers; the local editable draft is
+        // project metadata and does not require an optional engine at the peer.
+        bundle.audio_pack = None;
         let envelope =
             match HandoffEnvelope::create(&bundle, &self.recorder.store, recipient, identity) {
                 Ok(envelope) => envelope,
@@ -699,7 +708,7 @@ impl AppState {
         let sender = received.sender;
         if received.bundle.session.id == self.recorder.session.id {
             let mut bundle =
-                ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
+                self.recorder.project_bundle();
             let mut media = self.recorder.store.clone();
             match received.accept_branch(&mut bundle, &mut media) {
                 Ok(_report) => {
@@ -711,6 +720,7 @@ impl AppState {
                         media,
                         self.recorder.missing_media.clone(),
                     );
+                    self.recorder.audio_pack = bundle.audio_pack;
                     self.recipient = Some(sender);
                     self.project_status = ProjectStatus::HandoffAccepted;
                     self.resync_tempo();
@@ -731,6 +741,7 @@ impl AppState {
                 received.media,
                 BTreeSet::new(),
             );
+            self.recorder.audio_pack = received.bundle.audio_pack;
             self.project_path = None;
             self.recipient = Some(sender);
             self.project_status = ProjectStatus::HandoffAccepted;
@@ -771,6 +782,8 @@ impl AppState {
             ProjectCommand::ExportMix { .. } => ProjectStatus::Exporting,
             ProjectCommand::WriteHandoff { .. } => ProjectStatus::WritingHandoff,
             ProjectCommand::ReadHandoff { .. } => ProjectStatus::ReadingHandoff,
+            ProjectCommand::LoadPack { .. } => ProjectStatus::Loading,
+            ProjectCommand::ExportMidi { .. } | ProjectCommand::RenderPack { .. } => ProjectStatus::Exporting,
         };
         let saved_revision = match &command {
             ProjectCommand::Save { bundle, media, .. } => Some(ProjectRevision {
@@ -845,7 +858,7 @@ impl AppState {
         }
         if let Some(path) = path {
             let bundle =
-                ProjectBundle::new(self.recorder.session.clone(), self.recorder.history.clone());
+                self.recorder.project_bundle();
             let admitted = self.submit_project(ProjectCommand::Save {
                 path,
                 bundle,
@@ -984,6 +997,27 @@ impl AppState {
             return;
         }
         match reply.update.value {
+            ProjectUpdate::PackLoaded { before, selection } => {
+                if before == self.recorder.audio_pack.as_ref().map(audio_packs::PackSelection::revision) {
+                    self.recorder.audio_pack = Some(selection);
+                    self.pack_notice = "Kit draft loaded; Save retains it with the project. Added drum layers use the project tempo and normal playback/history.".into();
+                } else { self.pack_notice = "Kit changed; loaded candidate was not applied.".into(); }
+                self.project_status = ProjectStatus::Idle;
+            },
+            ProjectUpdate::PackRendered { revision, track, bpm, meter, bars, samples } => {
+                let current = self.recorder.audio_pack.as_ref().map(audio_packs::PackSelection::revision);
+                if self.is_recording() || current.as_deref() != Some(&revision) || self.recorder.session.bpm != bpm
+                    || self.recorder.session.time_signature != meter || self.recorder.session.bars_per_phrase != bars {
+                    self.pack_notice = "Project rhythm or clock changed; rendered candidate was not added.".into();
+                } else {
+                    self.pack_notice = match self.recorder.append_imported_audio(track, &samples, 48_000, Self::now_ms()) {
+                        Ok(_) => "Drum layer added. It auditions through normal track playback; use the layer mute control to silence it. Handoffs carry the rendered audio.".into(),
+                        Err(error) => error,
+                    };
+                }
+                self.project_status = ProjectStatus::Idle;
+            },
+
             ProjectUpdate::Saved { path, saved_head } => {
                 let Some(revision) = pending.saved_revision else {
                     return;
@@ -1010,6 +1044,7 @@ impl AppState {
                 }
             },
             ProjectUpdate::Exported { path } => {
+                self.pack_notice = format!("Exported {}", path.display());
                 self.project_status = ProjectStatus::Exported(path);
             },
             ProjectUpdate::HandoffWritten { path } => {
@@ -1023,6 +1058,9 @@ impl AppState {
                 self.incoming = Some(received);
             },
             ProjectUpdate::Failed { action, message } => {
+                if matches!(action, "load kit" | "export MIDI" | "render drum layer") {
+                    self.pack_notice = format!("{action}: {message}");
+                }
                 self.continue_after_save = false;
                 self.project_status = ProjectStatus::Error(format!("{action}: {message}"));
             },
@@ -1148,6 +1186,8 @@ impl AppState {
                 self.recorder.replace_project(
                     loaded.bundle.session, loaded.bundle.history, loaded.media, loaded.missing_media,
                 );
+                self.recorder.audio_pack = loaded.bundle.audio_pack;
+                self.pack_notice.clear();
                 self.project_path = Some(path);
                 self.saved_revision = ProjectRevision::current(&self.recorder);
                 self.project_status = ProjectStatus::Saved;

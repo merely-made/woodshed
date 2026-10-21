@@ -1,0 +1,272 @@
+{
+  "woodshed": {
+    "installed_folder_removed_before_reopen": true,
+    "saved_selection_exact_after_failed_replacement_and_reopen": true,
+    "midi_bytes_equal": true,
+    "midi": {
+      "file": "woodshed-final-before.mid",
+      "sha256": "8a4fd9c1279f6ddb4e4e5e2714587f753fbb38439c7bee563e7b551ac1e7ace9",
+      "bytes": 138,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        1920
+      ],
+      "end_quarters": [
+        4.0
+      ],
+      "tempos": [
+        {
+          "tick": 0,
+          "microseconds_per_quarter": 480000
+        }
+      ],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 2,
+          "off": 2
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 2,
+          "off": 2
+        },
+        {
+          "channel": 10,
+          "note": 42,
+          "on": 8,
+          "off": 8
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 1680,
+      "last_note_off_tick": 1740,
+      "note_bar_counts": {
+        "36": {
+          "0": 2
+        },
+        "38": {
+          "0": 2
+        },
+        "42": {
+          "0": 8
+        }
+      },
+      "controllers": [],
+      "message_kinds": {
+        "0x9": 12,
+        "0x8": 12
+      },
+      "meta_types": {
+        "0x51": 1,
+        "0x58": 1,
+        "0x2f": 1
+      },
+      "notes_on": 12,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        60,
+        60
+      ]
+    },
+    "processes": [
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 94.676,
+        "binary_sha256": "5ab2e1de4ebe75c649733b7e14270ed97c9e43041e2fad75e05fc17c6aa70f47",
+        "scenario_sha256": "b88735693bf13de94203ec6ffff140132714552169e0155ec507998a36f09759",
+        "receipt": "scenario.done",
+        "captures": 3
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 40.747,
+        "binary_sha256": "5ab2e1de4ebe75c649733b7e14270ed97c9e43041e2fad75e05fc17c6aa70f47",
+        "scenario_sha256": "d6ccfc8fba4e39f3972e24d0570c072e8304fe75d79f23e905bb23d88798a328",
+        "receipt": "scenario.done",
+        "captures": 2
+      }
+    ]
+  },
+  "hocket": {
+    "bundle_and_media_exact": true,
+    "archive_entries": [
+      "manifest.cbor",
+      "media/6746e6c3b1d0ba365f97d9f9edbc8b0c2e78409c2b7f7d32802f61bbb1b55cf5.wv",
+      "meta.json"
+    ],
+    "wav_sha256": "02a1f9b9593e33235d1c89ce56ae3ef89c6cf80162bcf628a40c857bb116db89",
+    "media": [
+      {
+        "fixture_bits_exact": false,
+        "frames": 377712,
+        "phrase": "199a543d-657a-4aa2-9f1b-62ce7b3e9931",
+        "reference": [
+          103,
+          70,
+          230,
+          195,
+          177,
+          208,
+          186,
+          54,
+          95,
+          151,
+          217,
+          249,
+          237,
+          188,
+          139,
+          12,
+          46,
+          120,
+          64,
+          156,
+          43,
+          127,
+          125,
+          50,
+          128,
+          47,
+          97,
+          187,
+          177,
+          181,
+          92,
+          245
+        ],
+        "sample_rate": 48000
+      }
+    ],
+    "muted_click_graph_output_observed": true,
+    "wav": {
+      "channels": 2,
+      "sample_rate": 48000,
+      "frames": 377712,
+      "peak": 0.6785686612129211
+    },
+    "installed_folder_removed_before_reopen": true,
+    "saved_selection_exact_after_failed_replacement_and_reopen": true,
+    "midi_bytes_equal": true,
+    "midi": {
+      "file": "hocket-final-before.mid",
+      "sha256": "131c8514f48a46fc6618a79330350de9f1bca60137be0fa393f7d20b993e6135",
+      "bytes": 138,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        1920
+      ],
+      "end_quarters": [
+        4.0
+      ],
+      "tempos": [
+        {
+          "tick": 0,
+          "microseconds_per_quarter": 491803
+        }
+      ],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 2,
+          "off": 2
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 2,
+          "off": 2
+        },
+        {
+          "channel": 10,
+          "note": 42,
+          "on": 8,
+          "off": 8
+        }
+      ],
+      "first_note_tick": 0,
+      "last_note_on_tick": 1680,
+      "last_note_off_tick": 1740,
+      "note_bar_counts": {
+        "36": {
+          "0": 2
+        },
+        "38": {
+          "0": 2
+        },
+        "42": {
+          "0": 8
+        }
+      },
+      "controllers": [],
+      "message_kinds": {
+        "0x9": 12,
+        "0x8": 12
+      },
+      "meta_types": {
+        "0x51": 1,
+        "0x58": 1,
+        "0x2f": 1
+      },
+      "notes_on": 12,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        60,
+        60
+      ]
+    },
+    "processes": [
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 125.676,
+        "binary_sha256": "b7b3473fdce79011b79f565e679b0f318f542b67dce09548e5b4a888083890d0",
+        "scenario_sha256": "147e11172f09441dc97d78f92b0181553183f1dfdb4cd91a82bc1ac8fca7da0e",
+        "receipt": "scenario.done",
+        "captures": 3
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 67.428,
+        "binary_sha256": "b7b3473fdce79011b79f565e679b0f318f542b67dce09548e5b4a888083890d0",
+        "scenario_sha256": "15748ef3af916ccfef538cda670b6419e77ef7125b370107644184d8de70bbfc",
+        "receipt": "scenario.done",
+        "captures": 2
+      }
+    ]
+  }
+}

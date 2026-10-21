@@ -1,0 +1,30 @@
+   Compiling ringdown-probe v0.0.1 (/Users/markik/Code/repos/woodshed/ports/ringdown/apps/probe)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.74s
+     Running unittests src/main.rs (target/build/debug/deps/ringdown_probe-a41ee6011d237c02)
+
+running 9 tests
+test pklg::tests::records_parse_in_either_byte_order ... ok
+test rpc::tests::a_path_with_no_number_is_declined_rather_than_guessed ... ok
+test rpc::tests::a_recording_path_splits_into_stem_number_and_extension ... ok
+test rpc::tests::only_the_digits_immediately_before_the_extension_count ... ok
+test pklg::tests::uuids_render_canonically ... ok
+test pklg::tests::acl_fragments_reassemble_into_one_att_pdu ... ok
+test pklg::tests::an_llt2_ack_is_not_mistaken_for_a_message ... ok
+test pklg::tests::a_plain_json_write_is_reported_as_a_message ... ok
+test pklg::tests::a_compressed_write_decodes_through_the_codec ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/standards_cli.rs (target/build/debug/deps/standards_cli-3524da87978dfdf2)
+
+running 7 tests
+test default_entry_prints_help_without_starting_rpc ... ok
+test packetlogger_is_an_independent_feature ... ok
+test rpc_feature_controls_routing_without_scanning ... ok
+test bundled_export_matches_shared_exporter_and_preserves_existing_output ... ok
+test installed_pack_exports_and_reopens_after_installation_is_removed ... ok
+test malformed_midi_is_rejected_before_opening_a_port ... ok
+test real_cli_delivers_exact_midi_to_a_virtual_input ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.77s
+

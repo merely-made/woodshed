@@ -1,0 +1,66 @@
+[
+  {
+    "name": "final-windows-check",
+    "command": [
+      "cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--target",
+      "x86_64-pc-windows-gnu"
+    ],
+    "exit_code": 0,
+    "environment": {}
+  },
+  {
+    "name": "final-linux-check",
+    "command": [
+      "cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--target",
+      "x86_64-unknown-linux-gnu"
+    ],
+    "exit_code": 0,
+    "environment": {
+      "PKG_CONFIG_ALLOW_CROSS": "1",
+      "PKG_CONFIG_SYSROOT_DIR": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/linux-sysroot",
+      "PKG_CONFIG_LIBDIR": "/Users/markik/Code/testing/woodshed/ble-midi-assessment_20261020/linux-sysroot/usr/lib/x86_64-linux-gnu/pkgconfig"
+    }
+  },
+  {
+    "name": "file-only-check",
+    "command": [
+      "cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--no-default-features"
+    ],
+    "exit_code": 0,
+    "environment": {}
+  },
+  {
+    "name": "os-midi-only-check",
+    "command": [
+      "cargo",
+      "check",
+      "--locked",
+      "--offline",
+      "-p",
+      "ringdown-probe",
+      "--no-default-features",
+      "--features",
+      "midi"
+    ],
+    "exit_code": 0,
+    "environment": {}
+  }
+]

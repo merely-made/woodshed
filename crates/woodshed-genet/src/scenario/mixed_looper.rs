@@ -19,11 +19,22 @@ pub(super) fn act(ctx: &mut Ctx<'_>, shared: &Rc<RefCell<Shared>>, label: &str) 
         crate::sync::after_dispatch(&mut shared.borrow_mut(), ctx);
         return Some(true);
     }
-    if matches!(label, "p7b-retime" | "p7b-duration-refusal" | "p7b-recover-seconds") {
+    if matches!(
+        label,
+        "p7b-retime" | "p7b-duration-refusal" | "p7b-recover-seconds"
+    ) {
         ctx.runner.update(|ui| {
-            let card = ui.set.cards.iter_mut().find(|c|c.label == "Loop scale").unwrap();
+            let card = ui
+                .set
+                .cards
+                .iter_mut()
+                .find(|c| c.label == "Loop scale")
+                .unwrap();
             match label {
-                "p7b-retime" => { card.timing.bpm = Some(137.0); ui.looper.beats = 5; },
+                "p7b-retime" => {
+                    card.timing.bpm = Some(137.0);
+                    ui.looper.beats = 5;
+                },
                 "p7b-duration-refusal" => card.timing.hold = Hold::Seconds(1.25),
                 _ => card.timing.hold = Hold::Seconds(1.125),
             }
@@ -32,16 +43,28 @@ pub(super) fn act(ctx: &mut Ctx<'_>, shared: &Rc<RefCell<Shared>>, label: &str) 
         return Some(true);
     }
     if let Some(name) = label.strip_prefix("p7b-checkpoint ") {
-        return Some(seconds_checkpoint(ctx.runner.state(), &mut shared.borrow_mut(), name));
+        return Some(seconds_checkpoint(
+            ctx.runner.state(),
+            &mut shared.borrow_mut(),
+            name,
+        ));
     }
     if label == "p7b-verify-reopen" {
         return Some(seconds_reopen(ctx.runner.state(), &mut shared.borrow_mut()));
     }
     if label == "physical-checkpoint" {
-        return Some(physical_receipt(ctx.runner.state(), &mut shared.borrow_mut(), false));
+        return Some(physical_receipt(
+            ctx.runner.state(),
+            &mut shared.borrow_mut(),
+            false,
+        ));
     }
     if label == "physical-verify-reopen" {
-        return Some(physical_receipt(ctx.runner.state(), &mut shared.borrow_mut(), true));
+        return Some(physical_receipt(
+            ctx.runner.state(),
+            &mut shared.borrow_mut(),
+            true,
+        ));
     }
     if label == "p7a-mixed-set-example" {
         ctx.runner.update(|ui| {
@@ -121,7 +144,13 @@ fn path(name: &str) -> Result<PathBuf, String> {
     }
     Ok(
         PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?)
-            .join(if name.starts_with("p7b-") || name.starts_with("physical-") { format!("{name}.json") } else { format!("p7a-{name}.json") }),
+            .join(
+                if name.starts_with("p7b-") || name.starts_with("physical-") {
+                    format!("{name}.json")
+                } else {
+                    format!("p7a-{name}.json")
+                },
+            ),
     )
 }
 fn plan_value(plan: &LoopPlan) -> Value {
@@ -170,9 +199,14 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
         let take = captures.iter().find(|take| take.id == segment.id);
         match (&bar.audio_buffer, take) {
             (None, None) => {},
-            (Some(buffer), Some(take)) if buffer.sample_rate_hz == take.buffer.sample_rate_hz
-                && buffer.len() == take.buffer.len()
-                && buffer.data.iter().zip(take.buffer.data.iter()).all(|(a,b)|a.to_bits()==b.to_bits()) => {},
+            (Some(buffer), Some(take))
+                if buffer.sample_rate_hz == take.buffer.sample_rate_hz
+                    && buffer.len() == take.buffer.len()
+                    && buffer
+                        .data
+                        .iter()
+                        .zip(take.buffer.data.iter())
+                        .all(|(a, b)| a.to_bits() == b.to_bits()) => {},
             _ => return Err("actual output PCM does not match its Set/Card capture owner".into()),
         }
         let phrase = segment
@@ -193,7 +227,12 @@ fn report(ui: &UiState, shared: &mut Shared) -> Result<Value, String> {
             || bar.time_signature.numerator != segment.beats
             || bar.time_signature.denominator != 4
             || bar.duration_seconds != segment.seconds
-            || bar.length != if segment.seconds.is_some() { 1 } else { segment.bars }
+            || bar.length
+                != if segment.seconds.is_some() {
+                    1
+                } else {
+                    segment.bars
+                }
             || bar.backing_phrase != phrase
             || bar
                 .chord_ref
@@ -347,25 +386,43 @@ fn verify_reopen(ui: &UiState, shared: &mut Shared) -> bool {
     result.is_ok()
 }
 
-
 fn seconds_checkpoint(ui: &UiState, shared: &mut Shared, name: &str) -> bool {
     let result = (|| -> Result<(), String> {
         let mut report = report(ui, shared)?;
         let plan = ui.loop_admitted.as_ref().ok_or("no admitted plan")?;
-        let seconds: Vec<_> = plan.segments.iter().filter_map(|s|s.seconds).collect();
-        if seconds.len()!=2 || !seconds.contains(&1.125) || !seconds.contains(&0.875) {
+        let seconds: Vec<_> = plan.segments.iter().filter_map(|s| s.seconds).collect();
+        if seconds.len() != 2 || !seconds.contains(&1.125) || !seconds.contains(&0.875) {
             return Err("admitted absolute Seconds must remain 1.125 and 0.875".into());
         }
-        if report["phrase_segments"] != 2 || report["input_unopened"] != true || report["streams"] != 1 {
-            return Err("two Seconds phrases, one output stream and unopened input required".into());
+        if report["phrase_segments"] != 2
+            || report["input_unopened"] != true
+            || report["streams"] != 1
+        {
+            return Err(
+                "two Seconds phrases, one output stream and unopened input required".into(),
+            );
         }
         if name == "duration-refused" {
-            let prior: Value = serde_json::from_slice(&std::fs::read(path("p7b-reordered")?).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
-            for key in ["admitted", "backend_admitted", "manifest", "captures", "wav_digest", "wav_frames"] {
-                if prior[key] != report[key] { return Err(format!("duration refusal changed {key}")); }
+            let prior: Value = serde_json::from_slice(
+                &std::fs::read(path("p7b-reordered")?).map_err(|e| e.to_string())?,
+            )
+            .map_err(|e| e.to_string())?;
+            for key in [
+                "admitted",
+                "backend_admitted",
+                "manifest",
+                "captures",
+                "wav_digest",
+                "wav_frames",
+            ] {
+                if prior[key] != report[key] {
+                    return Err(format!("duration refusal changed {key}"));
+                }
             }
             if report["requested_ready"] != true || report["admitted"] == report["requested"] {
-                return Err("valid changed duration must remain unadmitted while PCM exists".into());
+                return Err(
+                    "valid changed duration must remain unadmitted while PCM exists".into(),
+                );
             }
         } else if report["requested_ready"] != true || report["admitted"] != report["requested"] {
             return Err("current Seconds backing must be admitted".into());
@@ -376,51 +433,88 @@ fn seconds_checkpoint(ui: &UiState, shared: &mut Shared, name: &str) -> bool {
         // fractional-second segments together differ by one frame from a
         // single rounded total-seconds expression.
         let expected_frames = beats * (rate * 60.0 / 240.0).round() as u64
-            + (1.125 * rate).round() as u64 + (0.875 * rate).round() as u64;
+            + (1.125 * rate).round() as u64
+            + (0.875 * rate).round() as u64;
         if report["wav_frames"].as_u64() != Some(expected_frames) {
             return Err("actual render duration differs from Bars plus absolute Seconds".into());
         }
         for take in report["captures"].as_array().ok_or("no captures")? {
-            if take["id"]["set"] != 1 || take["id"]["card"] != 2 || take["seconds"] != 1.125 || take["bars"] != 0
-                || take["frames"].as_u64()!=Some((1.125 * report["rate"].as_f64().unwrap()).round() as u64) {
+            if take["id"]["set"] != 1
+                || take["id"]["card"] != 2
+                || take["seconds"] != 1.125
+                || take["bars"] != 0
+                || take["frames"].as_u64()
+                    != Some((1.125 * report["rate"].as_f64().unwrap()).round() as u64)
+            {
                 return Err("Seconds take identity/absolute clock changed".into());
             }
         }
-        if matches!(name,"reordered"|"final"|"duration-refused") && report["captures"].as_array().unwrap().len()!=1 {
+        if matches!(name, "reordered" | "final" | "duration-refused")
+            && report["captures"].as_array().unwrap().len() != 1
+        {
             return Err("one preserved Seconds take required".into());
         }
-        if matches!(name,"reordered"|"final"|"duration-refused")
-            && (report["selected_index"] != 0 || report["selected_has_capture"] != true) {
+        if matches!(name, "reordered" | "final" | "duration-refused")
+            && (report["selected_index"] != 0 || report["selected_has_capture"] != true)
+        {
             return Err("reordered Scale Card must own its capture in output row zero".into());
         }
         if matches!(name, "final" | "reopenexport") {
-            let directory=PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?);
-            let bytes=std::fs::read(directory.join("loop-export.wav")).map_err(|e|e.to_string())?;
-            if woodshed_core::loop_capture::pcm_digest(&bytes) != report["wav_digest"].as_str().ok_or("no reference digest")? {
-                return Err("actual WAV worker file differs from admitted-snapshot reference".into());
+            let directory = PathBuf::from(
+                std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?,
+            );
+            let bytes =
+                std::fs::read(directory.join("loop-export.wav")).map_err(|e| e.to_string())?;
+            if woodshed_core::loop_capture::pcm_digest(&bytes)
+                != report["wav_digest"].as_str().ok_or("no reference digest")?
+            {
+                return Err(
+                    "actual WAV worker file differs from admitted-snapshot reference".into(),
+                );
             }
             report["worker_wav_exact"] = json!(true);
         }
         write(&format!("p7b-{name}"), &report)
     })();
-    if let Err(error)=&result { eprintln!("P7b checkpoint {name}: {error}"); }
+    if let Err(error) = &result {
+        eprintln!("P7b checkpoint {name}: {error}");
+    }
     result.is_ok()
 }
 
 fn seconds_reopen(ui: &UiState, shared: &mut Shared) -> bool {
     let result = (|| -> Result<(), String> {
-        let expected:Value=serde_json::from_slice(&std::fs::read(path("p7b-final")?).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
-        let actual=report(ui,shared)?;
-        for key in ["set","owner","looper","saved_backing","manifest","captures","admitted","backend_admitted","requested","wav_frames","wav_digest"] {
-            if expected[key]!=actual[key] { return Err(format!("reopened {key} differs")); }
+        let expected: Value =
+            serde_json::from_slice(&std::fs::read(path("p7b-final")?).map_err(|e| e.to_string())?)
+                .map_err(|e| e.to_string())?;
+        let actual = report(ui, shared)?;
+        for key in [
+            "set",
+            "owner",
+            "looper",
+            "saved_backing",
+            "manifest",
+            "captures",
+            "admitted",
+            "backend_admitted",
+            "requested",
+            "wav_frames",
+            "wav_digest",
+        ] {
+            if expected[key] != actual[key] {
+                return Err(format!("reopened {key} differs"));
+            }
         }
-        if actual["playing"]!=false || actual["input_unopened"]!=true { return Err("reopen must be stopped/input unopened".into()); }
-        write("p7b-reopened",&actual)
+        if actual["playing"] != false || actual["input_unopened"] != true {
+            return Err("reopen must be stopped/input unopened".into());
+        }
+        write("p7b-reopened", &actual)
     })();
-    if let Err(error)=&result {eprintln!("P7b reopen: {error}");}
+    if let Err(error) = &result {
+        eprintln!("P7b reopen: {error}");
+    }
     result.is_ok()
 }
-
 
 /// Actual microphone PCM is unpredictable: report() verifies exact sealed and
 /// backend bits, and these receipts retain only its digest for fresh reopening.
@@ -428,38 +522,57 @@ fn physical_receipt(ui: &UiState, shared: &mut Shared, reopen: bool) -> bool {
     let result = (|| -> Result<(), String> {
         let mut actual = report(ui, shared)?;
         let takes = actual["captures"].as_array().ok_or("no capture report")?;
-        let references = actual["manifest"]["takes"].as_array().ok_or("no sealed references")?;
-        if actual["owner"] != 1 || actual["playing"] != false
-            || actual["rate"] != 48_000 || actual["streams"] != 1
-            || actual["requested_ready"] != true || actual["admitted"] != actual["requested"]
-            || actual["phrase_segments"] != 2 || actual["wav_frames"] != 132_000
+        let references = actual["manifest"]["takes"]
+            .as_array()
+            .ok_or("no sealed references")?;
+        if actual["owner"] != 1
+            || actual["playing"] != false
+            || actual["rate"] != 48_000
+            || actual["streams"] != 1
+            || actual["requested_ready"] != true
+            || actual["admitted"] != actual["requested"]
+            || actual["phrase_segments"] != 2
+            || actual["wav_frames"] != 132_000
             || actual["selected"] != json!({"set":1,"card":2})
-            || actual["selected_index"] != 1 || actual["selected_has_capture"] != true
-            || takes.len() != 1 || references.len() != 1
+            || actual["selected_index"] != 1
+            || actual["selected_has_capture"] != true
+            || takes.len() != 1
+            || references.len() != 1
         {
             return Err("physical receipt requires stopped admitted mixed backing at 48 kHz, with exactly one selected Set 1/Card 2 take".into());
         }
         let take = &takes[0];
         let reference = &references[0];
-        if take["id"] != json!({"set":1,"card":2}) || take["frames"] != 54_000
-            || take["rate"] != 48_000 || take["seconds"] != 1.125 || take["bars"] != 0
-            || take["bpm"] != 180.0 || take["beats"] != 3 || take["legacy_clock"] != false
+        if take["id"] != json!({"set":1,"card":2})
+            || take["frames"] != 54_000
+            || take["rate"] != 48_000
+            || take["seconds"] != 1.125
+            || take["bars"] != 0
+            || take["bpm"] != 180.0
+            || take["beats"] != 3
+            || take["legacy_clock"] != false
             || take["sealed_pcm_exact"] != true
             || actual["manifest"]["version"] != 4
             || reference["id"] != take["id"]
             || reference["clock"] != woodshed_core::loop_capture::SECONDS_CLOCK
-            || reference["seconds"] != 1.125 || reference["bars"] != 0
-            || reference["frames"] != 54_000 || reference["sample_rate"] != 48_000
-            || reference["bpm"] != 180.0 || reference["beats"] != 3
+            || reference["seconds"] != 1.125
+            || reference["bars"] != 0
+            || reference["frames"] != 54_000
+            || reference["sample_rate"] != 48_000
+            || reference["bpm"] != 180.0
+            || reference["beats"] != 3
         {
-            return Err("physical take owner, 54000-frame PCM or explicit Seconds clock differs".into());
+            return Err(
+                "physical take owner, 54000-frame PCM or explicit Seconds clock differs".into(),
+            );
         }
-        let directory = PathBuf::from(
-            std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?,
-        );
+        let directory =
+            PathBuf::from(std::env::var_os("WOODSHED_CAPTURE_DIR").ok_or("no receipt directory")?);
         let bytes = std::fs::read(directory.join("loop-export.wav")).map_err(|e| e.to_string())?;
         if woodshed_core::loop_capture::pcm_digest(&bytes)
-            != actual["wav_digest"].as_str().ok_or("no reference WAV digest")?
+            != actual["wav_digest"]
+                .as_str()
+                .ok_or("no reference WAV digest")?
         {
             return Err("physical WAV worker file differs from admitted-snapshot reference".into());
         }
@@ -469,12 +582,29 @@ fn physical_receipt(ui: &UiState, shared: &mut Shared, reopen: bool) -> bool {
             // receipt directory. Missing expectation is a failure, never reseed.
             let expected: Value = serde_json::from_slice(
                 &std::fs::read(path("physical-final")?).map_err(|e| e.to_string())?,
-            ).map_err(|e| e.to_string())?;
+            )
+            .map_err(|e| e.to_string())?;
             for key in [
-                "set", "owner", "looper", "saved_backing", "manifest", "captures",
-                "selected", "selected_index", "selected_has_capture", "admitted",
-                "backend_admitted", "requested", "requested_ready", "rate", "streams",
-                "phrase_segments", "sealed_exact", "wav_frames", "wav_digest", "worker_wav_exact",
+                "set",
+                "owner",
+                "looper",
+                "saved_backing",
+                "manifest",
+                "captures",
+                "selected",
+                "selected_index",
+                "selected_has_capture",
+                "admitted",
+                "backend_admitted",
+                "requested",
+                "requested_ready",
+                "rate",
+                "streams",
+                "phrase_segments",
+                "sealed_exact",
+                "wav_frames",
+                "wav_digest",
+                "worker_wav_exact",
             ] {
                 if expected.get(key) != actual.get(key) {
                     return Err(format!("physical reopened {key} differs from seed"));
@@ -484,8 +614,17 @@ fn physical_receipt(ui: &UiState, shared: &mut Shared, reopen: bool) -> bool {
                 return Err("physical reopen must leave input unopened".into());
             }
         }
-        write(if reopen { "physical-reopened" } else { "physical-final" }, &actual)
+        write(
+            if reopen {
+                "physical-reopened"
+            } else {
+                "physical-final"
+            },
+            &actual,
+        )
     })();
-    if let Err(error) = &result { eprintln!("Physical capture receipt: {error}"); }
+    if let Err(error) = &result {
+        eprintln!("Physical capture receipt: {error}");
+    }
     result.is_ok()
 }

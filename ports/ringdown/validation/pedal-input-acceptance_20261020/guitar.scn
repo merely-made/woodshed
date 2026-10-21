@@ -1,0 +1,86 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+assert snap midi-attempted == 0
+assert snap pedal-input-armed == false
+act midi-checkpoint restored
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI input
+click role:option PEDAL_INPUT_SOURCE
+click role:combobox @aria-label=MIDI output
+click role:option Bluetooth MIDI pedal (no encryption)
+act midi-await-open
+wait 100000
+act midi-checkpoint advertising
+capture 01_advertising
+act midi-await-ready
+wait 100000
+assert snap midi-ready == true
+click .t-btn Arm pedal inputs
+assert snap pedal-input-armed == true
+act midi-checkpoint armed
+capture 02_armed
+act midi-await-count 2
+wait 100000
+assert snap midi-accepted == 2
+assert snap pedal-action == effect-next
+act midi-checkpoint keyboard-next
+capture 03_real_keyboard_next
+act midi-await-count 4
+wait 100000
+assert snap midi-accepted == 4
+assert snap pedal-action == effect-previous
+act midi-checkpoint keyboard-previous
+capture 04_real_keyboard_previous
+act midi-await-count 6
+wait 100000
+assert snap midi-accepted == 6
+assert snap pedal-action == effect-next
+act midi-checkpoint controller-next
+capture 05_controller_next
+act midi-await-count 8
+wait 100000
+assert snap midi-accepted == 8
+assert snap pedal-action == effect-previous
+act midi-checkpoint controller-previous
+capture 06_controller_previous
+act midi-await-disconnected
+wait 100000
+assert snap midi-ready == false
+assert snap midi-accepted == 8
+assert snap pedal-input-armed == false
+act midi-checkpoint disconnected
+capture 07_disconnected
+act midi-await-ready
+wait 100000
+act midi-dwell 1500
+wait 100000
+assert snap midi-accepted == 8
+assert snap pedal-input-armed == false
+act midi-checkpoint reconnected
+capture 08_reconnected_disarmed
+click .t-btn Arm pedal inputs
+act midi-checkpoint rearmed-held
+act midi-dwell 3000
+wait 100000
+assert snap midi-accepted == 8
+act midi-checkpoint held-quiet
+capture 09_held_controller_no_replay
+act midi-await-count 10
+wait 100000
+assert snap midi-accepted == 10
+assert snap pedal-action == effect-next
+act midi-checkpoint fresh-next
+act midi-await-count 12
+wait 100000
+assert snap midi-accepted == 12
+assert snap pedal-action == effect-previous
+act midi-checkpoint fresh-previous
+capture 10_fresh_after_reconnect
+click role:combobox @aria-label=MIDI input
+click role:option None
+click role:combobox @aria-label=MIDI output
+click role:option None
+settle 3
+act midi-checkpoint final
+capture 11_closed

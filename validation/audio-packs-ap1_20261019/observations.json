@@ -1,0 +1,54 @@
+{
+  "bundled_directory_midi_equal": true,
+  "custom_directory_snapshot_toml_midi_equal": true,
+  "bundled_directory_wav_equal": true,
+  "custom_directory_snapshot_toml_wav_equal": true,
+  "original_custom_install_directory_present": false,
+  "renders": {
+    "bundled": {
+      "channels": 1,
+      "sample_rate": 48000,
+      "frames": 115200,
+      "seconds": 2.4,
+      "peak": 0.7617999911308289,
+      "all_finite": true,
+      "sha256": "5f85d9bf15fa96953aae36ebb0f5149b3238a894c93162cbaf359bde8c6f27c8"
+    },
+    "directory": {
+      "channels": 1,
+      "sample_rate": 48000,
+      "frames": 115200,
+      "seconds": 2.4,
+      "peak": 0.7617999911308289,
+      "all_finite": true,
+      "sha256": "5f85d9bf15fa96953aae36ebb0f5149b3238a894c93162cbaf359bde8c6f27c8"
+    },
+    "user": {
+      "channels": 1,
+      "sample_rate": 48000,
+      "frames": 128000,
+      "seconds": 2.6666666666666665,
+      "peak": 0.7617999911308289,
+      "all_finite": true,
+      "sha256": "1d976cd097c6caba8cb8f7190c60b37347094123f2da101b61a894770f2cdc58"
+    },
+    "snapshot": {
+      "channels": 1,
+      "sample_rate": 48000,
+      "frames": 128000,
+      "seconds": 2.6666666666666665,
+      "peak": 0.7617999911308289,
+      "all_finite": true,
+      "sha256": "1d976cd097c6caba8cb8f7190c60b37347094123f2da101b61a894770f2cdc58"
+    },
+    "toml": {
+      "channels": 1,
+      "sample_rate": 48000,
+      "frames": 128000,
+      "seconds": 2.6666666666666665,
+      "peak": 0.7617999911308289,
+      "all_finite": true,
+      "sha256": "1d976cd097c6caba8cb8f7190c60b37347094123f2da101b61a894770f2cdc58"
+    }
+  }
+}

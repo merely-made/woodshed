@@ -1,0 +1,108 @@
+{
+  "checked_date": "2026-10-20",
+  "method": "Public primary-source web inspection; short paraphrases only; no vendor APK, firmware or restricted spec PDF downloaded.",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "MIDI 1.0 Core Specifications",
+      "url": "https://midi.org/midi-1-0-core-specifications",
+      "observation": "Public MIDI messages are specified independently of HyVibe. The specification text, implementation and logos have distinct rights questions."
+    },
+    {
+      "id": "S02",
+      "title": "Standard MIDI Files Specification",
+      "url": "https://midi.org/standard-midi-files-specification",
+      "observation": "Official SMF landing page and download listing; member/download access notices are present. Full downloadable document and its terms were not acquired."
+    },
+    {
+      "id": "S03",
+      "title": "MIDI over Bluetooth Low Energy",
+      "url": "https://midi.org/midi-over-bluetooth-low-energy-ble-midi",
+      "observation": "Defines MIDI encoding over BLE; full download access is membership-labelled. It is a separate transport from the custom app GATT service."
+    },
+    {
+      "id": "S04",
+      "title": "MIDI Association IP Policy",
+      "url": "https://midi.org/mma-ip-policy",
+      "observation": "Members owning essential claims make royalty-free RAND licensing commitments subject to stated conditions including reciprocity. This is not a finding that every relevant patent is covered."
+    },
+    {
+      "id": "S05",
+      "title": "MIDI 2.0 Logo Licensing Program",
+      "url": "https://midi.org/midi-2-0-logo-licensing-program",
+      "observation": "Explicitly distinguishes making MIDI 2.0 products from licensing its logo. It is not a substitute for checking applicable MIDI 1.0/BLE-MIDI document and mark terms."
+    },
+    {
+      "id": "S06",
+      "title": "HyVibe MIDI instructions (French)",
+      "url": "https://www.hyvibeguitar.com/midi-instructions-fr/",
+      "observation": "Vendor explains AirTurn pairing and bindings, Control Change and Note On; this documents an external-controller workflow, not a grant for private RPC implementation."
+    },
+    {
+      "id": "S07",
+      "title": "HyVibe MIDI instructions entry",
+      "url": "https://www.hyvibeguitar.com/knowledge-base/midi-instructions/",
+      "observation": "Links to https://www.hyvibeguitar.com/airturn-midi-instructions/. English linked page was also opened; detailed binding text was inspected on the French page."
+    },
+    {
+      "id": "S08",
+      "title": "HyVibe Terms of Sale",
+      "url": "https://www.hyvibeguitar.com/terms-of-sale/",
+      "observation": "Published update date 2021-10-20. Sales terms; Article 13 protects website elements. Article 10 addresses warranty exclusions. This is not affirmative developer permission."
+    },
+    {
+      "id": "S09",
+      "title": "HyVibe Privacy Policy",
+      "url": "https://www.hyvibeguitar.com/privacy-policy/",
+      "observation": "Published effective date 2018-09-21. Covers website and app Service and refers to Terms and Conditions; privacy wording is not an interoperability license."
+    },
+    {
+      "id": "S10",
+      "title": "JSON-RPC 2.0 Specification",
+      "url": "https://www.jsonrpc.org/specification",
+      "observation": "Public spec requires string version 2.0 and permits implementation/use of document under its stated notice conditions; it does not define HyVibe methods or grant HyVibe rights. Parsed indexed URL was accessible after canonical fetch timeouts."
+    },
+    {
+      "id": "S11",
+      "title": "Bluetooth qualification overview",
+      "url": "https://www.bluetooth.com/develop-with-bluetooth/qualify/",
+      "observation": "SIG describes product qualification and patent/copyright/trademark agreements. Applicability to an OS-API-only desktop application needs a product-specific determination."
+    },
+    {
+      "id": "S12",
+      "title": "Bluetooth QPRD v5",
+      "url": "https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/QPRD/out/en/index-en.html",
+      "observation": "Version date 2026-04-21. Defines products/designs/layers and qualification requirements; no application-only exemption or fee conclusion established in this pass."
+    },
+    {
+      "id": "S13",
+      "title": "Wireshark PacketLogger reader",
+      "url": "https://gitlab.com/wireshark/wireshark/-/raw/master/wiretap/packetlogger.c",
+      "observation": "Current upstream source declares GPL-2.0-or-later. Selected header/record and endian logic was inspected alongside Rust pklg reader. No exhaustive expression comparison or historical-source pin established."
+    },
+    {
+      "id": "S14",
+      "title": "17 USC 102, official 2024 edition",
+      "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title17/html/USCODE-2024-title17-chap1-sec102.htm",
+      "observation": "Section 102(b) excludes ideas/procedures/systems from copyright protection. This is not a blanket contract, patent or copying clearance."
+    },
+    {
+      "id": "S15",
+      "title": "17 USC 1201, official 2024 edition",
+      "url": "https://www.govinfo.gov/content/pkg/USCODE-2024-title17/html/USCODE-2024-title17-chap12-sec1201.htm",
+      "observation": "Section 1201(f) is conditional, including lawful access, necessity, independent interoperability and limits on disclosure. No exemption determination made for this project."
+    },
+    {
+      "id": "S16",
+      "title": "HyVibe feature overview",
+      "url": "https://www.hyvibeguitar.com/",
+      "observation": "Advertises external PC input, Bluetooth speaker and MIDI controller capability. Feature support is distinct from licensing a private app protocol."
+    },
+    {
+      "id": "S17",
+      "title": "HyVibe terms-and-conditions candidate URL",
+      "url": "https://www.hyvibeguitar.com/terms-and-conditions/",
+      "observation": "Not accessible through web tool in this audit. Historical founding note reported 404; no fresh HTTP status or proof that no terms exist elsewhere."
+    }
+  ]
+}

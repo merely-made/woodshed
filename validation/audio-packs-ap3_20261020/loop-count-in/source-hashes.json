@@ -1,0 +1,9 @@
+{
+  "crates/audio-pattern/src/lib.rs": "17dc85285cc3732654330ee76f84859e1238c550674bda4b394b099c22d05362",
+  "crates/audio-pattern/src/sequencer.rs": "97ed2f0cdf155c30313c9bd6bf67696343e6f67fdfd313ad49f45beb767e93b9",
+  "crates/audio-pattern/src/midi.rs": "5a75ded34d9923aeff0715894a9bf8ef3f47d45e98da1c189c503118d3528f68",
+  "crates/audio-pattern/src/render.rs": "f835b61b2cb9703ddbb6984f2a215d1062a26d5e8c73c37b7600f308d8ebc79d",
+  "crates/audio-pattern/src/sound.rs": "647f820871f1a7b29a0a02e53f16a38c167f12e13a44ed9736f90f366be34e9d",
+  "crates/audio-packs/src/lib.rs": "ece43738bfb53d5bb7d56225491ad7190cc6178b0adc18d120c7388fc1e5ae32",
+  "crates/audio-packs/src/definition.rs": "e677f7376133cc4ddea32e895686fcad6bec24a78f25925b09c4b9554e42c678"
+}

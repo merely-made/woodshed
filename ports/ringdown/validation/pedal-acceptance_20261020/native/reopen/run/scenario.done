@@ -1,0 +1,16 @@
+RESULT ok
+captured 01_reopened_bindings
+waited 1 frames
+waited 69 frames
+captured 02_partial_release_visible
+waited 18 frames
+waited 2 frames
+captured 03_reconnected_no_replay
+waited 47 frames
+captured 04_script_results
+capture 01_reopened_bindings 2360x2100 digest=8bd4f15440263876 file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/reopen/run/01_reopened_bindings.png
+capture 02_partial_release_visible 2360x2100 digest=765b316d016f9926 file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/reopen/run/02_partial_release_visible.png
+capture 03_reconnected_no_replay 2360x2100 digest=abfe3af3fd0b0cbe file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/reopen/run/03_reconnected_no_replay.png
+capture 04_script_results 2360x2100 digest=4f0507fc69c65724 file=/Users/markik/Code/testing/woodshed/pedal-acceptance_20261020/native-r4/reopen/run/04_script_results.png
+frames: 4 captured, 0 blank, 4 distinct digests
+presentation: 189 frames, 192 redraws, 3 unpresented redraws

@@ -1,0 +1,53 @@
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> /Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> /Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime.rs:473:14
+    |
+473 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+473 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+473 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> /Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime.rs:521:14
+    |
+521 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+521 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+521 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> /Users/markik/Code/repos/woodshed/crates/woodshed-audio/src/output_runtime.rs:542:14
+    |
+542 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+542 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+542 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+   Compiling ap0-runtime v0.0.0 (/Users/markik/Code/testing/woodshed/audio-packs-ap0_20261019/runtime)
+    Finished `dev` profile [unoptimized] target(s) in 1.43s
+     Running `target/debug/ap0-runtime artifacts`

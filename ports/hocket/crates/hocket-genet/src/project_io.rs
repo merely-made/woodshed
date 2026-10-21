@@ -43,6 +43,9 @@ pub struct ProjectReply {
 }
 
 pub enum ProjectCommand {
+    LoadPack { path: PathBuf, before: Option<String> },
+    ExportMidi { path: PathBuf, selection: audio_packs::PackSelection },
+    RenderPack { selection: audio_packs::PackSelection, revision: String, track: TrackId, bpm: f32, meter: hocket_model::TimeSignature, bars: u8 },
     Save {
         path: PathBuf,
         bundle: ProjectBundle,
@@ -76,6 +79,8 @@ pub enum ProjectCommand {
 }
 
 pub enum ProjectUpdate {
+    PackLoaded { before: Option<String>, selection: audio_packs::PackSelection },
+    PackRendered { revision: String, track: TrackId, bpm: f32, meter: hocket_model::TimeSignature, bars: u8, samples: Vec<f32> },
     Saved {
         path: PathBuf,
         saved_head: NodeId,
@@ -120,6 +125,26 @@ fn run_command(request: ProjectRequest, updates: &Emitter<ProjectReply>) {
         })
     };
     match request.command.value {
+        ProjectCommand::LoadPack { path, before } => {
+            match audio_packs::files::load(&path, None) {
+                Ok(selection) => emit(ProjectUpdate::PackLoaded { before, selection }),
+                Err(e) => emit(ProjectUpdate::Failed { action: "load kit", message: e.to_string() }),
+            }
+        },
+        ProjectCommand::ExportMidi { path, selection } => {
+            match audio_packs::files::export_midi(&selection, &path) {
+                Ok(()) => emit(ProjectUpdate::Exported { path }),
+                Err(e) => emit(ProjectUpdate::Failed { action: "export MIDI", message: e.to_string() }),
+            }
+        },
+        ProjectCommand::RenderPack { selection, revision, track, bpm, meter, bars } => {
+            let result = selection.at_tempo(bpm).and_then(|p| p.render_bars(48_000, bars));
+            match result {
+                Ok(samples) => emit(ProjectUpdate::PackRendered { revision, track, bpm, meter, bars, samples }),
+                Err(e) => emit(ProjectUpdate::Failed { action: "render drum layer", message: e.to_string() }),
+            }
+        },
+
         ProjectCommand::Save {
             path,
             bundle,

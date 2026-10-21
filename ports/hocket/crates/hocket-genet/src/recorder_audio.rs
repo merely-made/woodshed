@@ -35,6 +35,16 @@ impl DesktopRecorderAudio {
         self.engine = Engine::new_with_audio_devices(selection).map_err(|error| error.to_string());
         self.engine.as_ref().map(|_| ()).map_err(Clone::clone)
     }
+    pub(crate) fn output_probe(&self) -> serde_json::Value {
+        match &self.engine {
+            Ok(engine) => {
+                serde_json::json!({"assigned":engine.voice_count(), "queued":engine.pending_layer_count(),
+                "bar_phase":engine.click_in_bar_phase(), "sample_rate":engine.sample_rate(),
+                "meter_active":engine.peak_db()[0].is_finite(), "input_frames":engine.recent_input().len()})
+            },
+            Err(error) => serde_json::json!({"error":error}),
+        }
+    }
     fn engine(&mut self) -> Result<&mut Engine, String> {
         self.engine.as_mut().map_err(|error| error.clone())
     }

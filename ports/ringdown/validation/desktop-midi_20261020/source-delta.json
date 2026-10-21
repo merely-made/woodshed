@@ -1,0 +1,54 @@
+{
+  "crates/woodshed-genet/src/midi.rs": {
+    "before": "b59323c681d0652803b8d04bab311b6945753511ee35c22da476ca16771ba51f",
+    "after": "42d9cb1025847e733153307af216f6f93e0436e41e533ddcbd4cc88b4f217189"
+  },
+  "crates/woodshed-genet/src/midi/worker.rs": {
+    "before": null,
+    "after": "f752ecd37b023b6c31f7208c3bbedc65fd3a80eac0bea448da42b35b087d2c71"
+  },
+  "crates/woodshed-genet/src/midi/worker/tests.rs": {
+    "before": null,
+    "after": "5a3e39c289ec766018b4f2902e75234dca888d205086d120c117a33eb0a79a22"
+  },
+  "crates/woodshed-genet/src/main.rs": {
+    "before": null,
+    "after": "7f57fa18db0fa134accd044f90ed11949780538346f83f587b1e91344727aac4"
+  },
+  "crates/woodshed-genet/src/sync.rs": {
+    "before": "a08161b146afd174a76994774e3f831ff0d9408525755508daf555683d84c31f",
+    "after": "1e4cd5404721798e74d6bea2e5401b1c11faacdfe724e15cb8b41c44418b3e21"
+  },
+  "crates/woodshed-genet/src/scenario.rs": {
+    "before": "8738e174d5b23b93cc145316a01de687ee2b435724af11039b2f1a0300a720ad",
+    "after": "05f8bcc530f7187c35db7d679adff1880524753053c31e564fe160052acf56e1"
+  },
+  "crates/woodshed-instrument/src/midi.rs": {
+    "before": "79e25ac8e335b727775d0f23bde7d54e66e1c38d2aee11dab7f35191370c7c92",
+    "after": "82b6769cac5dccd747b07674025ac984052e65273f30a4ccd86bdb093843898a"
+  },
+  "crates/woodshed-instrument/src/midi/ble.rs": {
+    "before": "99fc74f4cef6e64d4c7b239169e53fafb394c05463a2e850c7a7e70d0237a3a5",
+    "after": "26c3986000bc48e45cc3255f1c23a4e71c667fca849f306e0d3fee7ffc6a5997"
+  },
+  "crates/woodshed-instrument/examples/midi_capture.rs": {
+    "before": null,
+    "after": "820abdb314bf91820beedd450a048a93df16050fb63ed6faf7b2265f57335828"
+  },
+  "crates/woodshed-views/src/stage.rs": {
+    "before": "7f893fbc8379074bda6d4f143e1567824695666e80d293828cb1604077ad9ddc",
+    "after": "f32fb97d02d4fbb048cc682e0d78afd8b20b3daa1df1956e15f51cdb1d0e3219"
+  },
+  "crates/woodshed-views/src/stage/settings.rs": {
+    "before": "fbbd280627ecf13755ef561d48989f7635175cf89ba391f5631eccdcc4467fee",
+    "after": "1e743a0541f7f39564b87a907a0af5cd014b7f4434d1e63aa8c167fc895d72e0"
+  },
+  "Cargo.lock": {
+    "before": null,
+    "after": "a049e3e62f515d67fd2900a0ffaba4fccad51419ff47a2c36c23007b4196f671"
+  },
+  "ports/ringdown/Cargo.lock": {
+    "before": null,
+    "after": "d2e46181d0dd45b89f95f43b91633fa51511eea55e572d684850c976f57bf3ff"
+  }
+}

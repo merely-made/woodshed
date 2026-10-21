@@ -1,0 +1,20 @@
+{"bindings":{"effect_next":{"channel":1,"enabled":true,"kind":"control-change","number":67,"release":0,"value":127},"effect_previous":{"channel":1,"enabled":true,"kind":"control-change","number":66,"release":0,"value":127}},"id":"s1","output":{"accepted":0,"attempted":0,"connected":"Pedal acceptance receiver","disconnects":0,"error":null,"failed":0,"generation":null,"last_failure":null,"pedal_failure":null,"ready":true,"rearm_required":false,"revision":1,"status":"OS MIDI output open · OS accepted 0; refused/uncertain 0"},"pedal":null}
+{"id":"s-next","pedal":{"accepted_messages":2,"action":"effect-next","detail":"All messages accepted by OS; musical result unobserved","id":1,"outcome":"accepted"}}
+{"id":"s-prev","pedal":{"accepted_messages":2,"action":"effect-previous","detail":"All messages accepted by OS; musical result unobserved","id":2,"outcome":"accepted"}}
+{"error":"Duplicate id refused; no action replayed","id":"s-next"}
+{"id":"s-partial","pedal":{"accepted_messages":1,"action":"effect-next","detail":"Receiver changed/disconnected; remaining messages cancelled, no replay","id":3,"outcome":"uncertain"}}
+{"id":"s-offline","pedal":{"accepted_messages":0,"action":"effect-next","detail":"Selected MIDI receiver is not ready; nothing queued","id":4,"outcome":"refused"}}
+{"id":"s-stale","pedal":{"accepted_messages":0,"action":"effect-next","detail":"Script target changed; request fresh status before another explicit trigger","id":5,"outcome":"refused"}}
+{"bindings":{"effect_next":{"channel":1,"enabled":true,"kind":"control-change","number":67,"release":0,"value":127},"effect_previous":{"channel":1,"enabled":true,"kind":"control-change","number":66,"release":0,"value":127}},"id":"s2","output":{"accepted":5,"attempted":5,"connected":"Pedal acceptance receiver","disconnects":1,"error":"MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement","failed":0,"generation":null,"last_failure":"MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement","pedal_failure":{"accepted_messages":1,"action":"effect-next","detail":"Receiver changed/disconnected; remaining messages cancelled, no replay","id":3,"outcome":"uncertain"},"ready":true,"rearm_required":false,"revision":3,"status":"OS MIDI output open · OS accepted 5; refused/uncertain 0 · Last failure: MIDI receiver disconnected; clock paused and no messages retained. Prior OS acceptance is not a device acknowledgement · Last uncertain pedal: Effect Next #3: Uncertain · 1 message(s) accepted by OS · Receiver changed/disconnected; remaining messages cancelled, no replay"},"pedal":{"accepted_messages":0,"action":"effect-next","detail":"Script target changed; request fresh status before another explicit trigger","id":5,"outcome":"refused"}}
+{"id":"s-fresh-next","pedal":{"accepted_messages":2,"action":"effect-next","detail":"All messages accepted by OS; musical result unobserved","id":6,"outcome":"accepted"}}
+{"id":"s-fresh-prev","pedal":{"accepted_messages":2,"action":"effect-previous","detail":"All messages accepted by OS; musical result unobserved","id":7,"outcome":"accepted"}}
+woodshed-genet: captured 01_reopened_bindings
+woodshed-genet: waited 1 frames
+woodshed-genet: waited 69 frames
+woodshed-genet: captured 02_partial_release_visible
+woodshed-genet: waited 18 frames
+woodshed-genet: waited 2 frames
+woodshed-genet: captured 03_reconnected_no_replay
+woodshed-genet: waited 47 frames
+woodshed-genet: captured 04_script_results
+woodshed-genet: RESULT ok (189 frames, 4 captures)

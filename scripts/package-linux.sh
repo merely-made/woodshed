@@ -139,6 +139,10 @@ install -m 644 -- "$root/README.md" "$stage/README.md"
 install -m 644 -- "$root/LICENSE" "$stage/LICENSE"
 install -m 644 -- "$root/Cargo.lock" "$stage/Cargo.lock"
 
+mkdir -p -- "$stage/THIRD-PARTY"
+install -m 644 -- "$root/vendor/ble-peripheral-rust/LICENSE" "$stage/THIRD-PARTY/ble-peripheral-rust-MIT.txt"
+install -m 644 -- "$root/vendor/ble-peripheral-rust/vendor/bluer/LICENSE" "$stage/THIRD-PARTY/bluer-BSD.txt"
+
 binary_sha256="$(sha256sum -- "$stage/Woodshed" | awk '{print $1}')"
 lock_sha256="$(sha256sum -- "$stage/Cargo.lock" | awk '{print $1}')"
 
@@ -156,7 +160,12 @@ libraries and desktop stack. In particular it needs Fontconfig, ALSA, a
 graphical X11 or Wayland session, and a GPU driver usable by the selected WGPU
 backend. It does not bundle, replace, or configure those system components.
 Microphone access is requested only for tuner or latency-calibration use; MIDI
-requires the system ALSA sequencer stack and compatible hardware.
+requires the system ALSA sequencer stack and compatible hardware. Bluetooth
+MIDI peripheral output additionally needs BlueZ, the system D-Bus service,
+permission to register a local GATT service/advertisement, and an adapter with
+peripheral advertising support. The encrypted choice requires BlueZ support for
+notification encryption flags; unsupported registration fails without downgrade.
+THIRD-PARTY includes the retained MIT and BSD notices for these suppliers.
 
 RUNTIME-LIBRARIES.txt is an ldd snapshot from the build host. It is provenance
 evidence only: it is not a distro-independent dependency contract and does not

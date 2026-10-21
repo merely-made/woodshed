@@ -1,0 +1,85 @@
+{
+  "woodshed": {
+    "installed_folder_removed_before_reopen": true,
+    "saved_selection_exact_after_failed_replacement_and_reopen": true,
+    "midi_bytes_equal": true,
+    "midi": {
+      "file": "woodshed-final-before.mid",
+      "sha256": "8a4fd9c1279f6ddb4e4e5e2714587f753fbb38439c7bee563e7b551ac1e7ace9",
+      "bytes": 138,
+      "format": 0,
+      "tracks": 1,
+      "ppq": 480,
+      "end_ticks": [
+        1920
+      ],
+      "end_quarters": [
+        4.0
+      ],
+      "tempos": [
+        {
+          "tick": 0,
+          "microseconds_per_quarter": 480000
+        }
+      ],
+      "meters": [
+        {
+          "tick": 0,
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "notes": [
+        {
+          "channel": 10,
+          "note": 36,
+          "on": 2,
+          "off": 2
+        },
+        {
+          "channel": 10,
+          "note": 38,
+          "on": 2,
+          "off": 2
+        },
+        {
+          "channel": 10,
+          "note": 42,
+          "on": 8,
+          "off": 8
+        }
+      ],
+      "notes_on": 12,
+      "unmatched_offs": 0,
+      "unterminated_notes": 0,
+      "gate_ticks_range": [
+        60,
+        60
+      ]
+    },
+    "processes": [
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 94.676,
+        "binary_sha256": "5ab2e1de4ebe75c649733b7e14270ed97c9e43041e2fad75e05fc17c6aa70f47",
+        "scenario_sha256": "b88735693bf13de94203ec6ffff140132714552169e0155ec507998a36f09759",
+        "receipt": "scenario.done",
+        "captures": 3
+      },
+      {
+        "launch_method": "LaunchServices temporary application bundle",
+        "launcher_exit": 0,
+        "timeout": false,
+        "success": true,
+        "elapsed_seconds": 40.747,
+        "binary_sha256": "5ab2e1de4ebe75c649733b7e14270ed97c9e43041e2fad75e05fc17c6aa70f47",
+        "scenario_sha256": "d6ccfc8fba4e39f3972e24d0570c072e8304fe75d79f23e905bb23d88798a328",
+        "receipt": "scenario.done",
+        "captures": 2
+      }
+    ]
+  }
+}
