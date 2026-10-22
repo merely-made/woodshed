@@ -1,0 +1,29 @@
+Window: "Redshank", App: Redshank Committed Recovery.
+0 standard window Redshank, Secondary Actions: Raise
+	1 container
+		2 button Appearance
+		3 container Player
+			4 slider (settable, float) Seek, Value: 30000
+			5 button Replay
+			6 button Skip backward
+			7 button Skip forward
+			8 button Add text note
+			9 toggle button (settable, boolean) Hold to record voice note, Value: off
+		10 tab group Destinations
+			11 tab (settable, boolean) Listen, Value: on
+			12 tab (settable, boolean) Library, Value: off
+			13 tab (settable, boolean) Notes, Value: off
+			14 tab (settable, boolean) Mere, Value: off
+			15 tab (settable, boolean) Settings, Value: off
+		16 container Listen
+			17 Listen pane
+				18 radio button (selectable, settable, boolean) Listen pane: Up next · 1
+				19 radio button (selectable, settable, boolean) Listen pane: Notes · 1
+			20 button Open note at 0:00
+			21 button More actions for note at 0:00
+	22 close button
+	23 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	24 minimize button
+	25 text Redshank
+26 menu bar
+	27 Redshank Committed Recovery

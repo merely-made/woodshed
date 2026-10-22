@@ -1,0 +1,9 @@
+{
+  "original_unchanged": true,
+  "refused_destination_absent": true,
+  "original_inventory": {
+    "failed-listener/state-00000000000000000001.json": "4b72dadf60a89205c4ccb75d881b8cd574315c5f04620a2935e064c8b49ecf0a",
+    "failed-listener/state-00000000000000000002.json": "5cedf979d0c3fc70789024eb642b588431777663bfeaee162bc3e0daec751488",
+    "failed-listener/state-00000000000000000003.json.pending": "3fb152b04be65f5278ee96bd97d8e76a0385c54e90d0553e933dc8f900a8bae2"
+  }
+}

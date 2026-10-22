@@ -1,0 +1,92 @@
+{
+  "source_commit": "94583610752dce03853bb1bf132175121e7c79eb",
+  "binary_sha256": "c18e11ef3df7a077d79d31a229abe6fff8a7dbb704df4c958ccd26b3de557855",
+  "source_exit": 0,
+  "source_process_gone": true,
+  "original_generations_unchanged": true,
+  "protected_destination_absent": true,
+  "failed_copy_has_no_model": true,
+  "source_wav_unavailable": true,
+  "generation": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/recovered-session/state-00000000000000000001.json",
+  "generation_sha256": "ed7a2ef155cb12c0c6de90d006b2cfda4d9b5648000a24fb7badcb7971d5fee0",
+  "media": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/recovered-session/media/recovery-00000000.wav",
+  "media_sha256": "40abc924dc63f75aafb2400bb99fd66741e22eb9ff2450973a18db53a06286ac",
+  "model": {
+    "transcripts": {},
+    "schema_version": 1,
+    "library": {
+      "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav": {
+        "kind": "local_audio",
+        "id": "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav",
+        "title": "Native Recovery Source.wav",
+        "source": {
+          "kind": "local",
+          "path": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/recovered-session/media/recovery-00000000.wav"
+        }
+      }
+    },
+    "subscriptions": {},
+    "queue": [
+      "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav"
+    ],
+    "selected_item": "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav",
+    "progress": {
+      "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav": {
+        "position_ms": 0,
+        "completed": false,
+        "updated_at_ms": 1792641289751
+      }
+    },
+    "annotations": {
+      "note:1792641537635:0": {
+        "id": "note:1792641537635:0",
+        "target": {
+          "item_id": "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav",
+          "offset_ms": 0,
+          "end_offset_ms": null,
+          "pressed_offset_ms": null,
+          "representation": {
+            "requested_url": null,
+            "final_url": null,
+            "media_type": null,
+            "byte_length": 960044,
+            "etag": null,
+            "last_modified": null,
+            "retrieved_at_ms": null,
+            "complete_digest": "blake3:b798c70638db7faa4c87b54cd0088be19ade86ec6c4229dc1d7f6e560c042abd"
+          }
+        },
+        "body": {
+          "kind": "text",
+          "plain_text": "Committed native recovery draft: preserve this exact text and the local audio."
+        },
+        "created_at_ms": 1792641537635,
+        "privacy": "private"
+      }
+    },
+    "listening_sessions": [],
+    "pinned": [],
+    "settings": {
+      "capture_playback": "pause",
+      "skip_forward_ms": 30000,
+      "skip_backward_ms": 15000,
+      "cache_budget_bytes": 2147483648,
+      "feed_max_bytes": 8388608,
+      "playback_rate_percent": 100,
+      "volume_percent": 80,
+      "reaction_offset_ms": 0,
+      "resume_after_capture": true,
+      "duck_volume_percent": 10,
+      "note_privacy": "private",
+      "refresh_schedule": "manual",
+      "resume_completed_from": "start",
+      "auto_download": false,
+      "auto_reclaim": false,
+      "seed": "wetland",
+      "mode": "dark",
+      "alignment_window_ms": 20000,
+      "alignment_min_confidence_per_mille": 940,
+      "alignment_max_search_ms": 21600000
+    }
+  }
+}

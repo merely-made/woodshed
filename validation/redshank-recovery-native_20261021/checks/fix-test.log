@@ -1,0 +1,36 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop" test) generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 45.75s
+     Running unittests src/main.rs (ports/redshank/target/build/debug/deps/redshank_desktop-0147183782a77c28)
+
+running 10 tests
+test tests::unchanged_recovery_closes_without_attempting_persistence ... ok
+test tests::recovery_close_keeps_work_and_transient_notices_until_explicit_discard ... ok
+test recovery::tests::invalid_span_draft_refuses_copy_without_consuming_the_editor ... ok
+test recovery::tests::recovery_copy_completion_cannot_discard_a_newer_model_revision ... ok
+test tests::revision_zero_recovery_draft_is_retained_by_keep_working ... ok
+test tests::canceled_and_failed_recovery_copy_keep_session_nonwriting ... ok
+test recovery::tests::recovery_discard_does_not_admit_queued_media_removals_or_forged_save_replies ... ok
+test tests::successful_recovery_copy_reopens_and_closes_without_original_durability ... ok
+test recovery::tests::recovery_copy_contains_draft_and_newer_editor_text_prevents_exit ... ok
+test recovery::tests::native_close_hook_and_recovery_controls_keep_the_appearance_barrier ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 83 filtered out; finished in 1.76s
+

@@ -1,7 +1,7 @@
 # Preservation and input admission
 
 Date: 2026-10-16; updated 2026-10-21.
-Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket and Redshank have CPU/build evidence only. No physical audio qualification is claimed.
+Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket remains CPU/build only. Redshank D3 has the bounded macOS native/reopen evidence in P6; broader Redshank acceptance remains separate. No physical audio qualification is claimed.
 
 2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local commits
 only. The current wave overrides this document's historical publication
@@ -135,7 +135,7 @@ a separate observation unless exercised explicitly.
 
 ### P6 D3 native recovery and fresh-process reopen
 
-**Status (2026-10-21): in progress.** The maintainer authorized native chooser
+**Status (2026-10-22): qualified at committed `94583610`; publication pending.** The maintainer authorized native chooser
 cancellation, failed/successful recovery copies, fresh-process reopening, exposed
 fixes and direct main publication. Current primary and reused D3 worktree start
 clean at fetched `97bb21e5`. All listener, media and appearance paths are isolated.
@@ -345,3 +345,14 @@ copy from pending close preserves the draft and local WAV and exits normally.
 The probe exposed Rust Debug error internals in the failure panel; the host now
 uses readable cause/action text, keeping detailed store errors out of that UI.
 Focused regression and committed-source native rerun are next.
+
+2026-10-22 P6 qualification: ten committed-source native captures cover chooser
+cancellation, protected-destination and missing-media failures, Keep Working,
+successful copying from pending Close, and independent 820x560 rail reopening.
+The exact unsaved note, target/representation, library, selection, queue and local
+WAV survive. Original published/pending bytes remain identical. A fresh process
+with the original WAV unavailable opens the note and plays copied media to 30,000
+ms/Completed. Both native processes exit zero. The full desktop gate passes
+92 cases with one existing ignore; locked build and independent source/capture
+review pass. [Native receipt](../validation/redshank-recovery-native_20261021/README.md).
+No P5a or physical microphone/audio acceptance is included.

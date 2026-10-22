@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "started_date": "2026-10-21",
+  "completed_date": "2026-10-22",
+  "base": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+  "qualified_source": "94583610752dce03853bb1bf132175121e7c79eb",
+  "binary_sha256": "c18e11ef3df7a077d79d31a229abe6fff8a7dbb704df4c958ccd26b3de557855",
+  "method": "Real macOS LaunchServices application, CUA native controls/Save panel, captured window pixels, filesystem comparisons and separate native reopen process. No scenario-only simulated chooser.",
+  "accepted_native_capture_count": 10,
+  "probe_capture_count": 7,
+  "captures": [
+    {
+      "path": "captures/01-initial-recovery.jpg",
+      "sha256": "fc616646a6edd2ceac187ddce446a66ed07787c9485ad45c89841becbe7a14f7",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "01-initial-recovery.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/02-draft-before-chooser.jpg",
+      "sha256": "4736c679dfbbc8e65750588d3140fb9ef954628c356df85c41735641687601e4",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "02-draft-before-chooser.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/03-native-chooser.jpg",
+      "sha256": "46a6b2421489a8be661c1010135316bd9861fcdd8ad50e2001454e7ff477ec6f",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "03-native-chooser.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/04-canceled.jpg",
+      "sha256": "091861b5227b127aa700f3a281c3ca1bf5e51ebe4cb014697793f89075cf0145",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "04-canceled.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/05-protected-refusal.jpg",
+      "sha256": "2f8a636495685ca265cdebe04d7d66fc6240d3c264e05c884c71ba03b9f99aa3",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "05-protected-refusal.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/06-close-choices.jpg",
+      "sha256": "a98b6c340d47bed40c6d1029bcab940dbcafbf25125cb3ea549a223675ed3a1e",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "06-close-choices.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/07-missing-media.jpg",
+      "sha256": "1ce18fafd2294ad10b7ac42147fd4041734139d43570b8f4edf3e398b8502c4b",
+      "phase": "initial probe",
+      "reviewed": true,
+      "observation": "Probe capture preserved, raw debug error prompted correction",
+      "original_capture_name": "07-missing-media.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/10-committed-draft.jpg",
+      "sha256": "bc8099fa8e372b3b4ef6dbe0fbe2efeb91f938006c5e39b839aafe0e9ef85280",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Unsaved exact draft and source loaded",
+      "original_capture_name": "10-committed-draft.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/11-committed-native-chooser.jpg",
+      "sha256": "46a6b2421489a8be661c1010135316bd9861fcdd8ad50e2001454e7ff477ec6f",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Real macOS chooser",
+      "original_capture_name": "11-committed-native-chooser.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/12-committed-canceled.jpg",
+      "sha256": "35eb19666cd46c1eb42c53220fd52b077b4f182d711ed13ec0cb17b656ba69f3",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Cancellation retains draft",
+      "original_capture_name": "12-committed-canceled.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/13-committed-protected-refusal.jpg",
+      "sha256": "06b6a157ce477024e4dc7bdb44cdec71a2ce7931a2e48f3f89277b9592980a80",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Readable protected-destination refusal retains draft",
+      "original_capture_name": "13-committed-protected-refusal.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/14-committed-missing-media.jpg",
+      "sha256": "8d58cc5db1650710576495ca38826b69916bfe553c06f315aee3a6a242b8e2de",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Readable missing-media failure retains draft",
+      "original_capture_name": "14-committed-missing-media.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/15-committed-close-choices.jpg",
+      "sha256": "78271dfdaec17cb51e8ce13ce250f50002a6a165be79a188150c1e3e38830b11",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Three close choices visible beside retained draft",
+      "original_capture_name": "15-committed-close-choices.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/16-committed-keep-working.jpg",
+      "sha256": "23a3d3323b32a2523fd63a77cb2a1d1197cca6b67541dcb865ad43e4f3134ab0",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Keep Working preserves exact draft",
+      "original_capture_name": "16-committed-keep-working.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/17-committed-success-chooser.jpg",
+      "sha256": "f5b13ba4f363cc03de7658a0aff552ce0a4177509bcfdad2fe3add14685681e0",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Real successful-copy destination selection",
+      "original_capture_name": "17-committed-success-chooser.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/18-fresh-reopen-rail.jpg",
+      "sha256": "45f7696934e61ed50ca9b40b92a72f7f5a744dba4308dd7a753f8fea76177b77",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Fresh native rail reopen shows exact note and decoded duration",
+      "original_capture_name": "18-fresh-reopen-rail.png",
+      "mime_type": "image/jpeg"
+    },
+    {
+      "path": "captures/20-fresh-reopen-complete.jpg",
+      "sha256": "c61939e5b2dad40cae05fe8385b95b5c8fbcc05fbece18148ab90a7f8f8582b8",
+      "phase": "committed acceptance",
+      "reviewed": true,
+      "observation": "Copied local audio completes 30 seconds while original WAV is unavailable",
+      "original_capture_name": "20-fresh-reopen-complete.png",
+      "mime_type": "image/jpeg"
+    }
+  ],
+  "checks": [
+    {
+      "name": "scoped",
+      "process": "checks/scoped-process.json",
+      "log": "checks/scoped.log",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-j",
+        "4",
+        "-p",
+        "redshank-desktop",
+        "recovery"
+      ],
+      "recorded_head": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+      "exit_code": 0,
+      "scope": "supporting gate, overlapping cases not added to final distinct count"
+    },
+    {
+      "name": "fix-test",
+      "process": "checks/fix-test-process.json",
+      "log": "checks/fix-test.log",
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "ports/redshank/Cargo.toml",
+        "--locked",
+        "-j",
+        "4",
+        "-p",
+        "redshank-desktop",
+        "recovery"
+      ],
+      "recorded_head": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+      "exit_code": 0,
+      "scope": "supporting gate, overlapping cases not added to final distinct count"
+    },
+    {
+      "name": "desktop-final",
+      "process": "checks/desktop-final-process.json",
+      "log": "checks/desktop-final.log",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-j",
+        "4",
+        "-p",
+        "redshank-desktop"
+      ],
+      "recorded_head": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+      "exit_code": 0,
+      "scope": "92 final desktop passes and one existing ignore"
+    },
+    {
+      "name": "build",
+      "process": "checks/build-process.json",
+      "log": "checks/build.log",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-j",
+        "4",
+        "-p",
+        "redshank-desktop"
+      ],
+      "recorded_head": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+      "exit_code": 0,
+      "scope": "supporting gate, overlapping cases not added to final distinct count"
+    },
+    {
+      "name": "build-final",
+      "process": "checks/build-final-process.json",
+      "log": "checks/build-final.log",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-j",
+        "4",
+        "-p",
+        "redshank-desktop"
+      ],
+      "recorded_head": "94583610752dce03853bb1bf132175121e7c79eb",
+      "exit_code": 0,
+      "scope": "supporting gate, overlapping cases not added to final distinct count"
+    },
+    {
+      "name": "source",
+      "process": "checks/source-process.json",
+      "log": "checks/source-launch.log",
+      "command": [
+        "python3",
+        "-c",
+        "import json,subprocess,sys; sys.exit(subprocess.run(json.load(open(\"/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/native-source-command.json\"))).returncode)"
+      ],
+      "recorded_head": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+      "exit_code": 0,
+      "scope": "Initial native probe"
+    },
+    {
+      "name": "final-source",
+      "process": "checks/final-source-process.json",
+      "log": "checks/final-source-launch.log",
+      "command": [
+        "python3",
+        "-c",
+        "import json,subprocess,sys; sys.exit(subprocess.run(json.load(open(\"/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/native-final-source-command.json\"))).returncode)"
+      ],
+      "recorded_head": "94583610752dce03853bb1bf132175121e7c79eb",
+      "exit_code": 0,
+      "scope": "Committed-source manual native process"
+    },
+    {
+      "name": "reopen",
+      "process": "checks/reopen-process.json",
+      "log": "checks/reopen-launch.log",
+      "command": [
+        "python3",
+        "-c",
+        "import json,subprocess,sys; sys.exit(subprocess.run(json.load(open(\"/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/native-reopen-command.json\"))).returncode)"
+      ],
+      "recorded_head": "94583610752dce03853bb1bf132175121e7c79eb",
+      "exit_code": 0,
+      "scope": "Committed-source manual native process"
+    },
+    {
+      "name": "doc-links",
+      "process": "checks/doc-links-process.json",
+      "log": "checks/doc-links.log",
+      "command": [
+        "/Users/markik/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "validation/link-model-p6_20261016/doc_link_audit.py",
+        "--repo",
+        ".",
+        "--base",
+        "97bb21e5b265b76284ed715f975e4b0b18181a24"
+      ],
+      "recorded_head": "94583610752dce03853bb1bf132175121e7c79eb",
+      "exit_code": 0,
+      "scope": "No new document-link findings against the current published base"
+    }
+  ],
+  "distinct_final_desktop_passes": 92,
+  "existing_desktop_ignore": 1,
+  "fix": "Replace Rust Debug internals in copy failures with readable causes and retention/retry guidance; strengthen production failed-copy regression.",
+  "original_generation_and_pending_bytes_unchanged": true,
+  "missing_media_failure_published_no_model": true,
+  "copy_reopened_without_original_wav": true,
+  "copied_audio_completed_ms": 30000,
+  "source_process_exited_before_reopen": true,
+  "reopen_pid": 49895,
+  "owned_processes_stopped": true,
+  "source_log_copies": "Raw process receipts retain original absolute paths; packaged logs are byte-for-byte copies checked against their original SHA256.",
+  "tool_observations": [
+    "Initial detached launcher was replaced by a waited, captured LaunchServices invocation before acceptance.",
+    "A full AX resnapshot renumbered chooser elements; the invalid-index attempt had no effect and actual cancellation was then verified.",
+    "A post-exit AX query in the probe relaunched an empty observation window; it was closed immediately and excluded. Final process closure was verified without another AX query.",
+    "An optional pause observation timed out while the reopened file played; refreshed state and final screenshot independently observed completed 30000 ms. The partial capture 19 is excluded."
+  ],
+  "limits": [
+    "macOS only; native source Dock at 960x780 and fresh reopen Rail at 820x560",
+    "Synthetic silent WAV through native decoder/output runtime; no physical audio/microphone qualification",
+    "Cached and voice-blob copy semantics retain their separate storage CPU evidence"
+  ],
+  "p5a_changed": false,
+  "independent_review": "Reader inspected exact committed code diff and six decisive native captures: 12,13,14,15,18,20; no must-fix findings.",
+  "image_encoding": "CUA returned JPEG bytes. Packaged extensions are corrected to .jpg without transcoding; SHA256 values remain those of the original capture bytes."
+}
