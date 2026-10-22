@@ -133,6 +133,22 @@ surface layouts emit the intended controls; integration is reviewed, checked,
 committed and published. Native chooser/window/appearance interaction remains
 a separate observation unless exercised explicitly.
 
+### P6 D3 native recovery and fresh-process reopen
+
+**Status (2026-10-21): in progress.** The maintainer authorized native chooser
+cancellation, failed/successful recovery copies, fresh-process reopening, exposed
+fixes and direct main publication. Current primary and reused D3 worktree start
+clean at fetched `97bb21e5`. All listener, media and appearance paths are isolated.
+P5a remains with its existing owner.
+
+Done when the exact locked desktop binary is exercised through the real native
+chooser and recovery controls, canceled/failed copies retain editor and original
+generations, a successful copy includes exact edited state and referenced audio,
+a separate application process reopens it without the original source media,
+and native captures are reviewed. Exposed fixes receive focused checks and a
+committed-source native rerun before publication. No physical capture claim is
+included in this recovery exercise.
+
 ## Findings
 
 2026-10-16: current persona settlement still opens incoming custody/resets the UI
@@ -321,3 +337,11 @@ picker, fresh-process and physical-device observations are not claimed.
 2026-10-21 D3 publication: `main` advanced from `01c4b3af` to `f4904a27`;
 remote advertised main and fetched source/evidence bytes match. The following
 metadata commit records that observation without extending qualification scope.
+
+2026-10-21 native D3 probe: real chooser cancellation, protected-destination
+refusal and missing-media failure retain the exact editor text. Original
+published/pending generation bytes remain identical. A successful native
+copy from pending close preserves the draft and local WAV and exits normally.
+The probe exposed Rust Debug error internals in the failure panel; the host now
+uses readable cause/action text, keeping detailed store errors out of that UI.
+Focused regression and committed-source native rerun are next.
