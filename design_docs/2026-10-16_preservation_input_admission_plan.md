@@ -475,3 +475,15 @@ used a private pinned-supplier field, and the MusicXML path test exposed raw
 versus canonical prefix mismatch. These attempts failed and were corrected;
 final locked desktop gate is green. Native source-qualified A→B→A and fresh
 process reopen are next. P5a source and ownership remain untouched.
+
+
+2026-10-22 D1 native probe at `88b6b61f`: actual custody-backed A→B→A,
+same-persona selection, separate A/B process reopening and corrupt incoming
+settings refusal/retry/cancel pass. Exact keeper-backed PCM, Card, journal and
+manifest readback matches seeded values. Locked startup correctly writes no
+store bytes but exposed a misleading generic “unconfirmed write” notice for
+the known nonwriting pending backend. The host now states that practice is not
+being saved and explains how to keep it. Final desktop rerun passes 343 cases
+with eight ignores; committed-source native rerun follows. The explicit-close
+probe ended before the scenario receipt; a later probe completed its assertions
+but waited at the close guard. Neither is counted as a completed native gate.

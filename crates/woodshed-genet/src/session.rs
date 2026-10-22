@@ -138,7 +138,14 @@ pub fn admit(storage: &SessionStore<HostBackend>) -> Result<UiState, String> {
 }
 
 pub fn refresh_save_status(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
-    ui.practice_save_notice = if let Some(reason) = storage.write_refusal() {
+    ui.practice_save_notice = if let Some(woodshed_views::persona::PracticeSeal::Pending {
+        reason,
+    }) = ui.seal.as_ref()
+    {
+        Some(format!(
+            "Practice is not being saved: {reason}. Changes stay in this window. Choose or reconnect the persona before closing if you want to keep them."
+        ))
+    } else if let Some(reason) = storage.write_refusal() {
         Some(format!(
             "Practice is not being saved: {reason}. The existing files will not be overwritten; current changes remain in this window."
         ))
@@ -310,6 +317,32 @@ mod tests {
         seed.try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
             .unwrap();
         (inner, ui)
+    }
+
+    #[test]
+    fn pending_custody_reports_known_nonwriting_instead_of_uncertain_durability() {
+        let storage = SessionStore::new(Box::new(MemoryBackend::default()) as HostBackend);
+        storage.session_unconfirmed("a write was refused");
+        let mut ui = UiState::new();
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Pending {
+            reason: "the vault is locked".into(),
+        });
+        refresh_save_status(&storage, &mut ui);
+        let notice = ui.practice_save_notice.as_deref().unwrap();
+        assert!(notice.contains("not being saved") && notice.contains("vault is locked"));
+        assert!(!notice.contains("unconfirmed") && !notice.contains("may already"));
+        assert!(!ui.practice_saved);
+        ui.seal = Some(woodshed_views::persona::PracticeSeal::Sealed {
+            persona: "default".into(),
+            protection: "test".into(),
+        });
+        refresh_save_status(&storage, &mut ui);
+        assert!(
+            ui.practice_save_notice
+                .as_deref()
+                .unwrap()
+                .contains("unconfirmed")
+        );
     }
 
     #[test]
