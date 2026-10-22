@@ -28,7 +28,7 @@ struct OverviewAmbientLeaf {
 }
 
 impl Leaf for OverviewAmbientLeaf {
-    fn accessibility(&mut self, node: &mut accesskit::Node) {
+    fn accessibility(&self, node: &mut accesskit::Node) {
         self.graph.accessibility(node);
     }
 
@@ -83,7 +83,7 @@ struct StageGuidesLeaf {
 }
 
 impl Leaf for StageGuidesLeaf {
-    fn accessibility(&mut self, node: &mut accesskit::Node) {
+    fn accessibility(&self, node: &mut accesskit::Node) {
         self.graph.accessibility(node);
     }
 

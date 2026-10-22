@@ -611,7 +611,7 @@ impl Leaf for NotationLeaf {
         self.dirty = false;
     }
     #[cfg(feature = "accessibility")]
-    fn accessibility(&mut self, node: &mut accesskit::Node) {
+    fn accessibility(&self, node: &mut accesskit::Node) {
         node.set_role(accesskit::Role::GraphicsObject);
         if let Some((bar, event)) = self.playhead {
             let kind = if self.score.measures[bar].events[event].rest {
