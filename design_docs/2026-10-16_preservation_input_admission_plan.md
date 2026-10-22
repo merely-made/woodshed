@@ -516,3 +516,10 @@ source bindings and the bundled evidence. This establishes local macOS storage,
 transition and fresh-process behavior; native PCM playback, physical audio,
 second-host operation, manual resize and native same-label seed replacement
 remain unclaimed. P5a source and ownership are untouched.
+
+
+2026-10-22 D1 publication: source and complete receipt are integrated and pushed
+through `79193e27`. Advertised main and fetched main agree; all 420 qualified
+source bindings, 90 evidence files and both canonical documents match the fetched
+remote tree. The [publication record](../validation/persona-store_20261022/publication.json)
+records this observation; its metadata commit adds no new source/native claim.
