@@ -1,0 +1,53 @@
+settle 12
+ui-zoom 1
+assert snap persona-id == default
+assert snap set-cards == 1
+assert snap cursor-label == D1 A phrase
+assert snap appearance-theme == woodshed:ember
+assert snap loop-capture-references == 1
+assert snap practice-saved == true
+checkpoint-music a-before
+capture 01_a_before
+click .pill Settings
+click .side-item General
+click .t-btn Switch persona
+settle 3
+capture 02_roster
+click .command-item @data-key=d1-b
+settle 8
+assert snap persona-id == d1-b
+assert snap persona-switch-pending == false
+assert snap set-cards == 2
+assert snap cursor-label == D1 B phrase
+assert snap appearance-theme == woodshed:dusk
+assert snap loop-capture-references == 1
+assert snap practice-saved == true
+checkpoint-music b-before
+capture 03_b_before
+click .pill Settings
+click .side-item General
+click .t-btn Switch persona
+settle 3
+click .command-item @data-key=default
+settle 8
+assert snap persona-id == default
+assert snap set-cards == 1
+assert snap cursor-label == D1 A phrase
+assert snap appearance-theme == woodshed:ember
+assert snap loop-capture-references == 1
+assert snap practice-saved == true
+checkpoint-music a-returned
+capture 04_a_returned
+click .pill Settings
+click .side-item General
+click .t-btn Switch persona
+settle 3
+click .command-item @data-key=default
+settle 5
+assert snap persona-id == default
+assert snap persona-switch-pending == false
+assert snap set-cards == 1
+assert snap cursor-label == D1 A phrase
+checkpoint-music a-same-persona
+capture 05_same_persona
+log D1 native A to B to A and cryptographic same-persona selection complete

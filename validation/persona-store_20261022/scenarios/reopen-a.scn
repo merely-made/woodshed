@@ -1,0 +1,12 @@
+settle 12
+ui-zoom 1
+assert snap persona-id == default
+assert snap set-cards == 1
+assert snap cursor-label == D1 A phrase
+assert snap appearance-theme == woodshed:ember
+assert snap loop-capture-references == 1
+assert snap practice-saved == true
+assert snap persona-switch-pending == false
+checkpoint-music reopen-a
+capture 01_reopen-a
+log D1 independent fresh process default reopened its own practice

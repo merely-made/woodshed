@@ -1,0 +1,10 @@
+settle 12
+assert snap persona-id == pending
+assert snap set-cards == 0
+assert snap practice-saved == false
+capture 01_locked_unsaved
+act diagnostic-request-close
+settle 4
+assert text Practice is not confirmed saved
+capture 02_locked_close
+log D1 locked custody stayed unsaved without opening a persona store

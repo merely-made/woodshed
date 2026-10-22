@@ -1,0 +1,8 @@
+[woodshed] identity pending (the identity is locked); practice is not saved
+[woodshed] identity pending: practice is not being saved
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+[cambium-winit] accessibility Installed, 290 nodes projected
+woodshed-genet: captured 01_locked_unsaved
+woodshed-genet: D1 locked custody stayed unsaved without reading a persona store
+woodshed-genet: RESULT ok (19 frames, 1 captures)
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.

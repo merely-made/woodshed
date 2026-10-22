@@ -1,0 +1,31 @@
+settle 12
+assert snap persona-id == default
+assert snap set-cards == 1
+assert snap cursor-label == D1 A phrase
+checkpoint-music a-before-failure
+click .pill Settings
+click .side-item General
+click .t-btn Switch persona
+settle 3
+click .command-item @data-key=d1-b
+settle 8
+assert snap persona-id == default
+assert snap persona-switch-pending == true
+assert snap cursor-label == D1 A phrase
+assert text Incoming practice could not open
+capture 01_incoming_refused
+click .persona-save-retry
+settle 8
+assert snap persona-id == default
+assert snap persona-switch-pending == true
+assert snap cursor-label == D1 A phrase
+capture 02_retry_retained
+click .persona-save-cancel
+settle 5
+assert snap persona-id == default
+assert snap persona-switch-pending == false
+assert snap set-cards == 1
+assert snap cursor-label == D1 A phrase
+checkpoint-music a-after-cancel
+capture 03_cancel_retained
+log D1 native corrupt incoming store refusal retry cancel preserved outgoing practice

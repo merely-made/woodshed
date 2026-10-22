@@ -1,0 +1,464 @@
+{
+  "dirty": false,
+  "live": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 0,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Scales",
+      "progression_expanded": 0,
+      "progression_idx": null,
+      "root_idx": 0,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 260,
+        "set_graph_reading": "Set",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 0,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Scales",
+    "loop_captures": {
+      "namespace": "00000000000000000000000000000001",
+      "takes": [
+        {
+          "bars": 1,
+          "beats": 4,
+          "bpm": 120.0,
+          "clock": "per-beat-v1",
+          "codec": "raw-f32-v1",
+          "digest": "78a91feec87687c3a78694316ee093d6fead75e0e5d70013fd6fe8a68f9027a7",
+          "frames": 2000,
+          "id": {
+            "card": 1,
+            "set": 1
+          },
+          "sample_rate": 1000
+        }
+      ],
+      "version": 4
+    },
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":3,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[],\"focus\":null,\"roles\":[],\"background\":[],\"folds\":[]}",
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "8e212921-89f9-4524-8dca-a6a18781f0ab"
+    },
+    "practice_history": {
+      "entries": [
+        {
+          "first_seen_at_ms": 0,
+          "key": "scale:Minor Pentatonic",
+          "last_seen_at_ms": 0,
+          "payload": null,
+          "privacy": "LocalOnly",
+          "visit_count": 1
+        }
+      ],
+      "owners": [
+        {
+          "creator": null,
+          "current": 0,
+          "identity": "practitioner",
+          "origin": 0,
+          "owned_visits": [
+            0
+          ],
+          "pending_origin_parent": null
+        }
+      ],
+      "visits": [
+        {
+          "bindings": [
+            {
+              "forward_child": null,
+              "last_accessed_at_ms": 0,
+              "owner": 0
+            }
+          ],
+          "children": [],
+          "context": {
+            "dated": false,
+            "from_id": null,
+            "kind": "Staged",
+            "practiced_ms": null,
+            "provenance": {
+              "card_snapshot": {
+                "from": null,
+                "id": 1,
+                "label": "A Minor Pentatonic",
+                "material": {
+                  "Scale": {
+                    "name": "Minor Pentatonic",
+                    "root": 9
+                  }
+                },
+                "setting": {
+                  "capo": null,
+                  "fret_window": null,
+                  "instrument": "Guitar",
+                  "mark_mode": "Off",
+                  "marked": [],
+                  "tuning": "Standard",
+                  "voicing_fingerprint": null,
+                  "voicing_idx": null,
+                  "voicing_profile": null
+                },
+                "timing": {
+                  "bpm": null,
+                  "hold": "Manual"
+                },
+                "touch": "Block"
+              },
+              "occurrence_id": 1,
+              "working_set_id": 1
+            }
+          },
+          "created_at_ms": 0,
+          "entry": 0,
+          "inbound": null,
+          "parent": null
+        }
+      ]
+    },
+    "progression_expanded": 0,
+    "progression_idx": null,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 0,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": null,
+          "id": 1,
+          "label": "D1 A phrase",
+          "material": {
+            "Scale": {
+              "name": "Minor Pentatonic",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 1,
+      "loop_mode": "Off"
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"arrangement\",\"id\":1464811858,\"title\":\"Arrangement\",\"kind\":\"woodshed.arrangement\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":1}},\"active_panel\":\"practice\"}"
+  },
+  "score": null,
+  "stored": {
+    "active_exploration": {
+      "arpeggio_direction": "UpDown",
+      "arpeggio_idx": 0,
+      "arpeggio_inversion": 0,
+      "arpeggio_position_idx": 0,
+      "chord_idx": 0,
+      "context_focus": null,
+      "exercise_idx": 0,
+      "exercise_starting_fret": 1,
+      "fretboard": {
+        "board_layout": "Two pane",
+        "marker_style": "Sharp",
+        "neck_end": null,
+        "neck_start": 0,
+        "orientation": "Horizontal"
+      },
+      "lens": "Scales",
+      "progression_expanded": 0,
+      "progression_idx": null,
+      "root_idx": 0,
+      "scale_idx": 8,
+      "search_query": "",
+      "stage_settings": {
+        "context": {
+          "enabled": true,
+          "node_limit": 24
+        },
+        "related": {
+          "arrangement": "Radial",
+          "dismissed_ids": [],
+          "graph_scope": "Selection",
+          "relation_depth": 1,
+          "show_neighborhood": true,
+          "use_history": true
+        },
+        "set_arrangement": "Snake",
+        "set_graph_height": 260,
+        "set_graph_reading": "Set",
+        "set_graph_width": 520,
+        "visible_set_relations": [
+          "Next"
+        ]
+      },
+      "tuning": {
+        "tuning_idx": 0
+      }
+    },
+    "arpeggio_direction": "UpDown",
+    "arpeggio_idx": 0,
+    "arpeggio_inversion": 0,
+    "arpeggio_position_idx": 0,
+    "catalog_explorations": {
+      "active_id": 1,
+      "active_name": "Catalog exploration 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "chord_idx": 0,
+    "exercise_idx": 0,
+    "exercise_starting_fret": 1,
+    "lens": "Scales",
+    "loop_captures": {
+      "namespace": "00000000000000000000000000000001",
+      "takes": [
+        {
+          "bars": 1,
+          "beats": 4,
+          "bpm": 120.0,
+          "clock": "per-beat-v1",
+          "codec": "raw-f32-v1",
+          "digest": "78a91feec87687c3a78694316ee093d6fead75e0e5d70013fd6fe8a68f9027a7",
+          "frames": 2000,
+          "id": {
+            "card": 1,
+            "set": 1
+          },
+          "sample_rate": 1000
+        }
+      ],
+      "version": 4
+    },
+    "musical_context": {
+      "entries": [],
+      "next_id": 0
+    },
+    "overview_presentation_json": "{\"version\":3,\"pan\":[0.0,0.0],\"zoom\":1.0,\"motion\":false,\"reduced_motion\":true,\"atmosphere\":{\"kind\":\"None\",\"seed\":1},\"positions\":[],\"focus\":null,\"roles\":[],\"background\":[],\"folds\":[]}",
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "8e212921-89f9-4524-8dca-a6a18781f0ab"
+    },
+    "practice_history": {
+      "entries": [
+        {
+          "first_seen_at_ms": 0,
+          "key": "scale:Minor Pentatonic",
+          "last_seen_at_ms": 0,
+          "payload": null,
+          "privacy": "LocalOnly",
+          "visit_count": 1
+        }
+      ],
+      "owners": [
+        {
+          "creator": null,
+          "current": 0,
+          "identity": "practitioner",
+          "origin": 0,
+          "owned_visits": [
+            0
+          ],
+          "pending_origin_parent": null
+        }
+      ],
+      "visits": [
+        {
+          "bindings": [
+            {
+              "forward_child": null,
+              "last_accessed_at_ms": 0,
+              "owner": 0
+            }
+          ],
+          "children": [],
+          "context": {
+            "dated": false,
+            "from_id": null,
+            "kind": "Staged",
+            "practiced_ms": null,
+            "provenance": {
+              "card_snapshot": {
+                "from": null,
+                "id": 1,
+                "label": "A Minor Pentatonic",
+                "material": {
+                  "Scale": {
+                    "name": "Minor Pentatonic",
+                    "root": 9
+                  }
+                },
+                "setting": {
+                  "capo": null,
+                  "fret_window": null,
+                  "instrument": "Guitar",
+                  "mark_mode": "Off",
+                  "marked": [],
+                  "tuning": "Standard",
+                  "voicing_fingerprint": null,
+                  "voicing_idx": null,
+                  "voicing_profile": null
+                },
+                "timing": {
+                  "bpm": null,
+                  "hold": "Manual"
+                },
+                "touch": "Block"
+              },
+              "occurrence_id": 1,
+              "working_set_id": 1
+            }
+          },
+          "created_at_ms": 0,
+          "entry": 0,
+          "inbound": null,
+          "parent": null
+        }
+      ]
+    },
+    "progression_expanded": 0,
+    "progression_idx": null,
+    "retained_sets": {
+      "entries": [],
+      "next_id": 0
+    },
+    "root_idx": 0,
+    "scale_idx": 8,
+    "section": "Stage",
+    "set": {
+      "cards": [
+        {
+          "from": null,
+          "id": 1,
+          "label": "D1 A phrase",
+          "material": {
+            "Scale": {
+              "name": "Minor Pentatonic",
+              "root": 9
+            }
+          },
+          "setting": {
+            "capo": null,
+            "fret_window": null,
+            "instrument": "Guitar",
+            "mark_mode": "Off",
+            "marked": [],
+            "tuning": "Standard",
+            "voicing_fingerprint": null,
+            "voicing_idx": null,
+            "voicing_profile": null
+          },
+          "timing": {
+            "bpm": null,
+            "hold": "Manual"
+          },
+          "touch": "Block"
+        }
+      ],
+      "cursor": 0,
+      "last_card_id": 1,
+      "loop_mode": "Off"
+    },
+    "song": {
+      "bars": [],
+      "click": true,
+      "name": "",
+      "one_shot": false
+    },
+    "working_sets": {
+      "active_id": 1,
+      "active_name": "Working Set 1",
+      "inactive": [],
+      "next_id": 1
+    },
+    "workspace_json": "{\"tree\":{\"stack\":{\"tabs\":[{\"panel\":\"overview\",\"id\":1464814917,\"title\":\"Mere\",\"kind\":\"woodshed.overview\",\"content_id\":\"overview\"},{\"panel\":\"practice\",\"id\":1464815698,\"title\":\"Practice\",\"kind\":\"woodshed.practice\",\"content_id\":\"stage\"},{\"panel\":\"set\",\"id\":1464816453,\"title\":\"Set\",\"kind\":\"woodshed.set\",\"content_id\":\"rehearsal\"},{\"panel\":\"related\",\"id\":1464816197,\"title\":\"Related\",\"kind\":\"woodshed.related\",\"content_id\":\"stage\"},{\"panel\":\"arrangement\",\"id\":1464811858,\"title\":\"Arrangement\",\"kind\":\"woodshed.arrangement\",\"content_id\":\"stage\"},{\"panel\":\"settings\",\"id\":1464816455,\"title\":\"Settings\",\"kind\":\"woodshed.settings\",\"content_id\":\"settings\"}],\"active\":1}},\"active_panel\":\"practice\"}"
+  }
+}

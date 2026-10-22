@@ -1,0 +1,279 @@
+[
+  {
+    "captures": {
+      "namespace": "00000000000000000000000000000001",
+      "takes": [
+        {
+          "bars": 1,
+          "beats": 4,
+          "bpm": 120.0,
+          "clock": "per-beat-v1",
+          "codec": "raw-f32-v1",
+          "digest": "78a91feec87687c3a78694316ee093d6fead75e0e5d70013fd6fe8a68f9027a7",
+          "frames": 2000,
+          "id": {
+            "card": 1,
+            "set": 1
+          },
+          "sample_rate": 1000
+        }
+      ],
+      "version": 4
+    },
+    "cards": [
+      {
+        "from": null,
+        "id": 1,
+        "label": "D1 A phrase",
+        "material": {
+          "Scale": {
+            "name": "Minor Pentatonic",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      }
+    ],
+    "owner": "62305141a3d9143121e6d1d87269ae0ae9b9038c9d512639cbd9229ac44db27e",
+    "pcm_bits_blake3": "c3d593e97e06b832da101e531ce1bbd63c8c377eb626fe10e603044859f46e44",
+    "pcm_frames": 2000,
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "8e212921-89f9-4524-8dca-a6a18781f0ab"
+    },
+    "profile": "default",
+    "settings": {
+      "board_layout": "Two pane",
+      "bpm": 87.0,
+      "context": {
+        "enabled": true,
+        "node_limit": 24
+      },
+      "distinguish_root": false,
+      "marker_style": "Sharp",
+      "midi_pedal": {
+        "effect_next": {
+          "channel": 1,
+          "enabled": false,
+          "kind": "control-change",
+          "number": 0,
+          "release": null,
+          "value": 127
+        },
+        "effect_previous": {
+          "channel": 1,
+          "enabled": false,
+          "kind": "control-change",
+          "number": 0,
+          "release": null,
+          "value": 127
+        },
+        "inputs": {
+          "effect_next": {
+            "controller": null,
+            "keyboard": null
+          },
+          "effect_previous": {
+            "controller": null,
+            "keyboard": null
+          }
+        }
+      },
+      "neck_end": null,
+      "neck_start": 0,
+      "orientation": "Horizontal",
+      "reduce_motion": false,
+      "related": {
+        "arrangement": "Radial",
+        "dismissed_ids": [],
+        "graph_scope": "Selection",
+        "relation_depth": 1,
+        "show_neighborhood": true,
+        "use_history": true
+      },
+      "set_arrangement": "Snake",
+      "set_graph_height": 260,
+      "set_graph_reading": "Set",
+      "set_graph_width": 520,
+      "settings_page": "General",
+      "text_scale": "Normal",
+      "theme": "Ember",
+      "tuning_idx": 0,
+      "visible_set_relations": [
+        "Next"
+      ]
+    }
+  },
+  {
+    "captures": {
+      "namespace": "00000000000000000000000000000002",
+      "takes": [
+        {
+          "bars": 1,
+          "beats": 4,
+          "bpm": 120.0,
+          "clock": "per-beat-v1",
+          "codec": "raw-f32-v1",
+          "digest": "a6315ae01173092a465d81a7e6a54fb708af03a1d99f60450d106e1f30692121",
+          "frames": 2000,
+          "id": {
+            "card": 1,
+            "set": 1
+          },
+          "sample_rate": 1000
+        }
+      ],
+      "version": 4
+    },
+    "cards": [
+      {
+        "from": null,
+        "id": 1,
+        "label": "D1 B phrase",
+        "material": {
+          "Scale": {
+            "name": "Minor Pentatonic",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      },
+      {
+        "from": null,
+        "id": 2,
+        "label": "D1 B phrase",
+        "material": {
+          "Scale": {
+            "name": "Minor Pentatonic",
+            "root": 9
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": null,
+          "voicing_idx": null,
+          "voicing_profile": null
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      }
+    ],
+    "owner": "3178a257d4ca6cf4530ceec4e6ba5612dc9c8361fa0779a196372cef9ba4ec49",
+    "pcm_bits_blake3": "01cdd61001a7285d14874c77dcd09af5fe13a352b83eaf892c266b6419fd60e1",
+    "pcm_frames": 2000,
+    "personal_relations": {
+      "journal": {
+        "entries": [],
+        "id": null,
+        "parents": [],
+        "provenance": null
+      },
+      "source_id": "4946af76-5a2c-425a-a856-59c4488ebbc9"
+    },
+    "profile": "d1-b",
+    "settings": {
+      "board_layout": "Two pane",
+      "bpm": 143.0,
+      "context": {
+        "enabled": true,
+        "node_limit": 24
+      },
+      "distinguish_root": false,
+      "marker_style": "Sharp",
+      "midi_pedal": {
+        "effect_next": {
+          "channel": 1,
+          "enabled": false,
+          "kind": "control-change",
+          "number": 0,
+          "release": null,
+          "value": 127
+        },
+        "effect_previous": {
+          "channel": 1,
+          "enabled": false,
+          "kind": "control-change",
+          "number": 0,
+          "release": null,
+          "value": 127
+        },
+        "inputs": {
+          "effect_next": {
+            "controller": null,
+            "keyboard": null
+          },
+          "effect_previous": {
+            "controller": null,
+            "keyboard": null
+          }
+        }
+      },
+      "neck_end": null,
+      "neck_start": 0,
+      "orientation": "Horizontal",
+      "reduce_motion": false,
+      "related": {
+        "arrangement": "Radial",
+        "dismissed_ids": [],
+        "graph_scope": "Selection",
+        "relation_depth": 1,
+        "show_neighborhood": true,
+        "use_history": true
+      },
+      "set_arrangement": "Snake",
+      "set_graph_height": 260,
+      "set_graph_reading": "Set",
+      "set_graph_width": 520,
+      "settings_page": "General",
+      "text_scale": "Normal",
+      "theme": "Dusk",
+      "tuning_idx": 0,
+      "visible_set_relations": [
+        "Next"
+      ]
+    }
+  }
+]

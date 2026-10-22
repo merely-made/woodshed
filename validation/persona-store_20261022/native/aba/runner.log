@@ -1,0 +1,15 @@
+{"launch_method": "LaunchServices temporary application bundle", "launcher_exit": 0, "timeout": false, "success": true, "elapsed_seconds": 14.935, "binary_sha256": "7d656c9b370e2c10f6c88c6b6e250730049d52b6726d0b01774f51440432079c", "scenario_sha256": "27b5619187cdc9129d37a3f34049520578327982576305584477c8d2bd70a0e7", "receipt": "scenario.done", "captures": 5}
+RESULT ok
+captured 01_a_before
+captured 02_roster
+captured 03_b_before
+captured 04_a_returned
+captured 05_same_persona
+D1 native A to B to A and cryptographic same-persona selection complete
+capture 01_a_before 2200x1400 digest=2c8286e145b6a227 file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/aba/01_a_before.png
+capture 02_roster 2200x1400 digest=e4b4802551c55bee file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/aba/02_roster.png
+capture 03_b_before 2200x1400 digest=fac7173fa77db41d file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/aba/03_b_before.png
+capture 04_a_returned 2200x1400 digest=b19052a98ef9fc3c file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/aba/04_a_returned.png
+capture 05_same_persona 2200x1400 digest=19bb68b456e3389e file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/aba/05_same_persona.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 97 frames, 99 redraws, 2 unpresented redraws

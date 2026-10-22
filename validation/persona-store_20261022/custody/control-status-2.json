@@ -1,0 +1,15 @@
+{
+  "type": "answer",
+  "id": 1,
+  "answer": {
+    "Ok": {
+      "answer": "status",
+      "lock": "Unlocked",
+      "protection": "Passphrase",
+      "profile": "default",
+      "persona_public_key": "7WpHo52oabVEYVXkCy2T8ePwFnviZzK656PvnY46P9M",
+      "wallet_public_key": null,
+      "wallet_root": null
+    }
+  }
+}
