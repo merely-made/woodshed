@@ -1,0 +1,14 @@
+{
+  "observed_at_utc": "2026-10-22T23:02:54.076814+00:00",
+  "published_revision": "79193e270248018dab50f6cd531cc95f81f42e2b",
+  "qualified_source_revision": "8bf59b317aa653c36a09a5fa9f178ef8e408e7d6",
+  "advertised_main": "79193e270248018dab50f6cd531cc95f81f42e2b",
+  "fetched_origin_main": "79193e270248018dab50f6cd531cc95f81f42e2b",
+  "checked_source_files": 420,
+  "checked_evidence_files": 90,
+  "checked_documentation_files": 2,
+  "all_checked_bytes_equal_fetched_remote_tree": true,
+  "checks": "Git cat-file blob bytes SHA-256 compared with source/evidence manifests and current canonical documents.",
+  "metadata_boundary": "This record describes published 79193e27. The subsequent metadata commit adds this record and its canonical progress link; it does not extend source/native qualification.",
+  "p5a": "Unchanged and separately owned."
+}
