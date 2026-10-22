@@ -80,8 +80,8 @@ experiment below remains diagnostic evidence.
 Current [keyboard/controller mappings](2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
 reuse that panel, input and dispatcher. Sixteen focused cases/build checks are
 recorded separately from device acceptance. Ordinary repeats are suppressed;
-a narrow source patch rejects synthesized focus presses at the existing host
-owner. The [input acceptance packet](../validation/pedal-input-acceptance_20261020/README.md)
+the shared Mere host rejects synthesized focus presses; the coordinated pool
+intake retires Woodshed's temporary source snapshot. The [input acceptance packet](../validation/pedal-input-acceptance_20261020/README.md)
 records callback/None-intent repairs, 48 focused cases and three fresh native
 processes with 35 independently received messages. Separate real-key/guitar
 checks finish with 12 OS-accepted messages, quiet reconnect/holds, five observed

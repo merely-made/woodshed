@@ -504,23 +504,19 @@ cannot retarget the old action. The existing writer owns optional release,
 partial outcomes and retained uncertainty. Input mapping does not establish
 musical timing, instrument reception or an audio engine trigger.
 
-**Shared-host correction:** pinned Mere `d1a200b1` discarded winit's
-`KeyboardInput.is_synthetic`. Winit 0.30.13 can synthesize non-repeat presses
-for held keys on focus regain on Windows/X11, with ordinary character/text
-fields. Filtering app key data cannot reliably distinguish them. A narrow
-MPL-2.0 supplier patch now rejects synthesized presses at that same shared
-event owner, before editing, button activation or shortcuts; releases keep
-their existing Tab-navigation path. Normal OS repeat is still filtered by the
-app's interceptor. The root Cargo source patch consumes one provenance-pinned
-snapshot of `cambium-genet-winit-host`; metadata confirms exactly one host.
-All its dependency identities remain the original Mere/Genet sources. No app
-host loop or replacement input driver is introduced. The exact source delta,
-license, hashes and return-to-owner condition live in
-`vendor/cambium-genet-winit-host/PATCHES.md` and the input receipt. The shared
-owner can absorb that same change, then its consumed pin and this supplier
-patch are replaced together. Focus-snapshot admission has a focused test and
-Windows/Linux gate compilation; native Windows/X11 focus interaction remains
-runtime qualification, not established by Mac software checks.
+**Shared-host correction:** the native Mere event owner rejects synthesized
+presses before editing, button activation or shortcuts; releases keep their
+existing Tab-navigation path. Normal OS repeat is still filtered by the app's
+interceptor. During the coordinated pool intake, Mere `a07a375e` absorbs the
+exact guard and test from Woodshed's temporary snapshot. Woodshed then receives
+that shared revision and removes the root source patch and all 52 snapshot
+files, retaining one host package from its owner. The
+[receiving record](../../../validation/stack-family_20261011/pool-cohort-20261022.json)
+records the source hashes and focused CPU checks; the previous snapshot and its
+provenance remain in Git history at Woodshed `97bb21e5`. The existing input
+receipt records the earlier Mac acceptance and Windows/Linux gate compilation.
+Native Windows/X11 focus interaction remains unqualified by this receiving
+change.
 
 ### Input acceptance follow-through (2026-10-21)
 

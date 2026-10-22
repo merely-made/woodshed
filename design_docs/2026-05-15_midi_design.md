@@ -77,8 +77,8 @@ explicit input None retires requested intent even after confirmed disconnection.
 suppressed; learning sends nothing, input history is consumed once, and lifetime
 changes disarm. See the [canonical input contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
 and [focused input evidence](../ports/ringdown/validation/pedal-inputs_20261020/README.md).
-A narrow source patch at the existing shared host rejects synthesized focus
-presses before dispatch; metadata confirms one resolved host. This implementation
+The shared Mere host rejects synthesized focus presses before dispatch; the
+coordinated pool intake retires Woodshed's temporary source snapshot. This implementation
 has focused retained-control/gate/build evidence; the [input acceptance packet](../ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
 adds 48 focused cases and a three-process/35-message native controller/fault
 cohort. The separate physical cohort confirms real held N/P and fresh CC/Note
