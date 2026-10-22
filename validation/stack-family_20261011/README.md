@@ -125,3 +125,11 @@ passes both saved appearance reopen checks using the unchanged seed profiles,
 with 33 presentations and four reviewed nonblank captures. Those new receipts
 close the two appearance reopen gates; they do not promote the earlier failed
 or unattributed captures into successful evidence.
+
+## Coordinated pool receiving — 2026-10-22
+
+[pool-cohort-20261022.json](pool-cohort-20261022.json) records the four receiving
+roots, exact source identities and CPU checks for Mere's coordinated Armillary
+pool intake. The shared Mere host now owns the synthesized-focus guard and its
+test; Woodshed removes the temporary source override and 52-file snapshot.
+This receiving record does not extend the earlier native or device evidence.

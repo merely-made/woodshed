@@ -1,0 +1,421 @@
+{
+  "kind": "Woodshed coordinated pool receiving and shared-host snapshot retirement",
+  "date": "2026-10-22",
+  "qualified_source_revision": "cbda7166f3efe65c6629873507a5d672f1fe2bc8",
+  "shared_ledger": "https://github.com/merely-made/mere/blob/main/support/family-promotion/pool-cohort-rollout-20261022.json",
+  "mere_sdk": "a07a375ed9f49d31bb757c4dd516a0fa7af33fde",
+  "graphs": [
+    {
+      "lock": "Cargo.lock",
+      "sha256": "e54b5b4e09c19b27c6b90f58207cf13b85764f594023e2d0b66034a6b45f5432",
+      "packages": [
+        {
+          "name": "apparatus-core",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/armillary.git?rev=75643df1f178757bb7b6386913af1a39353f3069#75643df1f178757bb7b6386913af1a39353f3069"
+        },
+        {
+          "name": "armillary",
+          "version": "0.1.1",
+          "source": "git+https://github.com/merely-made/armillary.git?rev=92d5b15cf39aaac40a3f2d863ffee69c9be11bfc#92d5b15cf39aaac40a3f2d863ffee69c9be11bfc"
+        },
+        {
+          "name": "cambium-genet-winit-host",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/mere.git?branch=main#a07a375ed9f49d31bb757c4dd516a0fa7af33fde"
+        },
+        {
+          "name": "chartulary",
+          "version": "0.2.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "eidetic",
+          "version": "0.0.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "esp",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/esp.git?rev=6d6ad84b773c9baf2390bd7807a21ca9887e6efd#6d6ad84b773c9baf2390bd7807a21ca9887e6efd"
+        },
+        {
+          "name": "muniment",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "netrender",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/netrender.git?branch=main#ec15eb269855c798467c93a6d10031100fdfdf65"
+        }
+      ]
+    },
+    {
+      "lock": "ports/hocket/Cargo.lock",
+      "sha256": "6f0f999893f2d9511249a287f043e8bda16cc6844c759748f0b5101a7fc3c48c",
+      "packages": [
+        {
+          "name": "apparatus-core",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/armillary.git?rev=75643df1f178757bb7b6386913af1a39353f3069#75643df1f178757bb7b6386913af1a39353f3069"
+        },
+        {
+          "name": "armillary",
+          "version": "0.1.1",
+          "source": "git+https://github.com/merely-made/armillary.git?rev=92d5b15cf39aaac40a3f2d863ffee69c9be11bfc#92d5b15cf39aaac40a3f2d863ffee69c9be11bfc"
+        },
+        {
+          "name": "cambium-genet-winit-host",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/mere.git?branch=main#a07a375ed9f49d31bb757c4dd516a0fa7af33fde"
+        },
+        {
+          "name": "chartulary",
+          "version": "0.2.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "eidetic",
+          "version": "0.0.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "muniment",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "netrender",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/netrender.git?branch=main#ec15eb269855c798467c93a6d10031100fdfdf65"
+        }
+      ]
+    },
+    {
+      "lock": "ports/redshank/Cargo.lock",
+      "sha256": "f318dd829914682eb5b9142f1337ec0e5452d6c0d9fe8ba6302994e6eaedc15b",
+      "packages": [
+        {
+          "name": "apparatus-core",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/armillary.git?rev=75643df1f178757bb7b6386913af1a39353f3069#75643df1f178757bb7b6386913af1a39353f3069"
+        },
+        {
+          "name": "cambium-genet-winit-host",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/mere.git?branch=main#a07a375ed9f49d31bb757c4dd516a0fa7af33fde"
+        },
+        {
+          "name": "chartulary",
+          "version": "0.2.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "eidetic",
+          "version": "0.0.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "muniment",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "murm-wire",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/murm.git?branch=main#5b1c5cac2f5d0e275ead94ae4b8b25c65a183694"
+        },
+        {
+          "name": "netfetcher",
+          "version": "0.1.1",
+          "source": "git+https://github.com/merely-made/genet.git?branch=main#7d1d89dbe729a853cf59c7b3f43ee3d8e494fde8"
+        },
+        {
+          "name": "netrender",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/netrender.git?branch=main#ec15eb269855c798467c93a6d10031100fdfdf65"
+        },
+        {
+          "name": "scroll-protocol",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab"
+        }
+      ]
+    },
+    {
+      "lock": "validation/relationship-recipe/Cargo.lock",
+      "sha256": "1a0adae11b179c0f34486275629501f7949ae2682840cd807330fb5e1b32e3b0",
+      "packages": [
+        {
+          "name": "armillary",
+          "version": "0.1.1",
+          "source": "git+https://github.com/merely-made/armillary.git?rev=92d5b15cf39aaac40a3f2d863ffee69c9be11bfc#92d5b15cf39aaac40a3f2d863ffee69c9be11bfc"
+        },
+        {
+          "name": "chartulary",
+          "version": "0.2.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "eidetic",
+          "version": "0.0.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "esp",
+          "version": "0.1.0",
+          "source": "git+https://github.com/merely-made/esp.git?rev=6d6ad84b773c9baf2390bd7807a21ca9887e6efd#6d6ad84b773c9baf2390bd7807a21ca9887e6efd"
+        },
+        {
+          "name": "muniment",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+        },
+        {
+          "name": "netrender",
+          "version": "0.1.2",
+          "source": "git+https://github.com/merely-made/netrender.git?branch=main#ec15eb269855c798467c93a6d10031100fdfdf65"
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "label": "woodshed-core-graph",
+      "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+      "command": [
+        "cargo",
+        "+1.99.1",
+        "--config",
+        "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+        "test",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/Users/markik/Code/repos/mere/target",
+        "-j1",
+        "-p",
+        "woodshed-core",
+        "-p",
+        "woodshed-graph",
+        "--lib"
+      ],
+      "exit_code": 0,
+      "seconds": 924.74,
+      "host": "m4-imac.lan",
+      "architecture": "arm64",
+      "log_sha256": "c041837a1824b4401510a54e1146bbbf1f8904a7a8160756ecdc6cdafe156de1",
+      "results": [
+        "test result: ok. 315 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s",
+        "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s"
+      ]
+    },
+    {
+      "label": "woodshed-hocket",
+      "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+      "command": [
+        "cargo",
+        "+1.99.1",
+        "--config",
+        "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+        "test",
+        "--manifest-path",
+        "ports/hocket/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/Users/markik/Code/repos/mere/target",
+        "-j1",
+        "--workspace"
+      ],
+      "exit_code": 0,
+      "seconds": 1358.24,
+      "host": "m4-imac.lan",
+      "architecture": "arm64",
+      "log_sha256": "0c59b3d734306557c1dbdc04d9de8350172f41ec3e2498cc89e2761c5583cdcc",
+      "results": [
+        "test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 94 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 13.50s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "label": "woodshed-redshank",
+      "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+      "command": [
+        "cargo",
+        "+1.99.1",
+        "--config",
+        "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+        "test",
+        "--manifest-path",
+        "ports/redshank/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/Users/markik/Code/repos/mere/target",
+        "-j1",
+        "--workspace"
+      ],
+      "exit_code": 0,
+      "seconds": 548.18,
+      "host": "m4-imac.lan",
+      "architecture": "arm64",
+      "log_sha256": "a1ffd731f466c24a881567ca6d9a3a2fff771afecb972f2f43a1bd700c3724a0",
+      "results": [
+        "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s",
+        "test result: ok. 92 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.53s",
+        "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s",
+        "test result: ok. 32 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 1.29s",
+        "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s",
+        "test result: ok. 107 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.80s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+        "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+      ]
+    },
+    {
+      "label": "woodshed-relationship-recipe-final",
+      "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+      "command": [
+        "cargo",
+        "+1.99.1",
+        "--config",
+        "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+        "test",
+        "--manifest-path",
+        "validation/relationship-recipe/Cargo.toml",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/Users/markik/Code/repos/mere/target",
+        "-j1",
+        "--workspace"
+      ],
+      "exit_code": 0,
+      "seconds": 31.85,
+      "host": "m4-imac.lan",
+      "architecture": "arm64",
+      "log_sha256": "2582ec8875c9584855d27818309991437b5f94ae816b4bcf32840ba6c6572bf6",
+      "results": [
+        "test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.10s"
+      ]
+    },
+    {
+      "label": "woodshed-leaf-libraries",
+      "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+      "command": [
+        "cargo",
+        "+1.99.1",
+        "--config",
+        "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+        "test",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/Users/markik/Code/repos/mere/target",
+        "-j1",
+        "-p",
+        "woodshed-views",
+        "-p",
+        "woodshed-notation",
+        "--lib"
+      ],
+      "exit_code": 0,
+      "seconds": 193.14,
+      "host": "m4-imac.lan",
+      "architecture": "arm64",
+      "log_sha256": "a34d56ae4b2a30bfc5708253b9a21b3b9d84b4b273fc1f162477222c8a74ecaa",
+      "results": [
+        "test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s",
+        "test result: ok. 297 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.28s"
+      ]
+    },
+    {
+      "label": "woodshed-desktop-leaf-final",
+      "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+      "command": [
+        "cargo",
+        "+1.99.1",
+        "--config",
+        "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+        "test",
+        "--locked",
+        "--offline",
+        "--target-dir",
+        "/Users/markik/Code/repos/mere/target",
+        "-j1",
+        "-p",
+        "woodshed-genet",
+        "--bin",
+        "woodshed-genet",
+        "atmosphere_is_clipped_resized_and_beneath_graph_independently_of_camera"
+      ],
+      "exit_code": 0,
+      "seconds": 2.39,
+      "host": "m4-imac.lan",
+      "architecture": "arm64",
+      "log_sha256": "c3df56a0d0b34efe927a7b838234e230480591f819528ba504277f5d7f0e82e8",
+      "results": [
+        "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 319 filtered out; finished in 0.00s"
+      ]
+    }
+  ],
+  "shared_host": {
+    "donor_revision": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+    "recorded_mere_base": "7de937d0e708db24d9a325cbff3fbe5beb3a4d3c",
+    "guard_sha256": "46427d1209f323bcad89d9e5d39e187493a1eee025c8599fb51acba32b192669",
+    "vendor_files": 52,
+    "vendor_lines": 13288,
+    "source_review": "Independent audit verifies 48 original upstream hashes; 46 originals byte-identical, one expanded manifest and lib event guard plus formatting. No other semantic vendor delta."
+  },
+  "retirement": "The owner SDK contains the exact guarded lib and helper/test; root Cargo path patch and all 52 snapshot files are removed. Historical snapshot/provenance remains in Git at donor_revision.",
+  "compatibility": "Current Cambium0.6/Sprigging0.3 and Eidetic34105 public type cohort; Redshank Errand3d family matches SDK; Genet7d/Murm5b and Netrender ec15 receiving sources retained where used.",
+  "scope": "Locked source graphs and CPU/process tests. Existing native-recovery delivery merged and preserved. No new audio, physical-device, native Windows/X11 focus or Knot checkpoint acceptance.",
+  "leaf_api_compatibility": "Four existing read-only accessibility hooks now use the Sprigging0.3 shared Leaf receiver &self; method bodies are unchanged. Notation/fretboard and graph-wrapper leaves preserve their labels and readings.",
+  "raw_evidence_local_only": "/Users/markik/Code/testing/pool-cohort-20261021",
+  "total_successful_gate_executions": {
+    "passed": 1086,
+    "ignored": 11,
+    "note": "Earlier failed compile and empty-filter attempt are controls, excluded from totals."
+  },
+  "leaf_api_before_control": {
+    "label": "woodshed-relationship-recipe",
+    "cwd": "/Users/markik/Code/worktrees/woodshed-pool-cohort-20261021",
+    "command": [
+      "cargo",
+      "+1.99.1",
+      "--config",
+      "build.build-dir=\"/Users/markik/Code/repos/mere/target/build\"",
+      "test",
+      "--manifest-path",
+      "validation/relationship-recipe/Cargo.toml",
+      "--locked",
+      "--offline",
+      "--target-dir",
+      "/Users/markik/Code/repos/mere/target",
+      "-j1",
+      "--workspace"
+    ],
+    "exit_code": 101,
+    "seconds": 262.18,
+    "host": "m4-imac.lan",
+    "architecture": "arm64",
+    "log_sha256": "eb4f4f3db4e524cd20532e5cc017396d2f75b9481ce014fa5a530a74d287d86a",
+    "results": []
+  },
+  "protected_ringdown_lock_sha256": "5011ad21e2f4673966cb040fb3d190b4d8d804451c62f781ff6bdb0e4a8b1dd8"
+}
