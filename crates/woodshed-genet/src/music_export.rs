@@ -1,6 +1,6 @@
 //! Native destination selection for the frozen MusicXML draft export.
 use crate::sync::Ctx;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 #[cfg(target_os = "macos")]
 fn destination(name: &str) -> Option<PathBuf> {
     rfd::FileDialog::new()
@@ -13,8 +13,8 @@ fn destination(name: &str) -> Option<PathBuf> {
 fn destination(name: &str) -> Option<PathBuf> {
     cambium_genet_winit_host::choose_save_path("Export MusicXML", name, &["musicxml"])
 }
-pub fn after_dispatch(ctx: &mut Ctx<'_>) {
-    after_dispatch_with(ctx, |name| {
+pub fn after_dispatch(shared: &crate::shared::Shared, ctx: &mut Ctx<'_>) {
+    after_dispatch_with(shared, ctx, |name| {
         if std::env::var_os("WOODSHED_SCENARIO").is_some()
             && std::env::var_os("WOODSHED_MUSICXML_RECEIPT_EXPORT").is_some()
         {
@@ -24,7 +24,11 @@ pub fn after_dispatch(ctx: &mut Ctx<'_>) {
         destination(name)
     });
 }
-pub(crate) fn after_dispatch_with(ctx: &mut Ctx<'_>, choose: impl FnOnce(&str) -> Option<PathBuf>) {
+pub(crate) fn after_dispatch_with(
+    shared: &crate::shared::Shared,
+    ctx: &mut Ctx<'_>,
+    choose: impl FnOnce(&str) -> Option<PathBuf>,
+) {
     let request = ctx.runner.state().music_editor.export_request.clone();
     let Some((name, xml)) = request else {
         return;
@@ -50,23 +54,7 @@ pub(crate) fn after_dispatch_with(ctx: &mut Ctx<'_>, choose: impl FnOnce(&str) -
         } else {
             parent.join(path.file_name().ok_or("Choose a file name")?)
         };
-        let storage = crate::storage::FsBackend::new();
-        for protected in storage.protected_export_paths() {
-            if let Ok(existing) = protected.canonicalize() {
-                if target == existing {
-                    return Err(
-                        "Choose an export outside Woodshed's saved session and settings.".into(),
-                    );
-                }
-            }
-        }
-        for protected in storage.protected_export_directories() {
-            if let Ok(existing) = protected.canonicalize() {
-                if target.starts_with(existing) {
-                    return Err("Choose an export outside Woodshed's private storage.".into());
-                }
-            }
-        }
+        protect_destination(shared, &target)?;
         use std::io::Write;
         let mut temporary = tempfile::NamedTempFile::new_in(&parent).map_err(|e| e.to_string())?;
         temporary
@@ -84,12 +72,50 @@ pub(crate) fn after_dispatch_with(ctx: &mut Ctx<'_>, choose: impl FnOnce(&str) -
     });
 }
 
+fn protect_destination(shared: &crate::shared::Shared, target: &Path) -> Result<(), String> {
+    let target = crate::paths::absolute(target)?;
+    if let Some(root) = shared.data_root.as_ref() {
+        let root = crate::wav_export::normalized(root)?;
+        if crate::wav_export::reserved_match(&target, &root, true) {
+            return Err("Choose an export outside Woodshed's private storage.".into());
+        }
+    }
+    for protected in shared.theme_library.iter() {
+        let protected = crate::wav_export::normalized(protected)?;
+        if crate::wav_export::reserved_match(&target, &protected, false) {
+            return Err("Choose an export outside Woodshed's authored theme library.".into());
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use taproot::Selector;
     use woodshed_views::{
         notation_leaf::NotationView, stage::music_editor, workspace::WorkspacePanel,
     };
+    #[test]
+    fn musicxml_protects_future_roots_and_library_case_aliases() {
+        let directory = tempfile::tempdir().unwrap();
+        let shared = crate::shared::Shared::with_store(None, None, None);
+        shared.borrow_mut().data_root = Some(directory.path().join("PrivateRoot"));
+        shared.borrow_mut().theme_library = Some(directory.path().join("AuthoredThemes.json"));
+        let shared = shared.borrow();
+        assert!(
+            super::protect_destination(&shared, &directory.path().join("privateroot")).is_err()
+        );
+        assert!(
+            super::protect_destination(&shared, &directory.path().join("authoredthemes.json"))
+                .is_err()
+        );
+        assert!(
+            super::protect_destination(&shared, &directory.path().join("ordinary.musicxml"))
+                .is_ok()
+        );
+        assert!(!directory.path().join("PrivateRoot").exists());
+    }
+
     #[test]
     fn native_music_controls_capture_fret_drags_and_save_without_changing_cards() {
         let store = woodshed_core::storage::SessionStore::new(Box::new(

@@ -2388,8 +2388,7 @@ mod tests {
                     "--ignored",
                     "--nocapture",
                 ])
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
                 .env("WOODSHED_CAPTURE_FIXTURE", mode)
                 .status()
                 .unwrap();
@@ -2400,26 +2399,20 @@ mod tests {
     /// CPU-only qualification of an explicitly copied Keeper profile. The
     /// caller owns the isolated vault/socket and all supplied filesystem paths.
     #[test]
-    #[ignore = "requires an isolated unlocked Keeper and copied profile overrides"]
+    #[ignore = "requires an isolated unlocked Keeper and copied application data root"]
     fn sealed_profile_compression_probe() {
         use std::io::Write;
         use std::path::PathBuf;
 
-        let state_path = PathBuf::from(
-            std::env::var_os("WOODSHED_STATE").expect("explicit copied WOODSHED_STATE is required"),
-        );
-        let settings_path = PathBuf::from(
-            std::env::var_os("WOODSHED_SETTINGS")
-                .expect("explicit copied WOODSHED_SETTINGS is required"),
+        let data_root = PathBuf::from(
+            std::env::var_os("WOODSHED_DATA_DIR")
+                .expect("explicit copied WOODSHED_DATA_DIR is required"),
         );
         let output_dir = PathBuf::from(
             std::env::var_os("WOODSHED_CAPTURE_PROBE_DIR")
                 .expect("owned WOODSHED_CAPTURE_PROBE_DIR is required"),
         );
-        assert!(
-            state_path.is_absolute() && settings_path.is_absolute() && output_dir.is_absolute()
-        );
-        assert!(state_path.is_file(), "copied profile session must exist");
+        assert!(data_root.is_absolute() && output_dir.is_absolute());
         assert!(
             output_dir.is_dir(),
             "owned probe output directory must exist"
@@ -2434,10 +2427,20 @@ mod tests {
             .open(&report_path)
             .expect("probe reports never overwrite existing files");
 
-        let (storage, seal) = crate::storage::open_store_as(None);
+        let crate::storage::OpenedStore {
+            storage,
+            seal,
+            binding,
+        } = crate::storage::open_store_as(None);
         assert!(
             matches!(seal, PracticeSeal::Sealed { .. }),
             "actual Keeper custody must be sealed"
+        );
+        let binding = binding.expect("sealed store binding");
+        assert!(binding.directory().starts_with(&data_root));
+        assert!(
+            binding.directory().join("session").is_file(),
+            "copied persona session must exist"
         );
         let original_json = storage
             .load()
@@ -2450,6 +2453,7 @@ mod tests {
         assert_eq!(ui.loop_captures, original.loop_captures);
         let shared = Shared::with_store(Some(storage), Some(seal), None);
         let mut shared = shared.borrow_mut();
+        shared.store_binding = Some(binding);
         shared.backend = Some(CpalBackend::offline_for_test());
         begin_session(&mut shared, &ui)
             .expect("actual capture bank must hydrate through session reset");
@@ -2575,8 +2579,12 @@ mod tests {
     #[ignore = "fresh-process child, invoked by the sealed capture test"]
     fn fresh_process_fixture() {
         let mode = std::env::var("WOODSHED_CAPTURE_FIXTURE").unwrap();
+        let directory = std::path::PathBuf::from(
+            std::env::var_os("WOODSHED_DATA_DIR").expect("isolated application data root required"),
+        )
+        .join("fixed-test-owner");
         let storage: SessionStore<HostBackend> = SessionStore::new(Box::new(SealedBackend::new(
-            crate::storage::FsBackend::new(),
+            crate::storage::FsBackend::at(&directory),
             [37; 32],
         )));
         let (expected_ui, expected) = fixture();
@@ -2637,7 +2645,7 @@ mod tests {
             state
                 .persist(&storage, true, backend.capture_snapshot(), &mut ui)
                 .unwrap();
-            let at_rest = std::fs::read(std::env::var("WOODSHED_STATE").unwrap()).unwrap();
+            let at_rest = std::fs::read(directory.join("session")).unwrap();
             assert!(serde_json::from_slice::<serde_json::Value>(&at_rest).is_err());
             println!(
                 "sealed capture seed: {} exact frames, no input device",

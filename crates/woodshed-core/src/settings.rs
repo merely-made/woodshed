@@ -1,4 +1,4 @@
-//! Canonical durable application settings.
+//! Canonical durable persona settings.
 //!
 //! Subsections match the product's Settings routes. Each subsection is
 //! flattened for serialization so sessions written before `AppSettings`
@@ -375,10 +375,10 @@ impl Default for AccessibilitySettings {
     }
 }
 
-/// Desktop window placement remembered as an application preference.
+/// Desktop window placement remembered by the device-local host preferences.
 ///
-/// This stays free of host types so the portable core can serialize it while
-/// the desktop adapter converts at its boundary.
+/// This stays free of host types; it is deliberately absent from
+/// [`AppSettings`], so persona settings never carry a machine's window layout.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct WindowSettings {
     pub x: f64,
@@ -393,8 +393,6 @@ pub struct WindowSettings {
 pub struct AppSettings {
     #[serde(rename = "settings_page")]
     pub page: SettingsPage,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub window: Option<WindowSettings>,
     #[serde(flatten)]
     pub appearance: AppearanceSettings,
     #[serde(flatten)]
@@ -545,23 +543,9 @@ mod tests {
     }
 
     #[test]
-    fn window_geometry_is_optional_and_round_trips() {
-        let default_json = serde_json::to_value(AppSettings::default()).unwrap();
-        assert!(default_json.get("window").is_none());
-
-        let mut settings = AppSettings::default();
-        settings.window = Some(WindowSettings {
-            x: 120.0,
-            y: 80.0,
-            width: 900.0,
-            height: 640.0,
-            maximized: true,
-        });
-        let json = serde_json::to_string(&settings).unwrap();
-        assert_eq!(
-            serde_json::from_str::<AppSettings>(&json).unwrap(),
-            settings
-        );
+    fn persona_settings_do_not_serialize_window_geometry() {
+        let json = serde_json::to_value(AppSettings::default()).unwrap();
+        assert!(json.get("window").is_none());
     }
 
     #[test]

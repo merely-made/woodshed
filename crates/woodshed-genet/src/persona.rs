@@ -21,7 +21,7 @@ use persona_picker::PickerEvent;
 use woodshed_views::persona::{PendingSwitch, PersonaPick, PickPurpose, SwitchDecision};
 
 use crate::shared::Shared;
-use crate::storage::{CUSTODY_APP, open_store_as};
+use crate::storage::{CUSTODY_APP, OpenedStore, open_store_as, open_store_at};
 use crate::sync::Ctx;
 
 /// The roster to ask about, or `None` when djinn already decides or cannot
@@ -127,6 +127,10 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
         // family choice still needs custody even when this process holds the
         // selected store. Canonical identity, rather than display name, binds it.
         if already_chosen
+            && shared.store_binding.as_ref().is_some_and(|binding| {
+                shared.data_root.as_deref() == Some(binding.root())
+                    && binding.matches_current(&profile).unwrap_or(false)
+            })
             && shared.storage.is_some()
             && matches!(shared.seal.as_ref(),
                 Some(woodshed_views::persona::PracticeSeal::Sealed { persona, .. })
@@ -161,28 +165,27 @@ pub(crate) fn resume_switch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     if pending.decision.is_none() && !pending.waiting {
         return;
     }
-    resume_switch_with(shared, ctx, |profile| open_store_as(Some(profile)));
+    let root = shared.data_root.clone();
+    resume_switch_with(shared, ctx, |profile| match &root {
+        Some(root) => open_store_at(root, Some(profile)),
+        None => open_store_as(Some(profile)),
+    });
 }
 
 fn resume_switch_with(
     shared: &mut Shared,
     ctx: &mut Ctx<'_>,
-    mut open: impl FnMut(
-        &personae::ProfileId,
-    ) -> (
-        woodshed_core::storage::SessionStore<crate::storage::HostBackend>,
-        woodshed_views::persona::PracticeSeal,
-    ),
+    mut open: impl FnMut(&personae::ProfileId) -> OpenedStore,
 ) {
     let mut chosen = None;
     ctx.runner
         .update(|ui| chosen = preserve_pending_switch(shared, ui));
     if let Some(profile) = chosen {
-        let (storage, seal) = open(&profile);
+        let mut opened = open(&profile);
         // A successful custody connection can still answer as another profile
         // if the family's choice changed while it was reopening. The selected
         // identity, not that convention, authorizes retiring outgoing practice.
-        let seal = match seal {
+        opened.seal = match opened.seal {
             woodshed_views::persona::PracticeSeal::Sealed { ref persona, .. }
                 if persona != &profile.0 =>
             {
@@ -195,7 +198,7 @@ fn resume_switch_with(
             },
             seal => seal,
         };
-        install_store(shared, ctx, storage, seal, PickPurpose::Switch);
+        install_store(shared, ctx, opened, PickPurpose::Switch);
     }
 }
 
@@ -303,45 +306,71 @@ fn settle(
 ) {
     // djinn switches to the choice and remembers it for the family; a switch
     // it refuses leaves the store pending rather than on somebody else.
-    let (storage, seal) = open_store_as(chosen);
-    install_store(shared, ctx, storage, seal, purpose);
+    let opened = match shared.data_root.as_deref() {
+        Some(root) => open_store_at(root, chosen),
+        None => open_store_as(chosen),
+    };
+    install_store(shared, ctx, opened, purpose);
 }
 
 fn install_store(
     shared: &mut Shared,
     ctx: &mut Ctx<'_>,
-    storage: woodshed_core::storage::SessionStore<crate::storage::HostBackend>,
-    seal: woodshed_views::persona::PracticeSeal,
+    opened: OpenedStore,
     purpose: PickPurpose,
 ) {
-    if purpose == PickPurpose::Switch {
-        if let woodshed_views::persona::PracticeSeal::Pending { reason } = &seal {
-            ctx.runner.update(|ui| {
-                if let Some(pending) = &mut ui.pending_persona_switch {
-                    pending.decision = None;
-                    pending.waiting = false;
-                    pending.notice = format!(
-                        "Incoming practice could not open ({reason}). Outgoing practice remains \
-                         active. Retry, cancel the switch, or explicitly discard outgoing changes \
-                         and retry opening the selected persona."
-                    );
-                }
-            });
-            return;
+    let OpenedStore {
+        storage,
+        seal,
+        binding,
+    } = opened;
+    let candidate = if purpose == PickPurpose::Switch || binding.is_some() {
+        let admitted = (|| {
+            if let woodshed_views::persona::PracticeSeal::Pending { reason } = &seal {
+                return Err(reason.clone());
+            }
+            let candidate = crate::session::admit(&storage)?;
+            let binding = binding
+                .as_ref()
+                .ok_or("Incoming store has no admitted owner.")?;
+            let profile = shared_pending_profile(ctx)
+                .or_else(|| match &seal {
+                    woodshed_views::persona::PracticeSeal::Sealed { persona, .. } => {
+                        Some(personae::ProfileId(persona.clone()))
+                    },
+                    _ => None,
+                })
+                .ok_or("The persona switch is no longer pending.")?;
+            binding.choose_profile(&profile)?;
+            Ok(candidate)
+        })();
+        match admitted {
+            Ok(candidate) => Some(candidate),
+            Err(reason) => {
+                ctx.runner.update(|ui| {
+                    if let Some(pick) = &mut ui.persona {
+                        pick.notice = Some(format!("Practice could not open: {reason}. Choose another persona or continue unsaved."));
+                    }
+                    if let Some(pending) = &mut ui.pending_persona_switch {
+                        pending.decision = None;
+                        pending.waiting = false;
+                        pending.notice = format!("Incoming practice could not open ({reason}). Outgoing practice remains active. Retry or cancel the switch.");
+                    }
+                });
+                return;
+            },
         }
-    }
+    } else {
+        None
+    };
+    let mut candidate = candidate;
     shared.wav_export.revoke_session();
     ctx.runner.update(|ui| {
-        if purpose == PickPurpose::Switch {
-            // The whole session goes, not just the parts the incoming persona
-            // happens to have stored. `restore` returns early on a store with
-            // no session, so anything left standing would be the OUTGOING
-            // persona's practice — and the next frame's save would write it
-            // into this persona's store. Host-fed fields (the MIDI port lists,
-            // latency) refill on the next dispatch.
-            reset_for_persona(ui);
+        if let Some(incoming) = candidate.take() {
+            install_persona_state(ui, incoming);
+        } else {
+            crate::session::restore(&storage, ui);
         }
-        crate::session::restore(&storage, ui);
         ui.persona = None;
         // After the reset above, so a switch does not wipe the seal it just
         // established. Cloned rather than moved: the callback is `FnMut`.
@@ -356,12 +385,28 @@ fn install_store(
     // who is practising.
     shared.seal = Some(seal);
     shared.storage = Some(storage);
+    shared.store_binding = binding;
 }
 
 /// Replace persona-owned practice and application settings while retaining the
 /// process-wide MIDI routing, authored library and its current editor model. Reloading that
 /// library here would introduce profile/environment I/O during a session reset.
+fn shared_pending_profile(ctx: &Ctx<'_>) -> Option<personae::ProfileId> {
+    ctx.runner
+        .state()
+        .pending_persona_switch
+        .as_ref()
+        .map(|pending| pending.profile.clone())
+}
+
 fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
+    install_persona_state(ui, woodshed_views::stage::UiState::new());
+}
+
+fn install_persona_state(
+    ui: &mut woodshed_views::stage::UiState,
+    incoming: woodshed_views::stage::UiState,
+) {
     let practice_clock_managed = ui.practice_clock_managed;
     let event_clock = ui.event_clock;
     let appearance = std::mem::take(&mut ui.appearance);
@@ -373,10 +418,14 @@ fn reset_for_persona(ui: &mut woodshed_views::stage::UiState) {
     } else {
         ui.appearance_notice.take()
     };
-    *ui = woodshed_views::stage::UiState::new();
+    *ui = incoming;
     ui.practice_clock_managed = practice_clock_managed;
     ui.event_clock = event_clock;
     ui.appearance = appearance;
+    // Definitions and the shared editor survive, while cached paint, queued
+    // application choices and font drafts belong to the outgoing persona.
+    ui.appearance.reset_active();
+    ui.appearance.reset_font_editor(&ui.app_settings.appearance);
     ui.midi = midi;
     ui.appearance_authoring_available = authoring_available;
     ui.appearance_notice = library_notice;
@@ -486,6 +535,149 @@ mod tests {
         assert_eq!(resolved.theme.id, authored_id);
         assert!(resolved.fallback_reason.is_none());
         assert!(ui.appearance_authoring_available);
+    }
+
+    #[test]
+    fn admitted_persona_install_keeps_shared_editor_and_clears_outgoing_appearance_requests() {
+        use std::cell::Cell;
+        use tabard::typography::{FontFamily, FontRole};
+        use woodshed_core::{settings::AppSettings, storage::SessionStore};
+        use woodshed_views::appearance::{AppearanceState, commit_selection};
+
+        let directory = tempfile::tempdir().unwrap();
+        let library = directory.path().join("themes.json");
+        let mut appearance = AppearanceState::load(&library).unwrap();
+        let mut incoming_settings = AppSettings::default();
+        incoming_settings.appearance.theme = "Ember".into();
+        appearance
+            .begin_edit(&incoming_settings.appearance)
+            .unwrap();
+        appearance.workshop.save();
+        appearance
+            .apply_workshop(&mut incoming_settings.appearance)
+            .unwrap();
+        let authored_id = appearance.workshop.draft_theme().id.clone();
+        incoming_settings
+            .appearance
+            .theme_choice
+            .as_mut()
+            .unwrap()
+            .fonts
+            .0
+            .insert(
+                FontRole::Interface,
+                vec![FontFamily::new("Incoming Interface").unwrap()],
+            );
+        appearance.set_available_fonts(vec![
+            "Incoming Interface".into(),
+            "Outgoing Interface".into(),
+        ]);
+        let reader = appearance.workshop.reader_preview();
+        *appearance.workshop.text_field_mut("name").unwrap() =
+            cambium::TextInput::new("Unfinished shared theme title");
+        appearance.workshop_open = true;
+
+        let mut ui = UiState::new();
+        ui.appearance = appearance;
+        ui.appearance_authoring_available = true;
+        ui.appearance
+            .request_selection(&ui.app_settings.appearance, "woodshed:parchment", None)
+            .unwrap();
+        *ui.appearance.font_editor.field_mut(FontRole::Interface) =
+            cambium::TextInput::new("Outgoing Interface");
+        ui.appearance.font_editor.request_apply();
+        let backend: crate::storage::HostBackend = Box::<muniment::MemoryBackend>::default();
+        let store = SessionStore::new(backend);
+        store
+            .try_save_settings(&serde_json::to_string(&incoming_settings).unwrap())
+            .unwrap();
+        let candidate = crate::session::admit(&store).unwrap();
+        install_persona_state(&mut ui, candidate);
+
+        assert_eq!(ui.app_settings, incoming_settings);
+        assert_eq!(
+            ui.appearance.workshop.library_path(),
+            Some(library.as_path())
+        );
+        assert!(std::rc::Rc::ptr_eq(
+            &reader,
+            &ui.appearance.workshop.reader_preview()
+        ));
+        assert!(ui.appearance.workshop_open);
+        assert_eq!(
+            ui.appearance.workshop.text_field("name").unwrap().text(),
+            "Unfinished shared theme title"
+        );
+        assert!(ui.appearance_authoring_available);
+        assert_eq!(
+            ui.appearance.font_editor.field(FontRole::Interface).text(),
+            "Incoming Interface"
+        );
+        assert_eq!(
+            ui.appearance.available_fonts,
+            vec!["Incoming Interface", "Outgoing Interface"]
+        );
+        let writes = Cell::new(0);
+        assert!(!commit_selection(&mut ui, |_| {
+            writes.set(writes.get() + 1);
+            Ok(())
+        }));
+        assert_eq!(
+            writes.get(),
+            0,
+            "no outgoing request may write incoming settings"
+        );
+        assert_eq!(ui.app_settings, incoming_settings);
+        let resolved = ui.appearance.resolve(&ui.app_settings.appearance);
+        assert_eq!(resolved.theme.id, authored_id);
+        assert!(resolved.fallback_reason.is_none());
+    }
+
+    #[test]
+    fn admitted_persona_install_reopens_same_settings_against_the_current_shared_definition() {
+        use woodshed_views::appearance::AppearanceState;
+
+        let directory = tempfile::tempdir().unwrap();
+        let mut ui = UiState::new();
+        ui.appearance = AppearanceState::load(directory.path().join("themes.json")).unwrap();
+        ui.appearance_authoring_available = true;
+        ui.appearance
+            .begin_edit(&ui.app_settings.appearance)
+            .unwrap();
+        ui.appearance.workshop.save();
+        ui.appearance
+            .apply_workshop(&mut ui.app_settings.appearance)
+            .unwrap();
+        let opening_name = ui
+            .appearance
+            .resolve(&ui.app_settings.appearance)
+            .theme
+            .name;
+        *ui.appearance.workshop.text_field_mut("name").unwrap() =
+            cambium::TextInput::new("Current shared definition");
+        ui.appearance.workshop.save();
+        assert_eq!(
+            ui.appearance.workshop.draft_theme().name,
+            "Current shared definition"
+        );
+        assert_eq!(
+            ui.appearance
+                .resolve(&ui.app_settings.appearance)
+                .theme
+                .name,
+            opening_name,
+            "saving a definition alone intentionally keeps the active presentation"
+        );
+        let mut candidate = UiState::new();
+        candidate.app_settings = ui.app_settings.clone();
+        install_persona_state(&mut ui, candidate);
+        assert_eq!(
+            ui.appearance
+                .resolve(&ui.app_settings.appearance)
+                .theme
+                .name,
+            "Current shared definition"
+        );
     }
 
     #[test]

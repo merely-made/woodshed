@@ -1,5 +1,5 @@
-# Isolated native acceptance. Use scratch WOODSHED_STATE, WOODSHED_SETTINGS,
-# WOODSHED_THEME_LIBRARY, XDG_DATA_HOME and PERSONAE_PASSPHRASE.
+# Isolated native acceptance. Use scratch WOODSHED_DATA_DIR, MERE_ROOT
+# and PERSONAE_PASSPHRASE.
 # Enable WOODSHED_APPEARANCE_RECEIPT=1 to leave musical devices inactive.
 log Shared Tabard appearance authoring in Woodshed
 settle 3

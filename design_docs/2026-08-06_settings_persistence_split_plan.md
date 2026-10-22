@@ -1,7 +1,9 @@
 # Woodshed Settings Persistence Split
 
 **Date**: 2026-08-06  
-**Status**: landed
+**Status**: historical split landed; current D1 cutover supersedes paths and window ownership.
+
+The accepted [D1 cutover](2026-10-16_preservation_input_admission_plan.md#p7-d1-persona-store-cutover) replaces the unreleased singleton paths below with strict persona stores under `WOODSHED_DATA_DIR` and device-local `desktop.json`. The commands and path discussion below describe the historical implementation.
 
 ## Boundary
 

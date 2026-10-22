@@ -27,9 +27,8 @@
 //! presented, so they need no compositor, no foreground, and no ffmpeg, and
 //! they cannot photograph another window by mistake.
 //!
-//! `WOODSHED_STATE` overrides the session file. A scenario run must set it:
-//! without it the run would read, and then overwrite, the real practice
-//! session.
+//! `WOODSHED_DATA_DIR` isolates the complete application root. A scenario run
+//! supplies an explicit scratch root, including persona stores and preferences.
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -2375,6 +2374,12 @@ impl Snapshot<'_, '_> {
                     .map_or("none".into(), audio_packs::PackSelection::revision),
             )
             .with_field("practice-saved", ui.practice_saved.to_string())
+            .with_field("persona-id", match ui.seal.as_ref() {
+                Some(woodshed_views::persona::PracticeSeal::Sealed { persona, .. }) => persona.clone(),
+                _ => "pending".into(),
+            })
+            .with_field("persona-owner", self.shared.store_binding.as_ref().map_or("".into(), |binding| binding.owner().to_string()))
+            .with_field("persona-switch-pending", ui.pending_persona_switch.is_some().to_string())
             .with_field(
                 "preview-starts",
                 self.shared

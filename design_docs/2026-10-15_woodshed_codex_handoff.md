@@ -289,9 +289,9 @@ audibility or latency claim follows from this receipt.
 ## 3. Traps
 
 - **Native runs.**
-  - Set `WOODSHED_SCENARIO`, `WOODSHED_CAPTURE_DIR`, `WOODSHED_STATE` and
-    `WOODSHED_PRESENTATION_TIMEOUT_SECS=30`. `WOODSHED_STATE` is mandatory;
-    without it the real session is overwritten.
+  - Set `WOODSHED_SCENARIO`, `WOODSHED_CAPTURE_DIR`, `WOODSHED_DATA_DIR` and
+    `WOODSHED_PRESENTATION_TIMEOUT_SECS=30`. An isolated `WOODSHED_DATA_DIR`
+    is mandatory; reuse that root and persona for reopening.
   - macOS has no `timeout`: background the run and poll
     `<capture dir>/scenario.done`.
   - A locked screen gives 0 presented frames. Check with

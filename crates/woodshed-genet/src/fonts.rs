@@ -36,16 +36,25 @@ mod tests {
     #[test]
     #[ignore = "requires an owned sealed font profile and live isolated Keeper"]
     fn sealed_profile_font_snapshot() {
-        let state = std::path::PathBuf::from(
-            std::env::var_os("WOODSHED_STATE").expect("owned state path required"),
+        let data_root = std::path::PathBuf::from(
+            std::env::var_os("WOODSHED_DATA_DIR").expect("owned application data root required"),
         );
-        assert!(state.is_file(), "existing owned profile required");
+        assert!(
+            data_root.is_absolute(),
+            "owned application data root must be absolute"
+        );
         let output = std::path::PathBuf::from(
             std::env::var_os("WOODSHED_FONT_SNAPSHOT").expect("owned snapshot output required"),
         );
-        let (storage, _) = crate::storage::open_store_as(None);
+        let opened = crate::storage::open_store_as(None);
+        let binding = opened.binding.as_ref().expect("sealed store binding");
+        assert!(binding.directory().starts_with(&data_root));
+        assert!(
+            binding.directory().join("session").is_file(),
+            "existing owned persona profile required"
+        );
         let mut ui = UiState::new();
-        crate::session::restore(&storage, &mut ui);
+        crate::session::restore(&opened.storage, &mut ui);
         assert_eq!(
             ui.set.cards.len(),
             2,
@@ -77,9 +86,14 @@ mod tests {
     #[test]
     #[ignore = "writes only an explicitly owned isolated theme library"]
     fn prepare_font_theme_fixture() {
-        let path = std::path::PathBuf::from(
-            std::env::var_os("WOODSHED_THEME_LIBRARY").expect("owned library path required"),
+        let data_root = std::path::PathBuf::from(
+            std::env::var_os("WOODSHED_DATA_DIR").expect("owned application data root required"),
         );
+        assert!(
+            data_root.is_absolute(),
+            "owned application data root must be absolute"
+        );
+        let path = data_root.join("themes.json");
         assert!(!path.exists(), "fixture library must be new");
         let mut theme = Theme::new(
             "theme:woodshed-font-acceptance",

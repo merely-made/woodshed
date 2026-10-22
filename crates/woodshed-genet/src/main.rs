@@ -26,6 +26,7 @@ mod appearance;
 mod arrangement;
 mod audio;
 mod capture_persistence;
+mod desktop;
 mod drive;
 mod fold_receipt;
 mod fonts;
@@ -37,7 +38,10 @@ mod midi_diagnostics;
 mod music_export;
 mod pack_io;
 mod pedal_inputs;
+mod paths;
 mod persona;
+#[cfg(test)]
+mod persona_store_receipt;
 mod scenario;
 mod session;
 mod shared;
@@ -312,7 +316,7 @@ fn boot_state(
     if let Some(storage) = shared.storage.as_ref() {
         session::ensure_personal_relation_source(storage, &mut ui);
     }
-    appearance::load_library(&mut ui);
+    appearance::load_library(&mut ui, &shared);
     shared.theme = ui.theme();
     shared.reduce_motion = ui.app_settings.accessibility.reduce_motion;
     shared.text_scale = ui.app_settings.accessibility.text_scale.clone();
@@ -438,13 +442,15 @@ fn to_window_settings(geometry: cambium_genet_winit_host::WindowGeometry) -> Win
 fn initial_window_geometry(
     shared: &Rc<RefCell<Shared>>,
 ) -> Option<cambium_genet_winit_host::WindowGeometry> {
-    shared
-        .borrow()
-        .storage
-        .as_ref()
-        .and_then(session::load_settings)
-        .and_then(|settings| settings.window)
-        .map(to_host_geometry)
+    let shared = shared.borrow();
+    let root = shared.data_root.as_deref()?;
+    match desktop::load(root) {
+        Ok(settings) => settings.window.map(to_host_geometry),
+        Err(error) => {
+            eprintln!("[woodshed] desktop preferences could not open: {error}");
+            None
+        },
+    }
 }
 
 fn persist_window_geometry(
@@ -452,15 +458,17 @@ fn persist_window_geometry(
     ctx: &mut Ctx<'_>,
     geometry: cambium_genet_winit_host::WindowGeometry,
 ) {
-    let mut json = None;
-    ctx.runner.update(|ui| {
-        ui.app_settings.window = Some(to_window_settings(geometry));
-        json = serde_json::to_string(&ui.app_settings).ok();
-    });
-    if let (Some(storage), Some(json)) = (shared.storage.as_ref(), json) {
-        storage.save_settings(&json);
-        ctx.runner
-            .update(|ui| session::refresh_save_status(storage, ui));
+    let Some(root) = shared.data_root.as_deref() else {
+        return;
+    };
+    let settings = desktop::DesktopSettings {
+        window: Some(to_window_settings(geometry)),
+    };
+    if let Err(error) = desktop::save(root, &settings) {
+        eprintln!("[woodshed] window placement was not saved: {error}");
+        ctx.runner.update(|ui| {
+            ui.appearance_notice = Some(format!("Window placement was not saved: {error}"))
+        });
     }
 }
 

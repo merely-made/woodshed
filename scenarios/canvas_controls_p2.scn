@@ -2,7 +2,7 @@
 # Woodshed's three graph surfaces through Cambium cameras, and pictograph's face measurement
 # checks view-layer hit targets against painted nodes after each command.
 #
-# Drive with WOODSHED_SCENARIO, WOODSHED_CAPTURE_DIR and an isolated WOODSHED_STATE.
+# Drive with WOODSHED_SCENARIO, WOODSHED_CAPTURE_DIR and an isolated WOODSHED_DATA_DIR.
 
 log P2: canvas commands over the Session Mere, relationship editor and Related graph
 settle 90

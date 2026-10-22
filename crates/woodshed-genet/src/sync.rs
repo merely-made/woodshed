@@ -42,7 +42,7 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     crate::pack_io::after_dispatch(shared, ctx);
     push_backend(shared, ctx);
     crate::wav_export::after_dispatch(shared, ctx);
-    crate::music_export::after_dispatch(ctx);
+    crate::music_export::after_dispatch(shared, ctx);
     // Window verbs used to be drained here from four `UiState` flags. The
     // host owns them now: the caption buttons call `WindowCommands` directly
     // and the title bar drags from its `--app-region` declaration.
@@ -1313,8 +1313,7 @@ mod tests {
                     "--nocapture",
                 ])
                 .env("WOODSHED_LOOP_WORKER", mode)
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
                 .output()
                 .unwrap();
             assert!(
@@ -1332,7 +1331,12 @@ mod tests {
         let Ok(mode) = std::env::var("WOODSHED_LOOP_WORKER") else {
             return;
         };
-        let backend: crate::storage::HostBackend = Box::<crate::storage::FsBackend>::default();
+        let directory = std::path::PathBuf::from(
+            std::env::var_os("WOODSHED_DATA_DIR").expect("isolated application data root required"),
+        )
+        .join("fixed-test-owner");
+        let backend: crate::storage::HostBackend =
+            Box::new(crate::storage::FsBackend::at(&directory));
         let store = woodshed_core::storage::SessionStore::new(backend);
         let mut expected = ready_ui();
         expected.looper.beats = 3;

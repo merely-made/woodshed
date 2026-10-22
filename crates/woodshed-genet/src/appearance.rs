@@ -2,12 +2,11 @@
 
 use std::cell::RefCell;
 use std::ffi::OsString;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 use cambium_genet_winit_host::{CloseDisposition, SceneProducer, choose_save_path};
 use cambium_rootstock::{ProducerRole, ProducerSemantics};
-use directories::ProjectDirs;
 use tabard_workshop::{
     ExportArtifact, ExportFormat, GRAPH_LEAF_KEY, PreviewScene, READER_LEAF_KEY, ReaderSpecimen,
     STYLESHEET_LEAF_KEY, StylesheetSpecimen,
@@ -27,15 +26,10 @@ const HOST_CHROME_CSS: &str = "
 .woodshed-mark { font-weight: 700; padding: 3px 6px; border: 1px solid currentColor; border-radius: 4px; }
 ";
 
-fn library_path(
-    theme_override: Option<OsString>,
-    state_override: Option<OsString>,
-    config: Option<PathBuf>,
-) -> Option<PathBuf> {
+fn library_path(theme_override: Option<OsString>, root: Option<PathBuf>) -> Option<PathBuf> {
     theme_override
         .map(PathBuf::from)
-        .or_else(|| state_override.map(|path| PathBuf::from(path).with_extension("themes.json")))
-        .or_else(|| config.map(|path| path.join("themes.json")))
+        .or_else(|| root.map(|root| root.join("themes.json")))
 }
 
 /// The isolated visual lane keeps the production host, views and stores while
@@ -45,22 +39,26 @@ pub fn device_free_receipt() -> bool {
         && std::env::var_os("WOODSHED_SCENARIO").is_some()
 }
 
-pub fn load_library(ui: &mut UiState) {
-    let path = configured_library_path();
+pub fn load_library(ui: &mut UiState, shared: &crate::shared::Shared) {
+    let path = shared.theme_library.clone();
     ui.appearance_authoring_available = false;
     let Some(path) = path else {
         ui.appearance_notice = Some("Appearance authoring is unavailable because no application configuration directory was found.".into());
         return;
     };
     load_library_at(ui, path);
+    ui.appearance
+        .workshop
+        .set_protected_export_paths(shared.theme_library.iter().cloned().collect());
+    ui.appearance
+        .workshop
+        .set_protected_export_directories(shared.data_root.iter().cloned().collect());
 }
 
-pub(crate) fn configured_library_path() -> Option<PathBuf> {
+pub(crate) fn configured_library_path(root: Option<&Path>) -> Option<PathBuf> {
     library_path(
         std::env::var_os("WOODSHED_THEME_LIBRARY"),
-        std::env::var_os("WOODSHED_STATE"),
-        ProjectDirs::from("dev", "Woodshed", "Woodshed")
-            .map(|dirs| dirs.config_dir().to_path_buf()),
+        root.map(Path::to_path_buf),
     )
 }
 
@@ -72,12 +70,6 @@ fn load_library_at(ui: &mut UiState, path: PathBuf) {
                 &crate::fonts::bundled_fonts(),
             ));
             appearance.reset_font_editor(&ui.app_settings.appearance);
-            appearance.workshop.set_protected_export_paths(
-                crate::storage::FsBackend::new().protected_export_paths(),
-            );
-            appearance.workshop.set_protected_export_directories(
-                crate::storage::FsBackend::new().protected_export_directories(),
-            );
             ui.appearance = appearance;
             ui.appearance_authoring_available = true;
             ui.appearance_notice = None;
@@ -271,25 +263,17 @@ mod tests {
     }
 
     #[test]
-    fn explicit_and_scenario_library_paths_preserve_private_profile_isolation() {
-        let config = Some(PathBuf::from("/profile/config"));
+    fn explicit_and_root_library_paths_preserve_profile_isolation() {
+        let root = Some(PathBuf::from("/scenario/root"));
         assert_eq!(
-            library_path(
-                Some("/explicit/library.json".into()),
-                Some("/scenario/state.json".into()),
-                config.clone()
-            ),
+            library_path(Some("/explicit/library.json".into()), root.clone()),
             Some(PathBuf::from("/explicit/library.json"))
         );
         assert_eq!(
-            library_path(None, Some("/scenario/state.json".into()), config.clone()),
-            Some(PathBuf::from("/scenario/state.themes.json"))
+            library_path(None, root),
+            Some(PathBuf::from("/scenario/root/themes.json"))
         );
-        assert_eq!(
-            library_path(None, None, config),
-            Some(PathBuf::from("/profile/config/themes.json"))
-        );
-        assert_eq!(library_path(None, None, None), None);
+        assert_eq!(library_path(None, None), None);
     }
 
     #[test]
