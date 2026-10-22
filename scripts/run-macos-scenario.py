@@ -9,6 +9,10 @@
 
 The temporary application bundle launches the real binary without modifying
 its host or rendering path. Product profile isolation is supplied with --env.
+For Woodshed, pass WOODSHED_DATA_DIR for the entire application data root and
+reuse that root and the same persona for reopen runs. Persona-owned outputs
+live beneath personas/v1/<owner-token>; inspect that directory when checking
+fixtures rather than assuming a singleton session file at the root.
 The Mesquite receipt, rather than open's exit status, determines success.
 """
 

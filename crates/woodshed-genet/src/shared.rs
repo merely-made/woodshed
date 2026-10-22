@@ -20,7 +20,7 @@ use woodshed_views::theme::ThemeMode;
 use crate::audio::CpalBackend;
 use crate::midi::MidiHost;
 use crate::scenario::Observed;
-use crate::storage::{HostBackend, open_store_as};
+use crate::storage::{HostBackend, StoreBinding, open_store_as};
 
 /// Presented-frame timings gathered only while a Set-graph drag is active.
 /// The scenario receipt reads these, but the counters are also useful when a
@@ -243,6 +243,10 @@ pub struct Shared {
     /// the user has and seal this session to a stranger. Nothing reads or
     /// writes practice through this while it is `None`, which is the point.
     pub storage: Option<SessionStore<HostBackend>>,
+    /// Frozen application root and admitted cryptographic store capability.
+    pub data_root: Option<std::path::PathBuf>,
+    pub theme_library: Option<std::path::PathBuf>,
+    pub store_binding: Option<StoreBinding>,
     /// What is protecting the store, for Settings to report. Seeded onto the
     /// first `UiState` beside the gate, then kept current by a switch.
     pub seal: Option<woodshed_views::persona::PracticeSeal>,
@@ -305,11 +309,13 @@ impl Shared {
         // Opened here only when nobody needs asking; behind a gate the store
         // (and so the seal) arrives later, from `persona::settle`.
         let opened = pending_roster.is_none().then(|| open_store_as(None));
-        let (storage, seal) = match opened {
-            Some((storage, seal)) => (Some(storage), Some(seal)),
-            None => (None, None),
+        let (storage, seal, binding) = match opened {
+            Some(opened) => (Some(opened.storage), Some(opened.seal), opened.binding),
+            None => (None, None, None),
         };
-        Self::with_store(storage, seal, pending_roster)
+        let shared = Self::with_store(storage, seal, pending_roster);
+        shared.borrow_mut().store_binding = binding;
+        shared
     }
 
     pub(crate) fn with_store(
@@ -317,11 +323,16 @@ impl Shared {
         seal: Option<woodshed_views::persona::PracticeSeal>,
         pending_roster: Option<Roster>,
     ) -> Rc<RefCell<Self>> {
+        let data_root = crate::storage::configured_root().ok();
+        let theme_library = crate::appearance::configured_library_path(data_root.as_deref());
         Rc::new(RefCell::new(Self {
             music_leaf_sig: None,
             backend: None,
             midi: MidiHost::new(),
             storage,
+            data_root,
+            theme_library,
+            store_binding: None,
             seal,
             pending_roster,
             theme: ThemeMode::default(),

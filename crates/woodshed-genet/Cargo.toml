@@ -25,6 +25,7 @@ muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63
 # workspace since P1, because woodshed-views names the `Roster` too.
 personae = { workspace = true }
 async-trait = "0.1"
+pollster = "0.4"
 woodshed-core = { workspace = true }
 woodshedding = { workspace = true }
 woodshed-audio = { workspace = true }

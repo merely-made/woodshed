@@ -70,8 +70,8 @@ Save/Discard/Keep editing guard on Back and native window close.
 
 The authored library defaults to `themes.json` in Woodshed's application
 configuration directory. `WOODSHED_THEME_LIBRARY` selects a separate library;
-when `WOODSHED_STATE` is set, its sibling `.themes.json` isolates scenario
-runs. Application settings retain the selected theme ID and mode. Existing
+`WOODSHED_DATA_DIR` selects an isolated application root, including its
+`themes.json`, persona stores and device-local preferences. Application settings retain the selected theme ID and mode. Existing
 named-theme settings remain readable. A missing theme shows a fallback notice,
 and an unreadable library disables editing without replacing the file.
 

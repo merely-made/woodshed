@@ -1,7 +1,7 @@
 # Seed two independent personal reasons through the normal Claims controls,
 # audition a generated directed reason, withdraw one exact ID, and save a
 # capture-directory receipt for fresh-process identity comparison. The native
-# runner supplies an isolated WOODSHED_STATE and sealed Keeper persona.
+# runner supplies an isolated WOODSHED_DATA_DIR and sealed Keeper persona.
 settle 3
 act claims-open-major-major7
 settle 3

@@ -1,20 +1,12 @@
-//! The desktop backend: files in the config dir the xilem app uses
-//! (`ProjectDirs dev/Woodshed/Woodshed`), under their own filenames so the two
-//! apps never clobber each other during the migration.
-//!
-//! A [`muniment::Backend`] rather than woodshed's own storage trait, so the
-//! store, the sealing, and the slot naming above it are all muniment's and this
-//! file is only the platform half: which directory, which filename per slot.
-//! The web host realizes the same trait over OPFS.
-//!
-//! **The sealing key comes from djinn** (dramatis DR-C). Woodshed opens no
-//! vault: it calls djinn over Graphshell's custody route, which releases the
-//! one key Woodshed seals practice with (D11). With djinn absent or Locked the
-//! identity is pending (D12): already-saved practice that was never sealed
-//! still reads, and nothing is written, in the clear or otherwise.
+//! Persona-owned desktop persistence. The application root contains separate
+//! cryptographic-owner stores; local profile labels only route custody calls.
+//! Normal opens authenticate an immutable sealed owner record before exposing
+//! session, settings or capture slots. Pending custody sees an empty read-only
+//! memory backend and never reads a singleton or another persona's files.
 
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use async_trait::async_trait;
@@ -23,8 +15,9 @@ use graphshell_endpoint::door::custody::CustodyRefusal;
 use graphshell_endpoint::door::custody_client::CustodyClientError;
 use graphshell_endpoint::door::custody_identity::CustodyIdentity;
 use muniment::backend::WriteOp;
-use muniment::{Backend, StoreError};
-use personae::ProfileId;
+use muniment::{Backend, MemoryBackend, StoreError};
+use personae::{IdentityProvider, ProfileId};
+use serde::{Deserialize, Serialize};
 use woodshed_core::loop_capture::{MAX_PCM_BYTES, pcm_key, validate_namespace};
 use woodshed_core::sealed_backend::SealedBackend;
 use woodshed_core::storage::SessionStore;
@@ -33,30 +26,349 @@ use woodshed_views::persona::PracticeSeal;
 /// The name Woodshed is admitted to djinn's custody route under.
 pub const CUSTODY_APP: &str = "woodshed";
 
-/// The practice store, sealed to the persona djinn speaks as.
-///
-/// `None` keeps djinn's own choice, which is the startup path on every machine
-/// that needs no asking. `Some` is the answer to the persona gate: djinn
-/// switches to it (and remembers it for the family) before the store opens.
-pub fn open_store_as(profile: Option<&ProfileId>) -> (SessionStore<HostBackend>, PracticeSeal) {
-    let (backend, seal) = open_backend(profile);
-    (SessionStore::new(backend), seal)
+/// A successful custody/store open retains the explicit candidate provider.
+/// Its family choice is committed by the caller only after content admission.
+pub struct OpenedStore {
+    pub storage: SessionStore<HostBackend>,
+    pub seal: PracticeSeal,
+    pub binding: Option<StoreBinding>,
 }
 
 /// The store woodshed practices over, decided at startup.
 pub type HostBackend = Box<dyn Backend + Send + Sync>;
 
-/// Reach djinn as Woodshed, on `profile` when one was chosen. The error is the
-/// pending reason, in words for Settings.
-fn connect(profile: Option<&ProfileId>) -> Result<CustodyIdentity, String> {
-    let identity = CustodyIdentity::connect(CUSTODY_APP).map_err(pending)?;
-    match profile {
-        Some(id) if identity.profile() != Some(id) => {
-            identity.choose_profile(id.clone()).map_err(pending)?;
-            // The provider answers for the persona it connected as.
-            CustodyIdentity::connect(CUSTODY_APP).map_err(pending)
+#[derive(Clone)]
+pub struct StoreBinding {
+    root: PathBuf,
+    owner: String,
+    authority: BindingAuthority,
+}
+
+#[derive(Clone)]
+enum BindingAuthority {
+    Custody(Arc<CustodyIdentity>),
+    #[cfg(test)]
+    Test {
+        profile: ProfileId,
+    },
+}
+
+impl StoreBinding {
+    pub fn root(&self) -> &Path {
+        &self.root
+    }
+
+    pub fn owner(&self) -> &str {
+        &self.owner
+    }
+
+    pub fn directory(&self) -> PathBuf {
+        persona_directory(&self.root, &self.owner)
+    }
+
+    /// Change the family choice using the already-admitted candidate provider.
+    /// A different target requires a different explicit custody connection.
+    pub fn choose_profile(&self, profile: &ProfileId) -> Result<(), String> {
+        match &self.authority {
+            BindingAuthority::Custody(identity) => {
+                if identity.profile() != Some(profile) {
+                    return Err(
+                        "The admitted persona differs from the requested family choice.".into(),
+                    );
+                }
+                self.validate_choice_identity(identity, profile)?;
+                identity.choose_profile(profile.clone()).map_err(|error| {
+                    format!("The family persona choice could not be confirmed ({}). The family choice may already have changed; reopen or retry the selected persona.", pending(error))
+                })?;
+                self.validate_choice_identity(identity, profile).map_err(|error| {
+                    format!("The family persona choice was acknowledged, but its identity could not be confirmed ({error}). The family choice may already have changed; reopen or retry the selected persona.")
+                })
+            },
+            #[cfg(test)]
+            BindingAuthority::Test { profile: connected } => {
+                if connected == profile {
+                    Ok(())
+                } else {
+                    Err("The admitted persona differs from the requested family choice.".into())
+                }
+            },
+        }
+    }
+
+    fn validate_choice_identity(
+        &self,
+        identity: &CustodyIdentity,
+        profile: &ProfileId,
+    ) -> Result<(), String> {
+        let status = identity.status().map_err(pending)?;
+        admit_choice_identity(
+            ChoiceIdentity {
+                profile: status.profile,
+                unlocked: status.lock == dramatis::view::VaultLockView::Unlocked
+                    && !identity.is_locked(),
+                public_key: status.persona_public_key,
+            },
+            profile,
+            identity.master_public_key().to_bytes(),
+            &self.owner,
+        )
+    }
+
+    /// Local labels can be reused for a new seed. Reconnect explicitly before
+    /// deciding that selecting a profile is a no-op for the installed store.
+    pub fn matches_current(&self, profile: &ProfileId) -> Result<bool, String> {
+        match &self.authority {
+            BindingAuthority::Custody(_) => {
+                let identity = connect(Some(profile))?;
+                validate_profile(&identity, Some(profile))?;
+                Ok(owner_for_provider(&identity) == self.owner)
+            },
+            #[cfg(test)]
+            BindingAuthority::Test { profile: connected } => Ok(connected == profile),
+        }
+    }
+
+    #[cfg(test)]
+    pub fn for_test(root: PathBuf, owner: String, profile: ProfileId) -> Self {
+        Self {
+            root,
+            owner,
+            authority: BindingAuthority::Test { profile },
+        }
+    }
+}
+
+/// Resolve the whole application root once. Obsolete exact-file overrides are
+/// refused, including empty values, so isolation can never fall back silently.
+pub fn configured_root() -> Result<PathBuf, String> {
+    let obsolete: Vec<_> = ["WOODSHED_STATE", "WOODSHED_SETTINGS"]
+        .into_iter()
+        .filter(|name| std::env::var_os(name).is_some())
+        .collect();
+    if !obsolete.is_empty() {
+        return Err(format!(
+            "{} is no longer supported. Unset the exact-file overrides and set WOODSHED_DATA_DIR to an isolated application directory.",
+            obsolete.join(" and ")
+        ));
+    }
+    let root = match std::env::var_os("WOODSHED_DATA_DIR") {
+        Some(path) if path.is_empty() => {
+            return Err("WOODSHED_DATA_DIR is empty. Set it to an application directory or unset it to use the normal directory.".into());
         },
-        _ => Ok(identity),
+        Some(path) => PathBuf::from(path),
+        None => ProjectDirs::from("dev", "Woodshed", "Woodshed")
+            .map(|dirs| dirs.config_dir().to_path_buf())
+            .ok_or("No application directory is available. Set WOODSHED_DATA_DIR to a writable directory.")?,
+    };
+    absolute_root(&root)
+}
+
+fn absolute_root(root: &Path) -> Result<PathBuf, String> {
+    if root.as_os_str().is_empty() {
+        return Err("The Woodshed application directory is empty.".into());
+    }
+    crate::paths::absolute(root)
+        .map_err(|error| format!("Cannot resolve the Woodshed application directory: {error}"))
+}
+
+pub fn open_store_as(profile: Option<&ProfileId>) -> OpenedStore {
+    match configured_root() {
+        Ok(root) => open_store_at(&root, profile),
+        Err(reason) => pending_store(reason),
+    }
+}
+
+/// Open the explicitly selected candidate without changing the family choice.
+/// Failure exposes no disk-backed fallback, even while the vault is pending.
+pub fn open_store_at(root: &Path, profile: Option<&ProfileId>) -> OpenedStore {
+    match try_open_store(root, profile) {
+        Ok(opened) => opened,
+        Err(reason) => pending_store(reason),
+    }
+}
+
+fn try_open_store(root: &Path, profile: Option<&ProfileId>) -> Result<OpenedStore, String> {
+    let root = absolute_root(root)?;
+    let identity = Arc::new(connect(profile)?);
+    let persona = validate_profile(&identity, profile)?;
+    let owner = owner_for_provider(identity.as_ref());
+    let directory = persona_directory(&root, &owner);
+    let sealed = SealedBackend::for_provider(FsBackend::at(&directory), identity.as_ref())
+        .map_err(|error| format!("djinn released no sealing key for {persona:?}: {error}"))?;
+    let backend = Custodied {
+        inner: sealed,
+        identity: Arc::clone(&identity),
+    };
+    initialize_owner(&backend, &directory, &owner)?;
+    let protection = identity.protection();
+    let storage = SessionStore::new(Box::new(backend) as HostBackend);
+    let binding = StoreBinding {
+        root,
+        owner,
+        authority: BindingAuthority::Custody(identity),
+    };
+    Ok(OpenedStore {
+        storage,
+        seal: PracticeSeal::Sealed {
+            persona,
+            protection,
+        },
+        binding: Some(binding),
+    })
+}
+
+fn pending_store(reason: String) -> OpenedStore {
+    OpenedStore {
+        storage: SessionStore::new(Box::new(PendingBackend::new()) as HostBackend),
+        seal: PracticeSeal::Pending { reason },
+        binding: None,
+    }
+}
+
+fn connect(profile: Option<&ProfileId>) -> Result<CustodyIdentity, String> {
+    CustodyIdentity::connect_as(CUSTODY_APP, profile.cloned()).map_err(pending)
+}
+
+fn validate_profile(
+    identity: &CustodyIdentity,
+    selected: Option<&ProfileId>,
+) -> Result<String, String> {
+    let profile = identity
+        .profile()
+        .ok_or("djinn opened no canonical persona profile")?;
+    if profile.0.trim().is_empty() || profile.0 != profile.0.trim() {
+        return Err("djinn opened an empty or non-canonical persona profile".into());
+    }
+    if selected.is_some_and(|selected| selected != profile) {
+        return Err("djinn opened a different persona from the selected profile".into());
+    }
+    Ok(profile.0.clone())
+}
+
+fn owner_for_provider(provider: &dyn IdentityProvider) -> String {
+    owner_for_public_key(&provider.master_public_key().to_bytes())
+}
+
+fn owner_for_public_key(public_key: &[u8; 32]) -> String {
+    blake3::derive_key("woodshed.persona-store.owner.v1", public_key)
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
+}
+
+/// Public facts read immediately around the mutable family-choice RPC. A local
+/// profile string is insufficient when its seed can have changed since preflight.
+struct ChoiceIdentity {
+    profile: Option<ProfileId>,
+    unlocked: bool,
+    public_key: Option<[u8; 32]>,
+}
+
+fn admit_choice_identity(
+    current: ChoiceIdentity,
+    expected_profile: &ProfileId,
+    retained_public_key: [u8; 32],
+    retained_owner: &str,
+) -> Result<(), String> {
+    if !current.unlocked {
+        return Err("The vault locked while the persona choice was being confirmed.".into());
+    }
+    if current.profile.as_ref() != Some(expected_profile) {
+        return Err("The current custody profile differs from the admitted persona. Reopen the selected persona.".into());
+    }
+    let current_public_key = current
+        .public_key
+        .ok_or("Custody released no public identity for the selected persona.")?;
+    if current_public_key != retained_public_key
+        || owner_for_public_key(&current_public_key) != retained_owner
+    {
+        return Err("The selected profile now belongs to a different cryptographic persona. Reopen the selected persona.".into());
+    }
+    Ok(())
+}
+
+fn persona_directory(root: &Path, owner: &str) -> PathBuf {
+    root.join("personas").join("v1").join(owner)
+}
+
+const OWNER_VERSION: u32 = 1;
+const OWNER_PURPOSE: &str = "woodshed.persona-practice-store";
+const MAX_OWNER_FILE_BYTES: usize = 4096;
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct OwnerManifest {
+    version: u32,
+    purpose: String,
+    owner: String,
+}
+
+fn admit_owner(bytes: &[u8], owner: &str) -> Result<(), String> {
+    let manifest: OwnerManifest = serde_json::from_slice(bytes)
+        .map_err(|error| format!("The persona-store owner record could not be decoded: {error}"))?;
+    if manifest.version != OWNER_VERSION || manifest.purpose != OWNER_PURPOSE {
+        return Err("The persona-store owner record has an unsupported version or purpose.".into());
+    }
+    if manifest.owner != owner {
+        return Err(
+            "The persona-store owner record belongs to another cryptographic persona.".into(),
+        );
+    }
+    Ok(())
+}
+
+/// Only a genuinely empty directory can acquire an owner. Incomplete or foreign
+/// files are never silently adopted. The owner slot publishes without clobbering.
+fn initialize_owner<B: Backend + Sync>(
+    backend: &B,
+    directory: &Path,
+    owner: &str,
+) -> Result<(), String> {
+    if let Some(bytes) = pollster::block_on(backend.get("owner")).map_err(|error| {
+        format!("The persona-store owner record could not be authenticated: {error}")
+    })? {
+        return admit_owner(&bytes, owner);
+    }
+    std::fs::create_dir_all(directory)
+        .map_err(|error| format!("Cannot create the persona-store directory: {error}"))?;
+    if std::fs::read_dir(directory)
+        .map_err(|error| format!("Cannot inspect the persona-store directory: {error}"))?
+        .next()
+        .transpose()
+        .map_err(|error| format!("Cannot inspect the persona-store directory: {error}"))?
+        .is_some()
+    {
+        // Another opener may have published the immutable record between the
+        // first read and directory inspection. Authenticate that winner before
+        // classifying this as an unowned partial directory.
+        if let Some(bytes) = pollster::block_on(backend.get("owner")).map_err(|error| {
+            format!("The persona-store owner record could not be authenticated: {error}")
+        })? {
+            return admit_owner(&bytes, owner);
+        }
+        return Err("The persona-store directory contains files without an authenticated owner record. Choose an empty WOODSHED_DATA_DIR or repair the incomplete store.".into());
+    }
+    let manifest = serde_json::to_vec(&OwnerManifest {
+        version: OWNER_VERSION,
+        purpose: OWNER_PURPOSE.into(),
+        owner: owner.into(),
+    })
+    .map_err(|error| format!("Cannot encode the persona-store owner record: {error}"))?;
+    let written = pollster::block_on(backend.put("owner", &manifest));
+    // A concurrent opener may have won the immutable publication. Accept only
+    // an authenticated readback with exactly this schema, purpose and owner.
+    let readback = pollster::block_on(backend.get("owner")).map_err(|error| {
+        format!("The persona-store owner record could not be verified: {error}")
+    })?;
+    match readback {
+        Some(bytes) => admit_owner(&bytes, owner),
+        None => Err(format!(
+            "The persona-store owner record was not published: {}",
+            written.err().map_or_else(
+                || "readback found no record".into(),
+                |error| error.to_string()
+            )
+        )),
     }
 }
 
@@ -70,75 +382,11 @@ fn pending(error: CustodyClientError) -> String {
     }
 }
 
-/// The backend, plus what is protecting what it writes.
-///
-/// The seal is returned rather than only logged: Settings offers to switch a
-/// persona, and until this it could not name the one in force. Every branch
-/// answers, so "pending" always arrives with its reason attached.
-fn open_backend(profile: Option<&ProfileId>) -> (HostBackend, PracticeSeal) {
-    let identity = match connect(profile) {
-        Ok(identity) => identity,
-        Err(reason) => {
-            return (
-                Box::new(PendingBackend::new(FsBackend::new())),
-                PracticeSeal::Pending { reason },
-            );
-        },
-    };
-    let Some(profile) = identity.profile() else {
-        return (
-            Box::new(PendingBackend::new(FsBackend::new())),
-            PracticeSeal::Pending {
-                reason: "djinn opened no canonical persona profile".into(),
-            },
-        );
-    };
-    let persona = profile.0.clone();
-    if persona.trim().is_empty() || persona != persona.trim() {
-        return (
-            Box::new(PendingBackend::new(FsBackend::new())),
-            PracticeSeal::Pending {
-                reason: "djinn opened an empty or non-canonical persona profile".into(),
-            },
-        );
-    }
-    match SealedBackend::for_provider(FsBackend::new(), &identity) {
-        // Adopting plaintext is the migration: a session written before sealing
-        // was switched on is read once as it stands, and the next save seals it.
-        Ok(sealed) => {
-            let protection = identity.protection();
-            eprintln!("[woodshed] practice sealed to persona {persona:?} ({protection})");
-            (
-                Box::new(Custodied {
-                    inner: sealed.adopting_plaintext(),
-                    identity,
-                }),
-                PracticeSeal::Sealed {
-                    persona,
-                    protection,
-                },
-            )
-        },
-        Err(error) => {
-            eprintln!(
-                "[woodshed] djinn released no sealing key for persona {persona:?}: {error}; \
-                 practice is not saved"
-            );
-            (
-                Box::new(PendingBackend::new(FsBackend::new())),
-                PracticeSeal::Pending {
-                    reason: format!("djinn released no sealing key for {persona:?}"),
-                },
-            )
-        },
-    }
-}
-
 /// The sealed store, answering only while djinn keeps the vault unlocked: a
 /// lock revokes the released key (D11), so reads and writes stop with it.
 struct Custodied<B> {
     inner: B,
-    identity: CustodyIdentity,
+    identity: Arc<CustodyIdentity>,
 }
 
 impl<B> Custodied<B> {
@@ -185,19 +433,17 @@ impl<B: Backend + Send + Sync> Backend for Custodied<B> {
     }
 }
 
-/// The store while the identity is pending (D12): reads what is already on
-/// disk (a sealed session simply does not decode), and writes nothing. A
-/// write is refused, so callers cannot publish a durable-success notice.
-/// Repeated dispatch attempts are logged only once.
-struct PendingBackend<B> {
-    inner: B,
+/// Pending custody has an empty memory view and refuses every mutation.
+/// It cannot leak a legacy singleton or another persona's plaintext into UI.
+struct PendingBackend {
+    inner: MemoryBackend,
     said: AtomicBool,
 }
 
-impl<B> PendingBackend<B> {
-    fn new(inner: B) -> Self {
+impl PendingBackend {
+    fn new() -> Self {
         Self {
-            inner,
+            inner: MemoryBackend::new(),
             said: AtomicBool::new(false),
         }
     }
@@ -213,7 +459,7 @@ impl<B> PendingBackend<B> {
 }
 
 #[async_trait]
-impl<B: Backend + Send + Sync> Backend for PendingBackend<B> {
+impl Backend for PendingBackend {
     async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
         self.inner.get(key).await
     }
@@ -239,51 +485,22 @@ impl<B: Backend + Send + Sync> Backend for PendingBackend<B> {
     }
 }
 
+/// The exact destinations for one resolved persona store. There is no default
+/// constructor: callers must use the installed binding's directory.
 pub struct FsBackend {
-    /// `None` when the platform exposes no config dir. Persistence is silently
-    /// disabled, matching woodshed-xilem's posture: a machine without a config
-    /// dir still practices, it just does not remember.
-    session: Option<PathBuf>,
-    settings: Option<PathBuf>,
+    directory: PathBuf,
 }
 
 impl FsBackend {
-    pub fn new() -> Self {
-        // `WOODSHED_STATE` points the session at another file. A scenario run
-        // sets it to a scratch profile: without it, an automated run would read
-        // and then overwrite the real practice session.
-        let settings_override = std::env::var("WOODSHED_SETTINGS").ok();
-        if let Ok(path) = std::env::var("WOODSHED_STATE") {
-            let state_path = PathBuf::from(path);
-            return Self {
-                settings: settings_override
-                    .map(PathBuf::from)
-                    .or_else(|| Some(state_path.with_extension("settings.json"))),
-                session: Some(state_path),
-            };
-        }
-        let (session, default_settings) = ProjectDirs::from("dev", "Woodshed", "Woodshed")
-            .map(|dirs| {
-                (
-                    dirs.config_dir().join("genet-state.json"),
-                    dirs.config_dir().join("genet-settings.json"),
-                )
-            })
-            .unzip();
+    pub fn at(directory: impl AsRef<Path>) -> Self {
         Self {
-            session,
-            settings: settings_override.map(PathBuf::from).or(default_settings),
+            directory: directory.as_ref().to_path_buf(),
         }
     }
 
-    /// Which file a slot lives in. Slot names are muniment's; the mapping to
-    /// filenames is this host's, which is why an unknown slot has no file rather
-    /// than a derived one: a typo should lose data loudly, not write somewhere
-    /// nobody looks.
     fn path(&self, key: &str) -> Result<Option<PathBuf>, StoreError> {
         match key {
-            "session" => Ok(self.session.clone()),
-            "settings" => Ok(self.settings.clone()),
+            "owner" | "session" | "settings" => Ok(Some(self.directory.join(key))),
             _ => {
                 let (namespace, digest) = key
                     .strip_prefix("loop-pcm/")
@@ -298,29 +515,18 @@ impl FsBackend {
     }
 
     fn capture_dir(&self) -> Option<PathBuf> {
-        self.session
-            .as_ref()
-            .map(|path| path.with_extension("loop-pcm"))
+        Some(self.directory.join("loop-pcm"))
     }
 
-    /// Exact host-owned destinations; Tabard owns normalization and collision
-    /// protection when its export dialog is embedded in this application.
     pub fn protected_export_paths(&self) -> Vec<PathBuf> {
-        self.session
-            .iter()
-            .chain(self.settings.iter())
-            .cloned()
-            .collect()
+        ["owner", "session", "settings"]
+            .map(|name| self.directory.join(name))
+            .into()
     }
 
+    /// Protect the entire store, including unknown future slots and temporaries.
     pub fn protected_export_directories(&self) -> Vec<PathBuf> {
-        self.capture_dir().into_iter().collect()
-    }
-}
-
-impl Default for FsBackend {
-    fn default() -> Self {
-        Self::new()
+        vec![self.directory.clone()]
     }
 }
 
@@ -391,7 +597,12 @@ impl Backend for FsBackend {
         let Some(path) = self.path(key)? else {
             return Ok(None);
         };
-        if key.starts_with("loop-pcm/") {
+        if key.starts_with("loop-pcm/") || key == "owner" {
+            let maximum = if key == "owner" {
+                MAX_OWNER_FILE_BYTES
+            } else {
+                MAX_CAPTURE_FILE_BYTES
+            };
             let file = match std::fs::File::open(path) {
                 Ok(file) => file,
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
@@ -401,19 +612,29 @@ impl Backend for FsBackend {
                 .metadata()
                 .map_err(|error| StoreError::Backend(error.to_string()))?
                 .len();
-            if length > MAX_CAPTURE_FILE_BYTES as u64 {
-                return Err(StoreError::Backend(
-                    "Loop PCM file exceeds its bounded byte budget.".into(),
-                ));
+            if length > maximum as u64 {
+                return Err(StoreError::Backend(format!(
+                    "{} file exceeds its bounded byte budget.",
+                    if key == "owner" {
+                        "Owner record"
+                    } else {
+                        "Loop PCM"
+                    }
+                )));
             }
             let mut bytes = Vec::with_capacity(length as usize);
-            file.take(MAX_CAPTURE_FILE_BYTES as u64 + 1)
+            file.take(maximum as u64 + 1)
                 .read_to_end(&mut bytes)
                 .map_err(|error| StoreError::Backend(error.to_string()))?;
-            if bytes.len() > MAX_CAPTURE_FILE_BYTES {
-                return Err(StoreError::Backend(
-                    "Loop PCM file grew beyond its bounded byte budget.".into(),
-                ));
+            if bytes.len() > maximum {
+                return Err(StoreError::Backend(format!(
+                    "{} file grew beyond its bounded byte budget.",
+                    if key == "owner" {
+                        "Owner record"
+                    } else {
+                        "Loop PCM"
+                    }
+                )));
             }
             return Ok(Some(bytes));
         }
@@ -433,10 +654,20 @@ impl Backend for FsBackend {
                 "Loop PCM write exceeds its bounded byte budget.".into(),
             ));
         }
-        atomic_write(&path, bytes, key.starts_with("loop-pcm/"))
+        if key == "owner" && bytes.len() > MAX_OWNER_FILE_BYTES {
+            return Err(StoreError::Backend(
+                "Owner record exceeds its bounded byte budget.".into(),
+            ));
+        }
+        atomic_write(&path, bytes, key.starts_with("loop-pcm/") || key == "owner")
     }
 
     async fn delete(&self, key: &str) -> Result<(), StoreError> {
+        if key == "owner" {
+            return Err(StoreError::Backend(
+                "The persona-store owner record is immutable.".into(),
+            ));
+        }
         let Some(path) = self.path(key)? else {
             return Ok(());
         };
@@ -449,7 +680,7 @@ impl Backend for FsBackend {
 
     async fn list(&self, prefix: &str) -> Result<Vec<String>, StoreError> {
         let mut keys = Vec::new();
-        for key in ["session", "settings"] {
+        for key in ["owner", "session", "settings"] {
             if key.starts_with(prefix) && self.path(key)?.is_some_and(|path| path.exists()) {
                 keys.push(key.to_string());
             }
@@ -538,10 +769,7 @@ mod capture_tests {
     const OTHER_NAMESPACE: &str = "fedcba9876543210fedcba9876543210";
 
     fn backend(directory: &Path) -> FsBackend {
-        FsBackend {
-            session: Some(directory.join("practice.json")),
-            settings: Some(directory.join("settings.json")),
-        }
+        FsBackend::at(directory)
     }
 
     fn ready<T>(future: impl std::future::Future<Output = T>) -> T {
@@ -606,7 +834,7 @@ mod capture_tests {
             std::fs::read(
                 directory
                     .path()
-                    .join("practice.loop-pcm")
+                    .join("loop-pcm")
                     .join(NAMESPACE)
                     .join(format!("{digest}.bin"))
             )
@@ -699,11 +927,7 @@ mod capture_tests {
         let directory = tempfile::tempdir().unwrap();
         let store = SessionStore::new(backend(directory.path()));
         store.try_save("previous session").unwrap();
-        std::fs::write(
-            directory.path().join("practice.loop-pcm"),
-            b"directory collision",
-        )
-        .unwrap();
+        std::fs::write(directory.path().join("loop-pcm"), b"directory collision").unwrap();
         assert!(store.try_write_capture(NAMESPACE, 48_000, &[0.25]).is_err());
         assert_eq!(store.load().as_deref(), Some("previous session"));
         let occupied = directory.path().join("occupied.json");
@@ -737,24 +961,24 @@ mod capture_tests {
         let raw = std::fs::read(
             directory
                 .path()
-                .join("practice.loop-pcm")
+                .join("loop-pcm")
                 .join(NAMESPACE)
                 .join(format!("{digest}.bin")),
         )
         .unwrap();
         assert_eq!(raw.len(), encode_pcm(48_000, &[0.25]).unwrap().len() + 40);
         assert_ne!(&raw[..8], b"WSHPCM\0\0");
-        let pending = SessionStore::new(PendingBackend::new(backend(directory.path())));
+        let pending = SessionStore::new(PendingBackend::new());
         assert!(
             pending
                 .try_write_capture(NAMESPACE, 48_000, &[0.5])
                 .is_err()
         );
         assert!(pending.try_save("must remain unsaved").is_err());
-        assert!(!directory.path().join("practice.json").exists());
+        assert!(!directory.path().join("session").exists());
         assert_eq!(
             ready(pending.backend().list("loop-pcm/")).unwrap(),
-            vec![pcm_key(NAMESPACE, &digest).unwrap()]
+            Vec::<String>::new()
         );
     }
 
@@ -766,7 +990,7 @@ mod capture_tests {
         let (digest, frames) = first.try_write_capture(NAMESPACE, 48_000, &[0.25]).unwrap();
         let path = directory
             .path()
-            .join("practice.loop-pcm")
+            .join("loop-pcm")
             .join(NAMESPACE)
             .join(format!("{digest}.bin"));
         let original = std::fs::read(&path).unwrap();
@@ -819,66 +1043,394 @@ mod capture_tests {
 }
 
 #[cfg(test)]
+mod persona_store_tests {
+    use super::*;
+    use personae::InMemoryProvider;
+
+    fn sealed_at(
+        root: &Path,
+        provider: &InMemoryProvider,
+    ) -> (SealedBackend<FsBackend>, String, PathBuf) {
+        let owner = owner_for_provider(provider);
+        let directory = persona_directory(root, &owner);
+        let backend = SealedBackend::for_provider(FsBackend::at(&directory), provider).unwrap();
+        (backend, owner, directory)
+    }
+
+    fn open_fixture(
+        root: &Path,
+        provider: &InMemoryProvider,
+    ) -> SessionStore<SealedBackend<FsBackend>> {
+        let (backend, owner, directory) = sealed_at(root, provider);
+        initialize_owner(&backend, &directory, &owner).unwrap();
+        SessionStore::new(backend)
+    }
+
+    #[test]
+    fn cryptographic_personas_isolate_session_settings_and_pcm_across_fresh_handles() {
+        let root = tempfile::tempdir().unwrap();
+        let first_provider = InMemoryProvider::from_seed([1; 32]);
+        let second_provider = InMemoryProvider::from_seed([2; 32]);
+        let first_owner = owner_for_provider(&first_provider);
+        let second_owner = owner_for_provider(&second_provider);
+        assert_ne!(first_owner, second_owner);
+        // Both vaults can use this local label. It never participates in paths.
+        let label = ProfileId("default".into());
+        let first_binding =
+            StoreBinding::for_test(root.path().into(), first_owner.clone(), label.clone());
+        let second_binding =
+            StoreBinding::for_test(root.path().into(), second_owner.clone(), label);
+        assert_ne!(first_binding.directory(), second_binding.directory());
+        let first = open_fixture(root.path(), &first_provider);
+        let second = open_fixture(root.path(), &second_provider);
+        first.try_save("first practice").unwrap();
+        first.try_save_settings("first settings").unwrap();
+        second.try_save("second practice").unwrap();
+        second.try_save_settings("second settings").unwrap();
+        let namespace = "0123456789abcdef0123456789abcdef";
+        let first_pcm = [0.25, -0.0];
+        let second_pcm = [0.75, 0.0];
+        let (first_digest, _) = first
+            .try_write_capture(namespace, 48_000, &first_pcm)
+            .unwrap();
+        let (second_digest, _) = second
+            .try_write_capture(namespace, 48_000, &second_pcm)
+            .unwrap();
+        drop(first);
+        drop(second);
+        let first = open_fixture(root.path(), &InMemoryProvider::from_seed([1; 32]));
+        let second = open_fixture(root.path(), &InMemoryProvider::from_seed([2; 32]));
+        assert_eq!(first.try_load().unwrap().as_deref(), Some("first practice"));
+        assert_eq!(
+            second.try_load().unwrap().as_deref(),
+            Some("second practice")
+        );
+        assert_eq!(first.load_settings().as_deref(), Some("first settings"));
+        assert_eq!(second.load_settings().as_deref(), Some("second settings"));
+        for (store, digest, expected) in [
+            (&first, first_digest, first_pcm),
+            (&second, second_digest, second_pcm),
+        ] {
+            let reference = woodshed_core::loop_capture::LoopCaptureRef {
+                id: woodshed_core::loop_plan::LoopSegmentId {
+                    set: woodshed_core::working_sets::WorkingSetId(3),
+                    card: woodshedding::rehearsal::CardId(7),
+                },
+                bpm: 120.0,
+                beats: 4,
+                bars: 1,
+                sample_rate: 48_000,
+                frames: 2,
+                digest,
+                codec: woodshed_core::loop_capture::LoopCaptureCodec::LegacyRawF32V1,
+                clock: None,
+                seconds: None,
+            };
+            let decoded = store.try_read_capture(namespace, &reference).unwrap();
+            assert_eq!(
+                decoded
+                    .iter()
+                    .map(|sample| sample.to_bits())
+                    .collect::<Vec<_>>(),
+                expected
+                    .iter()
+                    .map(|sample| sample.to_bits())
+                    .collect::<Vec<_>>()
+            );
+        }
+        let renamed_binding = StoreBinding::for_test(
+            root.path().into(),
+            owner_for_provider(&InMemoryProvider::from_seed([1; 32])),
+            ProfileId("renamed".into()),
+        );
+        assert_eq!(first_binding.directory(), renamed_binding.directory());
+        assert_eq!(
+            std::fs::read_dir(root.path().join("personas/v1"))
+                .unwrap()
+                .count(),
+            2
+        );
+        assert!(!root.path().join("genet-state.json").exists());
+    }
+
+    #[test]
+    fn owner_initialization_authenticates_schema_identity_and_is_immutable() {
+        let provider = InMemoryProvider::from_seed([3; 32]);
+        for (version, purpose, foreign_owner) in [
+            (2, OWNER_PURPOSE, false),
+            (OWNER_VERSION, "another-purpose", false),
+            (OWNER_VERSION, OWNER_PURPOSE, true),
+        ] {
+            let root = tempfile::tempdir().unwrap();
+            let (backend, owner, directory) = sealed_at(root.path(), &provider);
+            let bytes = serde_json::to_vec(&OwnerManifest {
+                version,
+                purpose: purpose.into(),
+                owner: if foreign_owner {
+                    "0".repeat(64)
+                } else {
+                    owner.clone()
+                },
+            })
+            .unwrap();
+            pollster::block_on(backend.put("owner", &bytes)).unwrap();
+            let before = std::fs::read(directory.join("owner")).unwrap();
+            assert!(initialize_owner(&backend, &directory, &owner).is_err());
+            assert_eq!(std::fs::read(directory.join("owner")).unwrap(), before);
+            assert!(!directory.join("session").exists());
+        }
+        let root = tempfile::tempdir().unwrap();
+        let (backend, owner, directory) = sealed_at(root.path(), &provider);
+        initialize_owner(&backend, &directory, &owner).unwrap();
+        let original = std::fs::read(directory.join("owner")).unwrap();
+        initialize_owner(&backend, &directory, &owner).unwrap();
+        assert!(pollster::block_on(backend.put("owner", b"replacement")).is_err());
+        assert!(pollster::block_on(backend.delete("owner")).is_err());
+        assert_eq!(std::fs::read(directory.join("owner")).unwrap(), original);
+        let foreign = SealedBackend::for_provider(
+            FsBackend::at(&directory),
+            &InMemoryProvider::from_seed([4; 32]),
+        )
+        .unwrap();
+        assert!(initialize_owner(&foreign, &directory, &owner).is_err());
+        assert_eq!(std::fs::read(directory.join("owner")).unwrap(), original);
+    }
+
+    #[test]
+    fn incomplete_unowned_directories_and_plaintext_never_become_owned_stores() {
+        let provider = InMemoryProvider::from_seed([5; 32]);
+        for name in ["session", "settings", "loop-pcm", ".owner.interrupted.tmp"] {
+            let root = tempfile::tempdir().unwrap();
+            let (backend, owner, directory) = sealed_at(root.path(), &provider);
+            std::fs::create_dir_all(&directory).unwrap();
+            std::fs::write(directory.join(name), b"unowned bytes").unwrap();
+            assert!(initialize_owner(&backend, &directory, &owner).is_err());
+            assert!(!directory.join("owner").exists());
+            assert_eq!(
+                std::fs::read(directory.join(name)).unwrap(),
+                b"unowned bytes"
+            );
+        }
+        let root = tempfile::tempdir().unwrap();
+        let (backend, owner, directory) = sealed_at(root.path(), &provider);
+        std::fs::create_dir_all(&directory).unwrap();
+        let plain = serde_json::to_vec(&OwnerManifest {
+            version: OWNER_VERSION,
+            purpose: OWNER_PURPOSE.into(),
+            owner: owner.clone(),
+        })
+        .unwrap();
+        std::fs::write(directory.join("owner"), &plain).unwrap();
+        assert!(initialize_owner(&backend, &directory, &owner).is_err());
+        assert_eq!(std::fs::read(directory.join("owner")).unwrap(), plain);
+    }
+
+    #[test]
+    fn valid_owner_does_not_adopt_plaintext_session_or_settings() {
+        let provider = InMemoryProvider::from_seed([6; 32]);
+        let root = tempfile::tempdir().unwrap();
+        let store = open_fixture(root.path(), &provider);
+        let directory = persona_directory(root.path(), &owner_for_provider(&provider));
+        std::fs::write(directory.join("session"), b"{}").unwrap();
+        std::fs::write(directory.join("settings"), b"{}").unwrap();
+        assert!(store.try_load().is_err());
+        assert!(store.load_settings().is_none());
+        assert!(store.write_refusal().is_some());
+        assert!(store.try_save("default").is_err());
+        assert!(store.try_save_settings("default").is_err());
+        assert_eq!(std::fs::read(directory.join("session")).unwrap(), b"{}");
+        assert_eq!(std::fs::read(directory.join("settings")).unwrap(), b"{}");
+    }
+
+    #[test]
+    fn family_choice_requires_stable_unlocked_profile_and_cryptographic_identity() {
+        let provider = InMemoryProvider::from_seed([11; 32]);
+        let master = provider.master_public_key().to_bytes();
+        let owner = owner_for_provider(&provider);
+        let profile = ProfileId("default".into());
+        let stable = || ChoiceIdentity {
+            profile: Some(profile.clone()),
+            unlocked: true,
+            public_key: Some(master),
+        };
+        assert!(admit_choice_identity(stable(), &profile, master, &owner).is_ok());
+        let changed_seed = InMemoryProvider::from_seed([12; 32])
+            .master_public_key()
+            .to_bytes();
+        for current in [
+            ChoiceIdentity {
+                unlocked: false,
+                ..stable()
+            },
+            ChoiceIdentity {
+                profile: None,
+                ..stable()
+            },
+            ChoiceIdentity {
+                profile: Some(ProfileId("another-profile".into())),
+                ..stable()
+            },
+            ChoiceIdentity {
+                public_key: None,
+                ..stable()
+            },
+            ChoiceIdentity {
+                public_key: Some(changed_seed),
+                ..stable()
+            },
+        ] {
+            assert!(admit_choice_identity(current, &profile, master, &owner).is_err());
+        }
+        assert!(
+            admit_choice_identity(stable(), &profile, master, &"0".repeat(64)).is_err(),
+            "a current public key must also match the installed cryptographic owner"
+        );
+        assert!(
+            admit_choice_identity(stable(), &profile, changed_seed, &owner).is_err(),
+            "a matching binding owner cannot substitute for the retained provider identity"
+        );
+    }
+
+    #[test]
+    fn pending_store_is_empty_and_refuses_every_mutation() {
+        let opened = pending_store("the vault is locked".into());
+        assert!(matches!(opened.seal, PracticeSeal::Pending { .. }));
+        assert!(opened.binding.is_none());
+        assert!(opened.storage.try_load().unwrap().is_none());
+        assert!(opened.storage.load_settings().is_none());
+        assert!(
+            pollster::block_on(opened.storage.backend().list(""))
+                .unwrap()
+                .is_empty()
+        );
+        assert!(opened.storage.try_save("must remain unsaved").is_err());
+        assert!(pollster::block_on(opened.storage.backend().delete("session")).is_err());
+        assert!(
+            pollster::block_on(opened.storage.backend().apply(&[WriteOp::Put {
+                key: "session".into(),
+                value: vec![1]
+            }]))
+            .is_err()
+        );
+        assert!(opened.storage.try_load().unwrap().is_none());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn root_resolution_preserves_symlink_parent_semantics_for_missing_destinations() {
+        let directory = tempfile::tempdir().unwrap();
+        let actual = directory.path().join("actual");
+        std::fs::create_dir_all(actual.join("sub")).unwrap();
+        std::os::unix::fs::symlink(actual.join("sub"), directory.path().join("link")).unwrap();
+        let root = directory.path().join("link/../private");
+        assert_eq!(
+            absolute_root(&root).unwrap(),
+            actual.canonicalize().unwrap().join("private")
+        );
+        assert!(
+            !actual.join("private").exists(),
+            "resolving isolation must not create storage"
+        );
+    }
+
+    #[test]
+    fn configured_root_freezes_relative_paths_and_refuses_obsolete_or_empty_overrides() {
+        for mode in ["relative", "obsolete-state", "obsolete-settings", "empty"] {
+            let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+            command
+                .args([
+                    "--exact",
+                    "storage::persona_store_tests::configured_root_worker",
+                    "--nocapture",
+                ])
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
+                .env_remove("WOODSHED_DATA_DIR")
+                .env("WOODSHED_ROOT_TEST_MODE", mode);
+            match mode {
+                "relative" => {
+                    command.env("WOODSHED_DATA_DIR", "isolated-root");
+                },
+                "obsolete-state" => {
+                    command.env("WOODSHED_STATE", "");
+                },
+                "obsolete-settings" => {
+                    command.env("WOODSHED_SETTINGS", "");
+                },
+                "empty" => {
+                    command.env("WOODSHED_DATA_DIR", "");
+                },
+                _ => unreachable!(),
+            }
+            let output = command.output().unwrap();
+            assert!(
+                output.status.success(),
+                "root test {mode} failed: {}{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+    }
+
+    #[test]
+    fn configured_root_worker() {
+        let Ok(mode) = std::env::var("WOODSHED_ROOT_TEST_MODE") else {
+            return;
+        };
+        // Configuration is supplied before this isolated process starts; the
+        // test runner's other threads never observe environment mutation.
+        match mode.as_str() {
+            "relative" => {
+                let root = configured_root().unwrap();
+                assert!(root.is_absolute());
+                assert_eq!(root, std::env::current_dir().unwrap().join("isolated-root"));
+            },
+            "obsolete-state" | "obsolete-settings" => {
+                let name = if mode == "obsolete-state" {
+                    "WOODSHED_STATE"
+                } else {
+                    "WOODSHED_SETTINGS"
+                };
+                let error = configured_root().unwrap_err();
+                assert!(error.contains(name));
+                assert!(error.contains("WOODSHED_DATA_DIR"));
+            },
+            "empty" => {
+                assert!(configured_root().unwrap_err().contains("empty"));
+            },
+            _ => panic!("unknown root test mode"),
+        }
+    }
+}
+
+#[cfg(test)]
 mod dr_c_receipts {
     use super::*;
     #[test]
-    #[ignore = "run mere/scripts/dr_c_receipts.py against the isolated receipt keeper"]
+    #[ignore = "run against an isolated absent/locked custody keeper with WOODSHED_DATA_DIR"]
     fn dr_c_woodshed_identity_stays_pending() {
         let mode = std::env::var("DR_C_RECEIPT_MODE").expect("receipt mode");
         assert!(mode == "absent" || mode == "locked");
-        if mode == "locked" {
-            let mut client =
-                graphshell_endpoint::door::custody_client::BlockingCustodyClient::open(
-                    graphshell_endpoint::door::app_admission::AppId::new(CUSTODY_APP),
-                )
-                .unwrap();
-            assert_eq!(
-                client.status().unwrap().lock,
-                graphshell_endpoint::door::identity::VaultLockView::Locked
-            );
-            assert!(!client.roster().unwrap().entries.is_empty());
-        }
-        let state = PathBuf::from(std::env::var("WOODSHED_STATE").expect("isolated state file"));
-        std::fs::write(&state, b"already-public practice").unwrap();
-        let (backend, seal) = open_backend(None);
+        let root = configured_root().expect("isolated application root");
+        assert!(std::env::var_os("WOODSHED_DATA_DIR").is_some());
+        std::fs::create_dir_all(&root).unwrap();
+        let legacy = root.join("genet-state.json");
+        std::fs::write(&legacy, b"already-public practice").unwrap();
+        let opened = open_store_at(&root, None);
+        assert!(matches!(opened.seal, PracticeSeal::Pending { .. }));
+        assert!(opened.binding.is_none());
+        assert!(opened.storage.try_load().unwrap().is_none());
         assert!(
-            matches!(seal, PracticeSeal::Pending { .. }),
-            "Woodshed must have no sealing-key fallback"
+            opened
+                .storage
+                .try_save("must never be written in the clear")
+                .is_err()
         );
-        let mut reads_and_writes = std::pin::pin!(async {
-            assert_eq!(
-                backend.get("session").await.unwrap().unwrap(),
-                b"already-public practice"
-            );
-            assert!(
-                backend
-                    .put("session", b"must never be written in the clear")
-                    .await
-                    .is_err()
-            );
-            assert!(backend.delete("session").await.is_err());
-            assert!(
-                backend
-                    .apply(&[WriteOp::Put {
-                        key: "session".into(),
-                        value: b"another forbidden cleartext write".to_vec(),
-                    }])
-                    .await
-                    .is_err()
-            );
-        });
-        use std::future::Future;
-        let mut context = std::task::Context::from_waker(std::task::Waker::noop());
-        assert!(
-            reads_and_writes.as_mut().poll(&mut context).is_ready(),
-            "the local file backend completes without an async runtime"
-        );
-        assert_eq!(
-            std::fs::read(&state).unwrap(),
-            b"already-public practice",
-            "pending must leave public bytes unchanged"
-        );
-        let (_, chosen) = open_backend(Some(&ProfileId("default".into())));
-        assert!(matches!(chosen, PracticeSeal::Pending { .. }));
+        assert!(pollster::block_on(opened.storage.backend().delete("session")).is_err());
+        assert_eq!(std::fs::read(&legacy).unwrap(), b"already-public practice");
+        assert!(!root.join("personas").exists());
+        let chosen = open_store_at(&root, Some(&ProfileId("default".into())));
+        assert!(matches!(chosen.seal, PracticeSeal::Pending { .. }));
+        assert!(chosen.binding.is_none());
     }
 }

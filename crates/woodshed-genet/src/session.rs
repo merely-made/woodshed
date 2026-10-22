@@ -13,9 +13,7 @@ use woodshed_views::stage::UiState;
 
 use crate::storage::HostBackend;
 
-/// Read the settings slot without applying it. Window creation happens before
-/// [`restore`], so the desktop entrypoint uses this same decoder to supply the
-/// host's initial geometry.
+/// Read the persona settings slot without applying it.
 pub fn load_settings(storage: &SessionStore<HostBackend>) -> Option<AppSettings> {
     storage
         .load_settings()
@@ -70,14 +68,73 @@ pub fn restore(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
                     "The retained workspace could not be admitted: {error}"
                 ));
             }
-        }
+        },
         Err(error) => {
             storage.refuse_writes(format!(
                 "The saved practice session could not be decoded: {error}"
             ));
-        }
+        },
     }
     refresh_save_status(storage, ui);
+}
+
+/// Fully admit an incoming persona before the host retires outgoing state.
+///
+/// Unlike the tolerant boot restore, a switch requires every retained slot and
+/// capture companion to be usable. This prepares only a fresh UI value: it does
+/// not mint a personal relation source, save data, or create an audio backend.
+pub fn admit(storage: &SessionStore<HostBackend>) -> Result<UiState, String> {
+    let mut ui = UiState::new();
+    restore(storage, &mut ui);
+    if let Some(reason) = storage.write_refusal().or_else(|| storage.save_problem()) {
+        return Err(reason);
+    }
+    let manifest = &ui.loop_captures;
+    manifest
+        .validate()
+        .map_err(|error| format!("The retained loop catalog could not be admitted: {error}"))?;
+    for reference in &manifest.takes {
+        storage
+            .try_read_capture(
+                manifest
+                    .namespace
+                    .as_deref()
+                    .expect("validated capture namespace"),
+                reference,
+            )
+            .map_err(|error| {
+                format!(
+                    "Captured loop {:?} could not be admitted: {error}",
+                    reference.id
+                )
+            })?;
+        let frames = woodshed_audio::Bar {
+            legacy_clock: reference.legacy_clock(),
+            bpm: reference.bpm,
+            time_signature: woodshed_audio::TimeSignature::new(reference.beats, 4),
+            length: if reference.seconds.is_some() {
+                1
+            } else {
+                reference.bars
+            },
+            duration_seconds: reference.seconds,
+            ..Default::default()
+        }
+        .checked_duration_frames(reference.sample_rate)
+        .map_err(|error| {
+            format!(
+                "Captured loop {:?} has an invalid clock: {error}",
+                reference.id
+            )
+        })?;
+        if frames != reference.frames as u64 {
+            return Err(format!(
+                "Captured loop {:?} PCM length differs from its recorded clock.",
+                reference.id
+            ));
+        }
+    }
+    Ok(ui)
 }
 
 pub fn refresh_save_status(storage: &SessionStore<HostBackend>, ui: &mut UiState) {
@@ -146,8 +203,224 @@ pub fn ensure_personal_relation_source(storage: &SessionStore<HostBackend>, ui: 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use woodshed_core::settings::WindowSettings;
+    use muniment::{Backend, MemoryBackend, StoreError, WriteOp};
+    use std::sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    };
+    use woodshed_core::loop_capture::{
+        CAPTURE_VERSION, LoopCaptureCodec, LoopCaptureRef, PER_BEAT_CLOCK,
+    };
+    use woodshed_core::loop_plan::LoopSegmentId;
+    use woodshed_core::working_sets::WorkingSetId;
     use woodshed_views::workspace::WorkspacePanel;
+    use woodshedding::rehearsal::CardId;
+
+    const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
+
+    fn filesystem_fixture_store() -> SessionStore<HostBackend> {
+        let root = std::path::PathBuf::from(
+            std::env::var_os("WOODSHED_DATA_DIR").expect("isolated session fixture root"),
+        );
+        let backend: HostBackend = Box::new(crate::storage::FsBackend::at(
+            root.join("personas/v1").join("1".repeat(64)),
+        ));
+        SessionStore::new(backend)
+    }
+
+    struct ReadOnlyBackend {
+        inner: MemoryBackend,
+        capture_reads: Arc<AtomicUsize>,
+        damage_capture: bool,
+    }
+
+    #[async_trait::async_trait]
+    impl Backend for ReadOnlyBackend {
+        async fn get(&self, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
+            let mut bytes = self.inner.get(key).await?;
+            if key.starts_with("loop-pcm/") {
+                self.capture_reads.fetch_add(1, Ordering::Relaxed);
+                if self.damage_capture {
+                    if let Some(bytes) = bytes.as_mut() {
+                        *bytes.last_mut().unwrap() ^= 1;
+                    }
+                }
+            }
+            Ok(bytes)
+        }
+
+        async fn put(&self, _: &str, _: &[u8]) -> Result<(), StoreError> {
+            panic!("incoming admission must not write")
+        }
+
+        async fn delete(&self, _: &str) -> Result<(), StoreError> {
+            panic!("incoming admission must not delete")
+        }
+
+        async fn list(&self, prefix: &str) -> Result<Vec<String>, StoreError> {
+            self.inner.list(prefix).await
+        }
+
+        async fn scan(&self, start: &str, end: &str) -> Result<Vec<String>, StoreError> {
+            self.inner.scan(start, end).await
+        }
+
+        async fn apply(&self, _: &[WriteOp]) -> Result<(), StoreError> {
+            panic!("incoming admission must not apply writes")
+        }
+    }
+
+    fn read_only_store(
+        inner: MemoryBackend,
+        damage_capture: bool,
+    ) -> (SessionStore<HostBackend>, Arc<AtomicUsize>) {
+        let capture_reads = Arc::new(AtomicUsize::new(0));
+        let backend: HostBackend = Box::new(ReadOnlyBackend {
+            inner,
+            capture_reads: capture_reads.clone(),
+            damage_capture,
+        });
+        (SessionStore::new(backend), capture_reads)
+    }
+
+    fn capture_fixture() -> (MemoryBackend, UiState) {
+        let inner = MemoryBackend::default();
+        let seed = SessionStore::new(inner.clone());
+        let samples = vec![0.25; 2_000];
+        let (digest, frames) = seed.try_write_capture(NAMESPACE, 1_000, &samples).unwrap();
+        let mut ui = UiState::new();
+        ui.stage_current(None);
+        ui.loop_captures.version = CAPTURE_VERSION;
+        ui.loop_captures.namespace = Some(NAMESPACE.into());
+        ui.loop_captures.takes.push(LoopCaptureRef {
+            id: LoopSegmentId {
+                set: ui.working_sets.active_id,
+                card: ui.set.cards[0].id,
+            },
+            bpm: 120.0,
+            beats: 4,
+            bars: 1,
+            sample_rate: 1_000,
+            frames,
+            digest,
+            codec: LoopCaptureCodec::RawF32V1,
+            clock: Some(PER_BEAT_CLOCK.into()),
+            seconds: None,
+        });
+        seed.try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+            .unwrap();
+        (inner, ui)
+    }
+
+    #[test]
+    fn incoming_admission_prepares_complete_state_without_writes_or_source_minting() {
+        let (inner, mut expected) = capture_fixture();
+        expected.app_settings.appearance.theme = "Ember".into();
+        let seed = SessionStore::new(inner.clone());
+        seed.try_save_settings(&serde_json::to_string(&expected.app_settings).unwrap())
+            .unwrap();
+        let original = seed.load().unwrap();
+        let keys = inner.len();
+        let (incoming, reads) = read_only_store(inner.clone(), false);
+        let admitted = admit(&incoming).unwrap();
+        assert_eq!(admitted.app_settings, expected.app_settings);
+        assert_eq!(
+            serde_json::to_value(&admitted.set).unwrap(),
+            serde_json::to_value(&expected.set).unwrap()
+        );
+        assert_eq!(admitted.loop_captures, expected.loop_captures);
+        assert!(admitted.personal_relations.is_none());
+        assert!(!admitted.rehearsal_running && !admitted.song_playing && !admitted.tuner.enabled);
+        assert_eq!(reads.load(Ordering::Relaxed), 1);
+        assert_eq!(seed.load().unwrap(), original);
+        assert_eq!(inner.len(), keys);
+
+        let (empty, _) = read_only_store(MemoryBackend::default(), false);
+        let admitted = admit(&empty).unwrap();
+        assert!(admitted.personal_relations.is_none());
+        assert!(admitted.loop_captures.is_empty());
+    }
+
+    #[test]
+    fn incoming_admission_refuses_corrupt_slots_and_unknown_workspace() {
+        for fault in ["settings", "session", "workspace"] {
+            let inner = MemoryBackend::default();
+            let seed = SessionStore::new(inner.clone());
+            match fault {
+                "settings" => seed.try_save_settings("not settings").unwrap(),
+                "session" => seed.try_save("not a session").unwrap(),
+                "workspace" => {
+                    let mut saved = UiState::new().to_persisted();
+                    saved.workspace_json = Some(r#"{"version":999,"future":"retained"}"#.into());
+                    seed.try_save(&serde_json::to_string(&saved).unwrap())
+                        .unwrap();
+                },
+                _ => unreachable!(),
+            }
+            let original = (seed.load(), seed.load_settings());
+            let (incoming, _) = read_only_store(inner, false);
+            assert!(admit(&incoming).is_err(), "{fault}");
+            assert!(incoming.write_refusal().is_some(), "{fault}");
+            assert_eq!((seed.load(), seed.load_settings()), original);
+        }
+    }
+
+    #[test]
+    fn incoming_admission_refuses_an_already_unconfirmed_store() {
+        let (incoming, _) = read_only_store(MemoryBackend::default(), false);
+        incoming.session_unconfirmed("earlier save could not be verified");
+        assert!(admit(&incoming).err().unwrap().contains("earlier save"));
+    }
+
+    #[test]
+    fn incoming_admission_refuses_invalid_capture_manifest() {
+        let (inner, mut ui) = capture_fixture();
+        ui.loop_captures.version = 999;
+        let seed = SessionStore::new(inner.clone());
+        seed.try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+            .unwrap();
+        let (incoming, reads) = read_only_store(inner, false);
+        assert!(admit(&incoming).err().unwrap().contains("manifest version"));
+        assert_eq!(reads.load(Ordering::Relaxed), 0);
+    }
+
+    #[test]
+    fn incoming_admission_reads_later_references_and_refuses_missing_pcm() {
+        let (inner, mut ui) = capture_fixture();
+        let mut missing = ui.loop_captures.takes[0].clone();
+        missing.id = LoopSegmentId {
+            set: WorkingSetId(2),
+            card: CardId(7),
+        };
+        missing.digest = "0".repeat(64);
+        ui.loop_captures.takes.push(missing);
+        let seed = SessionStore::new(inner.clone());
+        seed.try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+            .unwrap();
+        let (incoming, reads) = read_only_store(inner, false);
+        assert!(admit(&incoming).err().unwrap().contains("missing"));
+        assert_eq!(reads.load(Ordering::Relaxed), 2);
+    }
+
+    #[test]
+    fn incoming_admission_refuses_damaged_pcm_digest() {
+        let (inner, _) = capture_fixture();
+        let (incoming, reads) = read_only_store(inner, true);
+        assert!(admit(&incoming).err().unwrap().contains("integrity"));
+        assert_eq!(reads.load(Ordering::Relaxed), 1);
+    }
+
+    #[test]
+    fn incoming_admission_refuses_pcm_that_disagrees_with_its_clock() {
+        let (inner, mut ui) = capture_fixture();
+        ui.loop_captures.takes[0].bpm = 60.0;
+        let seed = SessionStore::new(inner.clone());
+        seed.try_save(&serde_json::to_string(&ui.to_persisted()).unwrap())
+            .unwrap();
+        let (incoming, reads) = read_only_store(inner, false);
+        assert!(admit(&incoming).err().unwrap().contains("recorded clock"));
+        assert_eq!(reads.load(Ordering::Relaxed), 1);
+    }
 
     #[test]
     fn corrupt_session_restore_remains_unsaved_and_source_initialization_cannot_replace_it() {
@@ -246,13 +519,6 @@ mod tests {
         let storage = SessionStore::new(backend);
         let mut settings = AppSettings::default();
         settings.appearance.theme = "Ember".into();
-        settings.window = Some(WindowSettings {
-            x: 120.0,
-            y: 80.0,
-            width: 900.0,
-            height: 640.0,
-            maximized: false,
-        });
         storage.save_settings(&serde_json::to_string(&settings).unwrap());
 
         let mut ui = UiState::new();
@@ -394,7 +660,6 @@ mod tests {
     #[test]
     fn connected_session_reopens_in_a_fresh_process() {
         let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("practice.json");
         for mode in ["seed", "verify"] {
             let output = std::process::Command::new(std::env::current_exe().unwrap())
                 .args([
@@ -403,8 +668,9 @@ mod tests {
                     "--nocapture",
                 ])
                 .env("WOODSHED_CONNECTED_WORKER", mode)
-                .env("WOODSHED_STATE", &path)
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
                 .output()
                 .unwrap();
             assert!(
@@ -424,8 +690,7 @@ mod tests {
         let Ok(mode) = std::env::var("WOODSHED_CONNECTED_WORKER") else {
             return;
         };
-        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
-        let storage = SessionStore::new(backend);
+        let storage = filesystem_fixture_store();
         if mode == "seed" {
             let mut ui = UiState::new();
             ui.stage.set_lens(Lens::Chords);
@@ -458,9 +723,11 @@ mod tests {
             ui.set.cursor = ui.set.index_of(first).unwrap();
             ui.select_app_section(AppSection::Rehearsal);
             ui.now_ms = Some(1000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.now_ms = Some(2500);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             storage.save(&serde_json::to_string(&ui.to_persisted()).unwrap());
             storage.save_settings(&serde_json::to_string(&ui.app_settings).unwrap());
             assert!(storage.load().is_some());
@@ -478,7 +745,8 @@ mod tests {
                 assert_eq!(card.timing.bpm, Some(90.0));
                 let pitches = ui
                     .stage
-                    .card_sounding_pitches_at_tempo(card, ui.transport.bpm).unwrap();
+                    .card_sounding_pitches_at_tempo(card, ui.transport.bpm)
+                    .unwrap();
                 assert!(!pitches.0.is_empty());
                 assert!(pitches.2 > 0.0);
             }
@@ -505,8 +773,9 @@ mod tests {
                     "--nocapture",
                 ])
                 .env("WOODSHED_SCALE_SESSION_WORKER", mode)
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
                 .output()
                 .unwrap();
             assert!(
@@ -529,8 +798,7 @@ mod tests {
         let Ok(mode) = std::env::var("WOODSHED_SCALE_SESSION_WORKER") else {
             return;
         };
-        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
-        let storage = SessionStore::new(backend);
+        let storage = filesystem_fixture_store();
         if mode == "seed" {
             let mut ui = UiState::new();
             ui.stage.set_lens(Lens::Chords);
@@ -574,14 +842,18 @@ mod tests {
             ui.set.select_id(arpeggio);
             ui.select_app_section(AppSection::Rehearsal);
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.now_ms = Some(2_000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.set.select_id(scale);
             ui.now_ms = Some(10_000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.now_ms = Some(11_500);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             storage.save(&serde_json::to_string(&ui.to_persisted()).unwrap());
             storage.save_settings(&serde_json::to_string(&ui.app_settings).unwrap());
             assert!(storage.load().is_some());
@@ -653,7 +925,8 @@ mod tests {
                 assert!(matches!(card.timing.hold, Hold::Bars(1)));
                 assert!(
                     !ui.stage
-                        .card_sounding_pitches_at_tempo(card, ui.transport.bpm).unwrap()
+                        .card_sounding_pitches_at_tempo(card, ui.transport.bpm)
+                        .unwrap()
                         .0
                         .is_empty()
                 );
@@ -697,8 +970,9 @@ mod tests {
                     "WOODSHED_PATTERN_EXPECTED",
                     dir.path().join("expected-patterns.json"),
                 )
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
                 .output()
                 .unwrap();
             assert!(
@@ -722,8 +996,7 @@ mod tests {
             return;
         };
         let expected_path = std::env::var("WOODSHED_PATTERN_EXPECTED").unwrap();
-        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
-        let storage = SessionStore::new(backend);
+        let storage = filesystem_fixture_store();
         if mode == "seed" {
             let mut ui = UiState::new();
             ui.stage.set_lens(Lens::Scales);
@@ -763,9 +1036,11 @@ mod tests {
                 assert_ne!(subject, "scale:Major");
                 subjects.push(subject);
                 ui.now_ms = Some(1_000 + index as u64 * 10_000);
-                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+                ui.toggle_rehearsal();
+                crate::tests::acknowledge_card_preview_fixture(&mut ui);
                 ui.now_ms = Some(2_500 + index as u64 * 10_000);
-                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+                ui.toggle_rehearsal();
+                crate::tests::acknowledge_card_preview_fixture(&mut ui);
             }
             assert_eq!(
                 serde_json::to_value(&ui.set.cards[0]).unwrap(),
@@ -865,8 +1140,9 @@ mod tests {
                     "WOODSHED_APPROACH_EXPECTED",
                     dir.path().join("expected-approaches.json"),
                 )
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
                 .output()
                 .unwrap();
             assert!(
@@ -892,8 +1168,7 @@ mod tests {
             return;
         };
         let expected_path = std::env::var("WOODSHED_APPROACH_EXPECTED").unwrap();
-        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
-        let storage = SessionStore::new(backend);
+        let storage = filesystem_fixture_store();
         if mode == "seed" {
             let mut ui = UiState::new();
             ui.stage.set_lens(Lens::Chords);
@@ -945,9 +1220,11 @@ mod tests {
                 assert_ne!(subject, "chord:Major 7");
                 subjects.push(subject);
                 ui.now_ms = Some(1_000 + index as u64 * 10_000);
-                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+                ui.toggle_rehearsal();
+                crate::tests::acknowledge_card_preview_fixture(&mut ui);
                 ui.now_ms = Some(2_500 + index as u64 * 10_000);
-                ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+                ui.toggle_rehearsal();
+                crate::tests::acknowledge_card_preview_fixture(&mut ui);
             }
             assert_eq!(serde_json::to_value(&ui.set.cards[..2]).unwrap(), originals);
             let ids = ui.set.cards.iter().map(|card| card.id).collect::<Vec<_>>();
@@ -1056,8 +1333,9 @@ mod tests {
                     "WOODSHED_LIBRARY_EXPECTED",
                     dir.path().join("expected-library.json"),
                 )
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
                 .output()
                 .unwrap();
             assert!(
@@ -1081,8 +1359,7 @@ mod tests {
             return;
         };
         let expected_path = std::env::var("WOODSHED_LIBRARY_EXPECTED").unwrap();
-        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
-        let storage = SessionStore::new(backend);
+        let storage = filesystem_fixture_store();
         if mode == "seed" {
             let mut ui = UiState::new();
             ui.stage.set_lens(Lens::Scales);
@@ -1114,7 +1391,8 @@ mod tests {
             ui.set.cards[0].label = "Edited working scale".into();
             ui.set.cards[0].timing.bpm = Some(137.0);
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             ui.activate_workspace_panel(WorkspacePanel::Overview);
             let expected = serde_json::json!({ "saved": saved, "saved_id": saved_id, "sound": sound, "working": ui.set });
             std::fs::write(&expected_path, serde_json::to_vec(&expected).unwrap()).unwrap();
@@ -1196,8 +1474,9 @@ mod tests {
                     "WOODSHED_INSTANCES_EXPECTED",
                     dir.path().join("expected-instances.json"),
                 )
-                .env("WOODSHED_STATE", dir.path().join("practice.json"))
-                .env("WOODSHED_SETTINGS", dir.path().join("settings.json"))
+                .env("WOODSHED_DATA_DIR", dir.path())
+                .env_remove("WOODSHED_STATE")
+                .env_remove("WOODSHED_SETTINGS")
                 .output()
                 .unwrap();
             assert!(
@@ -1218,8 +1497,7 @@ mod tests {
             return;
         };
         let expected_path = std::env::var("WOODSHED_INSTANCES_EXPECTED").unwrap();
-        let backend: HostBackend = Box::<crate::storage::FsBackend>::default();
-        let storage = SessionStore::new(backend);
+        let storage = filesystem_fixture_store();
         if mode == "seed" {
             let mut ui = UiState::new();
             ui.stage.set_lens(Lens::Scales);
@@ -1276,7 +1554,8 @@ mod tests {
             ));
             assert!(ui.activate_working_set(first));
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(&mut ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(&mut ui);
             assert!(ui.activate_working_set(second));
             assert_eq!(ui.rehearsal_owner, Some(first));
             assert_eq!(ui.rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);

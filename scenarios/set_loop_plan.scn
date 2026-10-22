@@ -1,7 +1,7 @@
 # Bounded Set backing admission through shipping controls. The existing fixture
 # supplies two block Chords, explicit instrument/tuning and one-Bar holds.
-# Use isolated WOODSHED_STATE/WOODSHED_SETTINGS paths, then run the reopen file
-# in a separate process against those same files. Requires an output engine;
+# Use an isolated WOODSHED_DATA_DIR, then run the reopen file in a separate
+# process with that same data root and persona. Requires an output engine;
 # physical microphone capture and PCM persistence are separate qualifications.
 settle 3
 ui-zoom 0.8

@@ -4,16 +4,16 @@
 
 use std::fs;
 use std::io::Read;
-use std::path::{Component, Path, PathBuf};
+use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, MutexGuard, mpsc};
 
 use cambium_genet_winit_host::CloseDisposition;
 use muniment::blob::Hash;
 use tempfile::NamedTempFile;
 use woodshed_audio::Song;
-use woodshed_audio::offline::{SongExportReport, export_song_wav_with_pattern_to};
 #[cfg(test)]
 use woodshed_audio::offline::export_song_wav_to;
+use woodshed_audio::offline::{SongExportReport, export_song_wav_with_pattern_to};
 use woodshed_core::loop_plan::LooperSource;
 use woodshed_views::stage::{LoopExportRequest, UiState};
 
@@ -28,52 +28,15 @@ struct Protection {
     directories: Vec<PathBuf>,
 }
 
-fn normalized(path: &Path) -> Result<PathBuf, String> {
-    let absolute = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        std::env::current_dir()
-            .map_err(|e| e.to_string())?
-            .join(path)
-    };
-    let mut lexical = PathBuf::new();
-    for part in absolute.components() {
-        match part {
-            Component::ParentDir => {
-                lexical.pop();
-            },
-            Component::CurDir => {},
-            other => lexical.push(other.as_os_str()),
-        }
-    }
-    let mut ancestor = lexical.as_path();
-    let mut missing = Vec::new();
-    while !ancestor.try_exists().map_err(|e| e.to_string())? {
-        missing.push(
-            ancestor
-                .file_name()
-                .ok_or("Invalid export destination.")?
-                .to_os_string(),
-        );
-        ancestor = ancestor.parent().ok_or("Invalid export destination.")?;
-    }
-    let mut result = ancestor.canonicalize().map_err(|e| e.to_string())?;
-    for part in missing.into_iter().rev() {
-        result.push(part);
-    }
-    Ok(result)
+pub(crate) fn normalized(path: &Path) -> Result<PathBuf, String> {
+    crate::paths::absolute(path)
 }
 
 impl Protection {
-    fn current() -> Self {
-        let storage = crate::storage::FsBackend::new();
-        let mut paths = storage.protected_export_paths();
-        if let Some(path) = crate::appearance::configured_library_path() {
-            paths.push(path);
-        }
+    fn current(shared: &Shared) -> Self {
         Self {
-            paths,
-            directories: storage.protected_export_directories(),
+            paths: shared.theme_library.iter().cloned().collect(),
+            directories: shared.data_root.iter().cloned().collect(),
         }
     }
 
@@ -110,7 +73,7 @@ impl Protection {
 
 // Reserve case aliases even for files/directories that do not exist yet.
 // Canonicalizing an existing ancestor alone cannot detect these on macOS.
-fn reserved_match(path: &Path, reserved: &Path, subtree: bool) -> bool {
+pub(crate) fn reserved_match(path: &Path, reserved: &Path, subtree: bool) -> bool {
     let path: Vec<_> = path.components().collect();
     let reserved: Vec<_> = reserved.components().collect();
     (if subtree {
@@ -190,7 +153,9 @@ pub struct WavExport {
 }
 
 impl WavExport {
-    pub(crate) fn is_finishing(&self) -> bool { self.job.is_some() }
+    pub(crate) fn is_finishing(&self) -> bool {
+        self.job.is_some()
+    }
 
     /// Serialize revocation with the worker's final link/rename. A commit
     /// already holding the gate completes before the host changes session.
@@ -344,8 +309,12 @@ fn render(
         .prefix(".woodshed-wav-")
         .tempfile_in(parent)
         .map_err(|e| e.to_string())?;
-    let pattern = pack.map(|p| p.hydrated_pattern()).transpose().map_err(|e| e.to_string())?;
-    let report = export_song_wav_with_pattern_to(&song, rate, pattern.as_ref(), file.as_file_mut()).map_err(|e| e.to_string())?;
+    let pattern = pack
+        .map(|p| p.hydrated_pattern())
+        .transpose()
+        .map_err(|e| e.to_string())?;
+    let report = export_song_wav_with_pattern_to(&song, rate, pattern.as_ref(), file.as_file_mut())
+        .map_err(|e| e.to_string())?;
     file.as_file().sync_all().map_err(|e| e.to_string())?;
     publish(
         Artifact {
@@ -522,6 +491,7 @@ fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
     // RFD marshals AppKit work to the main queue. Schedule it only after the
     // dispatch returns, releasing Shared and the host's input-handler borrows
     // before AppKit enters its nested modal event loop.
+    let protection = Protection::current(shared);
     let Some(choose) = choose else {
         start_dialog(
             pack,
@@ -530,7 +500,7 @@ fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
             song,
             rate,
             name,
-            Protection::current(),
+            protection,
             choose_wav_destination,
         )?;
         ctx.runner.update(|ui| {
@@ -551,7 +521,7 @@ fn choose_and_start<F: FnMut(&str) -> Option<PathBuf>>(
         );
     }
     path = wav_path(path)?;
-    let protection = Protection::current();
+    let protection = Protection::current(shared);
     let path = protection.check(&path)?;
     shared.wav_export.spawn(session, move |cancelled| {
         render(pack, song, rate, path, protection, &cancelled)
@@ -632,6 +602,33 @@ mod tests {
     use taproot::Selector;
 
     #[test]
+    fn installed_root_protection_is_frozen_and_covers_uncreated_case_aliases() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path().join("PrivateRoot");
+        let shared = Shared::with_store(None, None, None);
+        shared.borrow_mut().data_root = Some(root.clone());
+        shared.borrow_mut().theme_library = Some(directory.path().join("AuthoredThemes.json"));
+        let protection = Protection::current(&shared.borrow());
+        shared.borrow_mut().data_root = Some(directory.path().join("AnotherRoot"));
+        assert!(
+            protection
+                .check(&directory.path().join("privateroot"))
+                .is_err()
+        );
+        assert!(
+            protection
+                .check(&directory.path().join("authoredthemes.json"))
+                .is_err()
+        );
+        assert!(
+            protection
+                .check(&directory.path().join("ordinary.wav"))
+                .is_ok()
+        );
+        assert!(!root.exists());
+    }
+
+    #[test]
     fn deferred_dialog_cancel_and_epoch_revocation_preserve_destinations() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("chosen.wav");
@@ -699,9 +696,10 @@ mod tests {
     #[test]
     fn deferred_export_close_preserves_the_dirty_appearance_gate() {
         let dir = tempfile::tempdir().unwrap();
-        let store = woodshed_core::storage::SessionStore::new(
-            Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend,
-        );
+        let store = woodshed_core::storage::SessionStore::new(Box::new(
+            muniment::MemoryBackend::default(),
+        )
+            as crate::storage::HostBackend);
         let shared = Shared::with_store(Some(store), None, None);
         let mut ui = UiState::new();
         crate::capture_persistence::begin_session(&mut shared.borrow_mut(), &ui).unwrap();
@@ -896,10 +894,12 @@ mod tests {
             std::env::var_os("WOODSHED_EXPORT_REFERENCE_DIR").expect("owned reference directory"),
         );
         assert!(
-            std::env::var_os("WOODSHED_STATE").is_some(),
+            std::env::var_os("WOODSHED_DATA_DIR").is_some(),
             "isolated state override required"
         );
-        let (storage, seal) = crate::storage::open_store_as(None);
+        let opened = crate::storage::open_store_as(None);
+        let storage = opened.storage;
+        let seal = opened.seal;
         let mut ui = UiState::new();
         crate::session::restore(&storage, &mut ui);
         let shared = Shared::with_store(Some(storage), Some(seal), None);
