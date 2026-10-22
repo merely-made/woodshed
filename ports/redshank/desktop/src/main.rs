@@ -3490,7 +3490,10 @@ mod tests {
             thread::sleep(Duration::from_millis(2));
         }
         assert!(!desktop.recovery.copying);
-        assert!(desktop.recovery.notice.as_ref().unwrap().contains("failed"));
+        let failure = desktop.recovery.notice.as_ref().unwrap();
+        assert!(failure.contains("failed"));
+        assert!(failure.contains("outside the original Redshank data directory"));
+        assert!(!failure.contains("Io("));
         assert!(!desktop.ready_to_close());
         assert!(desktop.persistence.requests.is_none());
         assert_eq!(desktop.persistence.durable, 0);

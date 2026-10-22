@@ -1,0 +1,20 @@
+{
+  "source_commit": "94583610752dce03853bb1bf132175121e7c79eb",
+  "binary": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/CommittedRecovery.app/Contents/MacOS/redshank-native-recovery",
+  "binary_sha256": "c18e11ef3df7a077d79d31a229abe6fff8a7dbb704df4c958ccd26b3de557855",
+  "bundle_id": "made.merely.redshank.recovery.committed20261021",
+  "environment": {
+    "REDSHANK_DATA_DIR": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/failed-listener",
+    "REDSHANK_APPEARANCE_STORE": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/appearance.json",
+    "REDSHANK_THEME_LIBRARY": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/themes.json",
+    "REDSHANK_WIDTH": "960",
+    "REDSHANK_HEIGHT": "780"
+  },
+  "media": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/Native Recovery Source.wav",
+  "before": {
+    "Native Recovery Source.wav": "40abc924dc63f75aafb2400bb99fd66741e22eb9ff2450973a18db53a06286ac",
+    "failed-listener/state-00000000000000000001.json": "4b72dadf60a89205c4ccb75d881b8cd574315c5f04620a2935e064c8b49ecf0a",
+    "failed-listener/state-00000000000000000002.json": "5cedf979d0c3fc70789024eb642b588431777663bfeaee162bc3e0daec751488",
+    "failed-listener/state-00000000000000000003.json.pending": "3fb152b04be65f5278ee96bd97d8e76a0385c54e90d0553e933dc8f900a8bae2"
+  }
+}

@@ -1,0 +1,20 @@
+[
+  "open",
+  "-n",
+  "-W",
+  "--stdout",
+  "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/native-reopen.log",
+  "--stderr",
+  "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/native-reopen.log",
+  "--env",
+  "REDSHANK_DATA_DIR=/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/recovered-session",
+  "--env",
+  "REDSHANK_APPEARANCE_STORE=/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/appearance.json",
+  "--env",
+  "REDSHANK_THEME_LIBRARY=/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/final-fixture/themes.json",
+  "--env",
+  "REDSHANK_WIDTH=820",
+  "--env",
+  "REDSHANK_HEIGHT=560",
+  "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/CommittedRecovery.app"
+]

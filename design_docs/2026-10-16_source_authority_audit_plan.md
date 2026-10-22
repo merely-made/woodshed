@@ -358,3 +358,10 @@ are published at `01c4b3af`. D3 implementation and qualification live in the
 This is a separate product-policy slice after the P10 first-wave recheck; P5a
 remains with its existing owner. Persona-store migration, capture-capacity
 policy and supplier checked snapshot construction remain separate work.
+
+2026-10-22 D3 native follow-up: committed `94583610` repairs exposed copy-failure
+wording and passes real macOS chooser cancellation, refusal/I/O failure, successful
+copy and independent copied-media reopening. Ten accepted captures and a 92-case
+desktop gate (one existing ignore) are in the [native recovery receipt](../validation/redshank-recovery-native_20261021/README.md).
+P5a stays with its existing owner; physical audio and broader platform acceptance
+remain separate.

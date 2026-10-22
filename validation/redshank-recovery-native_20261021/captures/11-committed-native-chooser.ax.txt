@@ -1,0 +1,21 @@
+Window: "Save", App: Redshank Committed Recovery.
+0 dialog Save, ID: save-panel, Secondary Actions: Raise
+	1 split group
+		2 text Value: Where:, ID: whereLabel
+		3 pop up button Where:, Value: Documents, ID: where popup
+		4 disclosure triangle Description: show more options, Value: 0
+		5 text Save Recovery Copy — choose a new directory name Save As:
+		6 text field (settable) Value: Redshank Recovery, ID: saveAsNameTextField
+		7 text Value: Tags:, ID: tagsLabel
+		8 text field (settable) tag editor
+		9 button Cancel, ID: CancelButton
+		10 button Save, ID: OKButton
+	11 text Save
+12 menu bar
+	13 Redshank Committed Recovery
+
+Selected text: ```
+Redshank Recovery
+```
+
+Note: Pay special attention to the content selected by the user. If the user asks a question or refers to the content they are looking at on-screen, they might be referring to the selected content (but they might be referring to something else that's visible, too).

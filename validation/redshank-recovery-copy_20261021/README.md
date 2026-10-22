@@ -64,3 +64,9 @@ window/chooser interaction, a fresh application process reopening the copy,
 physical audio and device acceptance were not exercised. P5a, recording-capacity
 policy, persona-store migration and supplier checked-construction intake remain
 separate work.
+
+Subsequent native qualification, completed October 22, is recorded separately in
+the [macOS recovery/reopen receipt](../redshank-recovery-native_20261021/README.md).
+It includes the native failure-wording correction at `94583610`, real chooser
+interaction and independent reopening. This earlier record retains its original
+CPU/build scope and source identity.

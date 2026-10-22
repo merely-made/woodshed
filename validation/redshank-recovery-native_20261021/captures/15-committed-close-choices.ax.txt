@@ -1,0 +1,41 @@
+Window: "Redshank", App: Redshank Committed Recovery.
+0 standard window Redshank, Secondary Actions: Raise
+	1 container
+		2 button Appearance
+		3 tab group Destinations
+			4 tab (settable, boolean) Listen, Value: on
+			5 tab (settable, boolean) Library, Value: off
+			6 tab (settable, boolean) Notes, Value: off
+			7 tab (settable, boolean) Mere, Value: off
+			8 tab (settable, boolean) Settings, Value: off
+		9 container Listener recovery
+			10 container Not saved: listener recovery failed (2 saved generations could not be restored). Changes stay in memory; existing state is preserved. Save a recovery copy to a new directory to retain this session.
+			11 container Keep working, save a separate recovery copy, or exit without saving these changes.
+			12 container Recovery copy failed: A required audio file or destination folder could not be found. Your current session is still open and the original store is unchanged. Resolve the problem, then choose a new directory to retry.
+			13 button Save Recovery Copy
+			14 button Keep Working
+			15 button Exit Without Saving
+		16 container Listen
+			17 button Select Native Recovery Source.wav
+			18 button More actions for Native Recovery Source.wav
+			19 container No notes for this episode yet.
+			20 container Captured note target
+			21 text entry area (settable) Committed native recovery draft: preserve this exact text and the local audio.
+			22 button Save text note
+			23 button Cancel text note
+		24 container Player
+			25 slider (settable, float) Seek, Value: 0
+			26 button Skip backward
+			27 button Play
+			28 button Skip forward
+			29 button Playback rate 1.0 times
+			30 button Volume 80 percent
+			31 container Capture
+				32 button Add text note
+				33 toggle button (settable, boolean) Hold to record voice note, Value: off
+	34 close button
+	35 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	36 minimize button
+	37 text Redshank
+38 menu bar
+	39 Redshank Committed Recovery
