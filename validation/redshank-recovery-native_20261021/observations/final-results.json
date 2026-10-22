@@ -1,0 +1,20 @@
+{
+  "completed_date": "2026-10-22",
+  "started_date": "2026-10-21",
+  "source_commit": "94583610752dce03853bb1bf132175121e7c79eb",
+  "binary_sha256": "c18e11ef3df7a077d79d31a229abe6fff8a7dbb704df4c958ccd26b3de557855",
+  "native_source_exit": 0,
+  "native_reopen_exit": 0,
+  "source_exit_precedes_reopen": true,
+  "reopen_observed_pid": 49895,
+  "owned_processes_stopped": true,
+  "original_generation_and_pending_inventory_unchanged": true,
+  "original_wav_unavailable_through_reopen": true,
+  "exact_note_target_body_identity_preserved": true,
+  "exact_library_selection_queue_preserved": true,
+  "copied_media_sha256": "40abc924dc63f75aafb2400bb99fd66741e22eb9ff2450973a18db53a06286ac",
+  "playback_of_copied_audio_completed_ms": 30000,
+  "runtime_scope": "Synthetic silent WAV through native decoder/output runtime; no physical audio or microphone qualification.",
+  "fixture_models_after_reopen": 3,
+  "p5a_untouched": true
+}

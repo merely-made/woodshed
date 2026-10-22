@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-native-source-process-20261021",
+  "command": [
+    "python3",
+    "-c",
+    "import json,subprocess,sys; sys.exit(subprocess.run(json.load(open(\"/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/native-source-command.json\"))).returncode)"
+  ],
+  "started_at": "2026-10-22T03:47:30.486244Z",
+  "ended_at": "2026-10-22T03:51:40.423338Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/source-launch.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "source_commit": "97bb21e5b265b76284ed715f975e4b0b18181a24"
+}

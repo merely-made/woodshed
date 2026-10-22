@@ -1,0 +1,36 @@
+{
+  "source_commit": "97bb21e5b265b76284ed715f975e4b0b18181a24",
+  "cancel_retained_draft": true,
+  "protected_destination_refused": true,
+  "missing_media_refused_with_no_model": true,
+  "original_generations_unchanged": true,
+  "success_copy_note": {
+    "id": "note:1792641099878:0",
+    "target": {
+      "item_id": "local:/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/fixture/Native Recovery Source.wav",
+      "offset_ms": 0,
+      "end_offset_ms": null,
+      "pressed_offset_ms": null,
+      "representation": {
+        "requested_url": null,
+        "final_url": null,
+        "media_type": null,
+        "byte_length": 960044,
+        "etag": null,
+        "last_modified": null,
+        "retrieved_at_ms": null,
+        "complete_digest": "blake3:b798c70638db7faa4c87b54cd0088be19ade86ec6c4229dc1d7f6e560c042abd"
+      }
+    },
+    "body": {
+      "kind": "text",
+      "plain_text": "Native D3 draft retained after cancel and failed copy."
+    },
+    "created_at_ms": 1792641099878,
+    "privacy": "private"
+  },
+  "success_copy_media_sha256": "40abc924dc63f75aafb2400bb99fd66741e22eb9ff2450973a18db53a06286ac",
+  "source_exit_code": 0,
+  "finding": "Native copy failure notice exposes Rust Debug internals; corrected before final acceptance.",
+  "tool_observation": "Querying AX after source exit launched an empty observation window; immediately closed and excluded from acceptance. Final native close will be verified by process exit without another AX query."
+}

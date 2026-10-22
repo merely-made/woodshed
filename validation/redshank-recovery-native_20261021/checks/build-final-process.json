@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-native-build-final-20261021",
+  "command": [
+    "cargo",
+    "build",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "redshank-desktop"
+  ],
+  "started_at": "2026-10-22T03:54:07.787230Z",
+  "ended_at": "2026-10-22T03:54:28.950948Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021/ports/redshank",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/checks/build-final.log",
+  "log_sha256": "fe6a43a3813943b4bc2d4bddef83026444456cffbe85abfc739c5b00e3e8e927",
+  "source_commit": "94583610752dce03853bb1bf132175121e7c79eb"
+}
