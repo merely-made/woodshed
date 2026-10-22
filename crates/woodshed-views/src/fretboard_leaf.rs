@@ -578,7 +578,7 @@ impl Leaf for FretboardLeaf {
     /// on the enclosing region and outranks this fallback; the markers over the
     /// leaf are their own named buttons, so a screen reader navigates the notes
     /// while this describes the surface they sit on.
-    fn accessibility(&mut self, node: &mut accesskit::Node) {
+    fn accessibility(&self, node: &mut accesskit::Node) {
         node.set_role(accesskit::Role::GraphicsObject);
         if node.label().is_none() {
             let orientation = match self.orientation {
