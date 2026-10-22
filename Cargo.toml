@@ -26,7 +26,6 @@ members = [
     "crates/woodshed-instrument",
 ]
 exclude = [
-    "vendor/cambium-genet-winit-host",
     "vendor/ble-peripheral-rust",
     "vendor/ble-peripheral-rust/vendor/bluer",
     "ports/hocket",
@@ -112,12 +111,10 @@ woodshed-web = { path = "crates/woodshed-web" }
 # woodshed-genet's main.rs is this package. Never publishable (it rides
 # genet-layout and genet-winit-host).
 #
-# The toolkit/host crates come from Mere at `11236fd4`; raw Genet engine
-# crates use `4bc75583`, the Genet that Mere revision pins. Cargo keys a git
-# source by URL and reference, so the split is intentional and keeps one source
-# identity for each family.
-# A narrow supplier source patch below retains this same host and filters
-# synthesized focus key presses; see vendor/cambium-genet-winit-host/PATCHES.md.
+# The toolkit/host crates receive Mere a07a375e; raw engine crates receive
+# its paired Genet 7d1d89db source. Cargo-generated locks retain one source per
+# family. The synthesized-focus guard now lives in the shared Mere host;
+# see validation/stack-family_20261011/pool-cohort-20261022.json.
 cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 sprigging = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
@@ -162,7 +159,7 @@ midir = "0.11"
 # Persistence
 ciborium = "0.2"
 uuid = { version = "1.10", features = ["v4", "serde"] }
-muniment = { version = "0.1.0", default-features = false, git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+muniment = { version = "0.1.0", default-features = false, git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main", features = ["verify"] }
 wavicle = { git = "https://github.com/merely-made/wavicle.git", rev = "2c5a49fd48db7a54aeab9e712804fd065411aef9", default-features = false, features = ["encode", "decode"] }
 serde = { version = "1.0", features = ["derive"] }
@@ -203,9 +200,9 @@ persona-picker = { package = "mere-persona-picker", git = "https://github.com/me
 [patch.crates-io]
 # Promoted sources shared with immutable older Mere suppliers.
 # Canonical promoted families; keep registry and Git consumers type-identical.
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
 # Mirror the agreed Mere renderer source; git dependencies do not inherit patches.
 netrender_device = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
@@ -280,18 +277,16 @@ opt-level = 2
 # Root patches are not inherited from the imported Murm suppliers.
 [patch."https://github.com/merely-made/mere.git"]
 # Promoted sources shared with immutable older Mere suppliers.
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 mere-webrtc-carrier = { git = "https://github.com/merely-made/murm.git", branch = "main" }
 
-# One resolved shared host: reject synthesized focus presses until the owner pin incorporates it.
-cambium-genet-winit-host = { path = "vendor/cambium-genet-winit-host" }
 
 [patch."https://www.github.com/merely-made/mere.git"]
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "738ef15956a29a125820b2d6c2280d39a6214f8e" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
