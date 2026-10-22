@@ -277,6 +277,31 @@ struct Snapshot {
     draft: Option<(TextCapture, String)>,
 }
 
+fn copy_failure(error: redshank_storage::StoreError) -> String {
+    use redshank_storage::StoreError;
+    let detail = match error {
+        StoreError::Io(error) => match error.kind() {
+            std::io::ErrorKind::NotFound => {
+                "A required audio file or destination folder could not be found".to_owned()
+            },
+            std::io::ErrorKind::AlreadyExists => {
+                "That recovery destination already exists".to_owned()
+            },
+            std::io::ErrorKind::PermissionDenied => {
+                "Access to a required file or destination folder was denied".to_owned()
+            },
+            _ => error.to_string(),
+        },
+        StoreError::Encode(_) => "The listener state could not be encoded".to_owned(),
+        StoreError::NoValidGeneration { .. } => {
+            "The recovery destination contains unreadable listener state".to_owned()
+        },
+    };
+    format!(
+        "Recovery copy failed: {detail}. Your current session is still open and the original store is unchanged. Resolve the problem, then choose a new directory to retry."
+    )
+}
+
 impl Desktop {
     fn recovery_dirty(&self, state: &RedshankSurfaceState) -> bool {
         self.persistence.revision != 0
@@ -455,7 +480,7 @@ impl Desktop {
         thread::spawn(move || {
             let result = JsonDirectoryStore::new(source)
                 .save_recovery_copy(&path, &model)
-                .map_err(|error| format!("Recovery copy failed: {error:?}. The original store is unchanged; choose a new directory to retry."));
+                .map_err(copy_failure);
             let _ = replies.send(IoReply::RecoveryCopied(result));
         });
         Ok(())
