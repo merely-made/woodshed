@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_locked_unsaved
+D1 locked custody stayed unsaved without reading a persona store
+capture 01_locked_unsaved 2200x1400 digest=070ae74a64cd61a9 file=/Users/markik/Code/testing/woodshed-persona-store-20261022/native/locked-reopen/01_locked_unsaved.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 19 frames, 21 redraws, 2 unpresented redraws

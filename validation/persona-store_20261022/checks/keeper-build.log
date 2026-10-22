@@ -1,0 +1,2 @@
+error: target `dr-c-receipt-host` in package `djinn` requires the features: `custody-receipt-host`
+Consider enabling them by passing, e.g., `--features="custody-receipt-host"`

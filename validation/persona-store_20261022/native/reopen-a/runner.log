@@ -1,0 +1,7 @@
+{"launch_method": "LaunchServices temporary application bundle", "launcher_exit": 0, "timeout": false, "success": true, "elapsed_seconds": 4.251, "binary_sha256": "7d656c9b370e2c10f6c88c6b6e250730049d52b6726d0b01774f51440432079c", "scenario_sha256": "0ca4fed6ced6eb7db737830e864b6fdea1b4ba2450da381357f9d98a1a7cb5b5", "receipt": "scenario.done", "captures": 1}
+RESULT ok
+captured 01_reopen-a
+D1 independent fresh process default reopened its own practice
+capture 01_reopen-a 2200x1400 digest=64829eb2cb871687 file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/reopen-a/01_reopen-a.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 25 frames, 27 redraws, 2 unpresented redraws

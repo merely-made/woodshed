@@ -1,0 +1,25 @@
+{
+  "type": "answer",
+  "id": 1,
+  "answer": {
+    "Ok": {
+      "answer": "roster",
+      "entries": [
+        {
+          "id": "d1-b",
+          "display_name": "D1 Persona B",
+          "slot_count": 0,
+          "chosen": false
+        },
+        {
+          "id": "default",
+          "display_name": "Receipt",
+          "slot_count": 0,
+          "chosen": true
+        }
+      ],
+      "chosen": "default",
+      "description": "Passphrase"
+    }
+  }
+}

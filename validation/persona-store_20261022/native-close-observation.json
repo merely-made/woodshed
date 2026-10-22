@@ -1,0 +1,13 @@
+{
+  "observer": "coordinator via native accessibility UI",
+  "app_bundle_identifier": "made.merely.woodshed.d1.final.locked",
+  "receipt_completed_before_action": true,
+  "observed_heading": "Practice is not confirmed saved",
+  "observed_reason": "Practice is not being saved: the vault is locked. Changes stay in this window. Choose or reconnect the persona before closing if you want to keep them.",
+  "observed_button": "Discard unsaved practice and close",
+  "observed_accessibility_index": 6,
+  "action": "clicked observed button through native app API",
+  "result": "Owned product process exited zero; final runner reports success and no timeout.",
+  "post_close_observation": "Subsequent accessibility lookup found the temporary application bundle already removed by the completed runner.",
+  "capture_boundary": "The final capture shows the guard before the click. The click is the coordinator observation; process.json independently records exit."
+}

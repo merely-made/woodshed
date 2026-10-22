@@ -1,0 +1,10 @@
+RESULT ok
+captured 01_incoming_refused
+captured 02_retry_retained
+captured 03_cancel_retained
+D1 native corrupt incoming store refusal retry cancel preserved outgoing practice
+capture 01_incoming_refused 2200x1400 digest=d90fc07bc74c472d file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/incoming-failure/01_incoming_refused.png
+capture 02_retry_retained 2200x1400 digest=101d32971a25398a file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/incoming-failure/02_retry_retained.png
+capture 03_cancel_retained 2200x1400 digest=a68bf292e48ee856 file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/incoming-failure/03_cancel_retained.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 68 frames, 70 redraws, 2 unpresented redraws

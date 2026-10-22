@@ -1,0 +1,8 @@
+[cambium-winit] accessibility Installed, 50 nodes projected
+[woodshed] could not read settings: backend: Stored bytes could not be unsealed with this persona; original data is retained.
+[woodshed] could not read settings: backend: Stored bytes could not be unsealed with this persona; original data is retained.
+woodshed-genet: captured 01_incoming_refused
+woodshed-genet: captured 02_retry_retained
+woodshed-genet: captured 03_cancel_retained
+woodshed-genet: D1 native corrupt incoming store refusal retry cancel preserved outgoing practice
+woodshed-genet: RESULT ok (68 frames, 3 captures)

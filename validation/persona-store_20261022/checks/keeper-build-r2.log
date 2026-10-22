@@ -1,0 +1,1720 @@
+   Compiling der v0.7.10
+   Compiling muniment v0.1.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling hest v0.2.0 (/Users/markik/Code/repos/mere/crates/cambium/hest)
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling ed25519 v2.2.3
+   Compiling insigne v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#7d498c27)
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+warning: unused variable: `time_range`
+   --> crates/cambium/scenes/scenomise/src/opened_link.rs:599:9
+    |
+599 |     let time_range = timeline_range(pending);
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_time_range`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `scenomise` (lib) generated 1 warning (run `cargo fix --lib -p scenomise` to apply 1 suggestion)
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling ed25519-dalek v2.2.0
+   Compiling iroh-relay v1.3.0
+   Compiling sec1 v0.7.3
+   Compiling spki v0.7.3
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling tabard v0.0.2 (/Users/markik/Code/repos/mere/crates/system/tabard)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling pkcs8 v0.10.2
+   Compiling elliptic-curve v0.13.8
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling pkcs1 v0.7.5
+   Compiling armillary v0.1.1 (https://github.com/merely-made/armillary.git?rev=92d5b15cf39aaac40a3f2d863ffee69c9be11bfc#92d5b15c)
+   Compiling ecdsa v0.16.9
+   Compiling primeorder v0.13.6
+   Compiling rsa v0.9.10
+   Compiling p256 v0.13.2
+   Compiling p384 v0.13.1
+   Compiling p521 v0.13.3
+   Compiling inker v0.1.1 (/Users/markik/Code/repos/mere/crates/inker/inker)
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling chirograph v0.0.2 (/Users/markik/Code/repos/mere/crates/chirograph)
+   Compiling genet-taffy v0.14.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling ssh-key v0.6.7
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling k256 v0.13.4
+   Compiling personae v0.3.0 (https://github.com/merely-made/dramatis.git?branch=main#7d498c27)
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling gaz v0.0.2 (https://github.com/merely-made/dramatis.git?branch=main#7d498c27)
+   Compiling hpke-rs-rust-crypto v0.7.0
+   Compiling sprigging v0.3.0 (/Users/markik/Code/repos/mere/crates/cambium/sprigging)
+   Compiling gemini-protocol v0.1.7 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling p2panda-encryption v0.7.1 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+   Compiling spartan-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling mere-kernel v0.0.2 (/Users/markik/Code/repos/mere/crates/graph/graph-kernel)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling notochord v0.1.1 (https://github.com/merely-made/dramatis.git?branch=main#7d498c27)
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling dramatis v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#7d498c27)
+   Compiling scroll-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling esp v0.1.0 (https://github.com/merely-made/esp.git?rev=6d6ad84b773c9baf2390bd7807a21ca9887e6efd#6d6ad84b)
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling seiche v0.0.6 (/Users/markik/Code/repos/mere/crates/conatus/seiche)
+   Compiling misfin v0.0.4 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling finger-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling gopher-protocol v0.2.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling nex-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling guppy-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling cambium v0.6.0 (/Users/markik/Code/repos/mere/crates/cambium/cambium)
+   Compiling chatelaine v0.0.3 (https://github.com/merely-made/dramatis.git?branch=main#7d498c27)
+   Compiling tungstenite v0.30.0
+warning: unused imports: `astar`, `dijkstra`, `has_path_connecting`, and `kosaraju_scc`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:21:22
+   |
+21 | use petgraph::algo::{astar, dijkstra, has_path_connecting, kosaraju_scc};
+   |                      ^^^^^  ^^^^^^^^  ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `Archived`, `Place`, and `Resolver`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:25:21
+   |
+25 | use rkyv::{Archive, Archived, Deserialize, Place, Resolver, Serialize, rancor::Fallible};
+   |                     ^^^^^^^^               ^^^^^  ^^^^^^^^
+
+warning: unused import: `HashSet`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:26:43
+   |
+26 | use std::collections::{BTreeMap, HashMap, HashSet};
+   |                                           ^^^^^^^
+
+warning: unused import: `AddressKind`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:33:31
+   |
+33 | use crate::address::{Address, AddressKind, address_from_url, cached_host_from_url, detect_mime};
+   |                               ^^^^^^^^^^^
+
+warning: unused imports: `GraphSnapshot`, `PersistedAddress`, `PersistedArrangementEdgeData`, `PersistedArrangementSubKind`, `PersistedContainmentEdgeData`, `PersistedContainmentSubKind`, `PersistedEdgeFamily`, `PersistedEdge`, `PersistedImportedEdgeData`, `PersistedImportedSubKind`, `PersistedNavigationTrigger`, `PersistedNodeSessionState`, `PersistedNode`, `PersistedProvenanceEdgeData`, `PersistedProvenanceSubKind`, `PersistedSemanticEdgeData`, `PersistedSemanticSubKind`, `PersistedTraversalEdgeData`, `PersistedTraversalMetrics`, and `PersistedTraversalRecord`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:35:5
+   |
+35 |     GraphSnapshot, PersistedAddress, PersistedArrangementEdgeData, PersistedArrangementSubKind,
+   |     ^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+36 |     PersistedContainmentEdgeData, PersistedContainmentSubKind, PersistedEdge, PersistedEdgeFamily,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^
+37 |     PersistedImportedEdgeData, PersistedImportedSubKind, PersistedNavigationTrigger, PersistedNode,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^
+38 |     PersistedNodeSessionState, PersistedProvenanceEdgeData, PersistedProvenanceSubKind,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+39 |     PersistedSemanticEdgeData, PersistedSemanticSubKind, PersistedTraversalEdgeData,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+40 |     PersistedTraversalMetrics, PersistedTraversalRecord,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `PersistedContainmentEdgeData`, `PersistedImportedEdgeData`, and `PersistedProvenanceEdgeData`
+  --> crates/graph/graph-kernel/src/graph/legacy_resource_migration.rs:23:20
+   |
+23 |     GraphSnapshot, PersistedContainmentEdgeData, PersistedEdge, PersistedImportedEdgeData,
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+24 |     PersistedProvenanceEdgeData, PersistedResourceFacet, PersistedResourceRecord,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `NodeTagPresentationState`
+  --> crates/graph/graph-kernel/src/graph/node_facets.rs:17:54
+   |
+17 | use crate::types::{NodeClassification, NodeProperty, NodeTagPresentationState};
+   |                                                      ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `RelationSelector`
+  --> crates/graph/graph-kernel/src/graph/query.rs:26:63
+   |
+26 | use super::edge_taxonomy::{ContainmentSubKind, EdgeAssertion, RelationSelector};
+   |                                                               ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `address_from_url` and `detect_mime`
+  --> crates/graph/graph-kernel/src/graph/snapshot/from.rs:18:22
+   |
+18 | use crate::address::{address_from_url, detect_mime};
+   |                      ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^
+
+   Compiling rustls-native-certs v0.8.4
+   Compiling errand v0.4.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling document-canvas v0.1.0 (/Users/markik/Code/repos/mere/crates/inker/document-canvas)
+   Compiling tokio-tungstenite v0.30.0
+   Compiling uxtree v0.0.2 (/Users/markik/Code/repos/mere/crates/forme/uxtree)
+   Compiling nematic v0.1.1 (/Users/markik/Code/repos/mere/crates/nematic/nematic)
+warning: unused imports: `BlockProvenanceMap`, `DocumentProvenance`, and `DocumentTrustState`
+  --> crates/nematic/nematic/src/knot/expand.rs:20:12
+   |
+20 |     Block, BlockProvenanceMap, DocumentProvenance, DocumentTrustState, Engine, EngineInput,
+   |            ^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `EngineDocument`
+ --> crates/nematic/nematic/src/knot/expand/build.rs:7:80
+  |
+7 | use inker::{Block, BlockProvenanceMap, DocumentProvenance, DocumentTrustState, EngineDocument};
+  |                                                                                ^^^^^^^^^^^^^^
+
+   Compiling murm-wire v0.1.0 (https://github.com/merely-made/murm.git?branch=main#5b1c5cac)
+   Compiling mere-fleece v0.0.1 (/Users/markik/Code/repos/mere/crates/fleece)
+warning: unused import: `EdgeRef`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:24:23
+   |
+24 | use petgraph::visit::{EdgeRef, IntoEdgeReferences};
+   |                       ^^^^^^^
+
+warning: unused import: `rancor::Fallible`
+  --> crates/graph/graph-kernel/src/graph/mod.rs:25:72
+   |
+25 | use rkyv::{Archive, Archived, Deserialize, Place, Resolver, Serialize, rancor::Fallible};
+   |                                                                        ^^^^^^^^^^^^^^^^
+
+   Compiling knot-file-catalog v0.0.1 (https://github.com/merely-made/knot-editor.git?branch=main#98d5212b)
+   Compiling graphshell-client v0.0.2 (/Users/markik/Code/repos/mere/crates/graphshell/graphshell-client)
+   Compiling browsing-context-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+warning: unused variable: `key`
+    --> crates/graph/graph-kernel/src/graph/assertion_write.rs:1011:19
+     |
+1011 |         let Some((key, current)) = self.find_semantic_statement(statement_id) else {
+     |                   ^^^ help: if this is intentional, prefix it with an underscore: `_key`
+     |
+     = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `nematic` (lib) generated 2 warnings (run `cargo fix --lib -p nematic` to apply 2 suggestions)
+   Compiling ssh-agent-lib v0.6.0
+   Compiling genet-documents v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#5b1c5cac)
+   Compiling knot-capture v0.0.1 (https://github.com/merely-made/knot-editor.git?branch=main#98d5212b)
+   Compiling mere-document-lanes v0.1.0 (/Users/markik/Code/repos/mere/crates/system/document-lanes)
+   Compiling netfetcher v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling knot-editor-host v0.1.1 (/Users/markik/Code/repos/mere/crates/inker/knot-editor-host)
+   Compiling cambium-winit v0.3.0 (/Users/markik/Code/repos/mere/crates/cambium/cambium-winit)
+   Compiling iroh v1.3.0
+   Compiling servitor v0.0.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+warning: methods `navigate_node`, `branch_history`, `node_history_back`, and `node_history_forward` are never used
+   --> crates/graph/graph-kernel/src/graph/mod.rs:722:19
+    |
+416 | impl Graph {
+    | ---------- methods in this implementation
+...
+722 |     pub(crate) fn navigate_node(&mut self, key: NodeKey, url: &str) {
+    |                   ^^^^^^^^^^^^^
+...
+736 |     pub(crate) fn branch_history(&mut self, child: NodeKey, parent: NodeKey) {
+    |                   ^^^^^^^^^^^^^^
+...
+748 |     pub(crate) fn node_history_back(&mut self, key: NodeKey) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^
+...
+758 |     pub(crate) fn node_history_forward(&mut self, key: NodeKey) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `upsert_persisted_statement` and `remove_statements_with_sub_kind` are never used
+   --> crates/graph/graph-kernel/src/graph/edge_data.rs:485:19
+    |
+340 | impl SemanticData {
+    | ----------------- methods in this implementation
+...
+485 |     pub(crate) fn upsert_persisted_statement(&mut self, mut statement: SemanticStatement) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+539 |     pub(crate) fn remove_statements_with_sub_kind(&mut self, sub_kind: SemanticSubKind) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: methods `insert`, `remove`, `contains`, and `is_empty` are never used
+   --> crates/graph/graph-kernel/src/graph/edge_data.rs:783:19
+    |
+782 | impl ContainmentData {
+    | -------------------- methods in this implementation
+783 |     pub(crate) fn insert(&mut self, sub_kind: ContainmentSubKind) -> bool {
+    |                   ^^^^^^
+...
+787 |     pub(crate) fn remove(&mut self, sub_kind: ContainmentSubKind) -> bool {
+    |                   ^^^^^^
+...
+791 |     pub(crate) fn contains(&self, sub_kind: ContainmentSubKind) -> bool {
+    |                   ^^^^^^^^
+...
+795 |     pub(crate) fn is_empty(&self) -> bool {
+    |                   ^^^^^^^^
+
+warning: methods `insert`, `remove`, `contains`, and `is_empty` are never used
+   --> crates/graph/graph-kernel/src/graph/edge_data.rs:801:19
+    |
+800 | impl ArrangementData {
+    | -------------------- methods in this implementation
+801 |     pub(crate) fn insert(&mut self, sub_kind: ArrangementSubKind) -> bool {
+    |                   ^^^^^^
+...
+805 |     pub(crate) fn remove(&mut self, sub_kind: ArrangementSubKind) -> bool {
+    |                   ^^^^^^
+...
+809 |     pub(crate) fn contains(&self, sub_kind: ArrangementSubKind) -> bool {
+    |                   ^^^^^^^^
+...
+813 |     pub(crate) fn is_empty(&self) -> bool {
+    |                   ^^^^^^^^
+
+warning: methods `assert_semantic_predicate`, `assert_semantic_relation_in_scope`, `assert_semantic_predicate_in_scope`, `withdraw_semantic_statement`, and `upsert_persisted_semantic_statement` are never used
+   --> crates/graph/graph-kernel/src/graph/edge_payload.rs:183:19
+    |
+ 67 | impl EdgePayload {
+    | ---------------- methods in this implementation
+...
+183 |     pub(crate) fn assert_semantic_predicate(&mut self, predicate: String) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+186 |     pub(crate) fn assert_semantic_relation_in_scope(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+201 |     pub(crate) fn assert_semantic_predicate_in_scope(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+215 |     pub(crate) fn withdraw_semantic_statement(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+225 |     pub(crate) fn upsert_persisted_semantic_statement(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: struct `LogIdAsString` is never constructed
+   --> crates/graph/graph-kernel/src/graph/identity.rs:160:19
+    |
+160 | pub(crate) struct LogIdAsString;
+    |                   ^^^^^^^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/graph/graph-kernel/src/graph/resource_content.rs:90:19
+    |
+ 89 | impl Graph {
+    | ---------- methods in this implementation
+ 90 |     pub(crate) fn insert_node_tag(&mut self, key: NodeKey, tag: String) -> bool {
+    |                   ^^^^^^^^^^^^^^^
+...
+ 93 |     pub(crate) fn remove_node_tag(&mut self, key: NodeKey, tag: &str) -> bool {
+    |                   ^^^^^^^^^^^^^^^
+...
+ 96 |     pub(crate) fn append_node_property(&mut self, key: NodeKey, property: NodeProperty) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+ 99 |     pub(crate) fn add_node_classification(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^
+...
+106 |     pub(crate) fn remove_node_classification(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+120 |     pub(crate) fn set_node_classification_status(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+135 |     pub(crate) fn set_node_primary_classification(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: multiple methods are never used
+   --> crates/graph/graph-kernel/src/graph/edge_ops.rs:350:19
+    |
+ 33 | impl Graph {
+    | ---------- methods in this implementation
+...
+350 |     pub(crate) fn assert_semantic_predicate(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+421 |     pub(crate) fn replay_assert_relation_by_ids(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+437 |     pub(crate) fn replay_set_edge_semantic_predicate_by_ids(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+506 |     pub(crate) fn dissolve_remove_node_collect_traversals(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+728 |     pub(crate) fn assert_surface_persisted_semantic_statement(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+825 |     pub(crate) fn replay_retract_relations(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^
+...
+964 |     pub(crate) fn set_edge_semantic_predicate(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: method `get_node_mut` is never used
+   --> crates/graph/graph-kernel/src/graph/query.rs:194:19
+    |
+187 | impl Graph {
+    | ---------- method in this implementation
+...
+194 |     pub(crate) fn get_node_mut(&mut self, key: NodeKey) -> Option<&mut Node> {
+    |                   ^^^^^^^^^^^^
+
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling script-engine-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling mere-site v0.1.0 (/Users/markik/Code/repos/mere/crates/domain/site)
+   Compiling knot-document v0.0.1 (https://github.com/merely-made/knot-editor.git?branch=main#98d5212b)
+   Compiling script-rhai v0.0.1 (/Users/markik/Code/repos/mere/crates/script/rhai)
+   Compiling retinue v0.3.0 (https://github.com/merely-made/murm.git?branch=main#5b1c5cac)
+   Compiling knot-composition v0.0.1 (https://github.com/merely-made/knot-editor.git?branch=main#98d5212b)
+   Compiling mere-alembic v0.0.1 (/Users/markik/Code/repos/mere/crates/distillery/alembic)
+   Compiling mere-cartography v0.0.2 (/Users/markik/Code/repos/mere/crates/canvas/cartography)
+   Compiling pandect v0.1.1 (/Users/markik/Code/repos/mere/crates/system/pandect)
+   Compiling mere-personal-facts v0.1.0 (/Users/markik/Code/repos/mere/crates/domain/personal-facts)
+warning: unused import: `std::io`
+  --> crates/system/pandect/src/wallet_grant/pairing.rs:10:5
+   |
+10 | use std::io;
+   |     ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `std::io`
+  --> crates/system/pandect/src/wallet_grant/records.rs:10:5
+   |
+10 | use std::io;
+   |     ^^^^^^^
+
+warning: unused import: `std::path::Path`
+  --> crates/system/pandect/src/wallet_grant/records.rs:11:5
+   |
+11 | use std::path::Path;
+   |     ^^^^^^^^^^^^^^^
+
+warning: unused imports: `Ed25519Keypair`, `IdentityProvider`, `InMemoryProvider`, and `PersonaId`
+  --> crates/system/pandect/src/wallet_grant/records.rs:13:16
+   |
+13 | use identity::{Ed25519Keypair, IdentityProvider, InMemoryProvider, PersonaId};
+   |                ^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^  ^^^^^^^^^
+
+warning: unused import: `Ed25519Signature`
+  --> crates/system/pandect/src/wallet_grant/types.rs:14:16
+   |
+14 | use identity::{Ed25519Signature, PersonaId};
+   |                ^^^^^^^^^^^^^^^^
+
+warning: unused imports: `DEVICE_GRANT_SCHEMA_VERSION` and `DeviceGrantError`
+  --> crates/system/pandect/src/wallet_grant/types.rs:19:5
+   |
+19 |     DEVICE_GRANT_SCHEMA_VERSION, DeviceExposure, DeviceGrantError, DeviceId, DevicePublicKey,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^                  ^^^^^^^^^^^^^^^^
+
+   Compiling cambium-rootstock v0.1.0 (/Users/markik/Code/repos/mere/crates/cambium/cambium-rootstock)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/producer/registry.rs:47:10
+   |
+47 |     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |          ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+47 -     next.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+47 +     next.try_update(Ordering::Relaxed, Ordering::Relaxed, |key| {
+   |
+
+warning: variable does not need to be mutable
+   --> crates/system/pandect/src/graph_session_merge.rs:689:13
+    |
+689 |         let mut add = |scratch: &mut Graph, more: Vec<CapturedDelta>, edits: &mut Vec<_>| {
+    |             ----^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/cambium/cambium-rootstock/src/scene_producer.rs:25:10
+   |
+25 |         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |          ^^^^^^^^^^^^
+   |
+help: replace the use of the deprecated method
+   |
+25 -         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+25 +         .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/cambium/cambium-rootstock/src/host.rs:117:10
+    |
+117 |     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |          ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+117 -     NEXT.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+117 +     NEXT.try_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+    |
+
+warning: unused import: `LayoutDom`
+   --> crates/cambium/cambium-rootstock/src/lib.rs:424:26
+    |
+424 |     use layout_dom_api::{LayoutDom as _, LocalName, Namespace, NodeKind};
+    |                          ^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `layout_dom_api::LayoutDom`
+   --> crates/cambium/cambium-rootstock/src/lib.rs:573:9
+    |
+573 |     use layout_dom_api::LayoutDom as _;
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling pictograph v0.2.0 (/Users/markik/Code/repos/mere/crates/canvas/pictograph)
+   Compiling pelt-core v0.2.0 (/Users/markik/Code/repos/mere/ports/pelt/core)
+warning: calls to `std::mem::drop` with a reference instead of an owned value does nothing
+   --> crates/cambium/cambium-rootstock/src/producer/registry.rs:685:13
+    |
+685 |             drop(renderer);
+    |             ^^^^^--------^
+    |                  |
+    |                  argument has type `&Renderer`
+    |
+    = note: `#[warn(dropping_references)]` on by default
+help: use `let _ = ...` to ignore the expression or result
+    |
+685 -             drop(renderer);
+685 +             let _ = renderer;
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> ports/pelt/core/src/pool_a11y.rs:65:18
+   |
+65 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+   |                  ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+65 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+65 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> ports/pelt/core/src/lib.rs:206:10
+    |
+206 |         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+    |          ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+206 -         .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+206 +         .try_update(Ordering::Relaxed, Ordering::Relaxed, |id| id.checked_add(1))
+    |
+
+   Compiling chrono-tz v0.10.4
+   Compiling platen v0.0.1 (/Users/markik/Code/repos/mere/crates/platen/platen)
+warning: `pelt-core` (lib) generated 2 warnings (run `cargo fix --lib -p pelt-core` to apply 2 suggestions)
+warning: unused import: `crate::diagnostics::channels::*`
+  --> crates/system/registry/src/diagnostics/descriptor/catalog.rs:10:5
+   |
+10 | use crate::diagnostics::channels::*;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `crate::diagnostics::channels::*`
+  --> crates/system/registry/src/diagnostics/descriptor/registry.rs:12:5
+   |
+12 | use crate::diagnostics::channels::*;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/system/registry/src/diagnostics/emit/queue.rs:89:31
+   |
+89 |         let _ = self.0[index].fetch_update(Ordering::Relaxed, Ordering::Relaxed, |old| {
+   |                               ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+89 -         let _ = self.0[index].fetch_update(Ordering::Relaxed, Ordering::Relaxed, |old| {
+89 +         let _ = self.0[index].try_update(Ordering::Relaxed, Ordering::Relaxed, |old| {
+   |
+
+warning: `mere-registry` (lib) generated 3 warnings (run `cargo fix --lib -p mere-registry` to apply 3 suggestions)
+   Compiling mere-apparatus v0.0.1 (/Users/markik/Code/repos/mere/crates/domain/apparatus)
+warning: method `into_graph` is never used
+   --> crates/system/pandect/src/graph_codicil.rs:185:19
+    |
+184 | impl GraphCodicil {
+    | ----------------- method in this implementation
+185 |     pub(crate) fn into_graph(self) -> Result<Graph> {
+    |                   ^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling knot-site v0.0.1 (https://github.com/merely-made/knot-editor.git?branch=main#98d5212b)
+   Compiling light-file-dialog v3.21.3 (/Users/markik/Code/repos/mere/support/patches/light-file-dialog)
+warning: `cambium-rootstock` (lib) generated 6 warnings (run `cargo fix --lib -p cambium-rootstock` to apply 3 suggestions)
+warning: function `build_affinity_spring` is never used
+  --> crates/canvas/pictograph/src/canvas.rs:68:4
+   |
+68 | fn build_affinity_spring(scores: &crate::signals::AffinityScores) -> AffinitySpring {
+   |    ^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `len` is never used
+   --> crates/canvas/pictograph/src/canvas/seiche_bridge.rs:104:19
+    |
+ 93 | impl VisibleRelationTopology {
+    | ---------------------------- method in this implementation
+...
+104 |     pub(crate) fn len(&self) -> usize {
+    |                   ^^^
+
+warning: function `visible_link_appearances` is never used
+  --> crates/canvas/pictograph/src/canvas/edge_cells.rs:31:15
+   |
+31 | pub(crate) fn visible_link_appearances(
+   |               ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `link_hit_test` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:550:15
+    |
+550 | pub(crate) fn link_hit_test(
+    |               ^^^^^^^^^^^^^
+
+warning: function `link_hit_test_with_assertion_hides` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:573:15
+    |
+573 | pub(crate) fn link_hit_test_with_assertion_hides(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `self_link_hit_test` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:598:15
+    |
+598 | pub(crate) fn self_link_hit_test(
+    |               ^^^^^^^^^^^^^^^^^^
+
+warning: function `self_link_hit_test_with_assertion_hides` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:621:15
+    |
+621 | pub(crate) fn self_link_hit_test_with_assertion_hides(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `link_hit_test_where` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:646:4
+    |
+646 | fn link_hit_test_where(
+    |    ^^^^^^^^^^^^^^^^^^^
+
+warning: function `link_hit_test_segments` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:674:15
+    |
+674 | pub(crate) fn link_hit_test_segments(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `links_in_rect` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:711:15
+    |
+711 | pub(crate) fn links_in_rect(
+    |               ^^^^^^^^^^^^^
+
+warning: function `links_in_rect_with_assertion_hides` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:732:15
+    |
+732 | pub(crate) fn links_in_rect_with_assertion_hides(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `links_in_rect_segments` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:756:15
+    |
+756 | pub(crate) fn links_in_rect_segments(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `link_overlay` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:790:15
+    |
+790 | pub(crate) fn link_overlay(
+    |               ^^^^^^^^^^^^
+
+warning: function `link_overlay_with_assertion_hides` is never used
+   --> crates/canvas/pictograph/src/canvas/edge_cells.rs:812:15
+    |
+812 | pub(crate) fn link_overlay_with_assertion_hides(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling graphshell-endpoint v0.0.2 (/Users/markik/Code/repos/mere/crates/graphshell/graphshell-endpoint)
+   Compiling mere-fetch v0.0.1 (/Users/markik/Code/repos/mere/crates/system/fetch)
+   Compiling mere-overmap v0.1.0 (/Users/markik/Code/repos/mere/crates/cambium/mere-overmap)
+   Compiling castellan v0.0.3 (/Users/markik/Code/repos/mere/ports/djinn/castellan)
+warning: unused import: `Path`
+  --> ports/djinn/castellan/src/custody/passphrase_storage.rs:44:17
+   |
+44 | use std::path::{Path, PathBuf};
+   |                 ^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `Deserialize` and `Serialize`
+  --> ports/djinn/castellan/src/custody/startup_unlock.rs:22:13
+   |
+22 | use serde::{Deserialize, Serialize};
+   |             ^^^^^^^^^^^  ^^^^^^^^^
+
+warning: field `records_root` is never read
+  --> ports/djinn/castellan/src/resident.rs:64:5
+   |
+62 | pub struct CastellanResident {
+   |            ----------------- field in this struct
+63 |     records: SealedRecordStorage,
+64 |     records_root: PathBuf,
+   |     ^^^^^^^^^^^^
+   |
+   = note: `CastellanResident` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: missing documentation for a variant
+  --> ports/djinn/castellan/src/authority.rs:97:5
+   |
+97 |     UnknownIntent,
+   |     ^^^^^^^^^^^^^
+   |
+note: the lint level is defined here
+  --> ports/djinn/castellan/src/lib.rs:82:9
+   |
+82 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/djinn/castellan/src/authority.rs:99:5
+   |
+99 |     InvalidPayload(#[from] serde_json::Error),
+   |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:101:5
+    |
+101 |     Decision(#[from] DecisionError),
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:103:5
+    |
+103 |     Identity(IdentityError),
+    |     ^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:111:5
+    |
+111 |     KeyGeneration,
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:113:5
+    |
+113 |     PublicEncoding,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:115:5
+    |
+115 |     InvalidComment,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:120:5
+    |
+120 |     InvalidProfileId,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:122:5
+    |
+122 |     InvalidProfileName,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:124:5
+    |
+124 |     InvalidIdleWindow,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:126:5
+    |
+126 |     ConfirmationRequired,
+    |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:128:5
+    |
+128 |     KeyNotFound,
+    |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:130:5
+    |
+130 |     NativeHandoffRequired,
+    |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:132:5
+    |
+132 |     DeviceRevocationConfirmationRequired,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:134:5
+    |
+134 |     CarryUnavailable,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/djinn/castellan/src/authority.rs:136:5
+    |
+136 |     DeviceRevocation(std::io::ErrorKind),
+    |     ^^^^^^^^^^^^^^^^
+
+   Compiling mere v0.0.2 (/Users/markik/Code/repos/mere/crates/mere)
+   Compiling cleromancy-core-acceptance v0.1.0 (https://github.com/merely-made/cleromancy.git?branch=main#69ed4554)
+warning: `mere-kernel` (lib) generated 21 warnings (run `cargo fix --lib -p mere-kernel` to apply 10 suggestions)
+   Compiling iroh-gossip v0.101.0
+   Compiling iroh-mdns-address-lookup v0.6.0
+   Compiling iroh-util v0.6.0
+   Compiling iroh-blobs v0.103.1
+warning: `castellan` (lib) generated 19 warnings (run `cargo fix --lib -p castellan` to apply 2 suggestions)
+warning: `pandect` (lib) generated 8 warnings (run `cargo fix --lib -p pandect` to apply 7 suggestions)
+   Compiling mere-p2panda-net v0.7.5 (https://github.com/mark-ik/p2panda.git?tag=mere-p2panda-net-0.7.5-upstream-20261013#1f69c9bc)
+warning: `pictograph` (lib) generated 14 warnings
+   Compiling stickleback v0.1.1 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling mere-transport v0.0.2 (https://github.com/merely-made/murm.git?branch=main#5b1c5cac)
+   Compiling graphshell-host v0.0.2 (/Users/markik/Code/repos/mere/crates/graphshell/graphshell-host)
+   Compiling mere-mesh v0.0.1 (/Users/markik/Code/repos/mere/crates/mesh/mesh)
+   Compiling knot-editor v0.0.3 (https://github.com/merely-made/knot-editor.git?branch=main#98d5212b)
+   Compiling graphshell v0.0.2 (/Users/markik/Code/repos/mere/ports/graphshell)
+   Compiling distillery v0.0.1 (/Users/markik/Code/repos/mere/ports/distillery)
+warning: unused import: `happens_before`
+  --> ports/graphshell/src/personal_sync.rs:35:5
+   |
+35 |     happens_before, observed_frontier, stable_writer_subject, validate_causal_metadata,
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> ports/distillery/src/resident.rs:500:13
+    |
+500 |         let mut authority_error = report.failure("authority").map(str::to_owned);
+    |             ----^^^^^^^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> ports/graphshell/src/retained_content/producer.rs:30:14
+   |
+30 |         NEXT.fetch_update(
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+30 -         NEXT.fetch_update(
+30 +         NEXT.try_update(
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> ports/graphshell/src/retained_content.rs:379:26
+    |
+379 |                     NEXT.fetch_update(
+    |                          ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+379 -                     NEXT.fetch_update(
+379 +                     NEXT.try_update(
+    |
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:17:5
+   |
+17 |     pub session_id: String,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+   |
+note: the lint level is defined here
+  --> ports/distillery/src/lib.rs:45:9
+   |
+45 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:18:5
+   |
+18 |     pub prompt_template_hash: String,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:47:5
+   |
+47 |     pub ask: AskRequestV1,
+   |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:48:5
+   |
+48 |     pub max_tokens: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:49:5
+   |
+49 |     pub temperature: f32,
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:50:5
+   |
+50 |     pub top_p: Option<f32>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol.rs:51:5
+   |
+51 |     pub seed: Option<u64>,
+   |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:114:5
+    |
+114 |     pub tokens: usize,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:116:5
+    |
+116 |     pub continuations: Vec<Continuation>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:119:5
+    |
+119 |     pub recall: Option<recall::RecallEvidence>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:140:5
+    |
+140 |     pub device: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:141:5
+    |
+141 |     pub at_token: usize,
+    |     ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:142:5
+    |
+142 |     pub reason: String,
+    |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:143:5
+    |
+143 |     pub first_differing_token: Option<usize>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol.rs:145:5
+    |
+145 |     pub compared_token_ids_hash: Option<String>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a constant
+  --> ports/distillery/src/inference_protocol/recall.rs:12:1
+   |
+12 | pub const RECALL_ASK_INTENT: &str = "distillery.inference/ask-recall-v1";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a constant
+  --> ports/distillery/src/inference_protocol/recall.rs:13:1
+   |
+13 | pub const ASK_PUBLISHED_INTENT: &str = "distillery.inference/ask-published-v1";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a constant
+  --> ports/distillery/src/inference_protocol/recall.rs:14:1
+   |
+14 | pub const PUBLISH_CORPUS_INTENT: &str = "distillery.inference/publish-corpus-v1";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a constant
+  --> ports/distillery/src/inference_protocol/recall.rs:15:1
+   |
+15 | pub const CHUNKER_VERSION: &str = "mere.unicode-chunks/v1";
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:21:1
+   |
+21 | pub struct PublishCorpusRequestV1 {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:24:5
+   |
+24 |     pub sources: Vec<RetainedSourceText>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:29:1
+   |
+29 | pub struct RecallConfig {
+   | ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:30:5
+   |
+30 |     pub chunk_chars: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:31:5
+   |
+31 |     pub max_passages: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:36:5
+   |
+36 |     pub max_context_chars: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:37:5
+   |
+37 |     pub max_corpus_chars: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:55:1
+   |
+55 | pub struct RecallAskRequestV1 {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:56:5
+   |
+56 |     pub ask: super::AskRequestV1,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:58:5
+   |
+58 |     pub scope: Vec<RecallSourceId>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:61:1
+   |
+61 | pub struct SuppliedPassage {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:64:5
+   |
+64 |     pub passage: InferencePassage,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:67:1
+   |
+67 | pub struct StalePassage {
+   | ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:68:5
+   |
+68 |     pub source: RecallSourceId,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:69:5
+   |
+69 |     pub indexed_version: String,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:70:5
+   |
+70 |     pub current_version: Option<String>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:71:5
+   |
+71 |     pub error: Option<String>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:74:1
+   |
+74 | pub struct Citation {
+   | ^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:75:5
+   |
+75 |     pub handle: u32,
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:76:5
+   |
+76 |     pub passage: eidetic::ManifestId,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:77:5
+   |
+77 |     pub basis: CitationBasis,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an enum
+  --> ports/distillery/src/inference_protocol/recall.rs:83:1
+   |
+83 | pub enum CitationBasis {
+   | ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/inference_protocol/recall.rs:84:5
+   |
+84 |     ModelMarker,
+   |     ^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/inference_protocol/recall.rs:85:5
+   |
+85 |     VerbatimPassage,
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> ports/distillery/src/inference_protocol/recall.rs:88:1
+   |
+88 | pub struct RecallEvidence {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:90:5
+   |
+90 |     pub embedding: Option<EmbeddingRecallEvidence>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:92:5
+   |
+92 |     pub owner: Option<String>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:94:5
+   |
+94 |     pub scope: Vec<RecallSourceId>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:95:5
+   |
+95 |     pub config: RecallConfig,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:96:5
+   |
+96 |     pub passages: Vec<SuppliedPassage>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:97:5
+   |
+97 |     pub stale: Vec<StalePassage>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/inference_protocol/recall.rs:99:5
+   |
+99 |     pub citations: Vec<Citation>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:101:5
+    |
+101 |     pub unknown_citations: Vec<u32>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:108:5
+    |
+108 |     pub owner: String,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:109:5
+    |
+109 |     pub ask: super::AskRequestV1,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:111:5
+    |
+111 |     pub scope: Vec<RecallSourceId>,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/inference_protocol/recall.rs:114:5
+    |
+114 |     pub fn validate(&self) -> Result<(), String> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:132:5
+    |
+132 |     pub provider: EmbeddingRecallProvider,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:133:5
+    |
+133 |     pub max_index_bytes: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:134:5
+    |
+134 |     pub lexical_weight: u32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:135:5
+    |
+135 |     pub vector_weight: u32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:136:5
+    |
+136 |     pub rrf_k: u32,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for an enum
+   --> ports/distillery/src/inference_protocol/recall.rs:140:1
+    |
+140 | pub enum EmbeddingRecallProvider {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/inference_protocol/recall.rs:141:5
+    |
+141 |     LexicalSparse {
+    |     ^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:142:9
+    |
+142 |         dimensions: usize,
+    |         ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:143:9
+    |
+143 |         token_ngram_orders: Vec<usize>,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:146:15
+    |
+146 |     Library { model: String },
+    |               ^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/inference_protocol/recall.rs:149:5
+    |
+149 |     pub fn validate(&self) -> Result<(), String> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+   --> ports/distillery/src/inference_protocol/recall.rs:181:1
+    |
+181 | pub struct EmbeddingRecallEvidence {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:182:5
+    |
+182 |     pub envelope: eidetic::ManifestId,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:183:5
+    |
+183 |     pub index: eidetic::ManifestId,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:184:5
+    |
+184 |     pub cache: String,
+    |     ^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:185:5
+    |
+185 |     pub vector_bytes: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:186:5
+    |
+186 |     pub persisted_bytes: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:187:5
+    |
+187 |     pub lexical_weight: u32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:188:5
+    |
+188 |     pub vector_weight: u32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/inference_protocol/recall.rs:189:5
+    |
+189 |     pub rrf_k: u32,
+    |     ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/courier.rs:42:5
+   |
+42 |     MalformedDigest,
+   |     ^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/courier.rs:44:5
+   |
+44 |     Store(String),
+   |     ^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/courier.rs:131:5
+    |
+131 |     pub async fn has(&self, blob: &BlobRef) -> bool {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+   --> ports/distillery/src/mesh_host/courier.rs:219:5
+    |
+219 |     pub fn new(transport: Arc<P2pandaTransport>, blobs: Arc<BlobStore>) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/host.rs:33:5
+   |
+33 |     fn as_source(&self) -> &dyn BlobSource;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/host.rs:34:5
+   |
+34 |     fn as_sink(&self) -> &dyn BlobSink;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:48:5
+   |
+48 |     pub registry: ResourceRegistry,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:49:5
+   |
+49 |     pub blobs: Arc<dyn BlobSpace>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:52:5
+   |
+52 |     pub clock: Arc<dyn Clock>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:53:5
+   |
+53 |     pub conditions: Arc<dyn ConditionSource>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:54:5
+   |
+54 |     pub facts: HostFacts,
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:55:5
+   |
+55 |     pub policy: DevicePolicy,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:56:5
+   |
+56 |     pub lease: LeasePolicy,
+   |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/host.rs:84:5
+   |
+84 |     Claimed {
+   |     ^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:85:9
+   |
+85 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/host.rs:87:5
+   |
+87 |     Granted {
+   |     ^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:88:9
+   |
+88 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:89:9
+   |
+89 |         epoch: u32,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:90:9
+   |
+90 |         lease: LeaseId,
+   |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> ports/distillery/src/mesh_host/host.rs:92:5
+   |
+92 |     Heartbeat {
+   |     ^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:93:9
+   |
+93 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:94:9
+   |
+94 |         lease: LeaseId,
+   |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:95:9
+   |
+95 |         progress: LeaseProgress,
+   |         ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/host.rs:99:9
+   |
+99 |         job: JobId,
+   |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:100:9
+    |
+100 |         lease: Option<LeaseId>,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:102:5
+    |
+102 |     Completed {
+    |     ^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:103:9
+    |
+103 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:104:9
+    |
+104 |         lease: Option<LeaseId>,
+    |         ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:106:5
+    |
+106 |     Released {
+    |     ^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:107:9
+    |
+107 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:108:9
+    |
+108 |         lease: LeaseId,
+    |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:109:9
+    |
+109 |         reason: ReleaseReason,
+    |         ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:114:9
+    |
+114 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:119:9
+    |
+119 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:120:9
+    |
+120 |         lease: LeaseId,
+    |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:121:9
+    |
+121 |         reason: ReclaimReason,
+    |         ^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:122:9
+    |
+122 |         stopped_at: LeaseProgress,
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:128:9
+    |
+128 |         job: JobId,
+    |         ^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> ports/distillery/src/mesh_host/host.rs:129:9
+    |
+129 |         lease: LeaseId,
+    |         ^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:131:5
+    |
+131 |     Idle,
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:138:5
+    |
+138 |     Sync(#[from] MeshSyncError),
+    |     ^^^^
+
+warning: missing documentation for a variant
+   --> ports/distillery/src/mesh_host/host.rs:140:5
+    |
+140 |     Store(#[from] MeshStoreError),
+    |     ^^^^^
+
+warning: missing documentation for an associated function
+   --> ports/distillery/src/mesh_host/host.rs:172:5
+    |
+172 |     pub fn new(synced: SyncedMesh<B>, keypair: Ed25519Keypair, config: HostConfig) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/host.rs:185:5
+    |
+185 |     pub fn me(&self) -> [u8; 32] {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/host.rs:232:5
+    |
+232 |     pub fn synced(&self) -> &SyncedMesh<B> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/host.rs:246:5
+    |
+246 |     pub fn policy(&self) -> &DevicePolicy {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:30:5
+   |
+30 |     pub reason: ReclaimReason,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:41:5
+   |
+41 |     pub handle: JobControlHandle,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:42:5
+   |
+42 |     pub task: JoinHandle<Result<RunOutcome, RunError>>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> ports/distillery/src/mesh_host/inflight.rs:45:5
+   |
+45 |     pub reclaim: Option<Reclaiming>,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:27:5
+   |
+27 |     fn now_ms(&self) -> u64;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+  --> ports/distillery/src/mesh_host/sense.rs:52:5
+   |
+52 |     pub fn at(now_ms: u64) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:58:5
+   |
+58 |     pub fn set(&self, now_ms: u64) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:62:5
+   |
+62 |     pub fn advance(&self, by_ms: u64) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> ports/distillery/src/mesh_host/sense.rs:80:5
+   |
+80 |     fn conditions(&self) -> DeviceConditions;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+  --> ports/distillery/src/mesh_host/sense.rs:91:5
+   |
+91 |     pub fn new(conditions: DeviceConditions) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> ports/distillery/src/mesh_host/sense.rs:102:5
+    |
+102 |     pub fn set(&self, conditions: DeviceConditions) {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `distillery` (lib) generated 134 warnings (run `cargo fix --lib -p distillery` to apply 1 suggestion)
+warning: method `begin_session` is never used
+   --> ports/graphshell/src/mere_host.rs:433:19
+    |
+269 | impl<B: Backend + Clone> MereHost<B> {
+    | ------------------------------------ method in this implementation
+...
+433 |     pub(crate) fn begin_session(&mut self, graph: Graph) {
+    |                   ^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `relation_kind_label` is never used
+    --> ports/graphshell/src/mere_host.rs:1479:4
+     |
+1479 | fn relation_kind_label(kind: RelationKind) -> &'static str {
+     |    ^^^^^^^^^^^^^^^^^^^
+
+warning: function `codicil_graph` is never used
+    --> ports/graphshell/src/product.rs:1088:4
+     |
+1088 | fn codicil_graph(snapshot: GraphSnapshot, facets: NodeFacetStore) -> Result<Graph, ProductError> {
+     |    ^^^^^^^^^^^^^
+
+warning: function `decode_codicil` is never used
+    --> ports/graphshell/src/product.rs:1438:15
+     |
+1438 | pub(crate) fn decode_codicil(bytes: &[u8]) -> Result<ProductCodicilV3, ProductError> {
+     |               ^^^^^^^^^^^^^^
+
+   Compiling djinn v0.0.2 (/Users/markik/Code/repos/mere/ports/djinn)
+warning: unused import: `Graph`
+  --> ports/djinn/src/knot_relation_intake.rs:19:20
+   |
+19 |     CapturedDelta, Graph, SemanticStatement, apply::GraphDelta, sub_kind_from_iri,
+   |                    ^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Hash`
+  --> ports/djinn/src/sync/carriage_host.rs:30:26
+   |
+30 | use p2panda_core::{Body, Hash, Header, Operation, SigningKey, Topic, VerifyingKey};
+   |                          ^^^^
+
+warning: unused import: `HeldLease`
+  --> ports/djinn/src/sync/carriage_host_commissioning.rs:42:64
+   |
+42 | use super::{CarriageCeilings, CarriageHost, CarriageHostError, HeldLease, now_ms};
+   |                                                                ^^^^^^^^^
+
+warning: variable does not need to be mutable
+   --> ports/djinn/src/resident_distillery.rs:875:24
+    |
+875 |     pub async fn close(mut self) -> Result<(), String> {
+    |                        ----^^^^
+    |                        |
+    |                        help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `refusal` is never used
+  --> ports/djinn/src/keeper/review.rs:15:4
+   |
+15 | fn refusal(error: impl std::fmt::Display) -> CustodyRefusal {
+   |    ^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `ceilings` is never read
+  --> ports/djinn/src/sync/carriage_host.rs:72:5
+   |
+62 | pub struct CarriageHost {
+   |            ------------ field in this struct
+...
+72 |     ceilings: CarriageCeilings,
+   |     ^^^^^^^^
+
+warning: `graphshell` (lib) generated 7 warnings (run `cargo fix --lib -p graphshell` to apply 3 suggestions)
+warning: `djinn` (lib) generated 6 warnings (run `cargo fix --lib -p djinn` to apply 4 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 26s

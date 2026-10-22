@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-22",
+  "status": "Qualified committed D1 source; final native rerun complete",
+  "source_revision": "8bf59b317aa653c36a09a5fa9f178ef8e408e7d6",
+  "implementation_revision": "88b6b61f",
+  "binary_sha256": "7d656c9b370e2c10f6c88c6b6e250730049d52b6726d0b01774f51440432079c",
+  "source_bindings": "source-sha256.json",
+  "source_file_count": 420,
+  "evidence_bindings": "evidence-sha256.json",
+  "accepted_policy": "Unreleased clean cutover; no legacy data migration or compatibility subsystem.",
+  "suppliers": {
+    "mere": "a07a375ed9f49d31bb757c4dd516a0fa7af33fde",
+    "personae_dramatis": "7d498c27df8076dacccb74ba4a05f863f9f48c76",
+    "muniment_eidetic": "34105d63ec17826e0a58a5b461b65150357dd000",
+    "repinned": false
+  },
+  "cpu": {
+    "core_unit_passes": 328,
+    "core_integration_passes": 7,
+    "desktop_parent_passes": 343,
+    "distinct_parent_and_integration_passes": 678,
+    "separate_nested_process_invocations": 5,
+    "default_desktop_ignores": 8,
+    "existing_ignores": 7,
+    "explicit_native_helper_ignores": 1,
+    "core_log": "checks/test-r1.log",
+    "final_desktop_log": "checks/test-r5.log",
+    "final_desktop_build": "checks/build-final.log",
+    "observed_final_command_exit_codes": {
+      "core_test": 0,
+      "desktop_test": 0,
+      "desktop_build": 0
+    },
+    "core_binding": "Core inputs unchanged between earlier combined gate and final host fixes; superseded desktop runs are not counted."
+  },
+  "native": {
+    "phases": [
+      "aba",
+      "reopen-a",
+      "reopen-b",
+      "incoming-failure",
+      "locked"
+    ],
+    "processes": 5,
+    "captures": 12,
+    "blank_captures": 0,
+    "exact_checkpoints": 8,
+    "launch": "LaunchServices temporary application bundles, production executable",
+    "real_custody": true,
+    "physical_audio": false,
+    "native_pcm_playback": false,
+    "second_host": false,
+    "same_label_seed_replacement": "CPU/API regression only",
+    "manual_resize_reposition": false,
+    "close_observation": "native-close-observation.json",
+    "audio_mode": "Disabled audio appearance receipt; existing audio-open caption is not evidence."
+  },
+  "reviewed_captures": [
+    "native/aba/01_a_before.png",
+    "native/aba/02_roster.png",
+    "native/aba/03_b_before.png",
+    "native/aba/04_a_returned.png",
+    "native/aba/05_same_persona.png",
+    "native/incoming-failure/01_incoming_refused.png",
+    "native/incoming-failure/02_retry_retained.png",
+    "native/incoming-failure/03_cancel_retained.png",
+    "native/locked/01_locked_unsaved.png",
+    "native/locked/02_locked_close.png",
+    "native/reopen-a/01_reopen-a.png",
+    "native/reopen-b/01_reopen-b.png"
+  ],
+  "review": {
+    "source": "Coordinator plus disjoint storage/session/preferences/fixture lane review.",
+    "final_images": "All 12 final captures personally viewed by independent preferences lane; no blocking D1 visual defect.",
+    "close_click": "Coordinator directly observed and clicked native AX discard after scenario receipt completed; final process metadata confirms zero exit."
+  },
+  "keeper_fixture": {
+    "observed_mere_revision_before_build": "cfbdaa88a464613c929b2b172c1c2c22866b5a27",
+    "binary_sha256": "8ec18c48797c9f7c8aac80994340c0d05bfbd9c63d536659558340e8e8b0f63d",
+    "command": "cargo build --locked -p djinn --bin dr-c-receipt-host --no-default-features --features custody-receipt-host",
+    "scope": "Synthetic isolated vault; fixture provenance only, no new supplier qualification."
+  },
+  "platform": {
+    "system": "macOS",
+    "version": "26.5.1",
+    "build": "25F80",
+    "arch": "arm64",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)"
+  },
+  "excluded": [
+    "Initial missing pollster compile, private-field regression compile, and canonical destination regression failure.",
+    "Earlier source 88b6b61f native probes superseded by committed 8bf59b31 rerun.",
+    "excluded-probes/locked: closed before completed scenario receipt.",
+    "excluded-probes/locked-reopen: assertions completed but product timed out waiting at guard."
+  ],
+  "p5a": "Untouched; existing owner retained.",
+  "raw_absolute_paths": "Local only; portable verifier reads bundled relative paths.",
+  "bundle_checks": {
+    "local_receipt_doc_links_checked": 24,
+    "credential_and_artifact_exclusion_scan": "Passed; no private vault, executable, passphrase, secret-key fields or recognized credential markers. Raw absolute paths explicitly local only.",
+    "source_core_unchanged_in_final_host_fix": true,
+    "whitespace": "Production source/docs/verifier pass. Six raw Cargo logs retain original terminal blank lines; their whitespace diagnostics are intentional evidence bytes."
+  }
+}

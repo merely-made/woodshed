@@ -1,0 +1,6 @@
+RESULT ok
+captured 01_reopen-a
+D1 independent fresh process default reopened its own practice
+capture 01_reopen-a 2200x1400 digest=64829eb2cb871687 file=/Users/markik/Code/testing/woodshed-persona-store-20261022/final/native/reopen-a/01_reopen-a.png
+frames: 1 captured, 0 blank, 1 distinct digests
+presentation: 25 frames, 27 redraws, 2 unpresented redraws

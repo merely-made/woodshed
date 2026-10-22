@@ -3,16 +3,18 @@
 Date: 2026-10-16; updated 2026-10-22.
 Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket remains CPU/build only. Redshank D3 has the bounded macOS native/reopen evidence in P6; broader Redshank acceptance remains separate. No physical audio qualification is claimed.
 
-2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local commits
-only. The current wave overrides this document's historical publication
-authorization. Existing preservation/admission fixes remain; a bounded A1 guard
+Historical 2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local
+commits only. That wave overrode the earlier publication authorization; the
+maintainer subsequently authorized commit/push/merge/prune for D3 and D1.
+Existing preservation/admission fixes remain; a bounded A1 guard
 now refuses incoming custody sealed as another persona before retiring outgoing
 work. Current device-free results and remaining design/native boundaries are in
 the [first-wave recheck receipt](../validation/first-wave-recheck_20261020/README.md).
 P5a stays with its existing owner. No push was performed.
 
 2026-10-22 D1: the post-rollout source recheck and accepted persona-store
-cutover are in [P7](#p7-d1-persona-store-cutover). The maintainer confirmed
+cutover are qualified at `8bf59b31` in [P7](#p7-d1-persona-store-cutover), with
+the [D1 receipt](../validation/persona-store_20261022/README.md). The maintainer confirmed
 the unreleased product has no deployed user-data compatibility obligation and
 authorized implementation. D3 publication
 and qualification retain their separate evidence below.
@@ -157,7 +159,10 @@ included in this recovery exercise.
 
 ### P7 D1 persona-store cutover
 
-**Status (2026-10-22): implemented and CPU-qualified; native qualification in progress.** The maintainer
+**Status (2026-10-22): implemented and qualified at committed `8bf59b31`; final CPU/build and bounded native/reopen gates pass.** The
+[D1 receipt](../validation/persona-store_20261022/README.md) records 678 distinct
+CPU parent/integration passes, five separate nested process invocations, five
+successful native product processes and 12 independently reviewed captures. The maintainer
 confirmed Woodshed has never been released and has no deployed user data to
 preserve, then authorized proceeding. This supersedes the migration proposal
 published at `033eb686`. Existing development stores and fixture formats can
@@ -211,7 +216,7 @@ of arbitrary development files is needed to accomplish the cutover. Shared
 validation facts stay in portable layers; the host owns paths, custody,
 admission and user wording. Hocket/Redshank retain independent contracts.
 
-#### Current-source gaps and implementation
+#### Rechecked baseline gaps and implementation
 
 The source at `80f2d4eb` opens each persona over the singleton FsBackend
 (`crates/woodshed-genet/src/storage.rs:78-135,250-303`). Wrong-key quarantine
@@ -300,10 +305,12 @@ close. These failures are recorded as failures, not passing receipt evidence.
 Final command exits, case accounting, changed-source hashes and remaining gates
 are recorded in `validation/preservation-input_20261016/receipt.json`.
 
-## Qualification boundary and remaining work
+## Historical October 16 qualification boundary and remaining work
 
-This slice qualifies source and device-free tests only. No native app, device,
-profile migration, physical microphone or playback qualification is performed.
+The original October 16 slice qualified source and device-free tests only.
+Later native and D1 qualifications are recorded separately above and in Progress.
+At that point no native app, device, profile migration, physical microphone or
+playback qualification had been performed.
 Existing native receipts refer to their own historical source. New Retry/Discard
 panels and OS close paths still need an independently scheduled native receipt.
 The combined codec-worker-wake-to-persona-install path has unit coverage of its
@@ -487,3 +494,25 @@ being saved and explains how to keep it. Final desktop rerun passes 343 cases
 with eight ignores; committed-source native rerun follows. The explicit-close
 probe ended before the scenario receipt; a later probe completed its assertions
 but waited at the close guard. Neither is counted as a completed native gate.
+
+
+2026-10-22 D1 final qualification at `8bf59b317aa653c36a09a5fa9f178ef8e408e7d6`:
+the final locked build and desktop gate pass (343 cases, eight default ignores,
+five nested invocations separate). Unchanged core inputs retain the 328 unit and
+seven integration passes, for 678 distinct parent/integration cases overall.
+Five independent native product processes complete without timeout and exit zero:
+A→B→A and same-persona selection, fresh A and B reopening, corrupt incoming
+settings refusal/Retry/Cancel, and actual locked-custody startup/close. All 12
+final captures passed independent visual review. Eight complete checkpoints have
+exact live/stored equality; both keeper-backed readbacks equal the seed for full
+Cards, personal source/journal payloads, settings, capture manifests and exact
+2,000-frame PCM bits per persona. Damaged B bytes and outgoing A are retained
+through failure; the locked process changes none of the eight persona files.
+The coordinator clicked the observed native Discard button only after the locked
+scenario completed. Final process metadata records its clean exit. Earlier
+pre-fix and incomplete locked probes are excluded. The portable
+[receipt verifier](../validation/persona-store_20261022/verify.py) checks 420
+source bindings and the bundled evidence. This establishes local macOS storage,
+transition and fresh-process behavior; native PCM playback, physical audio,
+second-host operation, manual resize and native same-label seed replacement
+remain unclaimed. P5a source and ownership are untouched.
