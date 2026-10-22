@@ -4,7 +4,7 @@ Started October 21; completed October 22, 2026, America/New_York.
 Qualified committed source: `94583610752dce03853bb1bf132175121e7c79eb`.
 The locked macOS desktop binary SHA256 is
 `c18e11ef3df7a077d79d31a229abe6fff8a7dbb704df4c958ccd26b3de557855`.
-Publication is established separately from this qualification record.
+Source and receipt are published through `428dd7ad`; the [publication record](publication.json) verifies the remote ref and exact source/evidence bytes.
 
 The exercise used a real LaunchServices application and the native macOS Save
 panel, operated through CUA. Listener, appearance, theme library and media paths

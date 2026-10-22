@@ -135,7 +135,7 @@ a separate observation unless exercised explicitly.
 
 ### P6 D3 native recovery and fresh-process reopen
 
-**Status (2026-10-22): qualified at committed `94583610`; publication pending.** The maintainer authorized native chooser
+**Status (2026-10-22): qualified at committed `94583610`; published through `428dd7ad`.** The maintainer authorized native chooser
 cancellation, failed/successful recovery copies, fresh-process reopening, exposed
 fixes and direct main publication. Current primary and reused D3 worktree start
 clean at fetched `97bb21e5`. All listener, media and appearance paths are isolated.
@@ -356,3 +356,7 @@ ms/Completed. Both native processes exit zero. The full desktop gate passes
 92 cases with one existing ignore; locked build and independent source/capture
 review pass. [Native receipt](../validation/redshank-recovery-native_20261021/README.md).
 No P5a or physical microphone/audio acceptance is included.
+
+2026-10-22 native publication: source fix and receipt published through `428dd7ad`;
+remote advertised main, all 74 qualified source/config/lock hashes and all 65
+evidence files match the fetched tree. [Publication record](../validation/redshank-recovery-native_20261021/publication.json).
