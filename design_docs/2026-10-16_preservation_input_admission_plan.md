@@ -1,6 +1,6 @@
 # Preservation and input admission
 
-Date: 2026-10-16; updated 2026-10-21.
+Date: 2026-10-16; updated 2026-10-22.
 Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket remains CPU/build only. Redshank D3 has the bounded macOS native/reopen evidence in P6; broader Redshank acceptance remains separate. No physical audio qualification is claimed.
 
 2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local commits
@@ -10,6 +10,11 @@ now refuses incoming custody sealed as another persona before retiring outgoing
 work. Current device-free results and remaining design/native boundaries are in
 the [first-wave recheck receipt](../validation/first-wave-recheck_20261020/README.md).
 P5a stays with its existing owner. No push was performed.
+
+2026-10-22 D1: the post-rollout source recheck and proposed persona-store
+migration are in [P7](#p7-d1-persona-store-migration-proposed). This proposal
+does not authorize its product changes or migrate user data. D3 publication
+and qualification retain their separate evidence below.
 
 ## Scope and ownership
 
@@ -148,6 +153,204 @@ a separate application process reopens it without the original source media,
 and native captures are reviewed. Exposed fixes receive focused checks and a
 committed-source native rerun before publication. No physical capture claim is
 included in this recovery exercise.
+
+### P7 D1 persona-store migration (proposed)
+
+**Status (2026-10-22): proposed; maintainer rulings required.** Decider: the
+maintainer. Rechecked fetched `main` at
+`80f2d4eb6dd6b30e3e38b4fae610250f7842b96e`, clean and equal to `origin/main`.
+The rollout selects Mere `a07a375ed9f49d31bb757c4dd516a0fa7af33fde`;
+Personae remains on Dramatis `7d498c27df8076dacccb74ba4a05f863f9f48c76`,
+and Muniment/Eidetic on `34105d63ec17826e0a58a5b461b65150357dd000`.
+No production code, dependency pin or user store changes are part of this
+proposal. P5a stays with its existing owner.
+
+#### Current-source findings
+
+- `woodshed-genet/src/storage.rs:78-135` opens every identity over the same
+  `FsBackend::new()`. Lines 250-303 map it to `genet-state.json`,
+  `genet-settings.json` and the adjacent `genet-state.loop-pcm/`, or to exact
+  `WOODSHED_STATE`/`WOODSHED_SETTINGS` overrides. Different sealing keys do
+  not create different stores. These references are under `crates/`.
+- Wrong-key reads are errors, and `SessionStore` quarantines writes after
+  failed admission (`woodshed-core/src/sealed_backend.rs:82-97`;
+  `woodshed-core/src/storage.rs:297-319`). This protects existing data but
+  leaves another persona unable to open its own independent practice at the
+  same path. Plaintext adoption is still enabled on ordinary opens.
+- The switch barrier preserves outgoing work and checks the selected
+  canonical profile (`woodshed-genet/src/persona.rs:167-198`). Installation
+  checks a Pending seal, then resets and restores the incoming state
+  (`:310-358`). D1 needs explicit incoming store admission before that reset;
+  a successful seal alone does not prove the session, settings or PCM opened.
+- `PersistedSession` includes working/retained Sets, explorations, musical
+  context, SongDoc, exact kit/pattern selections, history, personal relation
+  journal, retained readings/presentation and Looper references
+  (`woodshed-core/src/storage.rs:375-439`). References and companion PCM
+  form one migration closure. Missing/unsupported takes are retained authored
+  data today; migration must not quietly drop them.
+- `AppSettings` currently combines musical, appearance, accessibility and
+  pedal preferences with window geometry (`woodshed-core/src/settings.rs:393-419`).
+  The separately authored **theme/font library** already stays global across
+  persona reset (`woodshed-genet/src/persona.rs:361-382` and
+  `appearance.rs:30-79`). This is distinct from retained musical material.
+- Export guards reconstruct `FsBackend::new()` rather than use installed
+  paths (`woodshed-genet/src/appearance.rs:75-79`, `music_export.rs:53-68`).
+  A namespace change must update these consumers in the same slice.
+- File publication is atomic per file; `FsBackend::apply` explicitly is not
+  a multi-file transaction (`woodshed-genet/src/storage.rs:332-335,517-528`).
+  Migration needs its own completion/admission boundary.
+- The pinned Mere `CustodyIdentity` already exposes `connect_as` and
+  `IdentityProvider::master_public_key` in
+  `crates/graphshell/graphshell-endpoint/src/door/custody_identity.rs`.
+  Candidate validation can use explicit custody without changing the family
+  choice. The pinned Personae documents `ProfileId` as stable **within a
+  vault** (`crates/personae/src/vault.rs:39-47`), so that string alone is not
+  a sufficient storage identity across replaced vaults or carried seeds.
+
+The five storage/transition files inspected above have no changes between
+the completed D3 publication `8ffa35a9` and this rollout revision. This is a
+source recheck, with no new CPU, native or migration acceptance claimed.
+
+#### Recommended storage and authority contract
+
+Use one product-owned store per cryptographic persona. A versioned,
+domain-separated digest of the custody-reported persona public key supplies
+the directory token; display names and raw profile strings never become path
+components. The token is a locator, not a secret or authorization. A sealed
+owner manifest binds the store UUID, format version, owner and migration
+provenance. Admission checks the selected canonical profile against custody
+and the cryptographic owner against the store. Reusing `default` with a new
+seed opens a distinct store; carrying the same seed retains the same owner.
+This uses existing custody APIs and the existing practice sealing context.
+It introduces no vault access or secret-key files in Woodshed.
+
+Illustrative layout, subject to the rulings below:
+
+```text
+<application-root>/
+  desktop.json                 # device-local window geometry, if D1.2 approved
+  themes.json                  # existing shared authored theme/font library
+  personas/v1/<owner-token>/
+    owner                     # sealed store identity and migration receipt
+    session                   # existing session payload, sealed
+    settings                  # persona preferences, sealed
+    loop-pcm/<namespace>/<digest>.bin
+    ready                     # final completion marker; never sufficient alone
+```
+
+New roots use strict sealed reads. Plaintext adoption becomes an explicit
+legacy-source operation, followed by structural admission, instead of a
+fallback on every normal persona-store open. Existing schemas, musical IDs,
+history branches, journal source/assertion IDs, capture clocks, codec bytes
+and PCM samples retain their meaning. The migration changes storage ownership
+and placement; it does not merge or regenerate practice material.
+
+| Data | Recommended owner |
+|---|---|
+| Complete session, retained musical material, history and personal assertions | Persona |
+| All referenced Looper companions and their existing namespace/digests | Same persona store |
+| Tuning, instrument, practice/view preferences, selected appearance, accessibility and pedal bindings | Persona |
+| Authored theme/font definitions | Existing shared application library |
+| Desktop window placement | Device/install, if D1.2 approved |
+| Live MIDI routes/inventory, audio devices, event clock, workers and custody handles | Running host; never migrated as durable practice |
+
+Shared crates continue to return validation facts and capabilities. The
+Woodshed host owns paths, leases, custody, migration choices, durable admission
+and user wording. Hocket and Redshank retain their independent store contracts.
+No cross-device synchronization, persona deletion, automatic garbage collection,
+cross-persona copy/merge, supplier repin or P5a change is included.
+
+#### Decisions requested from the maintainer
+
+All recommendations in this table remain proposed.
+
+| Ruling | Recommendation | Alternative and consequence |
+|---|---|---|
+| **D1.1 Legacy assignment and retention** | Ask once which persona receives the existing practice, naming the target and explaining what will be copied. Matching-key decryption is required for sealed data; plaintext still needs explicit assignment. Copy into that one store and retain the original files unchanged, with no automatic expiry. Cancel leaves assignment unresolved and permits unsaved practice. | Automatically assign to the current family persona: fewer steps, but current selection does not establish ownership of plaintext legacy material. Cloning to every persona would duplicate history and assertions and is not recommended. |
+| **D1.2 Preference ownership** | Move musical, view, selected appearance, accessibility and pedal preferences with the persona. Keep authored theme/font definitions shared, and split window geometry into device-local installation preferences. | Keep the entire current AppSettings payload per persona, including window geometry: smaller first slice, but window placement follows whichever persona last saved it. |
+| **D1.3 Override compatibility** | Add a whole-root `WOODSHED_DATA_DIR` for isolated multi-persona runs. Keep existing exact-file overrides as an explicit single-owner compatibility mode, bound to one owner and refused for another; never silently append persona suffixes or fall back to production paths. | Redefine existing overrides as persona-root selectors: simpler long-term surface, but breaks fixture scripts and their expected output paths. Removing exact-file support requires a separate caller migration. |
+| **D1.4 Family choice** | Preserve the current family-wide persona switch. Preflight through explicit `connect_as`, then commit the family choice only after outgoing preservation and incoming admission succeed. | Make persona choice Woodshed-local: reduces cross-app effects, but changes an established product convention and the current-persona no-op contract. |
+
+D1.3 details: whole-root and exact-file modes must not be mixed silently.
+The new whole-root mode isolates installation preferences and the theme library
+as well as persona stores, unless an explicit library override is supplied.
+Existing `WOODSHED_STATE` adjacency rules and explicit `WOODSHED_SETTINGS`
+filenames stay exact in compatibility mode. A settings-only override must
+require an explicit compatible state destination rather than silently combine
+scratch settings with the production session. New empty exact-file stores bind
+their owner before the first write; populated legacy files need ownership
+admission. Scenario harnesses may provide an explicit expected owner and
+migration choice, validated exactly as the UI choice, so fixtures remain
+deterministic. Sidecars and every configured destination join export protection.
+
+#### Migration transaction and failure behavior
+
+1. **Preserve and inspect.** Finish the existing outgoing preservation barrier.
+   Obtain a single-writer lease for the product root and target. Snapshot the
+   legacy session, settings and companion inventory with byte hashes, without
+   rewriting or pruning the source. Recheck it before publication. Concurrent
+   old binaries do not honor a new lease: migration must refuse known concurrent
+   instances and document that running mixed versions during migration is
+   unsupported; a lease alone cannot prove legacy files are immutable.
+2. **Admit ownership and contents.** Resolve custody for the explicit candidate;
+   check selected profile and owner, then authenticate/decode the session and
+   settings using existing structural validators and the view's retained-data
+   admission. Resolve every referenced companion. Never try every persona key
+   behind the user's back. Wrong key, corrupt settings/session, unsupported
+   referenced codecs or missing PCM stop automatic migration. Keep authored
+   references and original bytes available for recovery; do not publish an
+   apparently complete destination with dropped takes.
+3. **Build a new candidate.** Use a sibling staging directory and a fresh
+   destination; never overwrite or merge an existing persona store. Preserve
+   exact admitted session bytes where no wire transformation is needed, and
+   exact encoded companion bytes through the same sealing policy. Plaintext
+   legacy payloads are sealed into the new store. If D1.2 is approved, split
+   only the known window field from settings while retaining other raw fields;
+   seed installation geometry only if it has no existing authoritative value.
+   Original unsplit settings remain in the retained source. Keep unreferenced
+   or foreign-key legacy blobs in that retained source; do not collect them.
+4. **Verify and publish.** Open the candidate through a fresh backend handle,
+   authenticate its owner, admit the full payload and verify referenced bytes,
+   digests, frame counts and unchanged identities. Record source fingerprints,
+   target owner/store UUID and format in the receipt. Publish completion last,
+   under the lease, using a host-supported no-replace promotion. A partial
+   directory or marker alone is never a usable store. Failure leaves the source
+   and outgoing window intact, with a retry/cancel/recovery explanation.
+5. **Install deliberately.** Only after admission, commit the family choice
+   under D1.4, revalidate custody and install the matching store/UI together.
+   There is no distributed transaction with djinn: a failure retains outgoing
+   work and reports the observed family choice. A crash after the family choice
+   leaves a fully admitted target for next launch. Normal save/close logic and
+   same-persona selection use the installed owner and resolved paths. Pending
+   custody, absent roots and failed migration never select a writable singleton
+   or default store. With custody unavailable, start unsaved and expose explicit
+   legacy recovery rather than silently loading an unassigned plaintext store.
+
+Once a complete persona store exists, it is authoritative. Do not reimport the
+legacy singleton on every startup. A changed legacy fingerprint is a recovery
+condition, not permission to overwrite current practice. Retained originals
+support deliberate recovery; reopening an older binary writes its old singleton
+and does not include subsequent persona-store edits. No automatic downgrade
+round-trip or cleanup is promised. Starting a new empty store while legacy
+assignment is deferred is explicit and must disclose that later import cannot
+overwrite or automatically merge that store.
+
+#### Implementation sequence and owners after the rulings
+
+The coordinator owns shared seams; no two lanes edit a seam concurrently.
+
+| Step | Sole owner / seams | Done-condition |
+|---|---|---|
+| **D1-A Resolve store identity and paths** | Host storage owner: `storage.rs`, resolved store descriptor, migration/lease primitives and their tests | Distinct keys with the same ProfileId isolate; same owner resolves consistently; hostile names cannot escape roots; new/legacy/partial/pending states are explicit; override/collision rules hold. |
+| **D1-B Copy and verify legacy data** | Same host storage owner, with core validator changes assigned to one core owner only if necessary | Interrupted writes, wrong key, missing/unsupported PCM, changed sources, existing destinations, lock loss and retry never overwrite source or claim completion. Valid split/flat legacy and exact settings/session/PCM read back through a fresh handle. |
+| **D1-C Admit and install** | Coordinator: `persona.rs`, `session.rs`, `shared.rs`, `main.rs`; one view owner for migration controls | Outgoing work survives canceled/failed incoming admission; family-choice errors are visible; A→B→A restores independent exact practice; current-persona no-op and host runtime bindings remain correct. |
+| **D1-D Use installed destinations everywhere** | Coordinator: `appearance.rs`, `music_export.rs`, resolved descriptor consumers; core owner for the approved settings split | Save, close, geometry, theme and MusicXML exports protect every live/legacy/staging store and override sidecar, including nonexisting targets and aliases. No consumer reconstructs the singleton to identify live storage. |
+| **D1-E Qualify and publish** | Coordinator schedules checks/native/Git; independent read-only review | Focused store/transition checks, a desktop build, native assignment/cancel/failure and A→B→A, lock/unavailable-custody behavior, plus independent fresh-process reopen of each persona with exact retained identities and PCM. Record source, commands, hashes, observations and publication separately; then prune only clean, merged completed work. |
+
+D1-A/B storage work and disjoint controls/core work may run in parallel once
+the descriptor and rulings are fixed. Integration, native execution and shared
+seam edits remain serialized. The prior rollout's CPU receipt and D3's native
+receipt do not qualify this unimplemented migration.
 
 ## Findings
 
@@ -360,3 +563,11 @@ No P5a or physical microphone/audio acceptance is included.
 2026-10-22 native publication: source fix and receipt published through `428dd7ad`;
 remote advertised main, all 74 qualified source/config/lock hashes and all 65
 evidence files match the fetched tree. [Publication record](../validation/redshank-recovery-native_20261021/publication.json).
+
+
+2026-10-22 D1 proposal: refreshed clean main at `80f2d4eb`, verified the
+post-rollout lock identities and re-read current storage, custody, switch,
+settings, capture and export seams. P7 records four requested maintainer
+rulings, owner-scoped implementation steps and failure/reopen gates. This is
+a documentation-only proposal; no migration code or user-data operation ran.
+P5a remains with its existing owner.
