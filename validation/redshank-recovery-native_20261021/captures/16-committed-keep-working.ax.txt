@@ -1,0 +1,39 @@
+Window: "Redshank", App: Redshank Committed Recovery.
+0 standard window Redshank, Secondary Actions: Raise
+	1 container
+		2 button Appearance
+		3 tab group Destinations
+			4 tab (settable, boolean) Listen, Value: on
+			5 tab (settable, boolean) Library, Value: off
+			6 tab (settable, boolean) Notes, Value: off
+			7 tab (settable, boolean) Mere, Value: off
+			8 tab (settable, boolean) Settings, Value: off
+		9 container Listener recovery
+			10 container Not saved: listener recovery failed (2 saved generations could not be restored). Changes stay in memory; existing state is preserved. Save a recovery copy to a new directory to retain this session.
+			11 container Changes are only in memory. Save a recovery copy to keep this session.
+			12 container Recovery copy failed: A required audio file or destination folder could not be found. Your current session is still open and the original store is unchanged. Resolve the problem, then choose a new directory to retry.
+			13 button Save Recovery Copy
+		14 container Listen
+			15 button Select Native Recovery Source.wav
+			16 button More actions for Native Recovery Source.wav
+			17 container No notes for this episode yet.
+			18 container Captured note target
+			19 text entry area (settable) Committed native recovery draft: preserve this exact text and the local audio.
+			20 button Save text note
+			21 button Cancel text note
+		22 container Player
+			23 slider (settable, float) Seek, Value: 0
+			24 button Skip backward
+			25 button Play
+			26 button Skip forward
+			27 button Playback rate 1.0 times
+			28 button Volume 80 percent
+			29 container Capture
+				30 button Add text note
+				31 toggle button (settable, boolean) Hold to record voice note, Value: off
+	32 close button
+	33 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	34 minimize button
+	35 text Redshank
+36 menu bar
+	37 Redshank Committed Recovery

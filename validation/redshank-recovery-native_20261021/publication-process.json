@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-native-publication-20261022",
+  "command": [
+    "git",
+    "push",
+    "origin",
+    "HEAD:main"
+  ],
+  "started_at": "2026-10-22T04:07:54.683824Z",
+  "ended_at": "2026-10-22T04:07:56.713305Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/publication.log",
+  "log_sha256": "15a509473160fc2c12da94187cc9067f3f93ae2d6d9833e68e57f58d6d14b1f8",
+  "source_commit": "428dd7adbb810142067b9f71d5d580a3f460b12a"
+}

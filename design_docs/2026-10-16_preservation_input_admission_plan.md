@@ -1,7 +1,7 @@
 # Preservation and input admission
 
 Date: 2026-10-16; updated 2026-10-21.
-Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket and Redshank have CPU/build evidence only. No physical audio qualification is claimed.
+Status: Integrated onto P5 at `cec221348154fc8e6abe3f6136f00b14f9860b78`; the shared after-frame/dispatch guard follow-up is at `d955f5dc3b99ec1efd6ec9a56dd3ba007755409e`. Current-source CPU/build and bounded Woodshed native/reopen gates pass. Direct publication to `main` is authorized for the coordinating owner; Git refs establish publication separately. Hocket remains CPU/build only. Redshank D3 has the bounded macOS native/reopen evidence in P6; broader Redshank acceptance remains separate. No physical audio qualification is claimed.
 
 2026-10-20 recheck: the user authorized parallel A1–A5/Q1 work and local commits
 only. The current wave overrides this document's historical publication
@@ -132,6 +132,22 @@ original generation/media preservation and coherent independent reopen; both
 surface layouts emit the intended controls; integration is reviewed, checked,
 committed and published. Native chooser/window/appearance interaction remains
 a separate observation unless exercised explicitly.
+
+### P6 D3 native recovery and fresh-process reopen
+
+**Status (2026-10-22): qualified at committed `94583610`; published through `428dd7ad`.** The maintainer authorized native chooser
+cancellation, failed/successful recovery copies, fresh-process reopening, exposed
+fixes and direct main publication. Current primary and reused D3 worktree start
+clean at fetched `97bb21e5`. All listener, media and appearance paths are isolated.
+P5a remains with its existing owner.
+
+Done when the exact locked desktop binary is exercised through the real native
+chooser and recovery controls, canceled/failed copies retain editor and original
+generations, a successful copy includes exact edited state and referenced audio,
+a separate application process reopens it without the original source media,
+and native captures are reviewed. Exposed fixes receive focused checks and a
+committed-source native rerun before publication. No physical capture claim is
+included in this recovery exercise.
 
 ## Findings
 
@@ -321,3 +337,26 @@ picker, fresh-process and physical-device observations are not claimed.
 2026-10-21 D3 publication: `main` advanced from `01c4b3af` to `f4904a27`;
 remote advertised main and fetched source/evidence bytes match. The following
 metadata commit records that observation without extending qualification scope.
+
+2026-10-21 native D3 probe: real chooser cancellation, protected-destination
+refusal and missing-media failure retain the exact editor text. Original
+published/pending generation bytes remain identical. A successful native
+copy from pending close preserves the draft and local WAV and exits normally.
+The probe exposed Rust Debug error internals in the failure panel; the host now
+uses readable cause/action text, keeping detailed store errors out of that UI.
+Focused regression and committed-source native rerun are next.
+
+2026-10-22 P6 qualification: ten committed-source native captures cover chooser
+cancellation, protected-destination and missing-media failures, Keep Working,
+successful copying from pending Close, and independent 820x560 rail reopening.
+The exact unsaved note, target/representation, library, selection, queue and local
+WAV survive. Original published/pending bytes remain identical. A fresh process
+with the original WAV unavailable opens the note and plays copied media to 30,000
+ms/Completed. Both native processes exit zero. The full desktop gate passes
+92 cases with one existing ignore; locked build and independent source/capture
+review pass. [Native receipt](../validation/redshank-recovery-native_20261021/README.md).
+No P5a or physical microphone/audio acceptance is included.
+
+2026-10-22 native publication: source fix and receipt published through `428dd7ad`;
+remote advertised main, all 74 qualified source/config/lock hashes and all 65
+evidence files match the fetched tree. [Publication record](../validation/redshank-recovery-native_20261021/publication.json).

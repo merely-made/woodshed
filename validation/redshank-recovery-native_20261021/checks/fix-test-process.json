@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "run_id": "d3-native-fix-tests-20261021",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "ports/redshank/Cargo.toml",
+    "--locked",
+    "-j",
+    "4",
+    "-p",
+    "redshank-desktop",
+    "recovery"
+  ],
+  "started_at": "2026-10-22T03:52:49.079455Z",
+  "ended_at": "2026-10-22T03:53:37.929520Z",
+  "exit_code": 0,
+  "cwd": "/Users/markik/Code/worktrees/woodshed-redshank-recovery-20261021",
+  "log": "/Users/markik/Code/testing/woodshed-redshank-recovery-native-20261021/checks/fix-test.log",
+  "log_sha256": "8bcf653f05ca26a03f8ccb10722e8f44a5543f8d0e02b0a079ee17a86820b751",
+  "source_commit": "97bb21e5b265b76284ed715f975e4b0b18181a24"
+}

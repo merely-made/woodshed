@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-22",
+  "published_through": "428dd7adbb810142067b9f71d5d580a3f460b12a",
+  "advertised_main": "428dd7adbb810142067b9f71d5d580a3f460b12a",
+  "qualified_source": "94583610752dce03853bb1bf132175121e7c79eb",
+  "binary_sha256": "c18e11ef3df7a077d79d31a229abe6fff8a7dbb704df4c958ccd26b3de557855",
+  "verified_source_files": 74,
+  "verified_evidence_files": 65,
+  "push_process": "publication-process.json",
+  "push_log": "publication.log",
+  "scope": "Observed source and receipt publication; this record is added by a following metadata commit. Mac native recovery only; no physical audio or P5a qualification."
+}
