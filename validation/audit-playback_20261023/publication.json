@@ -1,0 +1,14 @@
+{
+  "observed_at_utc": "2026-10-23T17:40:02.284879+00:00",
+  "published_revision": "f2b16aeab126084c1e2b656d5ca4df8782aaf1e9",
+  "qualified_source_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd",
+  "advertised_main": "f2b16aeab126084c1e2b656d5ca4df8782aaf1e9",
+  "fetched_origin_main": "f2b16aeab126084c1e2b656d5ca4df8782aaf1e9",
+  "checked_source_files": 265,
+  "checked_evidence_files": 23,
+  "checked_canonical_and_ledger_files": 3,
+  "all_checked_bytes_equal_fetched_remote_tree": true,
+  "method": "Git cat-file blobs SHA256 against source/evidence manifests and canonical plan/index/ledger.",
+  "metadata_boundary": "This record describes published f2b16aea. The subsequent metadata commit adds this record and its progress link without changing source or extending CPU/build qualification.",
+  "p5a": "Completed bounded assignment reservation retired; no P5a code changes."
+}

@@ -424,3 +424,11 @@ manifest, lock, shipping public API or P5a code changed. No new native/physical
 or second-host acceptance follows. The current ledger corrects D1,S4,R04,Q5 and
 optional Ringdown reach, retains all97 rows, and marks only the selected B8
 findings CPU/build qualified. Publication verification and scoped pruning follow.
+
+
+2026-10-23 P11 publication: source, receipt and corrected frontier are merged
+and pushed through `f2b16aea`. Advertised and fetched main agree; all265 qualified
+source bindings,23 evidence files and the three canonical/index/ledger files
+match the fetched remote tree. The [publication record](../validation/audit-playback_20261023/publication.json)
+records that observation; its metadata commit extends no qualification claim.
+The completed clean checkout/branch are pruned after that publication.
