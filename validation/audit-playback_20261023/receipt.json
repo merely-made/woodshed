@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-23",
+  "status": "Implemented and scoped CPU/build qualified; publication is recorded separately in publication.json",
+  "base_revision": "3ce93675179098b7d1c81da20cb4f63caa75e6b5",
+  "qualified_source_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd",
+  "findings": [
+    "redshank:R02",
+    "redshank:R03",
+    "redshank:R06",
+    "redshank:R07",
+    "redshank:R17"
+  ],
+  "source_files_changed": [
+    "ports/redshank/playback/src/backend.rs",
+    "ports/redshank/playback/src/lib.rs",
+    "ports/redshank/playback/src/output.rs",
+    "ports/redshank/playback/src/worker.rs"
+  ],
+  "source_bindings": "source-sha256.json",
+  "source_binding_count": 265,
+  "test_accounting": {
+    "playback_unit_passed": 39,
+    "playback_integration_passed": 3,
+    "desktop_unit_passed": 92,
+    "model_unit_passed": 18,
+    "model_integration_passed": 15,
+    "distinct_passed": 167,
+    "ignored_existing": 8,
+    "new_regressions": 7,
+    "baseline_failures_excluded": 3,
+    "selector_error_excluded": 1,
+    "repeated_suites_added_to_total": false
+  },
+  "positive_gates": [
+    "playback-final",
+    "receiving-final-r2",
+    "desktop-build",
+    "format-final"
+  ],
+  "negative_controls": {
+    "baseline-cache": {
+      "expected_exit": 101,
+      "failed_cases": 1,
+      "reason": "Production cached-integrity RefCell panic hides refusal."
+    },
+    "baseline-eof": {
+      "expected_exit": 101,
+      "failed_cases": 2,
+      "reason": "Real WAV exact-end backend/worker stays Idle/Loading."
+    },
+    "receiving-final": {
+      "expected_exit": 101,
+      "failed_cases": 0,
+      "reason": "Wrong package selector redshank-genet; no product test ran."
+    }
+  },
+  "review": {
+    "implementation_owner": "One playback owner for all four files; coordinator owns gates/integration/Git.",
+    "independent_reviewers": 2,
+    "result": "Both reviewed production and all seven regressions with no actionable blocker. Recovery probe reads actual backend/controller/gain, not retained snapshot alone.",
+    "frozen_source_sha256": {
+      "ports/redshank/playback/src/lib.rs": "4342e38947ba7db0acddadc5eb0682a3df352f1f92b90108932ea883fc4f85dc",
+      "ports/redshank/playback/src/backend.rs": "34a5e9dd81f9927fdb6e1766a7b82a913110f4abf272252076f086e8399795bb",
+      "ports/redshank/playback/src/output.rs": "0e22dcb802d5eade1e344adc23c8255c1df0d37a252c29421da246d8fadb2314",
+      "ports/redshank/playback/src/worker.rs": "a358478fee0e85b51535be9f94e0a546b7a5a5ca3575d5c960df23207b878ef5"
+    }
+  },
+  "source_execution_binding": "Gates executed from source-dirty 3ce93675; every captured compiled product input remained stable. The resulting bytes are identical to committed 046b0bf4, verified via Git blobs; no repeat count is added for committing.",
+  "configuration": {
+    "supplier_repins": false,
+    "manifest_or_lock_changes": false,
+    "public_shipping_api_changed": false,
+    "inspect_controls": "cfg(test) only; reads actual worker/controller/backend facts."
+  },
+  "p5a": "Historical bounded lane completed; stale reservation retired under direct maintainer authorization; no P5a source edited or new timing qualification claimed.",
+  "limits": [
+    "Scoped CPU/controller/backend/real-WAV and desktop-build evidence.",
+    "No new native GUI, physical audio/device, gain/rate listening, microphone, second-host or fresh-process native receipt.",
+    "Eight existing ignored cases remain unexecuted.",
+    "Adjacent capture gesture/capacity/export identity and Woodshed availability work remain open.",
+    "Original capture PCM/clocks and supplier pins unchanged."
+  ],
+  "platform": {
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "system": "macOS26.5.1/25F80 arm64"
+  },
+  "raw_paths": "Absolute build/trial paths are retained local-only provenance. Portable verifier never follows those paths.",
+  "bundle_checks": {
+    "new_receipt_canonical_links_checked": 20,
+    "credential_and_artifact_scan": "Passed; no executable, generated media, private vault or recognized credential material bundled. Raw paths are local only.",
+    "whitespace": "Source/docs/scripts pass with raw logs and original test-patch context excluded. Two raw log terminal blank lines and two original patch context-space diagnostics remain original evidence bytes."
+  }
+}

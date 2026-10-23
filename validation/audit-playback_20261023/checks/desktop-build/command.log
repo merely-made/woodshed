@@ -1,0 +1,93 @@
+   Compiling hashbrown v0.17.1
+   Compiling serde_json v1.0.151
+   Compiling aho-corasick v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling num-integer v0.1.47
+   Compiling primal-check v0.3.4
+   Compiling transpose v0.2.3
+   Compiling rustfft v6.4.1
+   Compiling indexmap v2.14.1
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling accesskit_consumer v0.39.1
+   Compiling rkyv v0.8.18
+   Compiling sceno v0.0.6 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling muniment v0.1.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling naga-types v30.0.1
+   Compiling wgpu-types v30.0.1
+   Compiling naga v30.0.1
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling h2 v0.4.19
+   Compiling petgraph v0.8.3
+   Compiling regex-automata v0.4.18
+   Compiling scenograph v0.0.5 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling realfft v3.5.0
+   Compiling rubato v5.0.1
+   Compiling redshank-model v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/model)
+   Compiling fixed-resample v0.13.0
+   Compiling accesskit_macos v0.27.1
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling logos-codegen v0.16.1
+   Compiling scenomise v0.0.6 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling hyper v1.11.1
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling logos-derive v0.16.1
+   Compiling logos v0.16.1
+   Compiling hyper-util v0.1.20
+   Compiling misfin v0.0.4 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling illume v0.0.3 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling wgpu-hal v30.0.1
+   Compiling hyper-rustls v0.27.10
+   Compiling murm-wire v0.1.0 (https://github.com/merely-made/murm.git?branch=main#5b1c5cac)
+   Compiling errand v0.4.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling redshank-feed v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/feed)
+   Compiling redshank-storage v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/storage)
+   Compiling netfetcher v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling redshank-cache v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/cache)
+   Compiling redshank-playback v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/playback)
+   Compiling wgpu v30.0.1
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling sprigging v0.3.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling cambium v0.6.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling redshank-surfaces v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/surfaces)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop") generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 23.13s

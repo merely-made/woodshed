@@ -1,0 +1,7 @@
+{
+  "qualified_source_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd",
+  "successful_build_process": "checks/desktop-build/process.json",
+  "observed_binary_path_local_only": "/Users/markik/Code/repos/woodshed/ports/redshank/target/debug/redshank-desktop",
+  "observed_sha256": "613159eca4520349a994fd80196b6c8b2bc1881d741a35762ed779f0c656c3c1",
+  "scope": "Successful locked desktop build and immediate frozen executable hash; binary is local only and was not launched for this B8 qualification."
+}

@@ -1,0 +1,595 @@
+   Compiling unicode-ident v1.0.24
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling allocator-api2 v0.2.21
+   Compiling stable_deref_trait v1.2.1
+   Compiling objc2 v0.6.4
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling parking_lot_core v0.9.12
+   Compiling scopeguard v1.2.0
+   Compiling proc-macro2 v1.0.107
+   Compiling lock_api v0.4.14
+   Compiling siphasher v1.0.3
+   Compiling zerocopy v0.8.56
+   Compiling hashbrown v0.17.1
+   Compiling percent-encoding v2.3.2
+   Compiling quote v1.0.47
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.4
+   Compiling syn v2.0.119
+   Compiling indexmap v2.14.1
+   Compiling form_urlencoded v1.2.2
+   Compiling foldhash v0.2.0
+   Compiling phf_shared v0.13.1
+   Compiling simd-adler32 v0.3.10
+   Compiling block2 v0.6.2
+   Compiling fastrand v2.5.0
+   Compiling crc32fast v1.5.1
+   Compiling dispatch2 v0.3.1
+   Compiling phf_generator v0.13.1
+   Compiling rustc-hash v1.1.0
+   Compiling miniz_oxide v0.9.1
+   Compiling bit-vec v0.9.1
+   Compiling unicode-width v0.2.2
+   Compiling codespan-reporting v0.13.1
+   Compiling objc2-core-foundation v0.3.2
+   Compiling bit-set v0.10.0
+   Compiling crossbeam-utils v0.8.22
+   Compiling raw-window-handle v0.6.2
+   Compiling flate2 v1.1.10
+   Compiling naga v30.0.1
+   Compiling string_cache_codegen v0.6.1
+   Compiling phf_codegen v0.13.1
+   Compiling memchr v2.8.3
+   Compiling thiserror v2.0.20
+   Compiling regex-syntax v0.8.11
+   Compiling new_debug_unreachable v1.0.6
+   Compiling static_assertions v1.1.0
+   Compiling web_atoms v0.2.6
+   Compiling num-integer v0.1.47
+   Compiling wgpu-hal v30.0.1
+   Compiling precomputed-hash v0.1.1
+   Compiling uuid v1.26.0
+   Compiling serde_bytes v0.11.19
+   Compiling miniz_oxide v0.8.9
+   Compiling objc2-foundation v0.3.2
+   Compiling synstructure v0.13.2
+   Compiling objc2-core-graphics v0.3.2
+   Compiling fdeflate v0.3.7
+   Compiling libloading v0.8.9
+   Compiling profiling v1.0.18
+   Compiling tendril v0.5.1
+   Compiling serde_derive v1.0.229
+   Compiling zerovec-derive v0.11.6
+   Compiling displaydoc v0.2.7
+   Compiling thiserror-impl v2.0.20
+   Compiling bytemuck_derive v1.12.0
+   Compiling tokio-macros v2.7.2
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling wgpu-core v30.0.1
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerocopy-derive v0.8.56
+   Compiling tracing-attributes v0.1.31
+   Compiling tokio v1.53.1
+   Compiling phf_macros v0.13.1
+   Compiling bytemuck v1.25.2
+   Compiling phf v0.13.1
+   Compiling zerofrom v0.1.8
+   Compiling font-types v0.12.4
+   Compiling naga-types v30.0.1
+   Compiling tracing v0.1.44
+   Compiling read-fonts v0.41.0
+   Compiling wgpu-types v30.0.1
+   Compiling polycool v0.4.0
+   Compiling litrs v1.0.0
+   Compiling yoke v0.8.3
+   Compiling once_cell v1.21.4
+   Compiling bitflags v2.13.1
+   Compiling arrayvec v0.7.8
+   Compiling document-features v0.2.12
+   Compiling png v0.18.1
+   Compiling wgpu v30.0.1
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling svg_fmt v0.4.5
+   Compiling smallvec v1.16.0
+   Compiling euclid v0.22.14
+   Compiling linebender_resource_handle v0.1.1
+   Compiling kurbo v0.13.1
+   Compiling parking_lot v0.12.5
+   Compiling string_cache v0.9.0
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling color v0.3.3
+   Compiling icu_locale_core v2.3.0
+   Compiling icu_collections v2.3.0
+   Compiling semver v1.0.28
+   Compiling rustls v0.23.44
+   Compiling markup5ever v0.39.0
+   Compiling rustc_version v0.4.1
+   Compiling peniko v0.6.1
+   Compiling guillotiere v0.7.0
+   Compiling enumn v0.1.14
+   Compiling icu_provider v2.3.1
+   Compiling hashbrown v0.16.1
+   Compiling accesskit v0.25.1
+   Compiling heapless v0.7.17
+   Compiling icu_properties v2.3.0
+   Compiling icu_normalizer v2.3.0
+   Compiling half v2.7.1
+   Compiling encoding_rs v0.8.35
+   Compiling num-complex v0.4.6
+   Compiling byteorder v1.5.0
+   Compiling hash32 v0.2.1
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling layout-dom-api v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling futures-intrusive v0.5.0
+   Compiling url v2.5.8
+   Compiling skrifa v0.44.0
+   Compiling cobs v0.3.0
+   Compiling object v0.39.1
+   Compiling postcard v1.1.3
+   Compiling paint_list_api v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling unicode-segmentation v1.13.3
+   Compiling objc-sys v0.3.5
+   Compiling crossbeam-epoch v0.9.20
+   Compiling icu_locale_fallback_data v2.3.0
+   Compiling genet-host-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling objc2-core-text v0.3.2
+   Compiling sha2 v0.11.0
+   Compiling crossbeam-deque v0.8.7
+   Compiling icu_segmenter_data v2.3.0
+   Compiling xml5ever v0.39.0
+   Compiling html5ever v0.39.0
+   Compiling vello_encoding v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling app_units v0.7.8
+   Compiling futures-macro v0.3.34
+   Compiling aho-corasick v1.1.5
+   Compiling pollster v1.0.1
+   Compiling vcpkg v0.2.15
+   Compiling rayon-core v1.13.0
+   Compiling ar_archive_writer v0.5.3
+   Compiling objc2-metal v0.3.2
+   Compiling regex-automata v0.4.18
+   Compiling libz-sys v1.1.29
+   Compiling futures-util v0.3.34
+   Compiling genet-static-dom v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling psm v0.1.32
+   Compiling genet-paint-types v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling objc2 v0.5.2
+   Compiling icu_locale_fallback v2.3.0
+   Compiling wgpu-naga-bridge v30.0.1
+   Compiling tokio-rustls v0.26.5
+   Compiling serde_spanned v1.1.1
+   Compiling memmap2 v0.9.11
+   Compiling parlance v0.1.0
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling wuff-capi v0.2.0
+   Compiling dtoa v1.0.11
+   Compiling toml v1.1.5+spec-1.1.0
+   Compiling vello_shaders v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling dtoa-short v0.3.5
+   Compiling genet-fontique v0.10.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling block2 v0.5.1
+   Compiling engine-observables-api v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling icu_segmenter v2.3.0
+   Compiling logos-codegen v0.16.1
+   Compiling objc2-quartz-core v0.3.2
+   Compiling raw-window-metal v1.1.0
+   Compiling genet-text v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling harfrust v0.12.0
+   Compiling parley_data v0.10.0
+   Compiling regress v0.11.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling cssparser-macros v0.7.0
+   Compiling stacker v0.1.25
+   Compiling color_quant v1.1.0
+   Compiling quick-error v2.0.1
+   Compiling dispatch v0.2.0
+   Compiling zune-core v0.5.3
+   Compiling weezl v0.1.12
+   Compiling glob v0.3.4
+   Compiling either v1.18.0
+   Compiling byteorder-lite v0.1.0
+   Compiling pxfm v0.1.30
+   Compiling rayon v1.12.0
+   Compiling fontsan v0.7.0
+   Compiling image-webp v0.2.4
+   Compiling gif v0.14.2
+   Compiling zune-jpeg v0.5.15
+   Compiling cssparser v0.37.0
+   Compiling objc2-foundation v0.2.2
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling genet-scripted-dom v0.1.2 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling logos-derive v0.16.1
+   Compiling moxcms v0.8.1
+   Compiling genet-parley v0.10.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling livery v0.0.5 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling redshank-model v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/model)
+   Compiling tokio-util v0.7.19
+   Compiling document-session-api v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling wuff v0.2.9
+   Compiling sceno v0.0.6 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling mere-curation v0.1.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling tinct v0.2.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling ptr_meta_derive v0.3.2
+   Compiling foreign-types-macros v0.2.4
+   Compiling num-bigint v0.4.8
+   Compiling core-foundation v0.9.4
+   Compiling ahash v0.8.12
+   Compiling ref-cast v1.0.27
+   Compiling foreign-types-shared v0.3.1
+   Compiling genet-css-flow v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling audioadapter-sample v5.2.0
+   Compiling scenograph v0.0.5 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling foreign-types v0.5.0
+   Compiling image v0.25.10
+   Compiling core-graphics-types v0.1.3
+   Compiling symphonia-core v0.5.5
+   Compiling ptr_meta v0.3.2
+   Compiling objc2-app-kit v0.2.2
+   Compiling num-rational v0.4.2
+   Compiling logos v0.16.1
+   Compiling cadency v0.0.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-taffy v0.14.0
+   Compiling async-trait v0.1.92
+   Compiling ref-cast-impl v1.0.27
+   Compiling num-iter v0.1.46
+   Compiling winit v0.30.13
+   Compiling workbench v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling foldhash v0.1.5
+   Compiling anymore v1.0.0
+   Compiling jotdown v0.10.0
+   Compiling transpose v0.2.3
+   Compiling meristem v0.2.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling illume v0.0.3 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling buckram v0.0.3 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling hashbrown v0.15.5
+   Compiling mere-surface-api v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling scenomise v0.0.6 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling h2 v0.4.19
+   Compiling audioadapter-buffers v5.2.0
+   Compiling num v0.4.3
+   Compiling netrender-vello v0.11.0 (https://github.com/mark-ik/vello.git?rev=276b46648c08f3d2062e70559afa999842e1873c#276b4664)
+   Compiling netrender_device v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling netrender v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling sprigging v0.3.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling rancor v0.1.3
+   Compiling core-graphics v0.23.2
+   Compiling rustls-platform-verifier v0.7.0
+   Compiling genet-document-resources v0.2.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling fastbloom v0.17.0
+   Compiling hest v0.2.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling toml_edit v0.25.13+spec-1.1.0
+   Compiling bytecheck_derive v0.8.3
+   Compiling primal-check v0.3.4
+   Compiling objc2-core-audio-types v0.3.2
+   Compiling paint_list_render v0.1.2 (https://github.com/merely-made/netrender.git?branch=main#ec15eb26)
+   Compiling simdutf8 v0.1.5
+   Compiling backstep v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling smol_str v0.2.2
+   Compiling borrow-or-share v0.2.4
+   Compiling bit-vec v0.8.0
+   Compiling cursor-icon v1.2.0
+   Compiling unicode-general-category v1.1.0
+   Compiling data-url v0.3.2
+   Compiling heck v0.5.0
+   Compiling dpi v0.1.2
+   Compiling jsonschema-value v0.58.0
+   Compiling fixedbitset v0.5.7
+   Compiling petgraph v0.8.3
+   Compiling strum_macros v0.28.0
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling bit-set v0.8.0
+   Compiling quinn-proto v0.11.18
+   Compiling fluent-uri v0.4.1
+   Compiling cambium v0.6.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling bytecheck v0.8.3
+   Compiling objc2-core-audio v0.3.2
+   Compiling bevy_macro_utils v0.19.1
+   Compiling rustfft v6.4.1
+   Compiling ringbuf v0.5.3
+   Compiling hyper v1.11.1
+   Compiling fraction v0.17.0
+   Compiling quinn-udp v0.5.15
+   Compiling futures-executor v0.3.34
+   Compiling munge_macro v0.4.7
+   Compiling slotmap v1.1.1
+   Compiling vsimd v0.8.0
+   Compiling micromap v0.3.0
+   Compiling num-cmp v0.1.0
+   Compiling bytecount v0.6.9
+   Compiling outref v0.5.2
+   Compiling referencing v0.58.0
+   Compiling uuid-simd v0.8.0
+   Compiling munge v0.4.7
+   Compiling bevy_platform v0.19.1
+   Compiling hyper-util v0.1.20
+   Compiling tungstenite v0.30.0
+   Compiling futures v0.3.34
+   Compiling quinn v0.11.12
+   Compiling firewheel-macros v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling rend v0.5.4
+   Compiling realfft v3.5.0
+   Compiling objc2-audio-toolbox v0.3.2
+   Compiling strum v0.28.0
+   Compiling fancy-regex v0.19.2
+   Compiling h3 v0.0.8
+   Compiling genet-render-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling regex v1.13.1
+   Compiling symphonia-metadata v0.5.5
+   Compiling email_address v0.2.9
+   Compiling visibility v0.1.1
+   Compiling rkyv_derive v0.8.18
+   Compiling jsonschema-regex v0.58.0
+   Compiling windowfunctions v0.1.1
+   Compiling web-time v1.1.0
+   Compiling compression-codecs v0.4.43
+   Compiling cambium-winit v0.3.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling h3-quinn v0.0.10
+   Compiling firewheel-core v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling rubato v5.0.1
+   Compiling jsonschema v0.58.0
+   Compiling hyper-rustls v0.27.10
+   Compiling tokio-tungstenite v0.30.0
+   Compiling coreaudio-rs v0.14.2
+   Compiling muniment v0.1.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling accesskit_consumer v0.39.1
+   Compiling rkyv v0.8.18
+   Compiling murm-wire v0.1.0 (https://github.com/merely-made/murm.git?branch=main#5b1c5cac)
+   Compiling accesskit_macos v0.27.1
+   Compiling fixed-resample v0.13.0
+   Compiling async-compression v0.4.48
+   Compiling pem v3.0.6
+   Compiling yasna v0.5.2
+   Compiling objc2-core-image v0.3.2
+   Compiling objc2-cloud-kit v0.3.2
+   Compiling objc2-core-data v0.3.2
+   Compiling objc2-core-video v0.3.2
+   Compiling triple_buffer v9.0.0
+   Compiling unicode-bidi v0.3.18
+   Compiling cpal v0.18.2
+   Compiling firewheel-graph v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling objc2-app-kit v0.3.2
+   Compiling netfetcher v0.1.1 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling rcgen v0.13.2
+   Compiling fleece v0.5.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-winit-host v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling chartulary v0.2.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling symphonia-utils-xiph v0.5.5
+   Compiling inker v0.1.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling gemini-protocol v0.1.7 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling crossbeam-channel v0.5.16
+   Compiling mere-fetch v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling ipc-channel v0.22.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling scroll-protocol v0.1.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling symphonia-format-riff v0.5.5
+   Compiling symphonia-format-isomp4 v0.5.5
+   Compiling misfin v0.0.4 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling firewheel-cpal v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling eidetic v0.0.2 (https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63)
+   Compiling firewheel-nodes v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling symphonia-bundle-mp3 v0.5.5
+   Compiling symphonia-codec-pcm v0.5.5
+   Compiling document-canvas v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling symphonia-codec-aac v0.5.5
+   Compiling tabard v0.0.2 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling spartan-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling guppy-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling gopher-protocol v0.2.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling nex-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling mere-fleece v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling finger-protocol v0.1.1 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling apparatus-core v0.1.0 (https://github.com/merely-made/armillary.git?rev=75643df1f178757bb7b6386913af1a39353f3069#75643df1)
+   Compiling servo-media-streams v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling quick-xml v0.39.4
+   Compiling option-ext v0.2.0
+   Compiling cpal v0.17.3
+   Compiling rfd v0.17.2
+   Compiling light-file-dialog v3.21.3
+   Compiling errand v0.4.0 (https://github.com/merely-made/errand.git?rev=3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab#3d2ce3a5)
+   Compiling dirs-sys v0.5.0
+   Compiling servo-media-player v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling mere-apparatus v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling mere-document-lanes v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling symphonia v0.5.5
+   Compiling firewheel v0.14.0 (https://github.com/mark-ik/firewheel?rev=2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc#2b03846d)
+   Compiling png v0.17.16
+   Compiling mach2 v0.5.0
+   Compiling timed-text v0.1.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/crates/timed-text)
+   Compiling redshank-surfaces v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/surfaces)
+   Compiling redshank-playback v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/playback)
+   Compiling redshank-feed v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/feed)
+   Compiling directories v6.0.0
+   Compiling redshank-cache v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/cache)
+   Compiling redshank-storage v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/storage)
+   Compiling pollster v0.4.0
+   Compiling genet-livery v0.0.4 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling genet-render v0.2.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling taproot v0.1.0 (https://github.com/merely-made/genet.git?branch=main#7d1d89db)
+   Compiling cambium-rootstock v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling cambium-winit-a11y v0.3.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling mesquite v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling cambium-genet-winit-host v0.1.0 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling tabard-workshop v0.0.1 (https://github.com/merely-made/mere.git?branch=main#a07a375e)
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop" test) generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 56.05s
+     Running unittests src/main.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/redshank_desktop-bfff1c9b9221c8b3)
+
+running 93 tests
+test appearance_tests::native_appearance_scenarios_use_the_existing_shared_lane ... ok
+test diagnostics::tests::capture_cut_is_admission_context_without_consuming_a_reader ... ok
+test diagnostics::tests::capture_cut_rejects_conflicts_and_unbounded_identity ... ok
+test diagnostics::tests::disabled_retention_reports_gaps_without_payloads ... ok
+test diagnostics::tests::independent_receipt_and_inspection_readers_report_loss ... ok
+test diagnostics_worker_tests::coalesced_dirty_revisions_do_not_invent_save_requests_or_action_causes ... ok
+test diagnostics_worker_tests::real_io_failure_and_retry_share_logical_revision_but_keep_distinct_requests ... ok
+test diagnostics_worker_tests::real_worker_success_precedes_durable_ack_and_causal_links_follow_owners ... ok
+test recovery::tests::invalid_span_draft_refuses_copy_without_consuming_the_editor ... ok
+test appearance_tests::export_guards_preserve_choice_future_generations_and_open_media ... ok
+test recovery::tests::recovery_copy_completion_cannot_discard_a_newer_model_revision ... ok
+test recovery::tests::recovery_copy_contains_draft_and_newer_editor_text_prevents_exit ... ok
+test recovery::tests::recovery_discard_does_not_admit_queued_media_removals_or_forged_save_replies ... ok
+test scenario::tests::a_seed_change_moves_the_scope_class_and_persists ... ok
+test scenario::tests::an_unknown_label_is_a_miss_the_loop_can_fail_on ... ok
+test scenario::tests::applying_a_label_emits_a_real_command ... ok
+test scenario::tests::observed_reports_one_event_per_transition ... ok
+test scenario::tests::position_events_are_bucketed_to_seconds ... ok
+test scenario::tests::product_observation_retains_each_transition_once ... ok
+test scenario::tests::quiescence_waits_for_host_work_and_readback_but_not_playing ... ok
+test scenario::tests::subscribing_uses_the_shipping_command_and_preserves_the_url ... ok
+test scenario::tests::the_command_vocabulary_parses_every_documented_label ... ok
+test scenario::tests::the_key_verb_knows_the_documented_shortcuts ... ok
+test appearance_tests::product_copy_preserves_endorsed_wetland_and_dirty_close_can_be_cancelled ... ok
+test selected_clip::tests::selected_voice_process_fixture ... ignored
+test selected_clip::tests::private_missing_and_changed_voice_are_refused_without_output ... ok
+test session::tests::a_completed_item_reopened_at_zero_stays_completed ... ok
+test session::tests::aligned_open_rechecks_current_threshold_and_original_target ... ok
+test session::tests::aligned_open_requires_a_ready_current_selection_and_destination_digest ... ok
+test session::tests::aligned_open_returns_a_separate_point_without_rewriting_original_span ... ok
+test session::tests::aligned_open_revalidates_saved_evidence ... ok
+test session::tests::all_notes_filter_lists_every_item_s_annotations ... ok
+test session::tests::approximate_note_seeking_still_requires_a_ready_current_load ... ok
+test session::tests::capture_fingerprint_is_optional_when_disabled_missing_or_insufficient ... ok
+test session::tests::capture_fingerprint_uses_source_anchor_after_reaction_and_excludes_decode_future ... ok
+test session::tests::day_labels_read_from_the_host_clock ... ok
+test session::tests::ending_playback_reports_completed_and_closes_the_listening_session ... ok
+test session::tests::item_rows_and_feed_rows_carry_the_library_facts_the_design_shows ... ok
+test session::tests::item_rows_carry_the_cached_receipt_and_the_pin ... ok
+test session::tests::note_seeking_requires_identity_unless_approximate_is_explicit ... ok
+test session::tests::projection_attaches_preview_state_only_to_the_matching_voice_note ... ok
+test session::tests::projection_keeps_each_notes_identity_and_frozen_target_separate ... ok
+test session::tests::projection_retains_voice_note_duration ... ok
+test session::tests::queue_reorder_and_projection_preserve_playback_and_draft_anchor ... ok
+test session::tests::refused_note_probe_preserves_saved_progress_when_selecting_away ... ok
+test session::tests::resume_completed_from_saved_reopens_where_the_listener_stopped ... ok
+test session::tests::selecting_a_completed_item_restarts_instead_of_seeking_to_end ... ok
+test session::tests::selection_change_rejects_old_clock_and_receipt ... ok
+test session::tests::streaming_notes_need_a_strong_validator_for_exact_seeking ... ok
+test session::tests::the_open_listening_session_is_projected_as_active ... ok
+test session::tests::the_reaction_offset_moves_the_anchor_back_and_keeps_the_press ... ok
+test tests::a_capture_ducks_the_output_and_the_lift_follows_the_last_open_capture ... ok
+test tests::a_new_note_action_cancels_a_pending_open_even_when_it_fails ... ok
+test tests::a_refused_replacement_note_keeps_the_accepted_seeks_progress_ack ... ok
+test appearance_tests::saving_same_identity_keeps_applied_snapshot_until_explicit_apply ... ok
+test tests::canceled_and_failed_recovery_copy_keep_session_nonwriting ... ok
+test tests::capture_projection_fails_on_an_owner_borrow_conflict ... ok
+test tests::capture_projection_is_opt_in_and_uses_a_fixed_fresh_run ... ok
+test tests::capture_projection_seals_redacted_ui_and_actual_persistence ... ok
+test tests::changing_tabs_or_volume_keeps_the_pending_note_open ... ok
+test tests::closing_cancels_a_pending_note_open ... ok
+test tests::editing_an_old_text_note_preserves_its_target_without_loading_audio ... ok
+test tests::failed_restoration_never_dispatches_writes_after_edits_or_retry ... ok
+test tests::cache_object_is_removed_only_after_its_model_revision_is_durable ... ok
+test tests::failed_save_preserves_dirty_revision_and_can_retry ... ok
+test tests::failed_transport_commands_do_not_release_the_note_progress_hold ... ok
+test tests::feed_failures_are_separate_from_import_diagnostics_and_clear_on_success ... ok
+test selected_clip::tests::selected_voice_uses_owned_blob_and_preserves_millisecond_target ... ok
+test tests::later_mutation_remains_dirty_after_earlier_save_ack ... ok
+test tests::note_draft_survives_failed_save_and_later_typing_survives_success ... ok
+test tests::recovery_close_keeps_work_and_transient_notices_until_explicit_discard ... ok
+test tests::removing_selected_library_item_clears_player_queue_and_editor ... ok
+test tests::revision_zero_recovery_draft_is_retained_by_keep_working ... ok
+test tests::scenario_wait_covers_asynchronous_product_work ... ok
+test tests::standalone_feed_fetch_retains_final_parser_facts ... ok
+test tests::feed_fetch_accepts_large_rss_and_enforces_the_configured_stream_limit ... ok
+test tests::successful_recovery_copy_reopens_and_closes_without_original_durability ... ok
+test tests::successful_restoration_admits_empty_or_older_valid_state ... ok
+test tests::transcript_fetch_rejects_oversized_response ... ok
+test tests::transcript_response_belongs_to_requested_item_after_selection_changes ... ok
+test tests::transcript_response_cannot_restore_deleted_then_readded_item ... ok
+test tests::transcript_fetch_survives_offline_store_reopen ... ok
+test tests::unchanged_recovery_closes_without_attempting_persistence ... ok
+test voice::tests::voice_blob_is_content_addressed_and_path_confined ... ok
+test tests::voice_blob_is_removed_only_after_note_deletion_is_durable ... ok
+test appearance_tests::native_listener_feed_route_survives_application_chrome ... ok
+test appearance_tests::corrupt_stores_and_failed_choice_writes_preserve_owned_bytes_and_presentation ... ok
+test tests::host_routes_typing_to_editor_and_command_enter_to_note_save ... ok
+test appearance_tests::selected_span_note_menu_and_export_stay_inside_the_window ... ok
+test appearance_tests::editor_native_text_route_does_not_edit_listener_note_or_queue_commands ... ok
+test recovery::tests::native_close_hook_and_recovery_controls_keep_the_appearance_barrier ... ok
+test appearance_tests::narrow_editor_keeps_parent_actions_visible_and_saves_through_shared_controls ... ok
+test appearance_tests::four_modes_authored_roles_and_reopen_preserve_listener_state_and_queue ... ok
+
+test result: ok. 92 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 3.09s
+
+     Running unittests src/lib.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/redshank_model-94f98592adf847c8)
+
+running 18 tests
+test tests::created_is_an_rfc3339_utc_date_time ... ok
+test tests::annotations_require_a_library_target ... ok
+test tests::feed_refresh_preserves_matching_cached_representation ... ok
+test tests::listening_sessions_keep_only_the_newest_five_hundred ... ok
+test tests::exported_voice_bodies_carry_their_blob_identity ... ok
+test tests::cache_eviction_order_deduplicates_objects_and_uses_newest_reference ... ok
+test tests::a_local_path_exports_as_a_file_url_and_a_relative_one_as_the_item_iri ... ok
+test tests::exported_annotations_are_web_annotations_with_media_fragments ... ok
+test selected_export::tests::voice_export_preserves_target_evidence_and_requires_shareable_note ... ok
+test tests::a_store_without_pins_or_resume_policy_still_loads ... ok
+test tests::queue_and_progress_mutations_are_deterministic ... ok
+test tests::queue_reorder_and_item_removal_preserve_invariants ... ok
+test tests::selected_item_is_optional_and_clears_when_removed ... ok
+test tests::feed_read_limit_is_persisted_and_clamped_at_the_network_boundary ... ok
+test tests::text_edit_keeps_the_original_capture_anchor ... ok
+test tests::pinning_toggles_survives_a_round_trip_and_ends_with_the_item ... ok
+test tests::a_stored_2026_09_13_document_loads_unchanged ... ok
+test tests::span_annotations_round_trip_through_json ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/alignment.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/alignment-894a48567ba2f02c)
+
+running 9 tests
+test fingerprint_evidence_requires_known_bounded_frames_reaching_the_anchor ... ok
+test stale_and_missing_note_results_are_refused ... ok
+test old_note_without_fingerprint_cannot_acquire_an_alignment_claim ... ok
+test invalid_evidence_does_not_replace_an_existing_position ... ok
+test deleting_notes_and_items_removes_only_their_derived_positions ... ok
+test alignment_settings_keep_explicit_disable_and_validate_resource_bounds ... ok
+test old_notes_and_settings_load_without_alignment_fields ... ok
+test restored_alignment_evidence_is_revalidated_without_mutating_the_model ... ok
+test derived_point_round_trips_without_changing_original_span_or_fingerprint ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/representation_identity.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/representation_identity-ddcd96361c9a00b9)
+
+running 3 tests
+test complete_digests_take_precedence_over_server_metadata ... ok
+test incomplete_evidence_distinguishes_disproof_from_uncertainty ... ok
+test only_valid_strong_etags_prove_identity_at_the_same_final_url ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/w3c_conformance.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/w3c_conformance-e5e76acf27442b88)
+
+running 3 tests
+test a_malformed_created_fails_exactly_its_assertion ... ok
+test the_specifications_own_example_passes_every_must_assertion ... ok
+test every_exported_annotation_passes_every_must_assertion ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+
+   Doc-tests redshank_model
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

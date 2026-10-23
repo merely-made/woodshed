@@ -1,0 +1,171 @@
+{
+  "date": "2026-10-23",
+  "revision": "3ce93675179098b7d1c81da20cb4f63caa75e6b5",
+  "primary_refreshed": true,
+  "primary_initial_state": "Clean; four commits behind origin/main; pulled fast-forward.",
+  "scope": "Targeted source reconciliation of remaining packages and existing receipts, not a new line-accounted full source audit. Untouched frozen reports keep their original snapshot.",
+  "selected_package": "B8",
+  "entries": [
+    {
+      "package": "A1\u2013A5/D1",
+      "disposition": "Implemented; no remaining P1 mechanism established in scoped current-source recheck.",
+      "qualification": "Historical receipts only; D1 bounded native/reopen at8bf59b31. Hocket real-custody/native receiving remains separate.",
+      "ledger_correction": "host:H2 singleton-store observation superseded by D1."
+    },
+    {
+      "package": "P5a",
+      "disposition": "Historical bounded timing/admission assignment completed; active reservation retired under user authorization.",
+      "qualification": "stage-p5a_20261016/receipt.json historical804 passes +5 child invocations,8 native images; not rerun now.",
+      "residual": "LO4 generic Path/Walk Hear fixed spacing remains separate from managed Run; LO5 aliases resolved B1."
+    },
+    {
+      "package": "B7",
+      "findings": [
+        "views:V03"
+      ],
+      "disposition": "Still present: absent audio_error implies both streams open; requested tuner enable implies listening.",
+      "source": "crates/woodshed-views/src/stage/settings.rs:575-577,966-994; stage/tools.rs:77-105; stage.rs:2815-2840",
+      "priority": "After reachable B8 panic/control failure; needs typed host facts and mounted view coverage.",
+      "already_implemented": "shared:S4 public wrapper diagnostic forwarding, recorded in recorder-runtime_20261019; no native claim."
+    },
+    {
+      "package": "B8",
+      "findings": [
+        "redshank:R02",
+        "redshank:R03",
+        "redshank:R06",
+        "redshank:R07",
+        "redshank:R17"
+      ],
+      "disposition": "Selected for implementation: all five source mechanisms present at frozen current main.",
+      "source": "ports/redshank/playback/src/{backend,worker,controller_adapter}.rs",
+      "priority": "Ordinary cache refusal panics and recreates playback; actual mute/rate/volume/duck can disagree with published controls.",
+      "baseline": "Three real worker/backend regressions fail with Cargo101: nested borrow, backend EOF remains Idle, worker remains Loading. Exact test patch and stable source-bound process records retained."
+    },
+    {
+      "package": "B9",
+      "findings": [
+        "redshank:R05",
+        "redshank:R09"
+      ],
+      "disposition": "Still present: recording projection removes dock pointer owner; bounded input callback silently stops accepting while elapsed UI advances.",
+      "source": "ports/redshank/surfaces/src/dock.rs:478-483; desktop/src/voice.rs:181-184; desktop/src/main.rs:602",
+      "priority": "Separate next capture-lifetime/capacity slice; accepted frames must own recorded duration and limit outcome."
+    },
+    {
+      "package": "B10",
+      "findings": [
+        "redshank:R04",
+        "redshank:R08"
+      ],
+      "disposition": "R04 source replaced: after-frame includes alignment/export pending. R08 still present: sanitized ItemId export path can collide and fs::write overwrites.",
+      "source": "ports/redshank/desktop/src/main.rs:944-956,2004-2019,2271-2272",
+      "qualification": "R04 idle native completion remains unqualified; scenario polling is not substituted."
+    },
+    {
+      "package": "B12\u2013B14/K3",
+      "disposition": "Do not carry old Woodshed GUI/private-RPC reach. Standards-based woodshed-instrument retains no old RPC Session. Live optional research/public APIs retain protocol and receipt findings.",
+      "source": "ports/ringdown/crates/ringdown-client/src/lib.rs:204-212,789-795; ringdown-ble/src/instrument{,/session}.rs; ringdown-ble/examples/metronome_link.rs:102-126",
+      "remaining": "UTF8 hex slicing, incomplete restore receipts and proof restoration/readback outcomes remain open; RPC/probe paths are explicit research features.",
+      "qualification": "Source recheck only, no private protocol or hardware action."
+    },
+    {
+      "package": "Q3/Q4",
+      "disposition": "Source-supported open: release packagers consume previously built binaries; scorer defaults missing notes to empty and does not bind reference/prediction source identity.",
+      "source": "scripts/package-{macos,linux}.sh; package-windows.ps1; audio_analysis_bench.py:40,186-187,225",
+      "priority": "After active product admission/output and preservation issues; product unreleased."
+    },
+    {
+      "package": "B11",
+      "disposition": "Still present: staged updater Apply re-resolves feed; hand_off prepares/signs media-proportional envelope on UI thread.",
+      "source": "ports/hocket/crates/hocket-genet/src/update/velopack_transport.rs:138; src/state.rs:535",
+      "reach": "Installed/configured updater; ordinary host handoff. Separate from playback fix."
+    },
+    {
+      "package": "C1\u2013C5",
+      "disposition": "Sampled current mechanisms remain: missing paint fingerprint inputs/native fields; effective motion/visibility/navigation/provenance; explicit context disclosure and pitch placement; Redshank item/navigation projections; Quartal register and modal explanation.",
+      "source": "crates/woodshed-genet/src/{leaves,text}.rs; crates/woodshed-views/src/stage{,/overview,/rehearsal,/set_tray}.rs; core/src/stage_scene.rs; ports/redshank/surfaces/src/{lib,rail,scene/geometry,tabs/notes,scene/mod}.rs; crates/woodshed-graph/src/lib.rs:1186; crates/woodshedding/src/chord.rs:510",
+      "qualification": "Targeted source review only; no new current-head runtime acceptance."
+    },
+    {
+      "package": "Q2",
+      "disposition": "All nine original scenarios still retain retired controls; eight frozen-identical, set_loop_plan changed but still stale. Subscription receipt still demands every rotated generation survive.",
+      "source": "scenarios/set_loop_plan.scn; ports/redshank/scripts/subscribe-podcasts.ps1:134-135",
+      "qualification": "No scenario execution is inferred from source or syntax."
+    },
+    {
+      "package": "Q5",
+      "disposition": "Earlier source-cohort/metadata-only claim superseded. Current relationship-recipe lock matches root Mere/Genet/Netrender and has scoped receiving CPU execution.",
+      "receipt": "../stack-family_20261011/pool-cohort-20261022.json",
+      "qualified_source_revision": "cbda7166f3efe65c6629873507a5d672f1fe2bc8",
+      "qualification": "Historical locked/offline recipe workspace test exit0:11 passed,1 ignored; no new native or hardware claim."
+    },
+    {
+      "package": "K1\u2013K3",
+      "disposition": "Public/test-only compatibility removals remain decision-gated; is_busy/awaiting_commit and dead selectors remain; HTTP per-range vector grows in production; optional private protocol classifiers/restore receipts remain.",
+      "source": "crates/woodshed-audio/src/{looper,offline,song}.rs; woodshed-core/src/stage_scene.rs; woodshed-genet/src/capture_persistence.rs; ports/redshank/playback/src/http_range.rs; ports/ringdown/crates/ringdown-client/src/lib.rs; ringdown-ble/src/instrument.rs; apps/probe/src/rpc.rs",
+      "limits": "Preserve Song/Bar/PCM/LoopClear/demo and public API evidence boundaries; no default hardware bypass or current Woodshed private-RPC path established."
+    }
+  ],
+  "frozen_current_source_sha256": {
+    "crates/woodshed-genet/src/storage.rs": "0430181e6618bafff76d9deb437e5c550d330e67217a07a7dde409ab9d9233bf",
+    "crates/woodshed-genet/src/persona.rs": "84c95df7768bd48d2155f7582410fe4abdc75846bbbd9213ffa56d80aa69b0b8",
+    "crates/woodshed-genet/src/capture_persistence.rs": "ac11eb5b71e9bb24d1f0eaa6e331f0e6bfa7adcc5eab3db7e45adb0ce586a683",
+    "crates/woodshed-views/src/stage/settings.rs": "35afac5b09ab169056fd5d2658ff3a02e317a84c65d3cf9fdc3391a94e27db5f",
+    "crates/woodshed-views/src/stage/tools.rs": "7cd59ee2446751be966eebe6efb41bdbefa9ba0de0d6461d5ff185264ecc4277",
+    "crates/woodshed-views/src/stage/timing.rs": "6518451075a882d9e326be947bb6b88ce7d229d2695e253127ed48494ac1fadf",
+    "crates/woodshed-views/src/stage/audition.rs": "c14385ad84883268b5987dfc8c94e13ad793521d1aab4575a5fcfad26e8a8df9",
+    "crates/woodshed-genet/src/layout_tests.rs": "508b45b3b79c1cd7a1faa35e320607b7ecf75bda7e2a18b6c7ea06874f09d6a4",
+    "crates/woodshed-core/src/connected_catalog.rs": "92a93775e7a508de13073be7c9cd92cd2f52323df7913a4e893700114e2cbab2",
+    "crates/hocket-views/src/recorder_adapter.rs": "ce53a7ce61e2da2877a309963f0058075bae6125366f190bdd124696fe1b7bbe",
+    "crates/hocket-views/tests/recorder_adapter.rs": "f381ed8e13634f012be2e9ff942863d2192c041b9f256976ffe618e1268ee90c",
+    "ports/redshank/playback/src/worker.rs": "12148fa07e11e6bd990f4ff1cddb14e9cd9ca9a691b7f10d2c8b4afb94018140",
+    "ports/redshank/playback/src/backend.rs": "434d4071eabd22629fc5c57c6963f566b1cd568a6dee67b194821733b6cafba8",
+    "ports/redshank/playback/src/output.rs": "9ab867c3884cb32610e42f4b02e0596b39536d45f1560aff955e4e69744fdb69",
+    "ports/redshank/desktop/src/main.rs": "4faf279589102e394e9445f8230c41651b3c80cffa782a311826106c135b88bf",
+    "ports/redshank/desktop/src/voice.rs": "45d926b6b1adc2183498cc800157c0f5b3335979feb53ddfcc5960d3b333469e",
+    "ports/redshank/surfaces/src/dock.rs": "b0f614a760b0aac6d7724456b0bce8c596ff3741951823caaa2aaa34286d19f2",
+    "ports/ringdown/crates/ringdown-client/src/lib.rs": "13e030037875a1e9c94ab581b6f1997e2c37add6e6ff7834af3d7230474c628a",
+    "ports/ringdown/crates/ringdown-ble/src/instrument/session.rs": "0b5a50bbb5223851605bd1f238f51360a9529c3eace9cbd012531440574239fa",
+    "ports/ringdown/crates/ringdown-ble/examples/metronome_link.rs": "7b16a8157e0042ee8cf9e7a1b15fd07228b0b46af016ff22e88c5e17c6e4f997",
+    "scripts/audio_analysis_bench.py": "4f63d7f65fac99845260d794f98ae79670526067c0db724f33cbf8afb228b8f5",
+    "scripts/package-macos.sh": "5786ace418f35768861fd943d5adf088b5a7af60fcebe9602ae4e50ff52dc194",
+    "scripts/package-linux.sh": "ec000df71386360d58dd8cbb56e976237f639752832292caacc564ff81b55080",
+    "scripts/package-windows.ps1": "9c11cf21562083b9729444ee6bcebef6c9a6248a92de57d5b9636cb92f6e4b10",
+    "ports/hocket/crates/hocket-genet/src/update/velopack_transport.rs": "8de3a6fc3b0f148bd8a61bf7118953c916c29226ede8bbea33a5bfd3d20153cb",
+    "ports/hocket/crates/hocket-genet/src/state.rs": "e734f39825522c6df2b95612f796f794df0f86459718c80a1a1f9cbe200f9572",
+    "ports/ringdown/crates/ringdown/src/rpc.rs": "891eea52d1eecf487642cd96b111339e48023dc121112134728b5a7a12f27a37",
+    "ports/ringdown/crates/ringdown/src/llt2.rs": "3dbf224c60bd1bf83c7b2c686f8c87f1443bd43d7dadb606e61afa03edafeb87",
+    "ports/ringdown/crates/ringdown-ble/src/instrument.rs": "fc2971b854d78e0a74d9a0dae348d648d11c7c4a088cd2b31c0d0d00385f94d9",
+    "ports/ringdown/apps/probe/src/rpc.rs": "89e3b0e6c48d3999bdb64900505954dc59ea8d5b05ba0b4db51ba47bfb94d454",
+    "ports/ringdown/apps/probe/src/pklg.rs": "ea145bc3f53fe8c7fdd65c9d69e879ace75e5112324afc0263e9100ff4e8b233",
+    "ports/ringdown/apps/probe/Cargo.toml": "556b86c206f9083a5cf4cb4e9c6deb08865ce0f9b0bf9360ecbd1d0f5ac41ab8",
+    "crates/woodshed-genet/src/leaves.rs": "78101f1ad7a8e9b547fe88a8e60dedffa64665546f167c97f826214678c2f1e8",
+    "crates/woodshed-genet/src/text.rs": "52753e39fd762df26e2597a5e61ebf1190580e76be8cb8a28424a58d222931ac",
+    "crates/woodshed-views/src/theme.rs": "f04a8a3c1b55d678c2b3b4e64de9ff6154c3aebeb3d548981fec054c45be3de9",
+    "crates/woodshed-views/src/stage/overview.rs": "ae4a4955df3340686a49ee8f5cceed49d6f078428e96d93a1bb29543fc0904ad",
+    "crates/woodshed-views/src/stage/rehearsal.rs": "1d6057694a8ed24c68179a969955b898edc61daa4150f81a821ee2d13e279247",
+    "crates/woodshed-views/src/stage/set_tray.rs": "73c5fc0fc8d522c15d1fc2c1bafcb9c1b98dd54500167d8e1f25e437ee5f69f8",
+    "crates/woodshed-core/src/stage_scene.rs": "adae4f351e9c81b4f5d99e520464f95763f76ad752b7e3d2397a83a58ce63b35",
+    "crates/woodshed-graph/src/lib.rs": "0e1bb09a1b0161f93e06788fab237385a1b2dc76f95d3e59366fd23e5ae58c9e",
+    "crates/woodshedding/src/chord.rs": "fd10d73952e49444498aa5bd5f89aebe75c08abad7a20dd5270f6503ec7ccdb3",
+    "ports/redshank/surfaces/src/lib.rs": "dbbc78cd553eea557143f34c6a50dc78122f92dd00ce9247638f296df062026e",
+    "ports/redshank/surfaces/src/rail.rs": "ae3c5a3a637c5f86421b8796f362f36e408ff539a3ebf218d6d6228ee14f6bb5",
+    "ports/redshank/surfaces/src/scene/geometry.rs": "33552e3874f1bb95c204542807b0e89ab5462db3664751999c2240cd9a65855a",
+    "ports/redshank/surfaces/src/tabs/notes.rs": "b43ae84c60f8b7cb7cc3b05f6ebf0d203c2ec118a93cf845f86e6bdfd196f85a",
+    "ports/redshank/surfaces/src/scene/mod.rs": "40e38f840709b1eede70acf8d026e7e12936df1bfcd14d7439d439ea514eda1e",
+    "scenarios/set_loop_plan.scn": "e06f483413933c863ecee33a6359fcc9e45ab11ac7be82e9f390e4f12abdf088",
+    "ports/redshank/scripts/subscribe-podcasts.ps1": "af4ec2b310b2be2c08e5dbc30d194b8cf139b189bd0df0544e3f50e503d49182",
+    "validation/relationship-recipe/Cargo.lock": "1a0adae11b179c0f34486275629501f7949ae2682840cd807330fb5e1b32e3b0",
+    "validation/stack-family_20261011/pool-cohort-20261022.json": "1520e6134f17a185f15f445340553a6cfdb9a266294e24a58d9b74275b3926a3",
+    "crates/woodshed-audio/src/looper.rs": "fb2d73574968a537ee35490f0f6bcea35b3d5e75874f7969bc5a0336cc6f90f7",
+    "crates/woodshed-audio/src/offline.rs": "a1b78e59e1106aebd62985bc9c037d1168e4f84eac4a3f7d891a8da092ab6d89",
+    "crates/woodshed-audio/src/song.rs": "36a182314eb482330563fe96e135cf34e2b27319d4c8eef81b8ae0e9b889f94a",
+    "ports/redshank/playback/src/http_range.rs": "85039fa223206f8f61daf8ceb3d9c30023266c11149ef10ce2246efa7e5a07f6"
+  },
+  "all_original_ledger_rows_retained": 97,
+  "notes": [
+    "Component responsibility is not evidence of a currently active chat owner.",
+    "Physical sound, native receiving and publication are separate claims."
+  ]
+}

@@ -1,0 +1,69 @@
+   Compiling redshank-playback v0.0.0 (/Users/markik/Code/worktrees/woodshed-playback-controls-20261023/ports/redshank/playback)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.29s
+     Running unittests src/lib.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/redshank_playback-d6ca0ce70f93d77c)
+
+running 46 tests
+test controller_adapter::tests::controller_keeps_typed_seek_and_backend_failures ... ok
+test controller_adapter::tests::maps_all_durable_source_variants ... ok
+test http_range::tests::range_source_rejects_an_exhausted_budget_before_fetching ... ok
+test backend::seek_tests::preview_and_episode_share_gain_before_output_exists_and_after_each_gain_change ... ok
+test backend::runtime_generation_tests::preview_with_retired_shared_runtime_fails_and_clears_its_sink ... ok
+test backend::retained_blob_tests::host_blob_decodes_without_a_filesystem_source_and_has_exact_evidence ... ok
+test output::tests::decoded_stream_buffer_never_discards_or_inserts_source_time ... ok
+test backend::seek_tests::empty_admitted_wav_reports_eof_without_a_sink ... ok
+test output::tests::old_generation_retirement_cannot_remove_a_new_contexts_sink ... ok
+test output::tests::rejected_stream_admission_retires_its_graph_node ... ok
+test backend::seek_tests::exact_duration_seek_reports_eof_before_first_frame_without_opening_output ... ok
+test http_range::tests::range_source_reports_server_and_representation_failures ... ok
+test tests::captured_pcm_wav_is_decodable ... ok
+test tests::cached_source_receipt_requires_the_published_bytes ... ok
+test output::tests::retimed_short_file_finishes_the_writer_before_ending_source_time ... ok
+test alignment::tests::capture_context_applies_reaction_offset_and_excludes_future_audio ... ok
+test tests::failed_remote_load_publishes_its_token_and_controller_error ... ok
+test tests::local_snapshot_survives_pathname_replacement ... ok
+test tests::new_runtime_has_an_honest_empty_snapshot ... ok
+test tests::local_snapshot_survives_in_place_writes_and_truncation ... ok
+test tests::sink_clock_helpers_preserve_frame_boundaries ... ok
+test http_range::tests::range_source_reuses_one_connection_across_ranges ... ok
+test tests::supplied_fixture_plays_each_dock_rate_at_its_wall_clock ... ignored, requires REDSHANK_PHASE4_FIXTURES and a default output device
+test tests::supplied_fixture_resumes_through_the_controller ... ignored, requires REDSHANK_PHASE4_FIXTURES with generated stereo fixtures
+test tests::supplied_fixtures_keep_their_pitch_at_every_dock_rate ... ignored, requires REDSHANK_PHASE4_FIXTURES with generated stereo fixtures
+test tests::supplied_http_fixture_decodes_progressively ... ignored, requires REDSHANK_HTTP_FIXTURE_URL served with byte ranges
+test tests::supplied_http_fixture_reaches_controller_ready ... ignored, requires REDSHANK_HTTP_FIXTURE_URL and a default output device
+test tests::supplied_local_sources_can_be_replaced ... ignored, requires REDSHANK_LOCAL_SEQUENCE or REDSHANK_PHASE4_FIXTURES and a default output device
+test tests::supplied_stereo_fixtures_preserve_two_distinct_channels ... ignored, requires REDSHANK_PHASE4_FIXTURES with generated stereo fixtures
+test tests::levels_report_the_effective_rate_and_the_honest_buffered_extent ... ok
+test http_range::tests::range_source_seeks_within_its_budget_and_records_representation ... ok
+test tests::unity_rate_leaves_the_decoded_bytes_alone ... ok
+test tests::voice_preview_preserves_the_loaded_episode_snapshot ... ok
+test tests::worker_cached_integrity_refusal_keeps_its_diagnostic_and_accepts_a_later_load ... ok
+test tests::worker_controller_sequence_needs_no_output_device ... ok
+test tests::worker_exact_duration_resume_reaches_ended_without_output ... ok
+test tests::worker_recovers_after_an_internal_failure ... ok
+test tests::local_decoder_plays_the_receipted_audio_after_source_mutation ... ok
+test alignment::tests::downloaded_wav_alignment_stores_a_second_position_without_changing_original ... ok
+test tests::worker_note_seek_acknowledges_only_the_matching_request ... ok
+test tests::worker_defers_unloaded_rate_until_controller_admission_and_reapplies_it_on_load ... ok
+test tests::worker_recovery_retains_actual_rate_volume_and_capture_duck_until_unduck ... ok
+test alignment::tests::changed_download_and_incomplete_search_refuse ... ok
+test backend::seek_tests::accurate_wav_seek_discards_packet_prefix_before_pcm_and_source_clock ... ok
+test tests::retiming_delivers_the_inverse_of_the_rate_in_source_time ... ok
+test output::tests::resampled_backlog_and_short_eof_preserve_exact_source_position ... ok
+
+test result: ok. 39 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 1.87s
+
+     Running tests/ipc_consumer.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/ipc_consumer-491c5120b1c0888a)
+
+running 3 tests
+test disconnect_follows_the_last_sender_and_drains_queued_data ... ok
+test typed_messages_preserve_text_bytes_and_order ... ok
+test transferred_sender_retains_the_original_receiver ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests redshank_playback
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

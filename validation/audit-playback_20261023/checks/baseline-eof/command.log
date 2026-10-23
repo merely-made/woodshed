@@ -1,0 +1,27 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.78s
+     Running unittests src/lib.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/redshank_playback-d6ca0ce70f93d77c)
+
+running 2 tests
+
+thread 'backend::seek_tests::exact_duration_seek_reports_eof_before_first_frame_without_opening_output' (57563853) panicked at playback/src/backend.rs:1049:13:
+assertion `left == right` failed
+  left: Idle
+ right: EndOfStream
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test backend::seek_tests::exact_duration_seek_reports_eof_before_first_frame_without_opening_output ... FAILED
+
+thread 'tests::worker_exact_duration_resume_reaches_ended_without_output' (57563854) panicked at playback/src/lib.rs:424:9:
+assertion `left == right` failed
+  left: Loading
+ right: Ended
+test tests::worker_exact_duration_resume_reaches_ended_without_output ... FAILED
+
+failures:
+
+failures:
+    backend::seek_tests::exact_duration_seek_reports_eof_before_first_frame_without_opening_output
+    tests::worker_exact_duration_resume_reaches_ended_without_output
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 40 filtered out; finished in 2.01s
+
+error: test failed, to rerun pass `-p redshank-playback --lib`
