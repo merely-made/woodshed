@@ -34,7 +34,7 @@ use symphonia::core::{
 
 use crate::{
     http_range::{DEFAULT_CACHE_BYTES, HttpRangeSource},
-    output::{AudioRuntime, BUFFER_LOW_WATER_SECONDS},
+    output::{AudioRuntime, BUFFER_LOW_WATER_SECONDS, Output},
 };
 
 /// Slowest and fastest rates the dock may ask for. Outside this the WSOLA
@@ -356,7 +356,7 @@ fn open_decoder(source: Box<dyn MediaSource>, hint_source: &str) -> Result<Decod
 }
 
 pub(super) struct Backend {
-    audio: Rc<RefCell<Option<AudioRuntime>>>,
+    audio: Rc<RefCell<Output>>,
     /// The host's fetch handle: every remote read goes through its policy.
     fetch: Arc<dyn Fetch>,
     blobs: Option<crate::HostBlobReader>,
@@ -377,10 +377,6 @@ pub(super) struct Backend {
     requested_playing: bool,
     source_positioned: bool,
     decoded_first_frame: bool,
-    /// Requested output volume in percent, applied as soon as a runtime exists.
-    volume_percent: u8,
-    /// A capture's duck, as a percent of the volume; `None` between captures.
-    duck_percent: Option<u8>,
     /// Playback rate in percent, clamped; survives loads like the volume does.
     rate_percent: u16,
     /// How much of the source can be seeked without waiting on the network.
@@ -395,13 +391,10 @@ pub(super) struct Backend {
 
 impl Backend {
     pub(super) fn new(fetch: Arc<dyn Fetch>) -> Self {
-        Self::with_audio(Rc::new(RefCell::new(None)), fetch)
+        Self::with_audio(Rc::new(RefCell::new(Output::default())), fetch)
     }
 
-    pub(super) fn with_audio(
-        audio: Rc<RefCell<Option<AudioRuntime>>>,
-        fetch: Arc<dyn Fetch>,
-    ) -> Self {
+    pub(super) fn with_audio(audio: Rc<RefCell<Output>>, fetch: Arc<dyn Fetch>) -> Self {
         Self {
             audio,
             fetch,
@@ -419,8 +412,6 @@ impl Backend {
             requested_playing: false,
             source_positioned: false,
             decoded_first_frame: false,
-            volume_percent: 100,
-            duck_percent: None,
             rate_percent: UNITY_RATE_PERCENT,
             buffered_percent: 0,
             fingerprint: None,
@@ -445,7 +436,7 @@ impl Backend {
         self.fetch.clone()
     }
 
-    pub(super) fn audio_handle(&self) -> Rc<RefCell<Option<AudioRuntime>>> {
+    pub(super) fn audio_handle(&self) -> Rc<RefCell<Output>> {
         Rc::clone(&self.audio)
     }
 
@@ -453,7 +444,7 @@ impl Backend {
         let Some(sink) = self.sink.take() else {
             return Ok(());
         };
-        if let Some(audio) = self.audio.borrow_mut().as_mut() {
+        if let Some(audio) = self.audio.borrow_mut().runtime.as_mut() {
             audio.remove_sink(sink).map_err(|error| error.to_string())
         } else {
             sink.stop().map_err(|error| error.to_string())
@@ -641,32 +632,28 @@ impl Backend {
 
     /// Record the requested output volume and apply it if the output exists.
     pub(super) fn set_volume(&mut self, percent: u8) {
-        self.volume_percent = percent;
-        self.apply_gain();
+        self.audio.borrow_mut().set_volume(percent);
     }
 
     /// Duck to a percent of the volume, or restore it with `None`.
     pub(super) fn set_duck(&mut self, percent: Option<u8>) {
-        self.duck_percent = percent;
-        self.apply_gain();
+        self.audio.borrow_mut().set_duck(percent);
     }
 
     /// The gain in effect: the volume, scaled by the duck while one is held.
+    #[cfg(test)]
     pub(super) fn effective_volume(&self) -> u8 {
-        match self.duck_percent {
-            Some(duck) => {
-                let scaled = u32::from(self.volume_percent) * u32::from(duck);
-                u8::try_from(scaled.div_ceil(100)).unwrap_or(u8::MAX)
-            },
-            None => self.volume_percent,
-        }
+        self.audio.borrow().effective_volume()
     }
 
-    fn apply_gain(&mut self) {
-        let gain = self.effective_volume();
-        if let Some(audio) = self.audio.borrow_mut().as_mut() {
-            audio.set_volume(gain);
-        }
+    #[cfg(test)]
+    pub(super) fn rate_percent(&self) -> u16 {
+        self.rate_percent
+    }
+
+    pub(super) fn output_levels(&self) -> (u8, Option<u8>) {
+        let output = self.audio.borrow();
+        (output.volume_percent(), output.duck_percent())
     }
 
     /// Apply a playback rate live and report the rate actually in effect.
@@ -766,16 +753,22 @@ impl Backend {
         if self.sink.as_ref().is_some_and(|sink| {
             self.audio
                 .borrow()
+                .runtime
                 .as_ref()
                 .is_none_or(|audio| !audio.owns_sink(sink))
         }) {
             return Err("shared audio output was retired; reload this stream to restart".into());
         }
-        let audio_tick = self.audio.borrow_mut().as_mut().map(AudioRuntime::tick);
+        let audio_tick = self
+            .audio
+            .borrow_mut()
+            .runtime
+            .as_mut()
+            .map(AudioRuntime::tick);
         if let Some(Err(error)) = audio_tick {
             // Retire the failed backend before reporting Unavailable. A later
             // load must open a fresh CpalStream, not reuse a stopped device.
-            self.audio.borrow_mut().take();
+            self.audio.borrow_mut().runtime.take();
             return Err(error.to_string());
         }
         if self.decoder.is_none() {
@@ -784,7 +777,11 @@ impl Backend {
         if !self.decoded_first_frame {
             self.decode_next_packet()?;
             if !self.decoded_first_frame {
-                return Ok(PumpState::Idle);
+                return Ok(if self.eof {
+                    PumpState::EndOfStream
+                } else {
+                    PumpState::Idle
+                });
             }
         }
         let (rate, channels) = self
@@ -793,16 +790,9 @@ impl Backend {
             .and_then(|decoder| decoder.channels.map(|channels| (decoder.rate, channels)))
             .ok_or("first decoded frame did not report a channel layout")?;
         if self.sink.is_none() {
-            if self.audio.borrow().is_none() {
-                let mut runtime = AudioRuntime::new().map_err(|error| error.to_string())?;
-                runtime.set_volume(self.effective_volume());
-                *self.audio.borrow_mut() = Some(runtime);
-            }
             self.sink = Some(
                 self.audio
                     .borrow_mut()
-                    .as_mut()
-                    .expect("audio runtime was initialized")
                     .sink(rate, channels)
                     .map_err(|error| error.to_string())?,
             );
@@ -1019,6 +1009,104 @@ mod seek_tests {
     }
 
     #[test]
+    fn empty_admitted_wav_reports_eof_without_a_sink() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("empty.wav");
+        hound::WavWriter::create(
+            &path,
+            hound::WavSpec {
+                channels: 1,
+                sample_rate: 48_000,
+                bits_per_sample: 16,
+                sample_format: hound::SampleFormat::Int,
+            },
+        )
+        .unwrap()
+        .finalize()
+        .unwrap();
+        let mut backend = Backend::new(crate::own_fetch());
+        backend
+            .load(&servo_media_player::controller::MediaSource::Local {
+                path: path.display().to_string(),
+            })
+            .unwrap();
+        assert_eq!(backend.pump().unwrap(), PumpState::EndOfStream);
+        assert_eq!(backend.position().unwrap(), Duration::ZERO);
+        assert!(backend.sink.is_none() && backend.audio.borrow().runtime.is_none());
+    }
+
+    #[test]
+    fn preview_and_episode_share_gain_before_output_exists_and_after_each_gain_change() {
+        let mut episode = Backend::new(crate::own_fetch());
+        episode.set_rate(150);
+        episode.set_volume(0);
+        let mut preview = Backend::with_audio(episode.audio_handle(), crate::own_fetch());
+        assert_eq!(episode.rate_percent(), 150);
+        assert_eq!(
+            preview.rate_percent(),
+            UNITY_RATE_PERCENT,
+            "voice preview retains its unity-rate policy"
+        );
+        assert_eq!(
+            preview.effective_volume(),
+            0,
+            "preview cannot introduce default full gain"
+        );
+        preview.set_volume(40);
+        assert_eq!(episode.effective_volume(), 40);
+        episode.set_duck(Some(25));
+        assert_eq!(preview.effective_volume(), 10);
+        preview.set_duck(Some(50));
+        assert_eq!(episode.effective_volume(), 20);
+        episode.set_volume(0);
+        assert_eq!(preview.effective_volume(), 0);
+        preview.set_duck(None);
+        assert_eq!(episode.effective_volume(), 0);
+        episode.set_volume(37);
+        preview.clear().unwrap();
+        assert_eq!(preview.effective_volume(), 37);
+        assert_eq!(episode.output_levels(), (37, None));
+        assert_eq!(preview.rate_percent(), UNITY_RATE_PERCENT);
+        assert!(episode.audio.borrow().runtime.is_none());
+    }
+
+    #[test]
+    fn exact_duration_seek_reports_eof_before_first_frame_without_opening_output() {
+        for rate in [8_000, 44_100, 48_000] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("exact-end.wav");
+            let mut writer = hound::WavWriter::create(
+                &path,
+                hound::WavSpec {
+                    channels: 1,
+                    sample_rate: rate,
+                    bits_per_sample: 16,
+                    sample_format: hound::SampleFormat::Int,
+                },
+            )
+            .unwrap();
+            for frame in 0..rate {
+                writer.write_sample(pcm_sample(frame, 0)).unwrap();
+            }
+            writer.finalize().unwrap();
+            let mut backend = Backend::new(crate::own_fetch());
+            backend
+                .load(&servo_media_player::controller::MediaSource::Local {
+                    path: path.display().to_string(),
+                })
+                .unwrap();
+            let end = Duration::from_secs(1);
+            backend.seek(end).unwrap();
+            backend.reset(end).unwrap();
+            assert_eq!(backend.pump().unwrap(), PumpState::EndOfStream);
+            assert_eq!(backend.position().unwrap(), end);
+            assert!(backend.pending.is_empty());
+            assert!(backend.sink.is_none());
+            assert!(backend.audio.borrow().runtime.is_none());
+        }
+    }
+
+    #[test]
     fn accurate_wav_seek_discards_packet_prefix_before_pcm_and_source_clock() {
         for rate in [8_000, 44_100, 48_000] {
             for channels in [1, 2] {
@@ -1120,7 +1208,8 @@ mod runtime_generation_tests {
             )
             .unwrap();
         assert!(state.is_active());
-        let mut preview = Backend::with_audio(Rc::new(RefCell::new(None)), crate::own_fetch());
+        let mut preview =
+            Backend::with_audio(Rc::new(RefCell::new(Output::default())), crate::own_fetch());
         preview.sink = Some(Sink {
             state: Arc::new(Mutex::new(state.clone())),
             node,

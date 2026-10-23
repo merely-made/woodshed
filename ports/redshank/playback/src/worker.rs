@@ -37,6 +37,33 @@ impl Default for Levels {
     }
 }
 
+/// Accepted configuration outlives the recoverable decoder/output session.
+/// An unloaded rate preference waits for controller admission after Load;
+/// snapshots keep their last admitted rate until that succeeds.
+#[derive(Clone, Copy)]
+struct Controls {
+    rate_percent: u16,
+    volume_percent: u8,
+    duck_percent: Option<u8>,
+}
+
+impl Default for Controls {
+    fn default() -> Self {
+        Self {
+            rate_percent: 100,
+            volume_percent: 100,
+            duck_percent: None,
+        }
+    }
+}
+
+impl Controls {
+    fn restore_gain(&self, backend: &mut Backend) {
+        backend.set_volume(self.volume_percent);
+        backend.set_duck(self.duck_percent);
+    }
+}
+
 fn publish(
     snapshot: &Arc<Mutex<SnapshotCell>>,
     token: Option<u64>,
@@ -123,19 +150,21 @@ fn publish_levels(snapshot: &Arc<Mutex<SnapshotCell>>, levels: Levels) {
     }
 }
 
-fn publish_buffered(snapshot: &Arc<Mutex<SnapshotCell>>, buffered_percent: u8) {
-    let levels = {
-        let cell = snapshot
-            .lock()
-            .unwrap_or_else(|poisoned| poisoned.into_inner());
+fn publish_backend_levels(
+    snapshot: &Arc<Mutex<SnapshotCell>>,
+    backend: &Backend,
+    rate_percent: u16,
+) {
+    let (volume_percent, duck_percent) = backend.output_levels();
+    publish_levels(
+        snapshot,
         Levels {
-            rate_percent: cell.value.rate_percent,
-            volume_percent: cell.value.volume_percent,
-            duck_percent: cell.value.duck_percent,
-            buffered_percent,
-        }
-    };
-    publish_levels(snapshot, levels);
+            rate_percent,
+            volume_percent,
+            duck_percent,
+            buffered_percent: backend.buffered_percent(),
+        },
+    );
 }
 
 fn publish_preview(snapshot: &Arc<Mutex<SnapshotCell>>, preview: Option<PreviewSnapshot>) {
@@ -434,11 +463,22 @@ fn project(
     snapshot: &Arc<Mutex<SnapshotCell>>,
     token: Option<u64>,
 ) -> Result<(), String> {
+    let (representation, source, _) = backend.borrow().facts();
+    if source.is_none() {
+        // No source can admit a rate yet. Gain remains a real output setting,
+        // including for a voice preview; retain the last admitted main rate.
+        let rate = snapshot
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .value
+            .rate_percent;
+        publish_backend_levels(snapshot, &backend.borrow(), rate);
+        return Ok(());
+    }
     let state = product_state(controller);
     let view = controller
         .snapshot()
         .map_err(|error| format!("{error:?}"))?;
-    let (representation, source, _) = backend.borrow().facts();
     publish(
         snapshot,
         token,
@@ -448,8 +488,31 @@ fn project(
         view.duration.map(|duration| duration.as_millis() as u64),
         source,
     );
-    publish_buffered(snapshot, backend.borrow().buffered_percent());
+    publish_backend_levels(
+        snapshot,
+        &backend.borrow(),
+        (view.rate * 100.0).round() as u16,
+    );
     Ok(())
+}
+
+fn admit_rate(
+    controller: &mut controller_adapter::Controller,
+    percent: u16,
+) -> Result<u16, String> {
+    let bounded = percent.clamp(
+        crate::backend::MIN_RATE_PERCENT,
+        crate::backend::MAX_RATE_PERCENT,
+    );
+    controller
+        .command(servo_media_player::controller::PlaybackCommand::SetRate(
+            f64::from(bounded) / 100.0,
+        ))
+        .map_err(|error| format!("controller rate failed: {error:?}"))?;
+    controller
+        .snapshot()
+        .map(|view| (view.rate * 100.0).round() as u16)
+        .map_err(|error| format!("controller rate snapshot failed: {error:?}"))
 }
 
 fn fail(
@@ -507,12 +570,19 @@ fn run_session(
     snapshot: Arc<Mutex<SnapshotCell>>,
     fetch: Arc<dyn Fetch>,
     blobs: Option<crate::HostBlobReader>,
+    controls: &mut Controls,
 ) {
     let backend = Rc::new(RefCell::new(Backend::new(fetch).with_blobs(blobs)));
+    controls.restore_gain(&mut backend.borrow_mut());
     let mut controller = controller_adapter::controller(backend.clone());
     let mut token = None;
     let mut preview = None;
-    let mut levels = Levels::default();
+    let admitted_rate = snapshot
+        .lock()
+        .unwrap_or_else(|p| p.into_inner())
+        .value
+        .rate_percent;
+    publish_backend_levels(&snapshot, &backend.borrow(), admitted_rate);
     loop {
         while let Ok(message) = receiver.try_recv() {
             let note_seek_request = match &message {
@@ -529,6 +599,17 @@ fn run_session(
                 PlaybackCommand::Shutdown => return,
                 #[cfg(test)]
                 PlaybackCommand::CrashWorker => panic!("injected playback worker failure"),
+                #[cfg(test)]
+                PlaybackCommand::InspectControls(sender) => {
+                    let rate = backend.borrow().rate_percent();
+                    let gain = backend.borrow().effective_volume();
+                    let admitted_rate = controller
+                        .snapshot()
+                        .ok()
+                        .map(|view| (view.rate * 100.0).round() as u16);
+                    let _ = sender.send((rate, admitted_rate, gain));
+                    continue;
+                },
                 PlaybackCommand::Load {
                     token: next,
                     source,
@@ -562,10 +643,14 @@ fn run_session(
                         );
                         continue;
                     }
-                    if let Some(expected) = source.cached_representation()
-                        && let Err(error) =
-                            backend.borrow_mut().admit_cached_representation(expected)
-                    {
+                    let cached_admission = source
+                        .cached_representation()
+                        .map(|expected| backend.borrow_mut().admit_cached_representation(expected));
+                    if let Some(Err(error)) = cached_admission {
+                        fail(&mut controller, &backend, &snapshot, token, error);
+                        continue;
+                    }
+                    if let Err(error) = admit_rate(&mut controller, controls.rate_percent) {
                         fail(&mut controller, &backend, &snapshot, token, error);
                         continue;
                     }
@@ -672,26 +757,33 @@ fn run_session(
                     }
                 },
                 PlaybackCommand::SetRate(percent) => {
-                    // The WSOLA stage retimes without moving pitch, so the
-                    // requested rate applies live; the snapshot reports what
-                    // the stage took, which is the request once clamped.
-                    levels.rate_percent = backend.borrow_mut().set_rate(percent);
-                    publish_levels(&snapshot, levels);
+                    let bounded = percent.clamp(
+                        crate::backend::MIN_RATE_PERCENT,
+                        crate::backend::MAX_RATE_PERCENT,
+                    );
+                    if backend.borrow().facts().1.is_some() {
+                        match admit_rate(&mut controller, bounded) {
+                            Ok(accepted) => controls.rate_percent = accepted,
+                            Err(error) => {
+                                fail(&mut controller, &backend, &snapshot, token, error);
+                                continue;
+                            },
+                        }
+                    } else {
+                        controls.rate_percent = bounded;
+                    }
                 },
                 PlaybackCommand::SetVolume(percent) => {
-                    levels.volume_percent = percent;
                     backend.borrow_mut().set_volume(percent);
-                    publish_levels(&snapshot, levels);
+                    controls.volume_percent = percent;
                 },
                 PlaybackCommand::Duck(percent) => {
-                    levels.duck_percent = Some(percent);
                     backend.borrow_mut().set_duck(Some(percent));
-                    publish_levels(&snapshot, levels);
+                    controls.duck_percent = Some(percent);
                 },
                 PlaybackCommand::Unduck => {
-                    levels.duck_percent = None;
                     backend.borrow_mut().set_duck(None);
-                    publish_levels(&snapshot, levels);
+                    controls.duck_percent = None;
                 },
                 PlaybackCommand::StartPreview { id, source } => {
                     start_preview(
@@ -868,6 +960,7 @@ pub(super) fn run(
     fetch: Arc<dyn Fetch>,
     blobs: Option<crate::HostBlobReader>,
 ) {
+    let mut controls = Controls::default();
     loop {
         if catch_unwind(AssertUnwindSafe(|| {
             run_session(
@@ -875,6 +968,7 @@ pub(super) fn run(
                 Arc::clone(&snapshot),
                 fetch.clone(),
                 blobs.clone(),
+                &mut controls,
             );
         }))
         .is_ok()
