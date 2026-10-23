@@ -350,11 +350,18 @@
     },
     {
       "id": "evidence:O1",
-      "classification": "source cohort alignment corrected; current instrument execution not requalified here",
+      "classification": "source cohort aligned; scoped receiving CPU qualified",
       "package": "Q5",
-      "current_observation": "Current four-root metadata uses one Mere d1a200b18, Genet917f88e and Netrendere8cda source each. Earlier production-scroll receipt executed eleven recipe cases on Mere2d95d95e. New label task updates locks and metadata; no new recipe runtime claim.",
-      "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
-      "detail": "current/evidence-tooling-current.json"
+      "current_observation": "Relationship-recipe lock matches root Mere a07a375e, Genet7d1d89db and Netrenderec15eb26. The October22 pool receiving receipt binds this exact lock and eleven passing recipe cases with one ignored case; older metadata-only observation is superseded.",
+      "qualification": "Historical locked/offline receiving CPU gate at cbda7166 exits0,11 passed,1 ignored. No new native/physical instrument claim from this recheck.",
+      "detail": "../stack-family_20261011/pool-cohort-20261022.json",
+      "before_frontier_recheck_20261023": {
+        "classification": "source cohort alignment corrected; current instrument execution not requalified here",
+        "current_observation": "Current four-root metadata uses one Mere d1a200b18, Genet917f88e and Netrendere8cda source each. Earlier production-scroll receipt executed eleven recipe cases on Mere2d95d95e. New label task updates locks and metadata; no new recipe runtime claim.",
+        "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+        "detail": "current/evidence-tooling-current.json",
+        "limits": null
+      }
     },
     {
       "id": "hocket:H1",
@@ -587,14 +594,26 @@
     },
     {
       "id": "host:H2",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; scoped CPU and bounded macOS native/reopen qualified",
       "package": "D1",
-      "current_observation": "open_store_as still uses FsBackend::new per identity. Preservation/reset improvements do not create independent mutable persona slots. Wrong-key quarantine remains protective.",
-      "qualification": "unassessed",
+      "current_observation": "D1 uses strict sealed cryptographic-owner roots and immutable owner records, separate session/settings/PCM slots, complete incoming scratch/PCM admission, and late same-provider verified family choice. Failure retains outgoing work. The singleton-store observation is superseded.",
+      "qualification": "D1 receipt at committed 8bf59b31: 678 distinct CPU parent/integration passes, five separate nested invocations, five successful native product processes, twelve independently reviewed captures and exact retained-data readback.",
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../persona-store_20261022/receipt.json",
       "original_index_title": "H2 \u2014 P2, acknowledged open gap: Persona keys share singleton mutable files",
-      "original_report": "host-report.md"
+      "original_report": "host-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "open_store_as still uses FsBackend::new per identity. Preservation/reset improvements do not create independent mutable persona slots. Wrong-key quarantine remains protective.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json",
+        "limits": null
+      },
+      "implementation_revision": "8bf59b317aa653c36a09a5fa9f178ef8e408e7d6",
+      "limits": [
+        "Historical committed D1 qualification; no new current-main execution gate from the October23 source recheck.",
+        "No native PCM playback/hydration, physical audio, second host, native same-label seed replacement or manual geometry exercise."
+      ]
     },
     {
       "id": "host:H3",
@@ -729,22 +748,38 @@
       "classification": "source replacement observed",
       "package": "P5a/P5 verification",
       "current_observation": "bound_card_preview checks underlying scale/approach/shape and unmarked availability. Empty admitted preview performs fallible output.cancel_preview. Managed lowering also carries unavailable/refusal. Frozen empty-success trigger has replacement source.",
-      "qualification": "unassessed",
+      "qualification": "Bounded managed P5a has historical CPU/build/native/reopen qualification in stage-p5a_20261016/receipt.json; current trigger source replacement rechecked October23, with no new execution claim.",
       "alias_of": null,
       "detail": "current/runtime.json",
       "original_index_title": "LO-1 \u2014 P2 \u2014 Do not admit an unavailable realization as intentional silence",
-      "original_report": "local-overlay-report.md"
+      "original_report": "local-overlay-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "source replacement observed",
+        "current_observation": "bound_card_preview checks underlying scale/approach/shape and unmarked availability. Empty admitted preview performs fallible output.cancel_preview. Managed lowering also carries unavailable/refusal. Frozen empty-success trigger has replacement source.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json",
+        "limits": null
+      },
+      "p5a_owner_status": "Historical bounded assignment completed; reservation retired. Current coordinator may own residual work if needed under October23 user authorization."
     },
     {
       "id": "local-overlay:LO-2",
       "classification": "source replacement observed",
       "package": "P5a/P5 fixture verification",
       "current_observation": "Inspected connected clock fixture now toggles Run before acknowledgement; request assertion precedes drain. rehearsal_dwell is cfg(test); production frame uses sync_practice_clock. Not all fixture bodies are requalified.",
-      "qualification": "unassessed",
+      "qualification": "Bounded managed P5a has historical CPU/build/native/reopen qualification in stage-p5a_20261016/receipt.json; current trigger source replacement rechecked October23, with no new execution claim.",
       "alias_of": null,
       "detail": "current/runtime.json",
       "original_index_title": "LO-2 \u2014 P2 \u2014 Finish the admission-fixture migration before trusting affected gates",
-      "original_report": "local-overlay-report.md"
+      "original_report": "local-overlay-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "source replacement observed",
+        "current_observation": "Inspected connected clock fixture now toggles Run before acknowledgement; request assertion precedes drain. rehearsal_dwell is cfg(test); production frame uses sync_practice_clock. Not all fixture bodies are requalified.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json",
+        "limits": null
+      },
+      "p5a_owner_status": "Historical bounded assignment completed; reservation retired. Current coordinator may own residual work if needed under October23 user authorization."
     },
     {
       "id": "local-overlay:LO-3",
@@ -764,7 +799,15 @@
       "current_observation": "Managed lowering emits sequential events with Beats/Seconds even onsets; production uses sync_practice_clock and legacy dwell is test-only. Generic Path/Walk Hear still uses fixed 130ms voicing_shape; arpeggiate_preview transforms only Arpeggiate. Frozen dwell-truncation trigger cannot be carried forward wholesale.",
       "qualification": "unassessed",
       "alias_of": null,
-      "detail": "current/runtime.json"
+      "detail": "current/runtime.json",
+      "before_frontier_recheck_20261023": {
+        "classification": "source replacement observed",
+        "current_observation": "Managed lowering emits sequential events with Beats/Seconds even onsets; production uses sync_practice_clock and legacy dwell is test-only. Generic Path/Walk Hear still uses fixed 130ms voicing_shape; arpeggiate_preview transforms only Arpeggiate. Frozen dwell-truncation trigger cannot be carried forward wholesale.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json",
+        "limits": null
+      },
+      "remaining_scope": "Generic Path/Walk Hear parity remains distinct from completed managed P5a; no active owner reservation is inherited from the frozen overlay."
     },
     {
       "id": "local-overlay:LO-5",
@@ -790,9 +833,17 @@
       "classification": "source replacement observed",
       "package": "P5a fixture verification",
       "current_observation": "Former undefined pitches assertion now uses request.preview.0. Frozen compiler blocker is historical.",
-      "qualification": "unassessed",
+      "qualification": "Bounded managed P5a has historical CPU/build/native/reopen qualification in stage-p5a_20261016/receipt.json; current trigger source replacement rechecked October23, with no new execution claim.",
       "alias_of": null,
-      "detail": "current/runtime.json"
+      "detail": "current/runtime.json",
+      "before_frontier_recheck_20261023": {
+        "classification": "source replacement observed",
+        "current_observation": "Former undefined pitches assertion now uses request.preview.0. Frozen compiler blocker is historical.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json",
+        "limits": null
+      },
+      "p5a_owner_status": "Historical bounded assignment completed; reservation retired. Current coordinator may own residual work if needed under October23 user authorization."
     },
     {
       "id": "redshank:R01",
@@ -818,47 +869,91 @@
     },
     {
       "id": "redshank:R02",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B8",
-      "current_observation": "Preview output can ignore listener mute",
+      "current_observation": "One shared output owner holds desired volume/duck before runtime and is reused by episode and voice preview. The initial gain node uses effective gain directly; preview rate remains independently unity.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "distinct_unit_and_integration_passes": 167,
+        "existing_ignores": 8,
+        "new_regressions": 7,
+        "baseline_failures_excluded": 3,
+        "desktop_build": "locked successful",
+        "source_stable": true,
+        "native": "not run",
+        "physical_audio_device": "not run",
+        "publication": "Recorded separately in validation/audit-playback_20261023/publication.json"
       },
       "canonical_id": "redshank:R02",
-      "limits": "Separate preview controller is legitimate; desired output gain should be shared.",
-      "detail": "current/ports.json",
+      "limits": [
+        "CPU/controller/backend/real-generated-WAV and desktop-build qualification only.",
+        "No new native GUI/device, microphone, listening gain/rate, second-host or fresh-process native acceptance.",
+        "Adjacent R05/R09 capture lifetime/capacity, R08 export identity and B7 availability remain separate."
+      ],
+      "detail": "../audit-playback_20261023/receipt.json",
       "original_index_title": "R02 \u2014 Put desired output gain in the shared output owner [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_playback_fix_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Preview output can ignore listener mute",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Separate preview controller is legitimate; desired output gain should be shared."
+      },
+      "implementation_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd"
     },
     {
       "id": "redshank:R03",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B8",
-      "current_observation": "Worker recreation resets effective controls but retains published values",
+      "current_observation": "Retained controls outlive catch_unwind sessions; recreated backends restore actual shared gain before output and admitted loads reapply rate through the controller. Capture duck remains until explicit host Unduck. Tests read real backend/controller/gain after recovery and reload.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "distinct_unit_and_integration_passes": 167,
+        "existing_ignores": 8,
+        "new_regressions": 7,
+        "baseline_failures_excluded": 3,
+        "desktop_build": "locked successful",
+        "source_stable": true,
+        "native": "not run",
+        "physical_audio_device": "not run",
+        "publication": "Recorded separately in validation/audit-playback_20261023/publication.json"
       },
       "canonical_id": "redshank:R03",
-      "limits": "Nondefault rate/gain/duck recovery not qualified.",
-      "detail": "current/ports.json",
+      "limits": [
+        "CPU/controller/backend/real-generated-WAV and desktop-build qualification only.",
+        "No new native GUI/device, microphone, listening gain/rate, second-host or fresh-process native acceptance.",
+        "Adjacent R05/R09 capture lifetime/capacity, R08 export identity and B7 availability remain separate."
+      ],
+      "detail": "../audit-playback_20261023/receipt.json",
       "original_index_title": "R03 \u2014 Restore accepted controls when recreating a worker session [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_playback_fix_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Worker recreation resets effective controls but retains published values",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Nondefault rate/gain/duck recovery not qualified."
+      },
+      "implementation_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd"
     },
     {
       "id": "redshank:R04",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "source replacement observed; idle native qualification remains open",
       "package": "B10",
-      "current_observation": "Native idle predicate omits alignment/export jobs",
+      "current_observation": "Current desktop after-frame scheduling includes alignment_pending and export_pending, as does scenario_busy. The frozen omission no longer describes current source; this recheck supplies no new idle-native worker completion acceptance.",
       "qualification": {
         "focused_regression": "unassessed",
         "integration_build": "unassessed",
@@ -869,9 +964,24 @@
       },
       "canonical_id": "redshank:R04",
       "limits": "Current predicate reread; scenario waits do not prove idle native completion.",
-      "detail": "current/ports.json",
+      "detail": "../audit-playback_20261023/recheck.json",
       "original_index_title": "R04 \u2014 Use one pending-job inventory for native scheduling and scripted waits [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Native idle predicate omits alignment/export jobs",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Current predicate reread; scenario waits do not prove idle native completion."
+      },
+      "rechecked_revision": "3ce93675179098b7d1c81da20cb4f63caa75e6b5"
     },
     {
       "id": "redshank:R05",
@@ -894,41 +1004,85 @@
     },
     {
       "id": "redshank:R06",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B8",
-      "current_observation": "Integrity refusal can nest mutable borrow and panic",
+      "current_observation": "Cached-representation admission releases the backend mutable borrow before failure handling. Actual worker regression retains the integrity diagnostic and exact WAV bytes, clears refused source facts, and accepts later valid load.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "distinct_unit_and_integration_passes": 167,
+        "existing_ignores": 8,
+        "new_regressions": 7,
+        "baseline_failures_excluded": 3,
+        "desktop_build": "locked successful",
+        "source_stable": true,
+        "native": "not run",
+        "physical_audio_device": "not run",
+        "publication": "Recorded separately in validation/audit-playback_20261023/publication.json"
       },
       "canonical_id": "redshank:R06",
-      "limits": "Direct-backend integrity tests do not cover this worker branch.",
-      "detail": "current/ports.json",
+      "limits": [
+        "CPU/controller/backend/real-generated-WAV and desktop-build qualification only.",
+        "No new native GUI/device, microphone, listening gain/rate, second-host or fresh-process native acceptance.",
+        "Adjacent R05/R09 capture lifetime/capacity, R08 export identity and B7 availability remain separate."
+      ],
+      "detail": "../audit-playback_20261023/receipt.json",
       "original_index_title": "R06 \u2014 Drop cached-admission's mutable borrow before handling refusal [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_playback_fix_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Integrity refusal can nest mutable borrow and panic",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Direct-backend integrity tests do not cover this worker branch."
+      },
+      "implementation_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd"
     },
     {
       "id": "redshank:R07",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B8",
-      "current_observation": "Exact-end seek can remain Buffering without first frame",
+      "current_observation": "EOF without a first decoded frame returns EndOfStream before sink/runtime creation. Real generated WAV tests cover empty source, exact-duration8k/44.1k/48k, worker resume and subsequent explicit end seek with a processing barrier.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "distinct_unit_and_integration_passes": 167,
+        "existing_ignores": 8,
+        "new_regressions": 7,
+        "baseline_failures_excluded": 3,
+        "desktop_build": "locked successful",
+        "source_stable": true,
+        "native": "not run",
+        "physical_audio_device": "not run",
+        "publication": "Recorded separately in validation/audit-playback_20261023/publication.json"
       },
       "canonical_id": "redshank:R07",
-      "limits": "Exact-duration seek/reopen terminal outcome unqualified.",
-      "detail": "current/ports.json",
+      "limits": [
+        "CPU/controller/backend/real-generated-WAV and desktop-build qualification only.",
+        "No new native GUI/device, microphone, listening gain/rate, second-host or fresh-process native acceptance.",
+        "Adjacent R05/R09 capture lifetime/capacity, R08 export identity and B7 availability remain separate."
+      ],
+      "detail": "../audit-playback_20261023/receipt.json",
       "original_index_title": "R07 \u2014 Admit EOF before first-frame readiness as a terminal fact [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_playback_fix_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Exact-end seek can remain Buffering without first frame",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Exact-duration seek/reopen terminal outcome unqualified."
+      },
+      "implementation_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd"
     },
     {
       "id": "redshank:R08",
@@ -1103,22 +1257,44 @@
     },
     {
       "id": "redshank:R17",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B8",
-      "current_observation": "Rate changes bypass admitted controller",
+      "current_observation": "Loaded rates and load/reload preference use existing controller SetRate admission. Unloaded preferences remain pending and preserve last admitted snapshot rate until successful load; failed load cannot publish them accepted.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "distinct_unit_and_integration_passes": 167,
+        "existing_ignores": 8,
+        "new_regressions": 7,
+        "baseline_failures_excluded": 3,
+        "desktop_build": "locked successful",
+        "source_stable": true,
+        "native": "not run",
+        "physical_audio_device": "not run",
+        "publication": "Recorded separately in validation/audit-playback_20261023/publication.json"
       },
       "canonical_id": "redshank:R17",
-      "limits": "Controller authority mismatch; not an assertion of wrong audible pitch.",
-      "detail": "current/ports.json",
+      "limits": [
+        "CPU/controller/backend/real-generated-WAV and desktop-build qualification only.",
+        "No new native GUI/device, microphone, listening gain/rate, second-host or fresh-process native acceptance.",
+        "Adjacent R05/R09 capture lifetime/capacity, R08 export identity and B7 availability remain separate."
+      ],
+      "detail": "../audit-playback_20261023/receipt.json",
       "original_index_title": "R17 \u2014 Route effective rate through the existing controller contract [P3]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_playback_fix_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Rate changes bypass admitted controller",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Controller authority mismatch; not an assertion of wrong audible pitch."
+      },
+      "implementation_revision": "046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd"
     },
     {
       "id": "ringdown:R1",
@@ -1194,7 +1370,23 @@
       "limits": "Checksum success is separate from persistence.",
       "detail": "current/ports.json",
       "original_index_title": "R4 \u2014 Propagate local save failure from --fetch to the process result",
-      "original_report": "ringdown-report.md"
+      "original_report": "ringdown-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Failed requested file save still returns success",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Checksum success is separate from persistence."
+      },
+      "current_source_path_20261023": "ports/ringdown/apps/probe/src/rpc.rs:867",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "ringdown:R5",
@@ -1232,7 +1424,23 @@
       "limits": "Multiple connections and incomplete/reused transfers unqualified.",
       "detail": "current/ports.json",
       "original_index_title": "R6 \u2014 Retain connection identity across capture reassembly and ATT interpretation",
-      "original_report": "ringdown-report.md"
+      "original_report": "ringdown-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "ACL/ATT decoding loses connection identity",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Multiple connections and incomplete/reused transfers unqualified."
+      },
+      "current_source_path_20261023": "ports/ringdown/apps/probe/src/pklg.rs:137",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "ringdown:R7",
@@ -1251,7 +1459,23 @@
       "limits": "Core three-way result is legitimate; consumer collapses unknowns.",
       "detail": "current/ports.json",
       "original_index_title": "R7 \u2014 Count uncheckable loop headers separately from matching ones",
-      "original_report": "ringdown-report.md"
+      "original_report": "ringdown-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Uncheckable/skipped metadata becomes all-match claim",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Core three-way result is legitimate; consumer collapses unknowns."
+      },
+      "current_source_path_20261023": "ports/ringdown/apps/probe/src/rpc.rs:775",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "ringdown:R8",
@@ -1270,7 +1494,23 @@
       "limits": "No default guarded-path bypass: case-insensitive driver guard catches host case miss. Preserve any stricter absolute host prohibition.",
       "detail": "current/ports.json",
       "original_index_title": "R8 \u2014 Consolidate the firmware wedging fact while preserving any absolute host policy",
-      "original_report": "ringdown-report.md"
+      "original_report": "ringdown-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Wedging-method fact duplicated in instrument host",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "No default guarded-path bypass: case-insensitive driver guard catches host case miss. Preserve any stricter absolute host prohibition."
+      },
+      "current_source_path_20261023": "ports/ringdown/crates/ringdown-ble/src/instrument.rs:48,293-297",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "ringdown:R9",
@@ -1289,7 +1529,23 @@
       "limits": "Observed fixtures end .wav; no established hardware regression from extensionless trigger.",
       "detail": "current/ports.json",
       "original_index_title": "R9 \u2014 Share the recording-name grammar instead of maintaining two parsers",
-      "original_report": "ringdown-report.md"
+      "original_report": "ringdown-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Driver/probe disagree on extensionless names",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Observed fixtures end .wav; no established hardware regression from extensionless trigger."
+      },
+      "current_source_path_20261023": "ports/ringdown/crates/ringdown-client/src/lib.rs:191; apps/probe/src/rpc.rs:785",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "ringdown:X1",
@@ -1308,7 +1564,23 @@
       "limits": "Alias of theory:T2; count once. T2 additionally covers skipped restoration after intervening error.",
       "detail": "current/ports.json",
       "original_index_title": "X1 \u2014 Cross-partition: the metronome hardware example does not fail its own read-back gate",
-      "original_report": "ringdown-report.md"
+      "original_report": "ringdown-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Readback mismatch does not fail hardware proof",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Alias of theory:T2; count once. T2 additionally covers skipped restoration after intervening error."
+      },
+      "current_source_path_20261023": "ports/ringdown/crates/ringdown-ble/examples/metronome_link.rs:94-126",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "shared:C1",
@@ -1435,16 +1707,16 @@
       "id": "shared:S4",
       "classification": "implemented; scoped CPU qualified",
       "package": "B7",
-      "current_observation": "Reusable Recorder wrapper forwards existing status to the shared renderer. Poll errors recover through existing availability facts and successful tempo retry clears prior refusal before new errors override it. Standalone duplicate status/accessor/CSS removed.",
+      "current_observation": "Reusable Recorder wrapper forwards existing status to the shared renderer. Poll errors recover through existing availability facts and successful tempo retry clears prior refusal before new errors override it. Standalone duplicate status/accessor/CSS removed. October23 source recheck confirms all public wrapper surfaces use recorder_projection and forward status; the remaining B7 V03 finding belongs to Woodshed stream/listening projection.",
       "qualification": {
         "affected_cpu_cases": 171,
         "ignored": 2,
         "baseline_control": "3 expected failures, 2 passes excluded from positive total",
-        "full_shared_view_unit": "blocked by existing paint API source/type mismatch",
+        "full_shared_view_unit": "Original receipt was blocked by existing paint API source/type mismatch; not rerun or claimed currently blocked by this recheck.",
         "native": "unassessed",
         "fresh_process": "unassessed",
         "physical_device": "unassessed",
-        "publication": "local for review"
+        "publication": "published through fd9fb82; historical receipt scope retained"
       },
       "canonical_id": "shared:S4",
       "limits": [
@@ -1470,7 +1742,27 @@
         "detail": "current/ports.json"
       },
       "requested_slice": "B6 tempo replay and runtime diagnostics; historical package label retained",
-      "implementation_revision": "7b161a9f5f22af92bc94728f80128b84c6ec20fd"
+      "implementation_revision": "7b161a9f5f22af92bc94728f80128b84c6ec20fd",
+      "before_frontier_recheck_20261023": {
+        "classification": "implemented; scoped CPU qualified",
+        "current_observation": "Reusable Recorder wrapper forwards existing status to the shared renderer. Poll errors recover through existing availability facts and successful tempo retry clears prior refusal before new errors override it. Standalone duplicate status/accessor/CSS removed.",
+        "qualification": {
+          "affected_cpu_cases": 171,
+          "ignored": 2,
+          "baseline_control": "3 expected failures, 2 passes excluded from positive total",
+          "full_shared_view_unit": "Original receipt was blocked by existing paint API source/type mismatch; not rerun or claimed currently blocked by this recheck.",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "published through fd9fb82; historical receipt scope retained"
+        },
+        "detail": "../recorder-runtime_20261019/receipt.json",
+        "limits": [
+          "No supplier/manifest/lock change, native/device or fresh-process native qualification.",
+          "Public-wrapper integration passes; blocked shared-view paint unit tests and full workspace are not qualified.",
+          "Historical B6 MIDI H6-H9 remains separate."
+        ]
+      }
     },
     {
       "id": "theory:T1",
@@ -1489,7 +1781,23 @@
       "limits": "Follow/Drive and omitted denominator are product policy. No GUI consumer found.",
       "detail": "current/ports.json",
       "original_index_title": "T1 \u2014 P2: an attempted instrument write becomes a confirmed match without a receipt",
-      "original_report": "theory-report.md"
+      "original_report": "theory-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Cached sent request is called a matched metronome",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Follow/Drive and omitted denominator are product policy. No GUI consumer found."
+      },
+      "current_source_path_20261023": "ports/ringdown/crates/ringdown-ble/src/instrument/session.rs:149",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "theory:T2",
@@ -1508,7 +1816,23 @@
       "limits": "Canonical for ringdown:X1; BPM/numerator target and restore must gate proof. Historical successful runs not disproved.",
       "detail": "current/ports.json",
       "original_index_title": "T2 \u2014 P2: the hardware proof can print a mismatch and still report confirmation; failures also skip restoration",
-      "original_report": "theory-report.md"
+      "original_report": "theory-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Mismatch can certify success; intervening error skips restore",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Canonical for ringdown:X1; BPM/numerator target and restore must gate proof. Historical successful runs not disproved."
+      },
+      "current_source_path_20261023": "ports/ringdown/crates/ringdown-ble/examples/metronome_link.rs:94-126",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "theory:T3",
@@ -1568,7 +1892,23 @@
       "limits": "Distinct from ringdown:R3; same B12 package. Public library, no GUI/device evidence.",
       "detail": "current/ports.json",
       "original_index_title": "T5 \u2014 P3: the instrument's typed decoder fabricates valid-looking measurements, and its resonance test never calls that decoder",
-      "original_report": "theory-report.md"
+      "original_report": "theory-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Defaults and unchecked narrowing invent measurements",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Distinct from ringdown:R3; same B12 package. Public library, no GUI/device evidence."
+      },
+      "current_source_path_20261023": "ports/ringdown/crates/ringdown-ble/src/instrument.rs:117,208",
+      "current_reach_20261023": "Live optional research/public library; old private instrument seam moved out of standards-based woodshed-instrument. No current Woodshed GUI RPC reach or hardware operation is claimed."
     },
     {
       "id": "theory:T6",
@@ -1629,13 +1969,20 @@
     },
     {
       "id": "tooling:T1",
-      "classification": "all nine original scenario files unchanged; retired selectors remain",
+      "classification": "retired scenario controls remain; eight original files unchanged",
       "package": "Q2",
-      "current_observation": "scenario-source-check.json contains exact current hashes and retired selector/readout strings. New scenario receipts do not establish these old nine execute.",
+      "current_observation": "All nine original scenarios still contain retired controls/readouts. Eight frozen-identical; set_loop_plan changed but retains stale Tempo+/Inherited/Click controls. No new scenario execution acceptance.",
       "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
       "detail": "current/evidence-tooling-current.json",
       "original_index_title": "T1 \u2014 P2: Nine retained scenarios address Looper controls and text removed by the shared recorder",
-      "original_report": "tooling-report.md"
+      "original_report": "tooling-report.md",
+      "before_frontier_recheck_20261023": {
+        "classification": "all nine original scenario files unchanged; retired selectors remain",
+        "current_observation": "scenario-source-check.json contains exact current hashes and retired selector/readout strings. New scenario receipts do not establish these old nine execute.",
+        "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
+        "detail": "current/evidence-tooling-current.json",
+        "limits": null
+      }
     },
     {
       "id": "tooling:T2",
@@ -1774,5 +2121,27 @@
   "first_wave_recheck_revision": "6a65a4d7d340ec635900188bd8f4e6a6207a6756",
   "first_wave_recheck_scope": "Only A1\u2013A5 and Q1 targeted production seams and focused CPU controls; other findings retain their earlier dated reconciliation.",
   "first_wave_publication_followup": "../first-wave-recheck_20261020/publication.json",
-  "first_wave_published_source_revision": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6"
+  "first_wave_published_source_revision": "cb4ed31e0865abb8158ad41a41fa31a43c2c4cf6",
+  "frontier_recheck_20261023": {
+    "revision": "3ce93675179098b7d1c81da20cb4f63caa75e6b5",
+    "scope": "Targeted remaining-frontier source recheck, not a full source audit. Older untouched row observations keep their original evidence boundaries.",
+    "selected_package": "B8",
+    "selected_findings": [
+      "redshank:R02",
+      "redshank:R03",
+      "redshank:R06",
+      "redshank:R07",
+      "redshank:R17"
+    ],
+    "status": "Selected B8 slice implemented and qualified at046b0bf4:167 distinct CPU passes,8 existing ignores,locked desktop build;3 baseline failures and1 selector error excluded.",
+    "detail": "../audit-playback_20261023/recheck.json",
+    "rechecked_packages": [
+      "A1\u2013A5/D1",
+      "P5a",
+      "B7\u2013B14",
+      "C1\u2013C5",
+      "Q2\u2013Q5",
+      "K1\u2013K3"
+    ]
+  }
 }

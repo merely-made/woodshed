@@ -1,10 +1,10 @@
 # Woodshed source authority audit and remediation
 
-Date: 2026-10-16; coordination closure: 2026-10-17.
+Date: 2026-10-16; coordination closure: 2026-10-17; updated 2026-10-23.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
 H3/H5 and Q1 process/link implementation is CPU qualified and published through `6e6498a`.
-B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9` and local for review, with the separate shared-view unit gate blocked. The frozen
+B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9`, published through `fd9fb82`; its original shared-view paint gate limit stays historical. D1 has bounded CPU/macOS/native/reopen qualification at `8bf59b31`. P11 rechecks main `3ce93675` and CPU/build qualifies B8 playback at `046b0bf4` with 167 distinct passes; remaining work is ordered below. The frozen
 audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
@@ -234,69 +234,113 @@ and retained receipt bytes. The [publication record](../validation/first-wave-re
 keeps actual process exits and the narrow cleanup scope. Native/custody/device
 acceptance, P5a and unresolved design decisions retain their existing boundaries.
 
+### P11 Recheck the remaining frontier and repair playback admission/controls (2026-10-23)
+
+**Status: implemented and scoped CPU/build qualified at `046b0bf4`.** The
+[B8 receipt](../validation/audit-playback_20261023/README.md) records 167 distinct
+passing cases, eight existing ignores and the locked desktop build. Primary was clean and
+four commits behind; fetch/pull brought it to `3ce93675179098b7d1c81da20cb4f63caa75e6b5`,
+equal to origin/main. The isolated `codex/woodshed-playback-controls-20261023`
+branch starts from that revision. The maintainer authorizes commit, push, merge
+and scoped pruning, and allows this coordinator to take over residual P5a work
+if its old reservation is stale.
+
+The historical P5a owner was the link-model coordinator after the October 16
+handoff. Its bounded timing/admission work is already implemented and qualified
+in the [Stage plan](2026-07-11_stage_set_tools_plan.md#p5a-admit-one-resolved-card-timing-contract-2026-10-16).
+That completed assignment is retired as an active reservation. LO-4 generic
+Path/Walk Hear parity remains a separate residual; this batch does not reopen
+completed managed timing or claim new P5a execution qualification.
+
+Targeted source triage, rather than a new full-source audit, rechecked the open
+safety, runtime, port and evidence frontiers. No scoped A1–A5/D1 preservation or
+identity P1 bypass was established. D1's host:H2 singleton observation is stale
+and is superseded by its [qualified receipt](../validation/persona-store_20261022/README.md).
+B7's remaining V03 falsely infers stream/listening availability; shared:S4 is
+already implemented and CPU qualified. Redshank R04's native idle predicate now
+includes alignment and export jobs; idle native completion is still separately
+unqualified. Frozen audit reports remain historical inputs, not the live backlog.
+
+**Selected slice: B8 Redshank R02/R03/R06/R07/R17.** Ordinary cached-integrity
+refusal can panic through an outstanding backend borrow; recovery then exposes
+competing effective-control copies. This reachable panic/control path takes
+priority over the remaining availability caption. It also admits exact-end EOF
+without requiring a nonexistent first frame. R05/R09 capture gesture/capacity,
+R08 export identity, B7, and the remaining C/Q/K work stay separate.
+
+One owner owns the entire `ports/redshank/playback` seam, including its regression
+fixtures. The coordinator alone owns Cargo/build/native scheduling, integration,
+ledger/docs and Git. Two other lanes independently reconcile and review source;
+they do not edit the shared playback seam or update suppliers.
+
+Done-conditions:
+
+1. Cached-integrity refusal keeps its diagnostic without panic and accepts a
+   subsequent valid load; no retained file is rewritten by refusal.
+2. Listener volume/duck has one shared output owner before device creation,
+   including a voice preview opened without an episode. Preview unity-rate policy
+   stays distinct from listener rate.
+3. Accepted rate/volume/duck configuration survives worker recreation and is
+   applied before resumed output; snapshots describe effective backend/controller
+   values. Rate commands pass through the existing controller admission.
+4. Exact-duration seek/reopen reaches a coherent terminal state without creating
+   output solely to finish; normal decoding and paused behavior remain supported.
+5. Regressions execute real worker/controller/backend paths with actual process
+   exits and source bindings. Run focused playback/model/session receiving gates,
+   the affected desktop build, independent review, then commit/integrate/push,
+   verify the fetched source/evidence and prune this completed checkout/branch.
+   CPU/decoded-source evidence does not establish physical sound or a new native
+   acceptance claim.
+
 ## Current findings and next implementation order
 
-1. **Preservation and input admission already have implementations.** A1, A4 and
-   A5 are present. Hocket A2's capture/close/full-revision dirty guards are
-   implemented, and its missing-media facts (H5) now have the separate CPU-qualified correction below. The preservation
-   receipts establish their exact historical software/build results and twelve
-   bounded Woodshed persona/close/quarantine/reopen captures. They do not
-   establish Hocket/Redshank native acceptance or current-head integration after
-   subsequent source/supplier changes. Reuse these owners and the existing
-   [preservation plan](2026-10-16_preservation_input_admission_plan.md).
-2. **A3 Hocket persona binding and A2 missing-media refresh are implemented.**
-   The offered profile, target key and losing token are checked against actual
-   admission before consent or identity changes. CPU controls cover drift,
-   consent-write refusal and persisted exact target facts. Same-session import
-   refreshes availability while retaining unresolved local media and branches.
-   Real custody IPC, Hocket native interaction and fresh-process persona reopen
-   remain unqualified; no native lane was taken over.
-3. **Q1 evidence integrity has scoped executable fixes.** CI/font gates now
-   require observed process evidence and reject failed or unfinished suites.
-   The link checker resolves historical local targets from the same tree as
-   historical referrers, while binary links remain existence checks. Fourteen
-   process controls, seven link controls and the real documentation scan pass.
-   Historical artifacts remain unchanged; their missing execution metadata is
-   not synthesized and their product runs are not reclassified as failures.
-4. **B1–B3 now have scoped CPU-qualified corrections.** Retained Path/contact
-   resolution is shared across display, generic sound, managed lowering and
-   durable recipe validation, with retained neck geometry in the view. SongBar
-   silence preserves authored payload and one audibility rule. Future-bar Arms
-   use the existing bounded queue and cleanup, with ordered stop/pause/seek and
-   unreachable-target observations. B4 now has scoped CPU-qualified finite PCM rejection, chunk-invariant onset
-   accounting and a single calibration estimate/support result. B5 now admits capture/import/unmute/reconciliation through one occurrence rule
-   using the existing model predicate; inactive media remains retained. The requested shared Recorder tempo replay and runtime diagnostic slice now
-   has scoped CPU qualification: accepted-clock-first keyed replacement,
-   preserved failure facts and one shared status renderer. Its full shared-view
-   unit gate is blocked by the pre-existing paint API mismatch.
-   Redshank preview/runtime control and idle-worker completion remain separate
-   product/controller seams. Protocol/instrument fixes B12–B14 preserve write,
-   readback, restoration, incomplete data and output-file outcomes. Ringdown X1
-   aliases theory T2; R8 is a P3 metadata duplication, not an established default
-   hardware-guard bypass.
-5. **Projection, packaging and compatibility cleanup follow actual reachability.**
-   All nine named obsolete Looper scenarios remain unchanged (Q2). Release
-   packagers still need build-to-binary binding and architecture checks (Q3),
-   and the scorer still admits missing notes/mismatched source identity (Q4).
-   macOS microphone wording now includes recording; Windows/Linux wording does
-   not. The recipe supplier cohort has since aligned, but new lock metadata is
-   not a new instrument execution receipt. Public legacy executors/query APIs
-   remain compatibility-gated removals (K1); do not delete saved formats, PCM,
-   inactive media or live orphan-clear paths merely to reduce duplication.
+**Rechecked 2026-10-23 at fetched/pulled `3ce93675`.** This is targeted source
+reconciliation of the remaining frontier, not a new exhaustive audit or a transfer
+of historical qualification to today's suppliers. The [recheck record](../validation/audit-playback_20261023/recheck.json)
+binds named current-source observations. The mutable [per-finding ledger](../validation/full-source-audit_20261016/current-finding-ledger.json)
+retains every one of the 93 original raw rows, O1 and the separately named
+LO-4/LO-5/LO-K1; earlier frozen reports retain their original inputs and limits.
 
-The [current per-finding ledger](../validation/full-source-audit_20261016/current-finding-ledger.json)
-maps every one of the 93 original raw index rows, plus O1 and the separately
-named LO-4/LO-5/LO-K1 items. No entry is silently omitted or counted as a unique
-confirmed bug. The runtime reviewer records five source replacements in the
-old overlay findings: LO-1, LO-2, LO-K1, LO-3 and LO-4. The undefined-pitches
-compile failure is historical, and generic Walk/Hear timing remains distinct
-from the managed processor-clock path. Source replacement is not a new
-current-head acceptance claim. Full details and evidence limits are in the
-[safety](../validation/full-source-audit_20261016/current/safety.md),
-[runtime](../validation/full-source-audit_20261016/current/runtime.md),
-[port/protocol](../validation/full-source-audit_20261016/current/ports.md), and
-[evidence/tooling](../validation/full-source-audit_20261016/current/evidence-tooling-current.md)
-reconciliations.
+1. **B8 playback admission and effective controls is the selected slice.**
+   Current Redshank cached-integrity refusal can reborrow a live mutable backend
+   borrow and panic. Worker recreation then exposes reset rate/volume/duck behind
+   surviving UI values. Shared preview output can ignore desired mute, rate
+   bypasses the controller, and exact EOF can remain Loading. Three new baseline
+   regressions reproduced the cache panic and backend/worker EOF failures. P11
+   now records the implemented correction and scoped CPU/build qualification.
+2. **Preservation/identity and bounded P5a are implemented.** No scoped A1–A5/D1
+   P1 mechanism was re-established. D1 closes the old singleton-store finding at
+   `8bf59b31`; the ledger now cites its actual CPU/macOS/native/reopen receipt.
+   Hocket H3/H5 and malformed-model admission retain their scoped CPU receipts;
+   Hocket real-custody/native receiving remains separate. Bounded P5a was already
+   qualified; retire its completed reservation rather than redo the frozen
+   overlay. Generic Path/Walk Hear parity (LO-4) remains distinct. LO-5 stays the
+   resolved B1 alias. Q1 and B1–B6 retain their named scoped historical receipts.
+3. **Next product seams are capture custody, export identity and availability.**
+   Redshank R05/R09 still lose a dock release owner and silently stop accepting
+   capture samples while the elapsed display advances. R08 still lets sanitized
+   export identities collide. R04's native scheduling predicate now includes
+   alignment/export work; actual idle native completion is not newly qualified.
+   B7 V03 still infers stream/listening facts from absent errors or desired input.
+   The public shared Recorder diagnostic finding S4 is already implemented and
+   CPU qualified; do not duplicate that work under V03.
+4. **B11–B14 and C1–C5 remain component-scoped work.** Hocket staged Apply still
+   re-resolves its feed and handoff performs media-proportional preparation on
+   the UI thread. Current paint/native-text, navigation/motion/visibility,
+   musical reading and catalog mechanisms retain source-supported follow-ups.
+   The old private instrument Connection/Session/example moved out of the
+   standards-based Woodshed instrument crate into optional Ringdown research.
+   Live public/optional protocol and receipt findings stay open there; they are
+   not a current Woodshed GUI RPC path or permission for hardware operations.
+5. **Q2–Q5 and K1–K3 follow reachable product defects.** Obsolete scenario targets,
+   release build/binary/architecture binding, scorer input/source admission and
+   bounded diagnostics remain evidence/maintenance work. Do not silently remove
+   public compatibility contracts, saved formats, PCM, inactive media or reachable
+   orphan-clear paths. Product release status removes unnecessary legacy data
+   migration obligations; it does not make an incomplete receipt a success.
+   Q5's old-cohort/metadata-only observation is superseded: the October 22 pool
+   receipt binds the aligned recipe lock and eleven receiving CPU passes with
+   one ignore. That receiving result adds no native or instrument-device claim.
 
 ## Existing rulings and authority boundaries
 
@@ -365,3 +409,18 @@ copy and independent copied-media reopening. Ten accepted captures and a 92-case
 desktop gate (one existing ignore) are in the [native recovery receipt](../validation/redshank-recovery-native_20261021/README.md).
 P5a stays with its existing owner; physical audio and broader platform acceptance
 remain separate.
+
+
+2026-10-23 P11 qualification: B8 source `046b0bf4fe06a8e18dfe7b8dc8874813edfcbfbd`
+passes 39 playback unit and three IPC integration cases, plus 92 desktop,18 model
+unit and15 model integration cases:167 distinct passes, eight existing ignores.
+Seven new regressions include three observed baseline failures (Cargo101, stable
+source) and actual reconstructed backend/controller/gain checks. The successful
+locked desktop build, changed-file format gate and both independent reviews
+pass. The earlier wrong `redshank-genet` package selector ran no product test;
+its failure is retained and excluded. Tests/build ran on stable dirty source
+whose compiled product inputs exactly match the committed source. No supplier,
+manifest, lock, shipping public API or P5a code changed. No new native/physical
+or second-host acceptance follows. The current ledger corrects D1,S4,R04,Q5 and
+optional Ringdown reach, retains all97 rows, and marks only the selected B8
+findings CPU/build qualified. Publication verification and scoped pruning follow.

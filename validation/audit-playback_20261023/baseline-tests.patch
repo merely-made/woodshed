@@ -1,0 +1,132 @@
+diff --git a/ports/redshank/playback/src/backend.rs b/ports/redshank/playback/src/backend.rs
+index 3c1e4fcc..51f5e44e 100644
+--- a/ports/redshank/playback/src/backend.rs
++++ b/ports/redshank/playback/src/backend.rs
+@@ -1018,6 +1018,42 @@ mod seek_tests {
+         (frame % 8192) as i16 + channel as i16 * 9000 - 16384
+     }
+ 
++    #[test]
++    fn exact_duration_seek_reports_eof_before_first_frame_without_opening_output() {
++        for rate in [8_000, 44_100, 48_000] {
++            let directory = tempfile::tempdir().unwrap();
++            let path = directory.path().join("exact-end.wav");
++            let mut writer = hound::WavWriter::create(
++                &path,
++                hound::WavSpec {
++                    channels: 1,
++                    sample_rate: rate,
++                    bits_per_sample: 16,
++                    sample_format: hound::SampleFormat::Int,
++                },
++            )
++            .unwrap();
++            for frame in 0..rate {
++                writer.write_sample(pcm_sample(frame, 0)).unwrap();
++            }
++            writer.finalize().unwrap();
++            let mut backend = Backend::new(crate::own_fetch());
++            backend
++                .load(&servo_media_player::controller::MediaSource::Local {
++                    path: path.display().to_string(),
++                })
++                .unwrap();
++            let end = Duration::from_secs(1);
++            backend.seek(end).unwrap();
++            backend.reset(end).unwrap();
++            assert_eq!(backend.pump().unwrap(), PumpState::EndOfStream);
++            assert_eq!(backend.position().unwrap(), end);
++            assert!(backend.pending.is_empty());
++            assert!(backend.sink.is_none());
++            assert!(backend.audio.borrow().is_none());
++        }
++    }
++
+     #[test]
+     fn accurate_wav_seek_discards_packet_prefix_before_pcm_and_source_clock() {
+         for rate in [8_000, 44_100, 48_000] {
+diff --git a/ports/redshank/playback/src/lib.rs b/ports/redshank/playback/src/lib.rs
+index 6ddaa9d9..b8e3f297 100644
+--- a/ports/redshank/playback/src/lib.rs
++++ b/ports/redshank/playback/src/lib.rs
+@@ -352,6 +352,80 @@ mod tests {
+         assert_eq!(backend.facts().0, Some(expected));
+     }
+ 
++    #[test]
++    fn worker_cached_integrity_refusal_keeps_its_diagnostic_and_accepts_a_later_load() {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("changed-cache.wav");
++        synthetic_source(&path, 1);
++        let original = fs::read(&path).unwrap();
++        let runtime = PlaybackRuntime::start();
++        runtime
++            .command(PlaybackCommand::Load {
++                token: 31,
++                source: MediaSource::Cached {
++                    path: path.display().to_string(),
++                    origin_url: "https://example.invalid/changed-cache.wav".into(),
++                    representation: Box::new(RepresentationReceipt {
++                        byte_length: Some(original.len() as u64),
++                        complete_digest: Some("blake3:changed".into()),
++                        ..Default::default()
++                    }),
++                },
++                resume_ms: 0,
++            })
++            .unwrap();
++        let refused = wait_for(&runtime, |snapshot| {
++            snapshot.load_token == Some(31)
++                && matches!(snapshot.state, PlaybackState::Unavailable(_))
++        });
++        assert!(
++            matches!(refused.state, PlaybackState::Unavailable(ref reason)
++                if reason.contains("cached audio failed integrity validation")
++                    && !reason.contains("internal audio failure")),
++            "integrity refusal must survive the worker path: {:?}",
++            refused.state
++        );
++        assert!(refused.source.is_none() && refused.representation.is_none());
++        assert_eq!(fs::read(&path).unwrap(), original);
++        runtime
++            .command(PlaybackCommand::Load {
++                token: 32,
++                source: MediaSource::Local {
++                    path: "redshank-test://after-cache-refusal".into(),
++                },
++                resume_ms: 0,
++            })
++            .unwrap();
++        assert_eq!(
++            wait_for(&runtime, |snapshot| snapshot.load_token == Some(32)
++                && snapshot.state == PlaybackState::Paused)
++            .state,
++            PlaybackState::Paused
++        );
++    }
++
++    #[test]
++    fn worker_exact_duration_resume_reaches_ended_without_output() {
++        let directory = tempfile::tempdir().unwrap();
++        let path = directory.path().join("exact-end.wav");
++        synthetic_source(&path, 1);
++        let runtime = PlaybackRuntime::start();
++        runtime
++            .command(PlaybackCommand::Load {
++                token: 33,
++                source: MediaSource::Local {
++                    path: path.display().to_string(),
++                },
++                resume_ms: 1_000,
++            })
++            .unwrap();
++        let ended = wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended);
++        assert_eq!(ended.load_token, Some(33));
++        assert_eq!(ended.state, PlaybackState::Ended);
++        assert_eq!(ended.position_ms, 1_000);
++        assert_eq!(ended.duration_ms, Some(1_000));
++    }
++
+     #[test]
+     fn local_snapshot_survives_in_place_writes_and_truncation() {
+         let directory = tempfile::tempdir().unwrap();
