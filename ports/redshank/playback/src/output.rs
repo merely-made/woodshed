@@ -32,6 +32,76 @@ fn stream_buffer_config() -> ResamplingChannelConfig {
 /// Firewheel's default `num_graph_outputs`: the ports the graph's output node has.
 const GRAPH_OUTPUT_CHANNELS: u32 = 2;
 
+/// One gain authority shared by episode and voice-note backends. Desired gain
+/// exists before a device does, so whichever stream opens output applies it.
+pub(super) struct Output {
+    pub(super) runtime: Option<AudioRuntime>,
+    volume_percent: u8,
+    duck_percent: Option<u8>,
+}
+
+impl Default for Output {
+    fn default() -> Self {
+        Self {
+            runtime: None,
+            volume_percent: 100,
+            duck_percent: None,
+        }
+    }
+}
+
+impl Output {
+    pub(super) fn volume_percent(&self) -> u8 {
+        self.volume_percent
+    }
+
+    pub(super) fn duck_percent(&self) -> Option<u8> {
+        self.duck_percent
+    }
+
+    pub(super) fn effective_volume(&self) -> u8 {
+        match self.duck_percent {
+            Some(duck) => {
+                let scaled = u32::from(self.volume_percent) * u32::from(duck);
+                u8::try_from(scaled.div_ceil(100)).unwrap_or(u8::MAX)
+            },
+            None => self.volume_percent,
+        }
+    }
+
+    pub(super) fn set_volume(&mut self, percent: u8) {
+        self.volume_percent = percent;
+        self.apply_gain();
+    }
+
+    pub(super) fn set_duck(&mut self, percent: Option<u8>) {
+        self.duck_percent = percent;
+        self.apply_gain();
+    }
+
+    fn apply_gain(&mut self) {
+        let gain = self.effective_volume();
+        if let Some(runtime) = self.runtime.as_mut() {
+            runtime.set_volume(gain);
+        }
+    }
+
+    fn open(&mut self) -> Result<()> {
+        if self.runtime.is_none() {
+            self.runtime = Some(AudioRuntime::new(self.effective_volume())?);
+        }
+        Ok(())
+    }
+
+    pub(super) fn sink(&mut self, rate: u32, channels: u32) -> Result<Sink> {
+        self.open()?;
+        self.runtime
+            .as_mut()
+            .expect("output was initialized")
+            .sink(rate, channels)
+    }
+}
+
 pub(super) struct AudioRuntime {
     // Drop the backend before its graph context.
     stream: CpalStream,
@@ -44,7 +114,7 @@ pub(super) struct AudioRuntime {
 }
 
 impl AudioRuntime {
-    pub(super) fn new() -> Result<Self> {
+    pub(super) fn new(volume_percent: u8) -> Result<Self> {
         let mut context = FirewheelContext::new(FirewheelConfig {
             num_graph_inputs: ChannelCount::ZERO,
             ..Default::default()
@@ -61,7 +131,7 @@ impl AudioRuntime {
             .min(GRAPH_OUTPUT_CHANNELS);
         let channels = NonZeroChannelCount::new(output_channels)
             .context("the audio output reported no channels")?;
-        let volume_params = VolumeNode::from_percent(100.0);
+        let volume_params = VolumeNode::from_percent(f32::from(volume_percent));
         let volume = context
             .add_node(volume_params, Some(VolumeNodeConfig { channels }))
             .map_err(|error| anyhow!("could not construct output gain: {error:?}"))?;

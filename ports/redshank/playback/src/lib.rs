@@ -70,8 +70,8 @@ pub struct PlaybackSnapshot {
     pub position_ms: u64,
     pub duration_ms: Option<u64>,
     pub source: Option<String>,
-    /// The rate the retiming stage is actually running at. It equals the
-    /// requested rate once clamped to what the stretcher supports.
+    /// The controller-admitted rate for the main source. Between sources this
+    /// retains the last admitted rate; unloaded preferences wait for Load.
     pub rate_percent: u16,
     /// The listener's volume. While ducked, the gain in effect is this
     /// scaled by `duck_percent`; the listener's number does not move.
@@ -140,6 +140,9 @@ pub enum PlaybackCommand {
     Shutdown,
     #[cfg(test)]
     CrashWorker,
+    /// Inspect actual backend/controller controls without requiring a device.
+    #[cfg(test)]
+    InspectControls(mpsc::Sender<(u16, Option<u16>, u8)>),
 }
 
 type Wake = Arc<dyn Fn() + Send + Sync>;
@@ -261,6 +264,16 @@ mod tests {
         }
     }
 
+    fn inspect_controls(runtime: &PlaybackRuntime) -> (u16, Option<u16>, u8) {
+        let (sender, receiver) = std::sync::mpsc::channel();
+        runtime
+            .command(PlaybackCommand::InspectControls(sender))
+            .unwrap();
+        receiver
+            .recv_timeout(Duration::from_secs(2))
+            .expect("worker control facts")
+    }
+
     #[test]
     fn new_runtime_has_an_honest_empty_snapshot() {
         assert_eq!(
@@ -350,6 +363,229 @@ mod tests {
         };
         backend.admit_cached_representation(&expected).unwrap();
         assert_eq!(backend.facts().0, Some(expected));
+    }
+
+    #[test]
+    fn worker_cached_integrity_refusal_keeps_its_diagnostic_and_accepts_a_later_load() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("changed-cache.wav");
+        synthetic_source(&path, 1);
+        let original = fs::read(&path).unwrap();
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 31,
+                source: MediaSource::Cached {
+                    path: path.display().to_string(),
+                    origin_url: "https://example.invalid/changed-cache.wav".into(),
+                    representation: Box::new(RepresentationReceipt {
+                        byte_length: Some(original.len() as u64),
+                        complete_digest: Some("blake3:changed".into()),
+                        ..Default::default()
+                    }),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        let refused = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(31)
+                && matches!(snapshot.state, PlaybackState::Unavailable(_))
+        });
+        assert!(
+            matches!(refused.state, PlaybackState::Unavailable(ref reason)
+                if reason.contains("cached audio failed integrity validation")
+                    && !reason.contains("internal audio failure")),
+            "integrity refusal must survive the worker path: {:?}",
+            refused.state
+        );
+        assert!(refused.source.is_none() && refused.representation.is_none());
+        assert_eq!(fs::read(&path).unwrap(), original);
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 32,
+                source: MediaSource::Local {
+                    path: "redshank-test://after-cache-refusal".into(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        assert_eq!(
+            wait_for(&runtime, |snapshot| snapshot.load_token == Some(32)
+                && snapshot.state == PlaybackState::Paused)
+            .state,
+            PlaybackState::Paused
+        );
+    }
+
+    #[test]
+    fn worker_exact_duration_resume_reaches_ended_without_output() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("exact-end.wav");
+        synthetic_source(&path, 1);
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 33,
+                source: MediaSource::Local {
+                    path: path.display().to_string(),
+                },
+                resume_ms: 1_000,
+            })
+            .unwrap();
+        let ended = wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended);
+        assert_eq!(ended.load_token, Some(33));
+        assert_eq!(ended.state, PlaybackState::Ended);
+        assert_eq!(ended.position_ms, 1_000);
+        assert_eq!(ended.duration_ms, Some(1_000));
+        runtime.command(PlaybackCommand::Seek(1_000)).unwrap();
+        // A worker barrier prevents the already-ended snapshot from satisfying
+        // the next assertion before the new seek has actually been processed.
+        inspect_controls(&runtime);
+        let sought = wait_for(&runtime, |snapshot| snapshot.state == PlaybackState::Ended);
+        assert_eq!(sought.state, PlaybackState::Ended);
+        assert_eq!(sought.position_ms, 1_000);
+        assert_eq!(sought.duration_ms, Some(1_000));
+    }
+
+    #[test]
+    fn worker_defers_unloaded_rate_until_controller_admission_and_reapplies_it_on_load() {
+        let runtime = PlaybackRuntime::start();
+        runtime.command(PlaybackCommand::SetRate(175)).unwrap();
+        runtime.command(PlaybackCommand::SetVolume(37)).unwrap();
+        assert_eq!(inspect_controls(&runtime), (100, None, 37));
+        assert_eq!(runtime.snapshot().state, PlaybackState::Empty);
+        assert_eq!(
+            runtime.snapshot().rate_percent,
+            100,
+            "no source admitted this preference"
+        );
+
+        for (token, expected_rate) in [(41, 175), (42, 200)] {
+            if token == 42 {
+                runtime.command(PlaybackCommand::SetRate(400)).unwrap();
+                assert_eq!(inspect_controls(&runtime), (200, Some(200), 37));
+            }
+            runtime
+                .command(PlaybackCommand::Load {
+                    token,
+                    source: MediaSource::Local {
+                        path: "redshank-test://admitted-rate".into(),
+                    },
+                    resume_ms: 0,
+                })
+                .unwrap();
+            let loaded = wait_for(&runtime, |snapshot| {
+                snapshot.load_token == Some(token) && snapshot.state == PlaybackState::Paused
+            });
+            assert_eq!(loaded.state, PlaybackState::Paused);
+            assert_eq!(loaded.rate_percent, expected_rate);
+            assert_eq!(
+                inspect_controls(&runtime),
+                (expected_rate, Some(expected_rate), 37)
+            );
+        }
+
+        let directory = tempfile::tempdir().unwrap();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 43,
+                source: MediaSource::Local {
+                    path: directory.path().join("missing.wav").display().to_string(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        let failed = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(43)
+                && matches!(snapshot.state, PlaybackState::Unavailable(_))
+        });
+        assert!(matches!(failed.state, PlaybackState::Unavailable(_)));
+        runtime.command(PlaybackCommand::SetRate(125)).unwrap();
+        inspect_controls(&runtime);
+        assert_eq!(
+            runtime.snapshot().rate_percent,
+            200,
+            "failed load cannot admit pending rate"
+        );
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 44,
+                source: MediaSource::Local {
+                    path: "redshank-test://later-rate-admission".into(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        let loaded = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(44) && snapshot.state == PlaybackState::Paused
+        });
+        assert_eq!(loaded.state, PlaybackState::Paused);
+        assert_eq!(loaded.rate_percent, 125);
+        assert_eq!(inspect_controls(&runtime), (125, Some(125), 37));
+    }
+
+    #[test]
+    fn worker_recovery_retains_actual_rate_volume_and_capture_duck_until_unduck() {
+        let runtime = PlaybackRuntime::start();
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 51,
+                source: MediaSource::Local {
+                    path: "redshank-test://controls-before-recovery".into(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        assert_eq!(
+            wait_for(&runtime, |snapshot| snapshot.load_token == Some(51)
+                && snapshot.state == PlaybackState::Paused)
+            .state,
+            PlaybackState::Paused
+        );
+        runtime.command(PlaybackCommand::SetRate(150)).unwrap();
+        runtime.command(PlaybackCommand::SetVolume(40)).unwrap();
+        runtime.command(PlaybackCommand::Duck(25)).unwrap();
+        assert_eq!(inspect_controls(&runtime), (150, Some(150), 10));
+        runtime.command(PlaybackCommand::CrashWorker).unwrap();
+        let recovered = wait_for(
+            &runtime,
+            |snapshot| matches!(snapshot.state, PlaybackState::Unavailable(ref reason) if reason.contains("recovered")),
+        );
+        assert!(matches!(recovered.state, PlaybackState::Unavailable(_)));
+        assert_eq!(
+            inspect_controls(&runtime),
+            (100, None, 10),
+            "gain restored before source/output admission"
+        );
+        runtime
+            .command(PlaybackCommand::Load {
+                token: 52,
+                source: MediaSource::Local {
+                    path: "redshank-test://controls-after-recovery".into(),
+                },
+                resume_ms: 0,
+            })
+            .unwrap();
+        let loaded = wait_for(&runtime, |snapshot| {
+            snapshot.load_token == Some(52) && snapshot.state == PlaybackState::Paused
+        });
+        assert_eq!(loaded.state, PlaybackState::Paused);
+        assert_eq!(
+            (
+                loaded.rate_percent,
+                loaded.volume_percent,
+                loaded.duck_percent
+            ),
+            (150, 40, Some(25))
+        );
+        assert_eq!(
+            inspect_controls(&runtime),
+            (150, Some(150), 10),
+            "backend, controller and snapshot must agree"
+        );
+        runtime.command(PlaybackCommand::Unduck).unwrap();
+        assert_eq!(inspect_controls(&runtime), (150, Some(150), 40));
+        assert_eq!(runtime.snapshot().duck_percent, None);
     }
 
     #[test]
