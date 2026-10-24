@@ -13,6 +13,14 @@ pub const PROGRAM_TICKS_PER_BEAT: u64 = 960;
 pub const BEAT_TICKS: u64 = PROGRAM_TICKS_PER_BEAT;
 pub const MAX_PROGRAM_TONE_FRAMES: usize = 65_536;
 pub const MAX_PROGRAM_TONES: usize = 256;
+/// Short periodic table used only when no integer-cycle loop meets the normal
+/// frame and pitch-error bounds. Playback advances through it with a fixed
+/// point phase accumulator and linear interpolation.
+pub const FALLBACK_PERIODIC_WAVE_FRAMES: usize = 4096;
+pub(super) const FALLBACK_PHASE_INDEX_BITS: u32 = 12;
+pub(super) const FALLBACK_PHASE_FRACTION_BITS: u32 = 52;
+const _: () = assert!(FALLBACK_PERIODIC_WAVE_FRAMES == 1usize << FALLBACK_PHASE_INDEX_BITS);
+const _: () = assert!(FALLBACK_PHASE_INDEX_BITS + FALLBACK_PHASE_FRACTION_BITS == 64);
 
 /// Caller-owned ephemeral identity. It is not persisted or interpreted here.
 pub type ProgramToken = u64;
@@ -179,7 +187,11 @@ pub(super) struct PreparedEvent {
 #[derive(Debug)]
 pub(super) struct PreparedTone {
     pub pcm: SampleBuffer,
+    pub requested_frequency_hz: f64,
     pub actual_frequency_hz: f64,
+    /// Present only for the short fractional-phase table. The ordinary
+    /// integer-cycle PCM path keeps its exact one-frame stepping behavior.
+    pub phase_step_q64: Option<u64>,
     #[cfg(test)]
     pub cycles: usize,
 }
@@ -471,9 +483,9 @@ fn prepare_tone(frequency: f64, rate: u32) -> Result<PreparedTone, OutputError> 
             break;
         }
     }
-    let (frames, cycles, actual_frequency_hz) = selected.ok_or_else(|| {
-        err("program tone cannot be represented by a bounded integer-cycle PCM loop")
-    })?;
+    let Some((frames, cycles, actual_frequency_hz)) = selected else {
+        return prepare_fractional_tone(frequency, rate);
+    };
     let mut pcm = Vec::with_capacity(frames);
     for frame in 0..frames {
         let phase = std::f64::consts::TAU * cycles as f64 * frame as f64 / frames as f64;
@@ -486,8 +498,43 @@ fn prepare_tone(frequency: f64, rate: u32) -> Result<PreparedTone, OutputError> 
     }
     Ok(PreparedTone {
         pcm: SampleBuffer::new(pcm, rate),
+        requested_frequency_hz: frequency,
         actual_frequency_hz,
+        phase_step_q64: None,
         #[cfg(test)]
         cycles,
+    })
+}
+
+fn prepare_fractional_tone(frequency: f64, rate: u32) -> Result<PreparedTone, OutputError> {
+    // The callback cannot synthesize or allocate, so prepare one cycle of the
+    // existing Woodshed waveform here and move through it at the requested
+    // output rate. A rounded Q64 step has much finer resolution than the
+    // existing 1 ppm admission limit; keep that limit as an explicit guard.
+    let phase_step_q64 = (frequency / rate as f64 * 18_446_744_073_709_551_616.0).round() as u64;
+    let actual_frequency_hz = phase_step_q64 as f64 / 18_446_744_073_709_551_616.0
+        * rate as f64;
+    if phase_step_q64 == 0
+        || !actual_frequency_hz.is_finite()
+        || (actual_frequency_hz - frequency).abs() / frequency > 1.0e-6
+    {
+        return Err(err("program tone exceeds the bounded frequency error"));
+    }
+
+    let mut pcm = Vec::with_capacity(FALLBACK_PERIODIC_WAVE_FRAMES);
+    for frame in 0..FALLBACK_PERIODIC_WAVE_FRAMES {
+        let phase = std::f64::consts::TAU * frame as f64 / FALLBACK_PERIODIC_WAVE_FRAMES as f64;
+        pcm.push((phase.sin() + (phase * 2.0).sin() * 0.25 + (phase * 3.0).sin() * 0.12) as f32);
+    }
+    if pcm.iter().any(|sample| !sample.is_finite()) {
+        return Err(err("program tone synthesis produced a nonfinite sample"));
+    }
+    Ok(PreparedTone {
+        pcm: SampleBuffer::new(pcm, rate),
+        requested_frequency_hz: frequency,
+        actual_frequency_hz,
+        phase_step_q64: Some(phase_step_q64),
+        #[cfg(test)]
+        cycles: 0,
     })
 }

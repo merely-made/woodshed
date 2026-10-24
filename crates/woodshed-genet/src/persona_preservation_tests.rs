@@ -315,7 +315,13 @@ fn fixture_with_candidate(
             cambium_genet_winit_host::Init {
                 sheet: crate::appearance::stylesheet(&ui),
                 state: ui,
-                logic: Box::new(move |ui: &UiState| crate::desktop_root(ui, &commands))
+                logic: Box::new(move |ui: &UiState| {
+                    crate::desktop_root(
+                        ui,
+                        &commands,
+                        cambium_genet_winit_host::WindowFrame::Host,
+                    )
+                })
                     as crate::sync::Logic,
                 fonts: Vec::new(),
                 images: Vec::new(),

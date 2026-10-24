@@ -1046,6 +1046,7 @@ mod capture_tests {
 mod persona_store_tests {
     use super::*;
     use personae::InMemoryProvider;
+    use woodshed_views::stage::UiState;
 
     fn sealed_at(
         root: &Path,
@@ -1151,6 +1152,59 @@ mod persona_store_tests {
             2
         );
         assert!(!root.path().join("genet-state.json").exists());
+    }
+
+    #[test]
+    fn scope_navigation_payload_reopens_from_filesystem_and_corrupt_route_bytes_are_retained() {
+        let root = tempfile::tempdir().unwrap();
+        let provider = InMemoryProvider::from_seed([13; 32]);
+        let store = open_fixture(root.path(), &provider);
+        let ui = UiState::new();
+        let saved = ui.to_persisted();
+        let route = saved.scope_navigation_json.clone().unwrap();
+        let bytes = serde_json::to_string(&saved).unwrap();
+        store.try_save(&bytes).unwrap();
+        drop(store);
+
+        let reopened_store = open_fixture(root.path(), &provider);
+        let reopened_bytes = reopened_store.try_load().unwrap().unwrap();
+        assert_eq!(reopened_bytes, bytes);
+        let reopened_session = woodshed_core::storage::decode_session(&reopened_bytes)
+            .unwrap()
+            .session;
+        assert_eq!(
+            reopened_session.scope_navigation_json.as_deref(),
+            Some(route.as_str())
+        );
+        let mut reopened_ui = UiState::new();
+        reopened_ui.apply_persisted(&reopened_session, Default::default());
+        assert_eq!(
+            reopened_ui.to_persisted().scope_navigation_json.as_deref(),
+            Some(route.as_str())
+        );
+
+        let mut corrupt_session = reopened_session;
+        corrupt_session.scope_navigation_json = Some("{".into());
+        let corrupt_bytes = serde_json::to_string(&corrupt_session).unwrap();
+        reopened_store.try_save(&corrupt_bytes).unwrap();
+        drop(reopened_store);
+
+        let fresh_store = open_fixture(root.path(), &provider);
+        let retained_corrupt_bytes = fresh_store.try_load().unwrap().unwrap();
+        let mut fresh_ui = UiState::new();
+        let corrupt_loaded = woodshed_core::storage::decode_session(&retained_corrupt_bytes)
+            .unwrap()
+            .session;
+        fresh_ui.apply_persisted(&corrupt_loaded, Default::default());
+        assert_eq!(
+            fresh_ui.to_persisted().scope_navigation_json.as_deref(),
+            Some("{")
+        );
+        assert_eq!(
+            fresh_store.try_load().unwrap().as_deref(),
+            Some(corrupt_bytes.as_str())
+        );
+        assert_eq!(retained_corrupt_bytes, corrupt_bytes);
     }
 
     #[test]
@@ -1383,7 +1437,14 @@ mod persona_store_tests {
             "relative" => {
                 let root = configured_root().unwrap();
                 assert!(root.is_absolute());
-                assert_eq!(root, std::env::current_dir().unwrap().join("isolated-root"));
+                assert_eq!(
+                    root,
+                    std::env::current_dir()
+                        .unwrap()
+                        .canonicalize()
+                        .unwrap()
+                        .join("isolated-root")
+                );
             },
             "obsolete-state" | "obsolete-settings" => {
                 let name = if mode == "obsolete-state" {

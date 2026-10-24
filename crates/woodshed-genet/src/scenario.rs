@@ -1861,6 +1861,13 @@ impl Snapshot<'_, '_> {
             )
             .with_field("working-set-id", ui.working_sets.active_id.0.to_string())
             .with_field(
+                "scope-panel",
+                ui.workspace
+                    .active_panel()
+                    .map_or("none", |panel| panel.label())
+                    .to_string(),
+            )
+            .with_field(
                 "explorations",
                 (ui.catalog_explorations.inactive.len() + 1).to_string(),
             )

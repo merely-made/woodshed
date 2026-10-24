@@ -1,0 +1,52 @@
+# Fresh Woodshed process, same encrypted isolated persona. First verify the
+# saved Card route/owner and Overview camera, then walk Back through both Sets.
+settle 90
+assert snap practice-saved == true
+assert snap working-sets == 2
+assert snap working-set-id == 2
+assert snap scope-panel == Practice
+assert snap overview-zoom == 1.25
+assert snap rehearsal-running == false
+act p6-context-observation reopened
+assert text Card context · Working Set 2
+assert text Guided chord
+capture 02_card_context_reopened
+
+click .scope-back
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 2
+click .scope-back
+settle 4
+assert snap overview-active == true
+act p6-context-observation back-overview
+assert snap overview-zoom == 1.25
+click .scope-back
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 2
+click .scope-back
+settle 4
+assert snap scope-panel == Practice
+assert snap working-set-id == 2
+click .scope-back
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 2
+click .scope-back
+settle 4
+assert snap overview-active == true
+act p6-context-observation back-older-overview
+assert snap overview-zoom == 1.00
+log Older Overview history restored its original camera
+click .scope-back
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 1
+click .scope-back
+settle 4
+assert snap scope-panel == Practice
+assert snap working-set-id == 1
+assert snap rehearsal-running == false
+act p6-context-observation returned
+log Fresh-process contextual route and cross-Set Back history restored

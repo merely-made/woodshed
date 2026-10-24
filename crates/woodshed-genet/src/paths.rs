@@ -19,6 +19,10 @@ pub(crate) fn absolute(path: &Path) -> Result<PathBuf, String> {
             Component::ParentDir => {
                 resolved.pop();
             },
+            // On Windows a Prefix by itself (for example, `C:` or a UNC
+            // share) is not the absolute root. Probing it can resolve as a
+            // drive-relative path. Keep it lexical until RootDir arrives.
+            Component::Prefix(prefix) => resolved.push(prefix.as_os_str()),
             other => {
                 resolved.push(other.as_os_str());
                 match std::fs::symlink_metadata(&resolved) {
@@ -52,6 +56,18 @@ mod tests {
         );
         assert!(!directory.path().join("future").exists());
         assert!(absolute(Path::new("")).is_err());
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn windows_root_prefix_survives_future_children() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path().canonicalize().unwrap();
+        assert!(root.is_absolute());
+
+        let path = root.join("scope-navigation-future/../private/session");
+        assert_eq!(absolute(&path).unwrap(), root.join("private/session"));
+        assert!(!root.join("scope-navigation-future").exists());
     }
 
     #[test]

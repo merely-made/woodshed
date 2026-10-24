@@ -165,6 +165,11 @@ fn view_label(view: NotationView) -> &'static str {
 impl UiState {
     pub fn leave_music_owner(&mut self) {
         self.music_editor.practice.stop();
+        self.leave_music_owner_view();
+    }
+    /// Leave owner-local editing gestures while a navigation route selects a
+    /// different Set. The captured practice run remains bound to its owner.
+    pub(super) fn leave_music_owner_view(&mut self) {
         self.music_editor.active_tone = None;
         self.music_editor.fret_gesture = None;
         self.music_editor.picking_preview = None;
@@ -1499,6 +1504,28 @@ mod tests {
         ui.activate_workspace_panel(WorkspacePanel::Arrangement);
         ui.music_example(rhythm);
         ui
+    }
+    #[test]
+    fn scope_set_switch_clears_owner_gestures_without_stopping_bound_practice() {
+        let mut ui = fixture(false);
+        let owner = ui.working_sets.active_id;
+        ui.practice_music();
+        assert!(ui.music_practice_requested());
+        let run_epoch = ui.music_editor.practice.run_epoch();
+        let other = ui
+            .working_sets
+            .create(&mut ui.set, "Other Set", Default::default());
+        assert!(ui.working_sets.activate(owner, &mut ui.set));
+        ui.preview_music_pattern(pattern::PickingPattern::EighthUpDown);
+        ui.music_editor.active_tone = Some(FrettedNote { string: 1, fret: 3 });
+        assert!(ui.music_preview_active());
+        assert!(ui.activate_working_set_for_scope(other));
+        assert_eq!(ui.working_sets.active_id, other);
+        assert_eq!(ui.music_editor.practice.owner(), Some(owner));
+        assert_eq!(ui.music_editor.practice.run_epoch(), run_epoch);
+        assert!(ui.music_practice_requested());
+        assert!(!ui.music_preview_active());
+        assert_eq!(ui.music_editor.active_tone, None);
     }
     #[test]
     fn musical_edits_share_one_history_across_views_save_and_reopen() {

@@ -56,7 +56,7 @@ use std::rc::Rc;
 use cambium::{clickable, el, text as text_node, title_bar};
 use cambium_genet_winit_host::{
     CaptionLabels, HostHooks, HostOptions, Init, Key, KeyPress, NamedKey, Runner, WindowCommands,
-    WindowFrame, platform_caption_controls, run,
+    WindowFrame, caption_controls_for_frame, platform_window_frame, run,
 };
 use woodshed_core::audio::AudioBackend as _;
 use woodshed_core::midi::MidiBackend as _;
@@ -68,7 +68,10 @@ use crate::shared::Shared;
 use crate::sync::{Ctx, Logic};
 
 /// The shared title bar owns native insets, drag regions and caption actions.
-fn desktop_chrome(commands: &WindowCommands) -> UiChild {
+fn desktop_chrome(commands: &WindowCommands, frame: WindowFrame) -> UiChild {
+    if frame == WindowFrame::Host {
+        return Box::new(String::new());
+    }
     title_bar(
         Box::new(
             el("span", text_node("W"))
@@ -77,11 +80,11 @@ fn desktop_chrome(commands: &WindowCommands) -> UiChild {
         ),
         Box::new(el("span", text_node("Woodshed")).attr("class", "chrome-title")),
         Box::new(String::new()),
-        platform_caption_controls(commands, &CaptionLabels::default()),
+        caption_controls_for_frame(commands, &CaptionLabels::default(), frame),
     )
 }
 
-fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
+fn desktop_root(ui: &UiState, commands: &WindowCommands, frame: WindowFrame) -> UiChild {
     let retry = commands.clone();
     let discard = commands.clone();
     let decision = ui.practice_close_pending.then(|| {
@@ -205,7 +208,7 @@ fn desktop_root(ui: &UiState, commands: &WindowCommands) -> UiChild {
         el(
             "div",
             (
-                desktop_chrome(commands),
+                desktop_chrome(commands, frame),
                 decision,
                 persona_decision,
                 draft_decision,
@@ -266,6 +269,7 @@ fn boot_state(
     window: &dyn cambium_genet_winit_host::HostWindow,
     commands: &WindowCommands,
     wake: &cambium_genet_winit_host::HostWake,
+    frame: WindowFrame,
 ) -> Init<UiState, Logic> {
     let mut shared = shared.borrow_mut();
     let music_practice_receipt = scenario::music_practice_receipt();
@@ -332,7 +336,7 @@ fn boot_state(
     let commands = commands.clone();
     Init {
         state: ui,
-        logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+        logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, frame)) as Logic,
         sheet,
         fonts: fonts::bundled_fonts(),
         images: Vec::new(),
@@ -620,11 +624,12 @@ fn main() {
     }
     let init_shared = shared.clone();
     let initial_geometry = initial_window_geometry(&shared);
+    let frame = platform_window_frame();
     let options = HostOptions {
         title: "Woodshed".into(),
-        // CSD: the app draws its own chrome (title row, window buttons, drag
-        // surface); the host supplies the edge-resize grab margins and cursors.
-        window_frame: WindowFrame::App,
+        // Native frames own their title and caption ornamentation. Windows
+        // keeps the shared client frame, including resize and Snap behavior.
+        window_frame: frame,
         maximize_control_label: CaptionLabels::default().maximize,
         initial_logical_size: (1_100.0, 664.0),
         initial_geometry,
@@ -635,7 +640,7 @@ fn main() {
     };
     run(
         options,
-        move |window, commands, wake| boot_state(&init_shared, window, commands, wake),
+        move |window, commands, wake| boot_state(&init_shared, window, commands, wake, frame),
         hooks(&shared),
     )
     .expect("run app");
@@ -662,7 +667,7 @@ mod tests {
                 Init {
                     sheet: appearance::stylesheet(&ui),
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, WindowFrame::Host)) as Logic,
                     fonts: vec![],
                     images: vec![],
                 }
@@ -805,7 +810,7 @@ mod tests {
                 Init {
                     sheet: appearance::stylesheet(&ui),
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, WindowFrame::Host)) as Logic,
                     fonts: Vec::new(),
                     images: Vec::new(),
                 }
@@ -996,6 +1001,10 @@ mod tests {
         assert_eq!(to_host_geometry(to_window_settings(host)), host);
     }
     fn appearance_harness() -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
+        appearance_harness_for_frame(WindowFrame::App)
+    }
+
+    fn appearance_harness_for_frame(frame: WindowFrame) -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
         let mut ui = UiState::new();
         ui.appearance_authoring_available = true;
         ui.appearance
@@ -1007,7 +1016,7 @@ mod tests {
                 let sheet = appearance::stylesheet(&ui);
                 Init {
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands)) as Logic,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, frame)) as Logic,
                     sheet,
                     fonts: vec![],
                     images: vec![],
@@ -1020,7 +1029,7 @@ mod tests {
                 ..cambium_genet_winit_host::inert_hooks()
             },
             HostOptions {
-                window_frame: WindowFrame::App,
+                window_frame: frame,
                 ..Default::default()
             },
         )
@@ -1082,5 +1091,29 @@ mod tests {
             let (_, top, _, _) = h.painted_rect(editor).unwrap();
             assert!(top >= 36.0);
         }
+    }
+
+    #[test]
+    fn native_frame_owns_window_ornamentation_without_hiding_application_content() {
+        use layout_dom_api::LayoutDom as _;
+        use taproot::Selector;
+        let mut h = appearance_harness_for_frame(WindowFrame::Host);
+        h.layout_at(1180.0, 800.0);
+        let direct_chrome = h.with_dom(|dom| {
+            let frame = taproot::matching_classes(dom, &Selector::class("desktop-frame"))[0];
+            let direct = |class: &str| {
+                taproot::matching_classes(dom, &Selector::class(class))
+                    .into_iter()
+                    .filter(|node| dom.parent(*node) == Some(frame))
+                    .count()
+            };
+            (
+                direct("cambium-title-bar"),
+                direct("window-caption-controls"),
+            )
+        });
+        assert_eq!(direct_chrome, (0, 0));
+        let editor = h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]);
+        assert!(h.visible_rect(editor).is_some());
     }
 }

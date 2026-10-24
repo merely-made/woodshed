@@ -1,0 +1,59 @@
+# Seed two real Sets with shared Card occurrence IDs, navigate through the
+# shipping overview and scope controls, then let the app close normally.
+settle 90
+ui-zoom 1
+act p6-context-native-seed
+settle 12
+assert snap working-sets == 2
+assert snap working-set-id == 2
+assert snap practice-saved == true
+
+click .workspace-panel Mere
+settle 4
+click .overview-node-title Working Set 1
+settle 2
+click .overview-open Open view
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 1
+click .scope-down
+settle 4
+assert snap scope-panel == Practice
+assert snap working-set-id == 1
+click .scope-up
+settle 4
+assert snap scope-panel == Set
+click .scope-up
+settle 4
+assert snap overview-active == true
+
+click .overview-node-title Working Set 2
+settle 2
+click .overview-open Open view
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 2
+click .scope-down
+settle 4
+assert snap scope-panel == Practice
+assert snap working-set-id == 2
+click .scope-up
+settle 4
+click .scope-up
+settle 4
+assert snap overview-active == true
+click .overview-zoom-in Zoom in
+settle 4
+assert snap overview-zoom == 1.25
+assert snap working-set-id == 2
+assert snap rehearsal-running == false
+click .scope-down
+settle 4
+assert snap scope-panel == Set
+assert snap working-set-id == 2
+click .scope-down
+settle 4
+assert snap scope-panel == Practice
+assert snap working-set-id == 2
+act p6-context-observation seed
+log Two-Set contextual route seeded; normal close follows

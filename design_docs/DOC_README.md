@@ -6,6 +6,19 @@
 
 # design_docs Index
 
+- [Contextual navigation in Woodshed](2026-10-23_contextual_navigation_plan.md)
+  — Native Back/Forward and Up/Down navigation across Session Mere, working
+  Set, and owner-qualified Card routes is qualified. Session-persistent history
+  passed fresh two-process Windows runs on the portable lock through isolated
+  unlocked Keepers: the exact owner/Card route and view reopened, Back restored
+  distinct Overview cameras, and playback remained stopped. Portable Mere and
+  Genet pins are locked at `7632bbd32a` and `2b5c01811e`; the Card 2 G2 tone
+  admission fallback is covered by 174 passing Woodshed audio tests and a
+  headed one-shot Card 2/full-Set run at the actual 44.1 kHz device rate.
+  Physical audio quality, latency, and live-user-persona qualification remain
+  open. Playback, edits, and audio capture remain
+  separately owned.
+
 Rust policy (2026-10-13): working toolchain 1.99.0 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".
 
 Murm source adoption (2026-10-13) is tracked in

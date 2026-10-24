@@ -163,6 +163,21 @@ impl UiState {
         self.activate_workspace_panel(WorkspacePanel::Set);
         true
     }
+    /// Select a Set as a view destination without transferring or stopping a
+    /// MusicXML practice run that remains bound to its original owner.
+    pub(super) fn activate_working_set_for_scope(&mut self, id: WorkingSetId) -> bool {
+        if self.working_sets.get(id, &self.set).is_none() {
+            return false;
+        }
+        if id != self.working_sets.active_id {
+            self.sync_card_rename();
+            self.leave_music_owner_view();
+            self.park_set_presentation();
+            self.working_sets.activate(id, &mut self.set);
+            self.restore_set_presentation();
+        }
+        true
+    }
     pub fn rehearsal_set(&self) -> &Set {
         self.rehearsal_owner
             .and_then(|owner| self.working_sets.get(owner, &self.set))

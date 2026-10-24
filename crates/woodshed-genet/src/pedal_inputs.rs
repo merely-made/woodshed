@@ -3,7 +3,7 @@ use crate::{
     shared::Shared,
     sync::{Ctx, Logic},
 };
-use cambium_genet_winit_host::{Key, KeyPress, NamedKey, Runner};
+use cambium_genet_winit_host::{Key, KeyPress, NamedKey, Runner, WindowFrame};
 use layout_dom_api::{LayoutDom as _, LocalName, Namespace};
 use woodshed_core::midi::{MidiBackend as _, PedalAction, PedalShortcut};
 use woodshed_views::stage::{UiChild, UiState};
@@ -329,7 +329,9 @@ mod tests {
                 Init {
                     sheet: crate::appearance::stylesheet(&ui),
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| crate::desktop_root(ui, &commands))
+                    logic: Box::new(move |ui: &UiState| {
+                        crate::desktop_root(ui, &commands, WindowFrame::Host)
+                    })
                         as Logic,
                     fonts: vec![],
                     images: vec![],

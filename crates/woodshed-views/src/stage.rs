@@ -57,6 +57,8 @@ mod connected_scales;
 mod context;
 #[cfg(test)]
 mod context_tests;
+mod contextual_navigation;
+mod context_card;
 mod instances;
 mod looper;
 pub mod music_editor;
@@ -811,8 +813,10 @@ pub fn set_graph_swatch_from_snapshot(
         swatch.show_labels = false;
     }
     swatch.selected = ui
-        .set
-        .cursor_id()
+        .scope_card_anchors
+        .get(&ui.working_sets.active_id)
+        .copied()
+        .or_else(|| ui.set.cursor_id())
         .and_then(|card| snapshot.instance_ref_of(card));
     swatch.focus = ui
         .context_focus
@@ -1149,6 +1153,13 @@ pub struct UiState {
     pub music_editor: music_editor::MusicEditor,
     pub overview_focus: Option<woodshed_core::session_overview::OverviewNodeId>,
     pub overview_notice: Option<String>,
+    /// In-memory scope visits name existing owners and Card occurrences only.
+    pub(super) scope_navigation: contextual_navigation::Navigation,
+    pub(crate) scope_navigation_hint: Option<cambium::scope_navigation::ScopeDirection>,
+    pub(crate) scope_navigation_notice: Option<String>,
+    pub(super) scope_navigation_rejected_json: Option<String>,
+    /// Visual Card anchors are separate from the runner's Set cursor.
+    pub(crate) scope_card_anchors: BTreeMap<woodshed_core::working_sets::WorkingSetId, CardId>,
     pub overview_folds: overview_folds::OverviewFolds,
     pub overview_viewport: GraphViewport,
     /// View-local cameras for the Related graph and relationship editor.
@@ -1446,6 +1457,11 @@ impl UiState {
             music_editor: Default::default(),
             overview_focus: None,
             overview_notice: None,
+            scope_navigation: Default::default(),
+            scope_navigation_hint: None,
+            scope_navigation_notice: None,
+            scope_navigation_rejected_json: None,
+            scope_card_anchors: Default::default(),
             overview_folds: Default::default(),
             overview_viewport: GraphViewport::default(),
             related_viewport: GraphViewport::default(),
@@ -1693,6 +1709,7 @@ impl UiState {
                 if !self.set.select_id(id) {
                     return;
                 }
+                self.remember_card_scope(id);
                 self.set_graph_relation = None;
                 self.set_graph_opened_link = None;
                 self.set_graph_card_expanded = if was_selected {
@@ -2586,6 +2603,10 @@ impl UiState {
                 .to_snapshot_json()
                 .expect("Woodshed only persists canonical workspace events"),
         );
+        session.scope_navigation_json = Some(
+            self.persist_scope_navigation()
+                .expect("Woodshed scope navigation has a serializable session schema"),
+        );
         session
     }
 
@@ -2739,6 +2760,7 @@ impl UiState {
             }
         });
         if matches!(self.section, AppSection::Looper | AppSection::Tools) {
+            self.restore_scope_navigation(session.scope_navigation_json.as_deref());
             return workspace_error;
         }
         if workspace_error.is_none() && session.workspace_json.is_some() {
@@ -2748,6 +2770,7 @@ impl UiState {
         } else {
             self.select_app_section(session.section);
         }
+        self.restore_scope_navigation(session.scope_navigation_json.as_deref());
         workspace_error
     }
 }
@@ -2784,7 +2807,22 @@ fn workspace_strip(ui: &UiState) -> UiChild {
             )) as UiChild
         })
         .collect();
-    Box::new(el("div", panels).attr("class", "workspace-strip"))
+    Box::new(
+        el(
+            "div",
+            (
+                panels,
+                ui.scope_navigation_widget(),
+                ui.scope_trail_widget(),
+                ui.scope_navigation_notice.as_ref().map(|notice| {
+                    el("span", text(notice.clone()))
+                        .attr("class", "scope-navigation-notice")
+                        .attr("role", "alert")
+                }),
+            ),
+        )
+        .attr("class", "workspace-strip"),
+    )
 }
 
 fn header(ui: &UiState) -> UiChild {
@@ -3633,6 +3671,25 @@ fn stage_board(ui: &UiState) -> UiChild {
     }
 }
 
+/// Read-only material context for a Card scope visit. The Card is resolved by
+/// its owner and stable occurrence id; the live Stage catalog remains separate.
+fn card_context_view(ui: &UiState) -> Option<UiChild> {
+    let visit = ui.current_scope_visit()?;
+    let contextual_navigation::WoodshedScopePlace::CardOccurrence { owner, card: id } = visit.place
+    else {
+        return None;
+    };
+    let set = ui.working_sets.get(owner, &ui.set)?;
+    let card = set.cards.iter().find(|card| card.id == id)?;
+    let owner_name = ui
+        .working_sets
+        .summaries(&ui.set)
+        .into_iter()
+        .find(|summary| summary.id == owner)?
+        .name;
+    Some(context_card::view(owner, &owner_name, card))
+}
+
 fn stage_screen(ui: &UiState) -> UiChild {
     if ui.stage_page == StagePage::Templates {
         return Box::new(
@@ -3640,6 +3697,7 @@ fn stage_screen(ui: &UiState) -> UiChild {
                 "div",
                 (
                     header(ui),
+                    card_context_view(ui),
                     lens_strip(ui),
                     templates::screen(ui),
                     set_tray::view(ui),
@@ -3675,6 +3733,7 @@ fn stage_screen(ui: &UiState) -> UiChild {
         "div",
         (
             header(ui),
+            card_context_view(ui),
             instances::staging_targets(ui),
             transport(ui),
             lens_strip(ui),

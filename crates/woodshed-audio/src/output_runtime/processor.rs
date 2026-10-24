@@ -1,7 +1,7 @@
 use super::clock::{
-    PreparedProgram, PreparedTone, ProgramDuration, ProgramEnd, ProgramEndReason, ProgramEpoch,
-    ProgramLoop, ProgramPosition, ProgramSnapshot, ProgramStatus, ProgramTransition,
-    ProgramTransitionKind,
+    FALLBACK_PHASE_FRACTION_BITS, PreparedProgram, PreparedTone, ProgramDuration, ProgramEnd,
+    ProgramEndReason, ProgramEpoch, ProgramLoop, ProgramPosition, ProgramSnapshot, ProgramStatus,
+    ProgramTransition, ProgramTransitionKind,
 };
 use super::*;
 use crate::capture_feed::CaptureFeedConsumer;
@@ -855,6 +855,7 @@ struct Processor {
 struct ProgramVoice {
     tone: ArcGc<PreparedTone>,
     position: usize,
+    phase_q64: u64,
     age: u64,
     gate: ProgramDuration,
     gate_end: u64,
@@ -1413,6 +1414,7 @@ impl Processor {
             self.program_voices[slot_index] = Some(ProgramVoice {
                 tone,
                 position: 0,
+                phase_q64: 0,
                 age: 0,
                 gate: event.gate,
                 gate_end: match event.gate {
@@ -1546,11 +1548,24 @@ impl Processor {
                 *slot = None;
                 continue;
             }
-            let sample = voice.tone.pcm.data[voice.position];
-            voice.position += 1;
-            if voice.position == voice.tone.pcm.len() {
-                voice.position = 0;
-            }
+            let sample = if let Some(step) = voice.tone.phase_step_q64 {
+                const PHASE_FRACTION_MASK: u64 = (1u64 << FALLBACK_PHASE_FRACTION_BITS) - 1;
+                let index = (voice.phase_q64 >> FALLBACK_PHASE_FRACTION_BITS) as usize;
+                let next = (index + 1) % voice.tone.pcm.len();
+                let fraction = (voice.phase_q64 & PHASE_FRACTION_MASK) as f32
+                    / (1u64 << FALLBACK_PHASE_FRACTION_BITS) as f32;
+                let first = voice.tone.pcm.data[index];
+                let second = voice.tone.pcm.data[next];
+                voice.phase_q64 = voice.phase_q64.wrapping_add(step);
+                first + (second - first) * fraction
+            } else {
+                let sample = voice.tone.pcm.data[voice.position];
+                voice.position += 1;
+                if voice.position == voice.tone.pcm.len() {
+                    voice.position = 0;
+                }
+                sample
+            };
             let attack_gain = (voice.age as f32 / attack as f32).min(1.0);
             let release_gain = if voice.released {
                 (1.0 - voice.release_age as f32 / release as f32).max(0.0)

@@ -507,7 +507,15 @@ impl UiState {
                 self.open_relationship_recipe()
             },
             OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)) => {
-                self.activate_working_set(id);
+                self.visit_scope(
+                    super::contextual_navigation::WoodshedScopePlace::WorkingSet {
+                        owner: id,
+                        panel: WorkspacePanel::Set,
+                    },
+                    Some(super::contextual_navigation::WoodshedScopeAnchor::OverviewNode(
+                        OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)),
+                    )),
+                );
             },
             OverviewNodeId::Artifact(SessionArtifactId::Exploration(id)) => {
                 self.activate_exploration(id);

@@ -232,7 +232,10 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 .pills {{ display: flex; margin-bottom: 10px; }}
 .pill {{ padding: 6px 14px; margin-right: 6px; border-radius: 14px; color: {text_dim}; }}
 .pill-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
-.workspace-strip {{ display: flex; gap: 4px; margin-bottom: 8px; }}
+.workspace-strip {{ display: flex; align-items: center; gap: 4px; margin-bottom: 8px; min-width: 0; }}
+.workspace-strip .cambium-scope-location {{ flex: 1 1 auto; min-width: 0; }}
+.workspace-strip .cambium-scope-trail {{ min-width: 0; overflow: hidden; }}
+.scope-navigation-notice {{ font-size: 11px; color: {text_dim}; }}
 .workspace-panel {{ padding: 3px 9px; border-radius: 7px; color: {text_dim}; font-size: 12px; }}
 .workspace-panel-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
 .nav-spacer {{ flex-grow: 1; }}
@@ -679,7 +682,8 @@ fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
 "#
     );
     format!(
-        "{}\n{}\n{}\n{themed}\n.woodshed-recorder-mount {{ width:100%; min-width:0; }}\n.woodshed-recorder-mount .hocket-recorder {{ --ground:{bg}; --surface:{surface}; --surface-2:{surface_2}; --raised:{surface_hover}; --line:{text_disabled}; --line-soft:{surface_2}; --text:{text}; --text-dim:{text_dim}; --text-faint:{text_disabled}; --voice-amber:{secondary}; --record:{danger}; }}",
+        "{}\n{}\n{}\n{}\n{themed}\n.woodshed-recorder-mount {{ width:100%; min-width:0; }}\n.woodshed-recorder-mount .hocket-recorder {{ --ground:{bg}; --surface:{surface}; --surface-2:{surface_2}; --raised:{surface_hover}; --line:{text_disabled}; --line-soft:{surface_2}; --text:{text}; --text-dim:{text_dim}; --text-faint:{text_disabled}; --voice-amber:{secondary}; --record:{danger}; }}",
+        cambium::SHELL_CSS,
         cambium::GRAPH_CANVAS_SWATCH_CSS,
         cambium::RESIZE_HANDLE_CSS,
         hocket_views::theme::sheet(),

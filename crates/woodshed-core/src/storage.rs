@@ -421,6 +421,10 @@ pub struct PersistedSession {
     /// session slot without learning the shared Workbench schema.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub workspace_json: Option<String>,
+    /// Woodshed-owned contextual route history. The core preserves this opaque
+    /// payload so the view layer can validate durable owner and Card ids.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub scope_navigation_json: Option<String>,
     /// Shared relational recipe snapshot plus its bounded disclosed evidence.
     /// An embedding validates this payload through the shared compiler when
     /// mounting it. Persistence retains the opaque bytes beside the owner's
@@ -473,6 +477,7 @@ impl PersistedSession {
             loop_captures: LoopCaptureManifest::default(),
             practice_history: practice_history.clone(),
             workspace_json: None,
+            scope_navigation_json: None,
             relationship_reading_json: None,
             overview_presentation_json: None,
             personal_relations: None,
@@ -595,6 +600,21 @@ mod tests {
         let mut invalid: serde_json::Value = serde_json::from_str(&json).unwrap();
         invalid["audio_pack"]["snapshot"]["assets"]["samples/kick.wav"][0] = serde_json::json!(0);
         assert!(decode_session(&invalid.to_string()).is_err());
+    }
+
+    #[test]
+    fn session_store_roundtrips_opaque_scope_navigation_bytes() {
+        let store = SessionStore::new(muniment::MemoryBackend::default());
+        let mut session = PersistedSession::default();
+        let route = r#"{"future_scope_payload":{"owner":"opaque","camera":[0.2,-0.1,1.4]}}"#;
+        session.scope_navigation_json = Some(route.into());
+        let written = serde_json::to_string(&session).unwrap();
+        store.try_save(&written).unwrap();
+
+        let read = store.try_load().unwrap().unwrap();
+        assert_eq!(read, written);
+        let reopened = decode_session(&read).unwrap().session;
+        assert_eq!(reopened.scope_navigation_json.as_deref(), Some(route));
     }
 
     #[test]

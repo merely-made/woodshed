@@ -1,0 +1,30 @@
+# One real guided Set through the shipping Run control and output processor.
+# The actual output-device sample rate is included in the Taproot snapshot.
+settle 90
+ui-zoom 1
+assert snap p5clock-sample-rate >= 1
+act p6-mixed-set-example
+settle 5
+assert snap set-cards == 3
+click .rehearsal-run
+act p6-await-scale
+wait 1000
+assert snap p5clock-card-index == 1
+assert snap p5clock-status == playing
+act p6-audio-observation card2
+capture 01_card2_playing
+
+# Card 2 is the two-second Guided scale. The remaining guided Card is allowed
+# to end naturally; no loop, pause, or stop action is issued.
+act p6-await-complete
+wait 4000
+assert snap p5clock-card-index == 2
+assert snap p5clock-status == complete
+assert snap rehearsal-running == false
+assert snap p5clock-sample-rate >= 1
+act p6-audio-observation complete
+capture 02_set_complete_stopped
+wait 1000
+assert snap p5clock-status == complete
+assert snap rehearsal-running == false
+log P6 one-shot guided Set, Card 2 audio admission and natural completion
