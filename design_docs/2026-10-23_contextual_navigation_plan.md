@@ -85,7 +85,7 @@ Up/Down move through the Session Mere → owner → occurrence hierarchy.
 - 2026-10-23: The Windows native scenario passed with 175 presented frames and
   one nonblank capture. The first Card remained running under Set 1 while the
   visible controls traversed Card, Set and overview, including Back/Forward.
-  Receipt: `../mere/support/family-promotion/contextual-navigation/woodshed-native-card-loop/scenario.done`.
+  Receipt: [native Card-loop result](https://github.com/merely-made/mere/blob/7632bbd32a00891b858335209a39f36f5777c0ae/support/family-promotion/contextual-navigation/woodshed-native-card-loop/scenario.done).
   The capture was visually reviewed. Seven navigation regressions and four
   Windows path/configuration tests pass. The native run exposed and fixed a
   drive-prefix path-resolution bug by deferring metadata until the root is
@@ -111,7 +111,7 @@ Up/Down move through the Session Mere → owner → occurrence hierarchy.
   171 reopen frames; both processes exited normally. Attempt 05 repeated the
   pair with 212 seed frames and 172 reopen frames, plus one reviewed native
   capture of the Card-context strip. Receipts are retained under
-  `../mere/support/family-promotion/contextual-navigation-publication/woodshed-native/attempt-04/`
+  [real-custody receipt](https://github.com/merely-made/mere/tree/main/support/family-promotion/contextual-navigation-publication/woodshed-native/attempt-04)
   and the visual supplement under `.../attempt-05/`. Isolated Keeper data stays
   outside public receipts.
 - 2026-10-24: The portable lock now resolves Mere `7632bbd32a` and Genet
@@ -125,7 +125,7 @@ Up/Down move through the Session Mere → owner → occurrence hierarchy.
   playback reopened; Back restored the newer Overview at ordinal 8 / zoom
   1.25, the older Overview at ordinal 4 / zoom 1.00, then owner 1 / Card 1.
   The portable receipt and checkpoints are under
-  `../mere/support/family-promotion/contextual-navigation-publication/woodshed-native/portable-attempt-01/`.
+  [portable custody receipt](https://github.com/merely-made/mere/blob/main/support/family-promotion/contextual-navigation-publication/woodshed-native/portable-attempt-01/portable-qualification.json).
 
 ## Open limits
 
