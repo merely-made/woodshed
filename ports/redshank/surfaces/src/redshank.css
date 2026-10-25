@@ -255,6 +255,10 @@
   flex: none;
 }
 
+.rs-transport-state {
+  display: contents;
+}
+
 /* The elastic gap between transport and capture at wide and narrow widths;
  * the phone grid hides it. */
 .rs-spacer {
@@ -445,6 +449,14 @@
   border-radius: 50%;
   background: var(--t-danger);
   animation: rs-pulse 1.2s infinite;
+}
+
+.rs-rec-retained {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--t-text);
 }
 
 .rs-rec-word {

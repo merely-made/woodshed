@@ -104,12 +104,27 @@ fn recording_card(state: &CompactPlayerState) -> Vec<CompactView> {
         }),
     ];
     let head: Vec<CompactView> = vec![
-        Box::new(el("span", ()).attr("class", "rs-rec-dot")),
-        label("RECORDING"),
+        Box::new(el("span", ()).attr(
+            "class",
+            if state.voice_capture_active {
+                "rs-rec-dot"
+            } else {
+                "rs-rec-retained"
+            },
+        )),
+        label(if state.voice_capture_active {
+            "RECORDING"
+        } else {
+            "CAPTURE RETAINED"
+        }),
     ];
     let actions: Vec<CompactView> = vec![
         control(
-            vec![label("Finish")],
+            vec![label(if state.voice_capture_active {
+                "Finish"
+            } else {
+                "Retry save"
+            })],
             "rs-btn rs-btn-primary rs-btn-wide",
             "Finish voice note".into(),
             Some("R"),
@@ -275,6 +290,7 @@ mod tests {
     fn recording_rail_shows_the_frozen_anchor_and_both_exits() {
         let mut runner = runner();
         runner.update(|state| {
+            state.voice_capture_active = true;
             state.recording = Some(Recording {
                 elapsed_ms: 4_000,
                 anchor_ms: 84_000,
