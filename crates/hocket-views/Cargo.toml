@@ -19,7 +19,7 @@ cambium.workspace = true
 sprigging.workspace = true
 
 [dev-dependencies]
-cambium-genet-winit-host.workspace = true
+cambium-desktop.workspace = true
 mesquite.workspace = true
 taproot.workspace = true
 paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main" }

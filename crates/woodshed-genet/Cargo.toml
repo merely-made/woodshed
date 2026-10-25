@@ -37,7 +37,7 @@ cambium = { workspace = true }
 # assembly needed (genet-layout, genet-winit-host, cambium-winit,
 # cambium-winit-a11y, netrender, paint_list_*) are gone from this manifest.
 # Woodshed is now the first consumer of that boundary rather than its donor.
-cambium-genet-winit-host = { workspace = true }
+cambium-desktop = { workspace = true }
 cambium-rootstock = { workspace = true }
 tabard-workshop = { workspace = true }
 tabard = { workspace = true }

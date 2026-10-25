@@ -103,19 +103,19 @@ winit = "0.30"
 #      dependency; taking all three from the source everything else uses does.
 cambium = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-rootstock = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium-web = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 woodshed-web = { path = "crates/woodshed-web" }
 # The single-root Cambium desktop host (genet G1, 2026-08-09). Woodshed was its
 # donor and is now its first consumer: the whole ApplicationHandler / SurfaceHost
 # / layout / paint / input / A11yHost assembly that used to live in
 # woodshed-genet's main.rs is this package. Never publishable (it rides
-# genet-layout and genet-winit-host).
+# genet-layout and genet-winit).
 #
-# The toolkit/host crates receive Mere a07a375e; raw engine crates receive
-# its paired Genet 7d1d89db source. Cargo-generated locks retain one source per
+# The toolkit/host crates receive Mere d20eb555; raw engine crates receive
+# its paired Genet ea18315d source. Cargo-generated locks retain one source per
 # family. The synthesized-focus guard now lives in the shared Mere host;
 # see validation/stack-family_20261011/pool-cohort-20261022.json.
-cambium-genet-winit-host = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 sprigging = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.2" }
@@ -178,7 +178,7 @@ serde_json = "1.0"
 dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 graphshell-endpoint = { git = "https://github.com/merely-made/mere.git", branch = "main", features = ["door"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-persona-picker = { package = "mere-persona-picker", git = "https://github.com/merely-made/mere.git", branch = "main" }
+persona-picker = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 
 # Future:
 #   fundsp          — AP0-assessed supplier for later data-defined synth/effect packs;
@@ -243,7 +243,7 @@ vello_shaders = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f
 opt-level = 2
 [profile.dev.package.cambium-rootstock]
 opt-level = 2
-[profile.dev.package.genet-render-host]
+[profile.dev.package.genet-presenter]
 opt-level = 2
 [profile.dev.package.genet-scripted-dom]
 opt-level = 2
@@ -287,7 +287,7 @@ muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-mere-webrtc-carrier = { git = "https://github.com/merely-made/murm.git", branch = "main" }
+murm-webrtc = { git = "https://github.com/merely-made/murm.git", branch = "main" }
 
 
 [patch."https://www.github.com/merely-made/mere.git"]

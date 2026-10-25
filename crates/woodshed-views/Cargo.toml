@@ -44,5 +44,5 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 
 [dev-dependencies]
-cambium-genet-winit-host.workspace = true
+cambium-desktop.workspace = true
 taproot.workspace = true

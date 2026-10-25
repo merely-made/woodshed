@@ -2213,7 +2213,7 @@ fn is_text_field<D: layout_dom_api::LayoutDom>(dom: &D, node: D::NodeId) -> bool
     cambium_textbox
         || dom
             .element_name(node)
-            .is_some_and(|name| name.local.as_ref() == "textarea")
+            .is_some_and(|name| &*name.local == "textarea")
 }
 
 fn note_editor_focused(runner: &AppRunner) -> bool {
