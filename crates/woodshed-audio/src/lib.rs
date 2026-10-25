@@ -50,8 +50,8 @@ pub use chord_audio::{ChordRender, render_chord};
 pub use engine::AudioError;
 pub use input::{
     Analyzer, DetectedNote, DetectedNoteName, DetectorKind, InputEngine, InputEngineBuilder,
-    LooperCaptureAnalyzer, LooperCaptureHandle, PitchAnalyzer, TunerEngine, TunerHandle,
-    TunerSnapshot,
+    InputHealth, LooperCaptureAnalyzer, LooperCaptureHandle, PitchAnalyzer, TunerEngine,
+    TunerHandle, TunerSnapshot,
 };
 pub use looper::Looper;
 pub use midi::{

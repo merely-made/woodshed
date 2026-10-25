@@ -88,7 +88,7 @@ pub fn overview_snapshot(ui: &UiState) -> OverviewSnapshot {
             activity: SessionActivity {
                 rehearsal: ui.rehearsal_running,
                 looper: ui.song_playing,
-                tuner: ui.tuner.enabled,
+                tuner: ui.tuner_is_listening(),
             },
         },
     });
@@ -193,18 +193,28 @@ fn place_new_takes(
 ) {
     let sx = width.saturating_sub(14).max(1) as f32;
     let sy = height.saturating_sub(14).max(1) as f32;
-    let movable: Vec<_> = nodes.iter().enumerate().filter_map(|(index, node)| {
-        (matches!(node.id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_)))
-            && !retained.contains_key(&node.id)).then_some(index)
-    }).collect();
+    let movable: Vec<_> = nodes
+        .iter()
+        .enumerate()
+        .filter_map(|(index, node)| {
+            (matches!(
+                node.id,
+                OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))
+            ) && !retained.contains_key(&node.id))
+            .then_some(index)
+        })
+        .collect();
     // The shared label is bounded to 160 px. Allow its node/target clearance
     // and a full label on either side of a neighboring node.
     let clear = |a: (f32, f32), b: (f32, f32)| {
         (a.0 - b.0).abs() * sx >= 380.0 || (a.1 - b.1).abs() * sy >= 40.0
     };
-    let mut occupied: Vec<_> = nodes.iter().enumerate()
+    let mut occupied: Vec<_> = nodes
+        .iter()
+        .enumerate()
         .filter(|(index, _)| !movable.contains(index))
-        .map(|(_, node)| node.position).collect();
+        .map(|(_, node)| node.position)
+        .collect();
     for index in movable {
         let home = nodes[index].position;
         let mut candidates = vec![home];
@@ -214,12 +224,14 @@ fn place_new_takes(
             }
         }
         candidates.sort_by(|a, b| {
-            let distance = |p: &(f32, f32)| ((p.0-home.0)*sx).powi(2) + ((p.1-home.1)*sy).powi(2);
+            let distance =
+                |p: &(f32, f32)| ((p.0 - home.0) * sx).powi(2) + ((p.1 - home.1) * sy).powi(2);
             distance(a).total_cmp(&distance(b))
         });
         // A completely packed canvas retains its existing default; this does
         // not claim to solve arbitrary user-authored overlaps.
-        let position = candidates.into_iter()
+        let position = candidates
+            .into_iter()
             .find(|&at| occupied.iter().all(|&other| clear(at, other)))
             .unwrap_or(home);
         nodes[index].position = position;
@@ -393,7 +405,11 @@ impl UiState {
     }
 
     pub fn move_overview_selection(&mut self, delta: (f32, f32)) {
-        if self.overview_focus.as_ref().is_some_and(|id| self.overview_folds.contains(id)) {
+        if self
+            .overview_focus
+            .as_ref()
+            .is_some_and(|id| self.overview_folds.contains(id))
+        {
             return;
         }
         let Some(id) = self.overview_focus.clone() else {
@@ -512,9 +528,11 @@ impl UiState {
                         owner: id,
                         panel: WorkspacePanel::Set,
                     },
-                    Some(super::contextual_navigation::WoodshedScopeAnchor::OverviewNode(
-                        OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)),
-                    )),
+                    Some(
+                        super::contextual_navigation::WoodshedScopeAnchor::OverviewNode(
+                            OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)),
+                        ),
+                    ),
                 );
             },
             OverviewNodeId::Artifact(SessionArtifactId::Exploration(id)) => {
@@ -574,9 +592,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                     if !ui.overview_folds.contains(&drag.id)
                         && !ui.overview_folds.selecting
                         && overview_snapshot(ui)
-                        .nodes
-                        .iter()
-                        .any(|node| node.id == drag.id)
+                            .nodes
+                            .iter()
+                            .any(|node| node.id == drag.id)
                     {
                         ui.reconcile_overview_dynamics();
                         match drag.phase {
@@ -707,7 +725,9 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 el(
                     "div",
                     (
-                        el("div", text(node.label.clone())).attr("class", "overview-node-title").attr("data-key", node.id.wire_key()),
+                        el("div", text(node.label.clone()))
+                            .attr("class", "overview-node-title")
+                            .attr("data-key", node.id.wire_key()),
                         el(
                             "div",
                             text(match node.id {
@@ -726,7 +746,8 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
                 .attr(
                     "class",
                     if ui.overview_focus.as_ref() == Some(&node.id)
-                        || (ui.overview_folds.selecting && ui.overview_folds.selected.contains(&node.id))
+                        || (ui.overview_folds.selecting
+                            && ui.overview_folds.selected.contains(&node.id))
                     {
                         "overview-node overview-node-selected"
                     } else {
@@ -1364,10 +1385,19 @@ mod tests {
         ui.set_viewport_width(1100.0);
         let before = overview_swatch(&ui);
         // Version-1 positions contain every old node, but no take identity.
-        let retained: BTreeMap<_, _> = before.graph.nodes.into_iter()
-            .map(|node| (node.id, node.position)).collect();
+        let retained: BTreeMap<_, _> = before
+            .graph
+            .nodes
+            .into_iter()
+            .map(|node| (node.id, node.position))
+            .collect();
         ui.overview_positions = retained.clone();
-        let ids: Vec<_> = ui.set.cards.iter().map(|card| take_id(ui.working_sets.active_id, card.id)).collect();
+        let ids: Vec<_> = ui
+            .set
+            .cards
+            .iter()
+            .map(|card| take_id(ui.working_sets.active_id, card.id))
+            .collect();
         with_takes(&mut ui, &ids);
         let swatch = overview_swatch(&ui);
         for node in &swatch.graph.nodes {
@@ -1377,17 +1407,32 @@ mod tests {
         }
         let projected = swatch.projected_positions();
         for (id, a) in &projected {
-            if !matches!(id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))) { continue; }
+            if !matches!(id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))) {
+                continue;
+            }
             for (other, b) in &projected {
-                if id == other { continue; }
-                assert!((a.0-b.0).abs() >= 379.0 || (a.1-b.1).abs() >= 39.0,
-                    "new take {id:?} collided with {other:?}");
+                if id == other {
+                    continue;
+                }
+                assert!(
+                    (a.0 - b.0).abs() >= 379.0 || (a.1 - b.1).abs() >= 39.0,
+                    "new take {id:?} collided with {other:?}"
+                );
             }
         }
         assert_eq!(ui.overview_positions, retained);
         let take = take_node(ids[0]);
         ui.overview_positions.insert(take.clone(), (0.31, 0.52));
-        assert_eq!(overview_swatch(&ui).graph.nodes.iter().find(|n| n.id == take).unwrap().position, (0.31, 0.52));
+        assert_eq!(
+            overview_swatch(&ui)
+                .graph
+                .nodes
+                .iter()
+                .find(|n| n.id == take)
+                .unwrap()
+                .position,
+            (0.31, 0.52)
+        );
     }
 
     #[test]
@@ -1420,7 +1465,10 @@ mod tests {
         assert!((position.0 - 0.21).abs() < 0.001 && (position.1 - 0.67).abs() < 0.001);
         let session = ui.to_persisted();
         let json = session.overview_presentation_json.clone().unwrap();
-        assert_eq!(serde_json::from_str::<serde_json::Value>(&json).unwrap()["version"], 3);
+        assert_eq!(
+            serde_json::from_str::<serde_json::Value>(&json).unwrap()["version"],
+            3
+        );
         let decoded = serde_json::from_str(&serde_json::to_string(&session).unwrap()).unwrap();
         let mut reopened = UiState::new();
         reopened.apply_persisted(&decoded, Default::default());
@@ -1580,7 +1628,8 @@ mod tests {
         ui.approach_source = Some(old);
         ui.card_rename_for = None;
         let owner = ui.working_sets.active_id;
-        ui.toggle_rehearsal(); ui.admit_previews_for_test();
+        ui.toggle_rehearsal();
+        ui.admit_previews_for_test();
         assert!(ui.open_retained_set(id));
         assert_ne!(ui.set.cards[0].id, old);
         assert_ne!(ui.set.cards[0].id, CardId::UNASSIGNED);

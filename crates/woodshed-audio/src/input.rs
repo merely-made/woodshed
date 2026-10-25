@@ -648,10 +648,61 @@ impl LooperCaptureHandle {
 // InputEngine + Builder
 // =================================================================
 
+/// Shared native-input health. A callback failure is permanent for this stream;
+/// recovery creates a fresh stream and health handle. Observers never clear it.
+#[derive(Clone, Default)]
+pub struct InputHealth {
+    state: Arc<Mutex<InputHealthState>>,
+}
+
+#[derive(Default)]
+struct InputHealthState {
+    failure: Option<String>,
+    wake: Option<Arc<dyn Fn() + Send + Sync>>,
+}
+
+impl InputHealth {
+    pub fn failure(&self) -> Option<String> {
+        self.state
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .failure
+            .clone()
+    }
+
+    /// The native error callback owns this report. Explicit input adapters may
+    /// report an equivalent stream failure without creating another runtime.
+    pub fn report_failure(&self, reason: impl Into<String>) {
+        let wake = {
+            let mut state = self.state.lock().unwrap_or_else(|error| error.into_inner());
+            if state.failure.is_some() {
+                return;
+            }
+            state.failure = Some(reason.into());
+            state.wake.clone()
+        };
+        if let Some(wake) = wake {
+            wake();
+        }
+    }
+
+    pub fn set_wake(&self, wake: Arc<dyn Fn() + Send + Sync>) {
+        let failed = {
+            let mut state = self.state.lock().unwrap_or_else(|error| error.into_inner());
+            state.wake = Some(wake.clone());
+            state.failure.is_some()
+        };
+        if failed {
+            wake();
+        }
+    }
+}
+
 /// Build phase for an [`InputEngine`]. Register analyzers, then call
 /// [`Self::build`] to open the cpal stream.
 pub struct InputEngineBuilder {
     analyzers: Vec<Box<dyn Analyzer + Send>>,
+    health: InputHealth,
 }
 
 impl Default for InputEngineBuilder {
@@ -664,7 +715,12 @@ impl InputEngineBuilder {
     pub fn new() -> Self {
         Self {
             analyzers: Vec::new(),
+            health: InputHealth::default(),
         }
+    }
+
+    pub fn health_handle(&self) -> InputHealth {
+        self.health.clone()
     }
 
     /// Register an arbitrary analyzer. The caller is responsible for
@@ -720,6 +776,8 @@ impl InputEngineBuilder {
         let sample_rate_hz = source_rate as f32;
 
         self.prepare_analyzers(source_rate);
+        let health = self.health;
+        let callback_health = health.clone();
         let mut analyzers = self.analyzers;
         // Reusable scratch buffer for the per-callback mono downmix.
         // Grows on first callback then stays sized.
@@ -741,7 +799,7 @@ impl InputEngineBuilder {
                             analyzer.process(&mono, sample_rate_hz, now);
                         }
                     },
-                    |err| eprintln!("audio input error: {err}"),
+                    move |err| callback_health.report_failure(format!("audio input stream: {err}")),
                     None,
                 )
                 .map_err(AudioError::StreamBuild)?,
@@ -752,6 +810,7 @@ impl InputEngineBuilder {
         Ok(InputEngine {
             _stream: stream,
             source_rate,
+            health,
         })
     }
 }
@@ -761,9 +820,14 @@ impl InputEngineBuilder {
 pub struct InputEngine {
     _stream: Stream,
     source_rate: u32,
+    health: InputHealth,
 }
 
 impl InputEngine {
+    pub fn health_handle(&self) -> InputHealth {
+        self.health.clone()
+    }
+
     pub fn sample_rate_hz(&self) -> f32 {
         self.source_rate as f32
     }
@@ -808,6 +872,35 @@ impl TunerEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn stream_failure_latches_across_observers_and_wakes_without_analyzer_polling() {
+        use std::sync::atomic::{AtomicUsize, Ordering};
+        let builder = InputEngineBuilder::new();
+        let health = builder.health_handle();
+        let observer = health.clone();
+        let wakes = Arc::new(AtomicUsize::new(0));
+        let counter = wakes.clone();
+        health.set_wake(Arc::new(move || {
+            counter.fetch_add(1, Ordering::SeqCst);
+        }));
+        assert!(observer.failure().is_none());
+        // This is the same report path invoked by CPAL's error callback.
+        health.report_failure("native input disconnected");
+        health.report_failure("later duplicate status");
+        assert_eq!(
+            observer.failure().as_deref(),
+            Some("native input disconnected")
+        );
+        assert_eq!(wakes.load(Ordering::SeqCst), 1);
+        assert!(
+            InputEngineBuilder::new()
+                .health_handle()
+                .failure()
+                .is_none(),
+            "a fresh stream owns a fresh latch; old observers never reset"
+        );
+    }
 
     #[test]
     fn capture_consumer_is_transferred_once_and_rate_precedes_callbacks() {

@@ -55,10 +55,10 @@ mod chord_approaches;
 mod connected;
 mod connected_scales;
 mod context;
+mod context_card;
 #[cfg(test)]
 mod context_tests;
 mod contextual_navigation;
-mod context_card;
 mod instances;
 mod looper;
 pub mod music_editor;
@@ -80,6 +80,7 @@ pub use overview::{
     OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_source_swatch, overview_swatch,
 };
 pub use relationship::{RELATIONSHIP_GRAPH_LEAF_KEY, relationship_swatch};
+mod audio_status;
 mod pitch_motion;
 mod rehearsal;
 mod related;
@@ -1271,6 +1272,7 @@ pub struct UiState {
     pub tuner: TunerState,
     /// A device/stream failure reported by the host's audio backend.
     pub audio_error: Option<String>,
+    pub audio_availability: woodshed_core::audio::AudioAvailability,
     pub tuning_dd: SelectState,
     pub root_dd: SelectState,
     /// Direct arrangement picker for the expanded Set graph. The durable value
@@ -1536,6 +1538,7 @@ impl UiState {
             transport: TransportState::default(),
             tuner: TunerState::default(),
             audio_error: None,
+            audio_availability: Default::default(),
             tuning_dd: SelectState::new(stage.tuning_idx),
             root_dd: SelectState::new(stage.root_idx),
             set_arrangement_dd,
@@ -2850,25 +2853,20 @@ fn header(ui: &UiState) -> UiChild {
 
 fn transport(ui: &UiState) -> UiChild {
     let play_label = if ui.transport.playing { "Stop" } else { "Play" };
-    let tuner_label = if ui.tuner.enabled {
+    let tuner_label = if ui.tuner_is_listening() {
         "Tuner: on"
+    } else if ui.tuner.enabled {
+        "Tuner: requested"
     } else {
         "Tuner: off"
     };
-    let readout = if let Some(err) = &ui.audio_error {
-        format!("audio: {err}")
-    } else if ui.tuner.enabled {
-        match &ui.tuner.reading {
-            Some(r) => format!(
-                "{}{} {}{:.0}¢{}",
-                r.note,
-                r.octave,
-                if r.cents >= 0.0 { "+" } else { "" },
-                r.cents,
-                if r.in_tune { "  in tune" } else { "" },
-            ),
-            None => "listening...".to_string(),
-        }
+    let readout = if matches!(
+        ui.audio_availability.output,
+        woodshed_core::audio::AudioStreamStatus::Failed(_)
+    ) {
+        ui.audio_output_status()
+    } else if ui.tuner.enabled || ui.tuner_is_listening() {
+        ui.tuner_status()
     } else {
         String::new()
     };
@@ -2906,6 +2904,10 @@ fn transport(ui: &UiState) -> UiChild {
                     },
                 ),
                 el("div", text(readout)).attr("class", "t-readout"),
+                ui.audio_error.as_ref().map(|reason| {
+                    el("div", text(format!("Audio operation: {reason}")))
+                        .attr("class", "audio-notice")
+                }),
                 el("span", ()).attr("class", "header-gap"),
                 clickable(
                     el("div", text("Stage")).attr("class", "t-btn"),

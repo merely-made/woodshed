@@ -37,8 +37,8 @@ mod midi;
 mod midi_diagnostics;
 mod music_export;
 mod pack_io;
-mod pedal_inputs;
 mod paths;
+mod pedal_inputs;
 mod persona;
 #[cfg(test)]
 mod persona_store_receipt;
@@ -293,6 +293,10 @@ fn boot_state(
     let scale = window.scale_factor() as f32;
     ui.set_viewport_width(size_w as f32 / scale);
     ui.set_viewport_height(size_h as f32 / scale);
+    ui.audio_availability = backend
+        .as_ref()
+        .map(CpalBackend::availability)
+        .unwrap_or_default();
     ui.audio_error = backend
         .as_ref()
         .and_then(|backend| backend.error().map(String::from));
@@ -577,6 +581,19 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                     if let Some(backend) = shared.backend.as_mut() {
                         backend.service();
                     }
+                    let availability = shared
+                        .backend
+                        .as_ref()
+                        .map(CpalBackend::availability)
+                        .unwrap_or_default();
+                    if ctx.runner.state().audio_availability != availability {
+                        ctx.runner.update(|ui| {
+                            ui.audio_availability = availability.clone();
+                            if !ui.audio_availability.tuner_active {
+                                ui.tuner.reading = None;
+                            }
+                        });
+                    }
                     return;
                 }
             }
@@ -667,7 +684,9 @@ mod tests {
                 Init {
                     sheet: appearance::stylesheet(&ui),
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, WindowFrame::Host)) as Logic,
+                    logic: Box::new(move |ui: &UiState| {
+                        desktop_root(ui, &commands, WindowFrame::Host)
+                    }) as Logic,
                     fonts: vec![],
                     images: vec![],
                 }
@@ -810,7 +829,9 @@ mod tests {
                 Init {
                     sheet: appearance::stylesheet(&ui),
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, WindowFrame::Host)) as Logic,
+                    logic: Box::new(move |ui: &UiState| {
+                        desktop_root(ui, &commands, WindowFrame::Host)
+                    }) as Logic,
                     fonts: Vec::new(),
                     images: Vec::new(),
                 }
@@ -1004,7 +1025,9 @@ mod tests {
         appearance_harness_for_frame(WindowFrame::App)
     }
 
-    fn appearance_harness_for_frame(frame: WindowFrame) -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
+    fn appearance_harness_for_frame(
+        frame: WindowFrame,
+    ) -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
         let mut ui = UiState::new();
         ui.appearance_authoring_available = true;
         ui.appearance
@@ -1016,7 +1039,8 @@ mod tests {
                 let sheet = appearance::stylesheet(&ui);
                 Init {
                     state: ui,
-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, frame)) as Logic,
+                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, frame))
+                        as Logic,
                     sheet,
                     fonts: vec![],
                     images: vec![],
@@ -1113,7 +1137,9 @@ mod tests {
             )
         });
         assert_eq!(direct_chrome, (0, 0));
-        let editor = h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]);
+        let editor = h.with_dom(|dom| {
+            taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]
+        });
         assert!(h.visible_rect(editor).is_some());
     }
 }
