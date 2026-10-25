@@ -529,3 +529,16 @@ microphone/output, native fault/retry/permission and Redshank native capture are
 not covered. Publication binding and completed-checkout pruning follow. The
 other computers remain inaccessible through current SSH credentials; their
 checkout revisions and dirtiness are unverified and no remote mutation occurred.
+
+
+2026-10-25 P12 publication: source, evidence and updated frontier are merged and
+pushed through `dc21232d`. Advertised/fetched/local main agree. All 644
+source bindings, 64 evidence files including their manifest, and the three
+canonical plan/index/ledger files match the fetched remote tree. The
+[publication record](../validation/capture-export-availability_20261025/publication.json)
+records that observation. Both completed task/control checkouts are removed,
+the merged task branch is deleted, and only the primary checkout remains
+registered. Intentional archive refs and normal build caches are preserved.
+The metadata commit extends no source/native/device claim. Other-host checkout
+synchronization remains blocked by access; local/GitHub publication does not
+establish their state.

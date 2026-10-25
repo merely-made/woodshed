@@ -1,0 +1,37 @@
+{
+  "observed_at_utc": "2026-10-25T17:24:46.758350+00:00",
+  "repository": "https://github.com/merely-made/woodshed",
+  "published_revision": "dc21232d83c7f3d180b95f220e8141bf67c47120",
+  "qualified_source_revision": "770f54435dcefe0a9d4a6a46a367a1684184e8b9",
+  "redshank_qualified_source_revision": "951c7822511ba21f2d5e89cacfaf81ea48bd73d8",
+  "publication_route": "Authenticated HTTPS fetch/push; stored SSH origin unchanged",
+  "remote_observation": "Advertised refs/heads/main and freshly fetched origin/main agree with clean local main at the published revision. All bindings below compared against that fetched Git tree.",
+  "verified_source_files": 644,
+  "verified_evidence_files_including_manifest": 64,
+  "source_manifest": "source-sha256.json",
+  "source_manifest_sha256": "7b53a58b81270b08ef9ea46c49420d0beebfaf1d8d9918eba2149bea474b5475",
+  "evidence_manifest": "evidence-sha256.json",
+  "evidence_manifest_sha256": "c50945a72c4f5934319bffcc741166c79630380b0b8c29e246bbd57a2fc3a16b",
+  "canonical_sha256_at_published_revision": {
+    "design_docs/2026-10-16_source_authority_audit_plan.md": "f7a562e1e94ae0239278ffadb45238331aa188287ee91fa79417b44b7b51df30",
+    "design_docs/DOC_README.md": "0c8516af1ef6d8bbb0e6fd8172dd972b986668439d26a41dea85a66418f51cbc",
+    "validation/full-source-audit_20261016/current-finding-ledger.json": "81554d54d2a512af0998028fa9b7cbd1fb3f90fae1fab845158e9cd666448bf5"
+  },
+  "review": "Independent core_projection_read artifact/document disposition clear; verified portable checks and original image equality without new native/Cargo work.",
+  "cleanup_observation": {
+    "task_checkout": "Removed clean task worktree at published revision; deleted merged codex/woodshed-audit-next-20261025 branch",
+    "control_checkout": "Removed earlier after upstream fixture control",
+    "registered_worktrees": [
+      "/Users/markik/Code/repos/woodshed"
+    ],
+    "preserved_archive_ref": "archive/20261021/intel-woodshed-portable-fretboard",
+    "preserved_ignored_caches": [
+      "target/",
+      "ports/hocket/target/",
+      "ports/redshank/target/",
+      "validation/relationship-recipe/target/"
+    ]
+  },
+  "other_computers": "Not synchronized or requalified: SSH authentication unavailable on s-pc/thinkpad-l14-f/imac-intel; o-pc timed out. No remote checkout accessed or mutated.",
+  "metadata_boundary": "This publication file and the following canonical progress paragraph are subsequent metadata. Their commit adds no source/native/device qualification and does not recursively bind itself."
+}
