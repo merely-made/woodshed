@@ -1,0 +1,28 @@
+{
+  "absent": {
+    "receipt_completed_before_click": true,
+    "observer": "coordinator native accessibility UI",
+    "observed_heading": "Practice is not confirmed saved",
+    "observed_button": "Discard unsaved practice and close",
+    "observed_index": 6,
+    "action": "clicked only after RESULT ok receipt existed",
+    "product_exit": 0,
+    "timeout": false,
+    "captures": 5,
+    "persona_owned_files": 0,
+    "post_close_lookup": "Temporary application removed by completed runner; subsequent AX lookup reported no executable."
+  },
+  "offline": {
+    "receipt_completed_before_click": true,
+    "observer": "coordinator native accessibility UI",
+    "observed_heading": "Practice is not confirmed saved",
+    "observed_button": "Discard unsaved practice and close",
+    "observed_index": 6,
+    "action": "clicked only after RESULT ok receipt existed",
+    "product_exit": 0,
+    "timeout": false,
+    "captures": 3,
+    "persona_owned_files": 0,
+    "post_close_lookup": "Temporary application removed by completed runner; subsequent AX lookup reported no executable."
+  }
+}

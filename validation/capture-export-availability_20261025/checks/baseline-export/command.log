@@ -1,0 +1,42 @@
+   Compiling redshank-model v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/model)
+   Compiling audio-primitives v0.1.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/audio-primitives)
+   Compiling redshank-storage v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/storage)
+   Compiling redshank-playback v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/playback)
+   Compiling redshank-cache v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/cache)
+   Compiling redshank-surfaces v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/surfaces)
+   Compiling redshank-feed v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/feed)
+   Compiling redshank-desktop v0.0.0 (/Users/markik/Code/worktrees/woodshed-audit-next-20261025/ports/redshank/desktop)
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+   --> desktop/src/diagnostics.rs:255:18
+    |
+255 |                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |                  ^^^^^^^^^^^^
+    |
+    = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+    |
+255 -                 .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+255 +                 .try_update(Ordering::Relaxed, Ordering::Relaxed, |value| {
+    |
+
+warning: `redshank-desktop` (bin "redshank-desktop" test) generated 1 warning (run `cargo fix --bin "redshank-desktop" -p redshank-desktop --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.13s
+     Running unittests src/main.rs (/Users/markik/Code/repos/woodshed/ports/redshank/target/build/debug/deps/redshank_desktop-6435abfa7f591e59)
+
+running 1 test
+
+thread 'tests::annotation_export_stems_keep_complete_identity_and_bounded_filenames' (61002870) panicked at desktop/src/main.rs:2534:9:
+assertion `left != right` failed: sanitizer collisions must not overwrite another item's export
+  left: "local--takes-a-b-wav"
+ right: "local--takes-a-b-wav"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::annotation_export_stems_keep_complete_identity_and_bounded_filenames ... FAILED
+
+failures:
+
+failures:
+    tests::annotation_export_stems_keep_complete_identity_and_bounded_filenames
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 93 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p redshank-desktop --bin redshank-desktop`

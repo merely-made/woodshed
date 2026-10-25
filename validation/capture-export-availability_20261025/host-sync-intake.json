@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-25",
+  "local_host": "m4-imac",
+  "local_intake": "Clean primary at da66d6c0, only primary registered; no uncommitted Woodshed changes.",
+  "local_refreshed_revision": "91b2dd5b",
+  "github": "SSH public-key auth failed; authenticated HTTPS fetch succeeded. Stored remote unchanged.",
+  "remote_readonly_attempts": {
+    "o-pc": "connection timeout",
+    "s-pc": "SSH authentication refused",
+    "thinkpad-l14-f": "SSH authentication refused",
+    "imac-intel": "SSH authentication refused"
+  },
+  "reason": "Local SSH agent reports no identities; no private key file exists locally.",
+  "remote_mutations": false,
+  "user_clarification": "Async request to unlock/load normal identity while implementation continues."
+}

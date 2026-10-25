@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-25",
+  "source_revision": "770f54435dcefe0a9d4a6a46a367a1684184e8b9",
+  "redshank_source_revision": "951c7822511ba21f2d5e89cacfaf81ea48bd73d8",
+  "refreshed_main_revision": "91b2dd5b905b190ad38295cdad8576196cf3970e",
+  "scope": [
+    "redshank:R05",
+    "redshank:R09",
+    "redshank:R08",
+    "views:V03"
+  ],
+  "status": "All three approved source slices implemented and published; scoped CPU/build/Wasm and bounded native availability presentation qualified. Other-host synchronization remains blocked by access.",
+  "sole_owners": {
+    "redshank_capture_export": "persona_fixture_paths: desktop main/voice/recovery, mounted dock/rail/capture surfaces and tests",
+    "woodshed_availability": "persona_admission_review: native input health, core facts, host admission/drive/persona, shared views and receiving tests",
+    "integration": "coordinator: Cargo/native scheduling, receipts/ledger/docs, Git"
+  },
+  "changes": {
+    "capture": "Mounted gesture owner survives recording projection. Accepted samples own duration; capacity auto-finishes with persistent limit notice. Acquisition stop unwinds playback/duck once. PCM, body, anchor and note ID remain across failed blob/model/durable admission and close; explicit Cancel discards, durable acknowledgement releases PCM, retry cannot duplicate notes.",
+    "export": "Bounded readable prefix plus full ItemId BLAKE3 digest separates colliding stems; sibling-temp synced writes atomically replace only the same item. Actual worker Shareable JSON and on-disk bytes checked.",
+    "availability": "Observed output/input/tuner facts drive General/Tools/Settings/Stage/overview and survive persona installation. Native input faults latch and wake host, block stale readings, retire pending/calibration work, and require fresh explicit retry. Operation refusal stays separate from stream failure."
+  },
+  "positive_gates": [
+    "redshank-final",
+    "redshank-build",
+    "redshank-web",
+    "woodshed-formatted-final",
+    "woodshed-formatted-build"
+  ],
+  "counts": {
+    "redshank_distinct_passes": 287,
+    "woodshed_distinct_parent_and_integration_passes": 866,
+    "distinct_passes": 1153,
+    "existing_ignored": 16,
+    "nested_child_invocations_separate": 5,
+    "new_executed_test_functions": 24,
+    "desktop_builds": 2,
+    "wasm_checks": 1
+  },
+  "counting": "Only redshank-final and woodshed-formatted-final contribute passes. Woodshed raw summaries total871; five single-case child subprocess summaries are excluded from866 distinct parent/integration cases. Superseded runs add no count.",
+  "baseline_controls": {
+    "baseline-dock": "Actual Cargo101; one full mounted-dock release assertion fails on91b with new test only.",
+    "baseline-export": "Actual Cargo101; one complete-identity/bounded-name assertion fails on91b with new test only.",
+    "baseline-availability": "Actual Cargo101; absent-backend General assertion fails first on91b with new test only. Later tuner assertions did not execute."
+  },
+  "failed_and_superseded": {
+    "redshank-first": "Cargo101; export worker fixture used private annotations, so W3C correctly exported no items. Corrected fixture to Shareable and asserted eligibility before I/O; distinct actual-payload assertions retained.",
+    "woodshed-first": "Cargo101; existing rehearsal viewport test failed. Clean91b control independently reproduced the same failure after incoming navigation geometry changed.",
+    "upstream-viewport-control": "Cargo101 at clean91b, same rehearsal fixture. Correction enters Rehearsal via production section selection and derives wheel location/amount from workspace geometry, asserting actual page movement and retaining all visible-note/hit assertions.",
+    "viewport-fixed": "EXCLUDED stale executable probe. Shared target reused clean control artifact:353-case inventory and old stack line596, while corrected source had363-case inventory and new assertion around732. Source hashes alone did not bind executable.",
+    "clean-local-root": "Removed only woodshed-core/views/audio/genet package outputs after control checkout pruning; supplier caches retained. viewport-fixed-r2 then rebuilt current source and passed1 with362filtered.",
+    "woodshed-final": "Passing pre-format run; superseded by exact formatted-byte final gate. No duplicate counts.",
+    "woodshed-build": "Passing pre-format build; superseded by woodshed-formatted-build.",
+    "root-format-precheck": "Initial style check failed; focused formatting of16 assigned Rust files then passed, followed by final full selected tests and build.",
+    "native-launcher-setup": "Initial frozen copy lacked executable mode; runner refused before product launch. Restored original executable mode; binary bytes/hash unchanged. Excluded as setup, not native product failure."
+  },
+  "artifact_freshness": "After explicit package clean, logs identify actual task source paths and363-case host inventory. Positive source_before/source_after match committed qualified bytes. Later source commits do not substitute for process evidence.",
+  "native": {
+    "artifact": "native-artifact.json",
+    "source_revision": "770f54435dcefe0a9d4a6a46a367a1684184e8b9",
+    "binary_sha256": "a7f92a7c1a64818c90b55aa870ededef23d159c1e93ba4c1f578c79bc9babcff",
+    "successful_product_processes": 2,
+    "reviewed_captures": 8,
+    "absent": "Five reviewed captures: unavailable output/input, tuner off, requested tuner still unavailable without backend, Settings same facts, visible close guard.",
+    "offline": "Three reviewed captures: offline engine/no device stream, input not opened, tuner off, visible close guard. Tuner never enabled in this mode.",
+    "custody": "Explicit nonexistent socket and isolated roots; no Keeper launched, persona-owned file count zero. Native close observer clicked Discard unsaved practice and close only after successful scenario receipt.",
+    "reviewer": "core_projection_read personally reviewed all eight images, binary hash and both scenario/process receipts; coordinator also observed native accessibility close guards.",
+    "captures": [
+      "native/absent/01_general_absent.png",
+      "native/absent/02_tools_tuner_off.png",
+      "native/absent/03_tools_requested_no_input.png",
+      "native/absent/04_settings_requested_no_input.png",
+      "native/absent/05_close_guard.png",
+      "native/offline/01_general_offline_lazy_input.png",
+      "native/offline/02_tools_offline_tuner_off.png",
+      "native/offline/03_close_guard.png"
+    ],
+    "limits": "Availability presentation only. No real input request, physical audio, native post-admission fault/retry/permission, Redshank native hold/cap/save, second-host acceptance or resize/reparent claim."
+  },
+  "source_bindings": {
+    "file": "source-sha256.json",
+    "count": 644,
+    "meaning": "Repository input snapshot equals qualified Git source. Gate-specific before/after snapshots identify exact inputs during each command; HEAD then preceded source commits. Listing a file is not a claim that its code executed."
+  },
+  "cohorts": {
+    "root": "Mere 7632bbd32a / Genet 2b5c01811e / Eidetic aa94fe22ee",
+    "redshank": "Mere a07a375ed9 / Genet 7d1d89dbe7 / Eidetic 34105d63",
+    "policy": "Independent locked consumers tested separately; no manifest, lock or supplier-pin changes. Q5 historical old-cohort11-case receiving receipt retained; current root alignment is not asserted."
+  },
+  "publication": "Source951c7822 and770f5443 already merged and pushed to main through authenticated HTTPS. publication.json will bind fetched source/evidence after receipt publication; stored origin configuration unchanged.",
+  "host_sync": {
+    "intake": "host-sync-intake.json",
+    "local": "Clean primary refreshed; source published on main. Completed task/control worktrees pruned after receipt publication.",
+    "other_hosts": "o-pc timeout; s-pc, thinkpad-l14-f and imac-intel SSH authentication refused. Agent has no identities. Remote working trees not accessed or mutated, cleanliness/revisions unverified.",
+    "no_remote_mutations": true
+  },
+  "limits": [
+    "Focused selected-package gates, not complete root or port workspace suites.",
+    "Capture uses deterministic admitted PCM/fake input plus actual storage/export workers and mounted pointer dispatch, not microphone or physical acceptance.",
+    "Native receipt only extends V03 availability presentation on this M4 at the recorded binary.",
+    "No new supplier, P5a, native custody migration, cross-computer receiving or physical hardware qualification.",
+    "Absolute cwd/build/fixture paths in retained logs are local provenance; portable verifier never follows them."
+  ]
+}

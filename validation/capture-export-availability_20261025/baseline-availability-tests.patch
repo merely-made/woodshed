@@ -1,0 +1,164 @@
+diff --git a/crates/woodshed-genet/src/layout_tests.rs b/crates/woodshed-genet/src/layout_tests.rs
+index fa1c02af..0693d490 100644
+--- a/crates/woodshed-genet/src/layout_tests.rs
++++ b/crates/woodshed-genet/src/layout_tests.rs
+@@ -55,7 +55,8 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
+         let mut h = harness(width, 664.0);
+         h.update(|ui| {
+             ui.now_ms = Some(1_000);
+-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(ui);
++            ui.toggle_rehearsal();
++            crate::tests::acknowledge_card_preview_fixture(ui);
+             ui.song_playing = true;
+             ui.tuner.enabled = true;
+         });
+@@ -228,7 +229,10 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
+         let b = serde_json::to_value(&h.state().set).unwrap();
+         let sound_b = h.state().preview_voicing().unwrap();
+         assert_ne!(sound_a.0, sound_b.0);
+-        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
++        assert_eq!(
++            h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
++            sound_a
++        );
+         assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+         assert!(h.click_on(&Selector::class("overview-new-set")));
+         let owner_c = h.state().working_sets.active_id;
+@@ -268,7 +272,10 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
+             ui.search = cambium::TextInput::new("Minor");
+         });
+         let config_b = serde_json::to_value(h.state().capture_exploration()).unwrap();
+-        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
++        assert_eq!(
++            h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
++            sound_a
++        );
+         assert!(h.click_on(&Selector::class("staging-target").containing("Working Set 1 copy")));
+         assert_eq!(h.state().working_sets.active_id, owner_b);
+         assert_eq!(h.state().catalog_explorations.active_id, exploration_b);
+@@ -402,7 +409,7 @@ fn background_runner_inherits_the_starting_exploration_setup() {
+     assert!(h.state().set.cards[0].setting.tuning.is_none());
+     let inherited = h.state().preview_voicing().unwrap();
+     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+-        h.update(crate::tests::acknowledge_card_preview_fixture);
++    h.update(crate::tests::acknowledge_card_preview_fixture);
+     assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+     assert!(h.click_on(&Selector::class("overview-new-exploration")));
+     h.update(|ui| {
+@@ -412,11 +419,15 @@ fn background_runner_inherits_the_starting_exploration_setup() {
+     assert_ne!(
+         h.state()
+             .stage
+-            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm).unwrap()
++            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm)
++            .unwrap()
+             .0,
+         inherited.0
+     );
+-    assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), inherited);
++    assert_eq!(
++        h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
++        inherited
++    );
+     assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+     assert!(h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running")));
+     assert!(h.click_on(&Selector::class("overview-pause-rehearsal")));
+@@ -534,6 +545,49 @@ fn narrow_stage_preserves_graph_width_and_horizontal_scroll() {
+     assert!((after_graph.2 - 520.0).abs() < 1.0);
+ }
+ 
++#[test]
++fn absent_audio_backend_never_claims_open_streams_or_a_listening_tuner() {
++    let mut h = harness(1_100.0, 700.0);
++    h.update(|ui| {
++        ui.section = woodshed_core::storage::AppSection::Settings;
++        ui.app_settings.page = woodshed_core::settings::SettingsPage::General;
++    });
++    let general = |h: &Harness<UiState, crate::sync::Logic, UiChild>, text: &str| {
++        let dom = h.runner().dom();
++        let dom = dom.borrow();
++        !taproot::matching_classes(&dom, &Selector::class("settings-line").containing(text))
++            .is_empty()
++    };
++    assert!(
++        general(&h, "Audio output: unavailable"),
++        "an absent backend must be visible"
++    );
++    assert!(general(&h, "Audio input: unavailable"));
++    assert!(!general(&h, "output and input streams open"));
++    h.update(|ui| {
++        ui.section = woodshed_core::storage::AppSection::Tools;
++        ui.tool_page = woodshed_views::stage::ToolPage::Tuner;
++        ui.tuner.enabled = true;
++    });
++    let dom = h.runner().dom();
++    let dom = dom.borrow();
++    assert!(
++        taproot::matching_classes(
++            &dom,
++            &Selector::class("tool-reading").containing("Listening…")
++        )
++        .is_empty(),
++        "requested tuner state is not observed microphone admission"
++    );
++    assert!(
++        !taproot::matching_classes(
++            &dom,
++            &Selector::class("tool-reading").containing("unavailable")
++        )
++        .is_empty()
++    );
++}
++
+ #[test]
+ fn settings_uses_the_shared_page_scroll_owner() {
+     let mut harness = harness(1_100.0, 300.0);
+@@ -935,7 +989,8 @@ fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
+         "an ordinary scale must not render chord-to-scale discovery"
+     );
+     assert!(
+-        taproot::matching_classes(&dom, &Selector::class("t-btn").containing("Discover ")).is_empty(),
++        taproot::matching_classes(&dom, &Selector::class("t-btn").containing("Discover "))
++            .is_empty(),
+         "an ordinary scale must not render chord-to-arpeggio discovery"
+     );
+     assert_eq!(
+@@ -1027,8 +1082,9 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
+         (board_size.0 as f32, board_size.1 as f32)
+     );
+     assert_eq!(h.state().preview_voicing().unwrap(), heard);
+-    let dwell =
+-        woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm).unwrap().unwrap();
++    let dwell = woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm)
++        .unwrap()
++        .unwrap();
+     assert!(
+         (dwell.as_secs_f32() - 3.0).abs() < 0.001,
+         "one bar inherits the 80 BPM runner tempo"
+@@ -1069,7 +1125,7 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
+         ui.now_ms = Some(1_000);
+     });
+     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+-        h.update(crate::tests::acknowledge_card_preview_fixture);
++    h.update(crate::tests::acknowledge_card_preview_fixture);
+     assert!(
+         matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request))
+         if request.preview.0.len() == 1 && (request.preview.0[0] - d4_hz).abs() < 0.001)
+@@ -1245,7 +1301,7 @@ fn scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narr
+             );
+             assert_eq!(h.state().practice_history.total_practiced_ms(&subject), 0);
+             assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+-        h.update(crate::tests::acknowledge_card_preview_fixture);
++            h.update(crate::tests::acknowledge_card_preview_fixture);
+             assert!(
+                 matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request)) if request.preview.0 == heard.0)
+             );
+@@ -1458,7 +1514,7 @@ fn adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals
+             let subject = catalog_id_for_card(&h.state().set.cards[2]).unwrap();
+             assert_ne!(subject, "chord:Major 7");
+             assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
+-        h.update(crate::tests::acknowledge_card_preview_fixture);
++            h.update(crate::tests::acknowledge_card_preview_fixture);
+             assert!(
+                 matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request)) if request.preview.0 == heard.0)
+             );

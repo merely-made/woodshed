@@ -1,0 +1,15 @@
+RESULT ok
+captured 01_general_absent
+captured 02_tools_tuner_off
+captured 03_tools_requested_no_input
+captured 04_settings_requested_no_input
+captured 05_close_guard
+Native absent-backend availability complete; awaiting explicit fixture discard
+capture 01_general_absent 2200x1400 digest=76c3bcbba1283872 file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/absent/01_general_absent.png
+capture 02_tools_tuner_off 2200x1400 digest=14f86ca6af260762 file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/absent/02_tools_tuner_off.png
+capture 03_tools_requested_no_input 2200x1400 digest=eb5a18ca751042df file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/absent/03_tools_requested_no_input.png
+capture 04_settings_requested_no_input 2200x1400 digest=e1bbba8ab6b72421 file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/absent/04_settings_requested_no_input.png
+capture 05_close_guard 2200x1400 digest=dcda7413ca67d155 file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/absent/05_close_guard.png
+frames: 5 captured, 0 blank, 5 distinct digests
+presentation: 45 frames, 46 redraws, 1 unpresented redraws
+a11y-publication {"sampled_at_lane_frame":45,"snapshot":{"host":1,"publication":{"adapter":"installed","outcome":{"contribution_issues":0,"nodes":57,"phase":"submitted"}},"sequence":47}}
