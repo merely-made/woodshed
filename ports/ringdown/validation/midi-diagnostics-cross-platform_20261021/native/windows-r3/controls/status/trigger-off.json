@@ -1,0 +1,10 @@
+{
+  "id": "refuse-off",
+  "pedal": {
+    "accepted_messages": 0,
+    "action": "effect-next",
+    "detail": "Selected MIDI receiver is not ready; nothing queued",
+    "id": 2,
+    "outcome": "refused"
+  }
+}

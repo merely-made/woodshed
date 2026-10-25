@@ -1,0 +1,165 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "diagnostics": {
+    "capacity": 512,
+    "events": [
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 18,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 1,
+        "stage": "recording-start",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectNext; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 67, value: 127, release: Some(0) }",
+        "elapsed_micros": 247997,
+        "generation": null,
+        "request_id": 1,
+        "revision": 0,
+        "sequence": 2,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Next #1: Refused \u00b7 0 message(s) accepted by OS \u00b7 Selected MIDI receiver is not ready; nothing queued",
+        "elapsed_micros": 248014,
+        "generation": null,
+        "request_id": 1,
+        "revision": null,
+        "sequence": 3,
+        "stage": "refused",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 758496,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 4,
+        "stage": "recording-stop",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 1926144,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 5,
+        "stage": "recording-start",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectNext; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 67, value: 127, release: Some(0) }",
+        "elapsed_micros": 2127317,
+        "generation": null,
+        "request_id": 3,
+        "revision": 0,
+        "sequence": 6,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Next #3: Refused \u00b7 0 message(s) accepted by OS \u00b7 Selected MIDI receiver is not ready; nothing queued",
+        "elapsed_micros": 2127334,
+        "generation": null,
+        "request_id": 3,
+        "revision": null,
+        "sequence": 7,
+        "stage": "refused",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 2648227,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 8,
+        "stage": "recording-stop",
+        "truncated": false
+      }
+    ],
+    "overwritten": 0,
+    "recording": false
+  },
+  "id": "status-cancelled",
+  "output": {
+    "accepted": 0,
+    "attempted": 0,
+    "connected": null,
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": false,
+    "rearm_required": false,
+    "revision": 0,
+    "settled_revision": 0,
+    "status": null
+  },
+  "pedal": {
+    "accepted_messages": 0,
+    "action": "effect-next",
+    "detail": "Selected MIDI receiver is not ready; nothing queued",
+    "id": 3,
+    "outcome": "refused"
+  }
+}

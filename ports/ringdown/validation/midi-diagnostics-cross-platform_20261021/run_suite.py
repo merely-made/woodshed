@@ -20,7 +20,7 @@ windows = sys.platform == 'win32'
 assert windows or sys.platform.startswith('linux')
 profile = b / 'profile'; profile.mkdir()
 shutil.copy2(a.settings_template, profile / 'settings.json')
-expected_bindings = json.loads(a.bindings.read_text())
+expected_bindings = json.loads(a.bindings.read_text(encoding='utf-8'))
 endpoint = (r'\\.\pipe\woodshed-diagnostics-' if windows else '/tmp/woodshed-diagnostics-') + uuid.uuid4().hex[:12]
 keeper = receiver = app = None
 receiver_name = 'Diagnostic receiver ' + uuid.uuid4().hex[:8]
@@ -46,13 +46,13 @@ def checkpoint_block(label):
 def scene(phase):
     start = 'settle 8\nclick .pill Settings\nclick .side-item Audio and MIDI\n'
     if phase == 'reopen':
-        return (HERE / 'reopen.scn').read_text()
+        return (HERE / 'reopen.scn').read_text(encoding='utf-8')
     if phase.startswith('close-'):
         return start + ('click .t-btn Refresh ports\nclick role:combobox @aria-label=MIDI output\nclick role:option None\n'
             'click .t-btn Record MIDI diagnostics\nclick .t-btn Stop MIDI diagnostics\n'
             'click .t-btn Export MIDI diagnostics…\n') + checkpoint_block('close-dialog') + checkpoint_block('close-held') + 'act midi-checkpoint should-not-survive-close\n'
     if not windows:
-        return (HERE / 'controls-linux.scn').read_text().replace('OUTPUT_RECEIVER', receiver_name)
+        return (HERE / 'controls-linux.scn').read_text(encoding='utf-8').replace('OUTPUT_RECEIVER', receiver_name)
     recipe = start + 'act midi-checkpoint default\ncapture 01_default_off\nact diagnostic-await default\nwait 100000\nassert snap diagnostic-gate-released == true\n'
     recipe += 'click .t-btn Record MIDI diagnostics\n' + checkpoint_block('recording-first')
     recipe += 'click .t-btn Stop MIDI diagnostics\n' + checkpoint_block('stopped')
@@ -60,7 +60,7 @@ def scene(phase):
     recipe += 'click .t-btn Record MIDI diagnostics\n' + checkpoint_block('recording-second')
     recipe += 'click .t-btn Stop MIDI diagnostics\nclick .t-btn Show latest events\n'
     # The remaining controls/cancel/save/exit recipe is shared with the Mac lane.
-    common = (HERE / 'controls-linux.scn').read_text()
+    common = (HERE / 'controls-linux.scn').read_text(encoding='utf-8')
     return recipe + common[common.index('act midi-checkpoint retained\n'):]
 
 
@@ -78,10 +78,12 @@ class App:
             'WOODSHED_STATE':str(profile / 'practice.bin'), 'APPDATA':str(profile),
             'XDG_DATA_HOME':str(b / 'data'), 'XDG_CONFIG_HOME':str(b / 'config'), 'XDG_CACHE_HOME':str(b / 'cache'),
             'MERE_ROOT':str(b / 'mere'), 'GRAPHSHELL_APP_ENDPOINT':endpoint})
+        if windows:
+            env['LOCALAPPDATA'] = str(b / 'local')
         if not windows:
             env['GDK_BACKEND'] = 'x11'; env.pop('WAYLAND_DISPLAY', None)
         (self.root / 'inputs.json').write_text(json.dumps({'command':[str(a.binary), '--midi-pedal-stdio'],
-            'environment':{k:v for k,v in env.items() if k.startswith(('WOODSHED_', 'XDG_', 'GRAPHSHELL_')) or k in ['APPDATA', 'MERE_ROOT', 'DISPLAY', 'XAUTHORITY', 'GDK_BACKEND', 'DBUS_SESSION_BUS_ADDRESS']},
+            'environment':{k:v for k,v in env.items() if k.startswith(('WOODSHED_', 'XDG_', 'GRAPHSHELL_')) or k in ['APPDATA', 'LOCALAPPDATA', 'MERE_ROOT', 'DISPLAY', 'XAUTHORITY', 'GDK_BACKEND', 'DBUS_SESSION_BUS_ADDRESS']},
             'startup_recording_opt_in':False}, indent=2))
         self.native = (self.root / 'native.log').open('w', encoding='utf-8')
         self.stdout = (self.root / 'stdio.jsonl').open('w', encoding='utf-8')
@@ -120,7 +122,7 @@ class App:
     def checkpoint(self, label, release=False):
         path = self.capture / ('midi-' + label + '.json')
         wait_for(path.exists, 'checkpoint ' + label)
-        value = json.loads(path.read_text())
+        value = json.loads(path.read_text(encoding='utf-8'))
         state = self.status(label)
         diagnostic = state['diagnostics']
         assert value['diagnostics']['recording'] == (diagnostic['recording'] if diagnostic else False)
@@ -148,7 +150,7 @@ class App:
             cmd = [sys.executable, str(HERE / 'native_linux.py'), '--pid', str(self.proc.pid), '--action', action]
             if capture: cmd += ['--capture', str(capture)]
             if destination: cmd += ['--destination', str(destination)]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=25)
+        result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=25)
         with (self.root / 'native-actions.jsonl').open('a', encoding='utf-8') as file:
             file.write(json.dumps({'command':cmd, 'exit':result.returncode, 'stdout':result.stdout, 'stderr':result.stderr}) + '\n')
         assert result.returncode == 0, result.stderr + result.stdout
@@ -158,7 +160,7 @@ class App:
         code = self.proc.wait(timeout=30); self.thread.join(timeout=5)
         self.native.close(); self.stdout.close()
         receipt = self.capture / 'scenario.done'
-        text = receipt.read_text() if receipt.exists() else None
+        text = receipt.read_text(encoding='utf-8') if receipt.exists() else None
         assert code == 0, code
         if not deliberate_close: assert text and text.startswith('RESULT ok\n'), text
         else: assert not (self.capture / 'midi-should-not-survive-close.json').exists()
@@ -167,7 +169,7 @@ class App:
 
 
 def assert_export(path, status):
-    obj = json.loads(path.read_text()); expected = dict(status); expected.pop('id')
+    obj = json.loads(path.read_text(encoding='utf-8')); expected = dict(status); expected.pop('id')
     assert obj['format'] == 'woodshed-midi-diagnostics' and obj['version'] == 1
     assert obj['status'] == expected
 
@@ -180,7 +182,7 @@ try:
         assert a.receiver
         receiver = subprocess.Popen([str(a.receiver), receiver_name, str(b / 'received.jsonl')], stdin=subprocess.PIPE,
             stdout=(b / 'receiver.log').open('w'), stderr=(b / 'receiver-errors.log').open('w'), text=True)
-        wait_for(lambda: (b / 'received.jsonl').exists() and '"event":"open"' in (b / 'received.jsonl').read_text(), 'ALSA receiver')
+        wait_for(lambda: (b / 'received.jsonl').exists() and '"event":"open"' in (b / 'received.jsonl').read_text(encoding='utf-8'), 'ALSA receiver')
     app = App('controls')
     _, initial = app.checkpoint('default'); assert initial['diagnostics'] is None
     assert initial['bindings'] == expected_bindings, 'Synthetic encrypted settings did not load'
@@ -206,7 +208,7 @@ try:
     wait_for(destination.exists, 'native JSON save', 15); time.sleep(.4); app.gate('save-dialog')
     saved, status = app.checkpoint('saved'); assert not saved['diagnostics']['busy']; assert status['diagnostics'] == retained['diagnostics']; assert 'exported to' in saved['diagnostics']['notice']; assert_export(destination, retained); app.gate('saved')
     wait_for((app.capture / 'midi-exit-recording.json').exists, 'recording on before exit')
-    assert json.loads((app.capture / 'midi-exit-recording.json').read_text())['diagnostics']['recording']
+    assert json.loads((app.capture / 'midi-exit-recording.json').read_text(encoding='utf-8'))['diagnostics']['recording']
     app.finish(); app = None
     app = App('reopen'); reopened, status = app.checkpoint('reopened'); assert status['diagnostics'] is None and not reopened['diagnostics']['recording']; assert status['bindings'] == expected_bindings
     assert reopened['saved_settings'] is not None and 'diagnostics' not in json.dumps(reopened['saved_settings']); app.gate('reopened'); app.finish(); app = None
@@ -221,7 +223,7 @@ try:
         else: app.ui('cancel', app.root / 'cancel-panel.png')
         app.finish(deliberate_close=True); app = None; results[phase] = True
     if not windows:
-        packets = [v['bytes'] for line in (b / 'received.jsonl').read_text().splitlines() if (v := json.loads(line))['event'] == 'packet']
+        packets = [v['bytes'] for line in (b / 'received.jsonl').read_text(encoding='utf-8').splitlines() if (v := json.loads(line))['event'] == 'packet']
         assert packets == [[176,67,127],[176,67,0]] * 3, packets
         results['independently_received_messages'] = len(packets)
     else:
@@ -242,3 +244,11 @@ finally:
         (b / 'keeper/stop').touch()
         try: keeper.wait(timeout=10)
         except subprocess.TimeoutExpired: keeper.terminate(); keeper.wait(timeout=10)
+
+    # GPU shader/font caches belong only to this fresh acceptance profile.
+    # Keep observations, saved profile and keeper evidence; discard rebuildable cache.
+    cache = b / 'cache'
+    if cache.is_dir():
+        size = sum(v.stat().st_size for v in cache.rglob('*') if v.is_file())
+        shutil.rmtree(cache)
+        (b / 'cache-cleanup.json').write_text(json.dumps({'removed_runtime_cache_bytes':size, 'path':str(cache)}))

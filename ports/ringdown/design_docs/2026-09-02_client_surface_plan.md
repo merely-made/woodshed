@@ -665,7 +665,18 @@ retains these controls on the current notation/audio cohort, folds upstream
 completion/failure projection into the same pedal writer, and updates the
 existing host admission patch to that cohort. Merged desktop/Hocket compilation
 and 43 focused desktop MIDI/diagnostic cases pass. This does not extend the
-historical native/device acceptance; Windows/Linux native dialogs remain pending.
+historical native/device acceptance. The subsequent
+[Windows/Linux diagnostic packet](../validation/midi-diagnostics-cross-platform_20261021/README.md)
+now has complete Windows and Linux Xwayland cohorts: default-off same-profile
+reopen, retained history across Stop/restart, whole Status/JSON parity, native
+Cancel/Save and both pending native close-event branches. Four fresh processes
+exit normally on one frozen binary per host; the same 43 desktop cases and one
+isolated journal case pass on each. Linux retains 20 events and captures six
+independent ALSA messages. Windows retains eight events from explicit no-output
+dispatcher refusals and attempts zero MIDI messages. Scrolled readout captures
+and independent local JSON rechecks pass. No guitar was used. Native Wayland
+and Windows MIDI/BLE delivery remain unqualified; final Windows preservation
+metadata collection is pending in that packet.
 
 
 ### Pedal acceptance (2026-10-20)

@@ -1,0 +1,345 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "diagnostics": {
+    "capacity": 512,
+    "events": [
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 1,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 1,
+        "stage": "recording-start",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectNext; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 67, value: 127, release: Some(0) }",
+        "elapsed_micros": 287706,
+        "generation": null,
+        "request_id": 1,
+        "revision": null,
+        "sequence": 2,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          127
+        ],
+        "detail": "index=0; action=EffectNext",
+        "elapsed_micros": 287721,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 3,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          0
+        ],
+        "detail": "index=1; action=EffectNext",
+        "elapsed_micros": 287722,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 4,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          127
+        ],
+        "detail": "index=0; action=EffectNext; due_late_us=5768",
+        "elapsed_micros": 293508,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 5,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          127
+        ],
+        "detail": "index=0; os_accepted=true; error=None",
+        "elapsed_micros": 293626,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 6,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          0
+        ],
+        "detail": "index=1; action=EffectNext; due_late_us=324",
+        "elapsed_micros": 343965,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 7,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          0
+        ],
+        "detail": "index=1; os_accepted=true; error=None",
+        "elapsed_micros": 344182,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 8,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Next #1: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+        "elapsed_micros": 344194,
+        "generation": null,
+        "request_id": 1,
+        "revision": 1,
+        "sequence": 9,
+        "stage": "terminal",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 935032,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 10,
+        "stage": "recording-stop",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 2717141,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 11,
+        "stage": "recording-start",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "action=EffectNext; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 67, value: 127, release: Some(0) }",
+        "elapsed_micros": 3012151,
+        "generation": null,
+        "request_id": 3,
+        "revision": null,
+        "sequence": 12,
+        "stage": "admission",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          127
+        ],
+        "detail": "index=0; action=EffectNext",
+        "elapsed_micros": 3012166,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 13,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          0
+        ],
+        "detail": "index=1; action=EffectNext",
+        "elapsed_micros": 3012168,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 14,
+        "stage": "planned-message",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          127
+        ],
+        "detail": "index=0; action=EffectNext; due_late_us=9384",
+        "elapsed_micros": 3021572,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 15,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          127
+        ],
+        "detail": "index=0; os_accepted=true; error=None",
+        "elapsed_micros": 3021792,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 16,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          0
+        ],
+        "detail": "index=1; action=EffectNext; due_late_us=263",
+        "elapsed_micros": 3072070,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 17,
+        "stage": "writer-send-start",
+        "truncated": false
+      },
+      {
+        "bytes": [
+          176,
+          67,
+          0
+        ],
+        "detail": "index=1; os_accepted=true; error=None",
+        "elapsed_micros": 3072291,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 18,
+        "stage": "writer-send-result",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Effect Next #3: Accepted \u00b7 2 message(s) accepted by OS \u00b7 All messages accepted by OS; musical result unobserved",
+        "elapsed_micros": 3072302,
+        "generation": null,
+        "request_id": 3,
+        "revision": 1,
+        "sequence": 19,
+        "stage": "terminal",
+        "truncated": false
+      },
+      {
+        "bytes": [],
+        "detail": "Desktop session recording control",
+        "elapsed_micros": 3645228,
+        "generation": null,
+        "request_id": null,
+        "revision": null,
+        "sequence": 20,
+        "stage": "recording-stop",
+        "truncated": false
+      }
+    ],
+    "overwritten": 0,
+    "recording": false
+  },
+  "id": "status-saved",
+  "output": {
+    "accepted": 6,
+    "attempted": 6,
+    "connected": "Desktop MIDI receiving fixture:Diagnostic receiver cfde112f 128:0",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "revision": 1,
+    "settled_revision": 1,
+    "status": "OS MIDI output open \u00b7 OS accepted 6; refused/uncertain 0"
+  },
+  "pedal": {
+    "accepted_messages": 2,
+    "action": "effect-next",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 3,
+    "outcome": "accepted"
+  }
+}

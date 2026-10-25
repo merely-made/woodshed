@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "retained_events": 8,
+  "reopen_default_off": true,
+  "native_cancel_save_and_close": true,
+  "full_status_parity": true,
+  "exports_sha256": {
+    "controls": "df2c00ebe255864d6b0844568ae2bd704658817c2328684cd4090ac962088a2f",
+    "close-save": "eaea4a26f66776868b42318e6533938674639f3fcf04428e19a139aba5bc0218"
+  },
+  "independent_midi_packets": null,
+  "binary_sha256": "99c4468965e32da45e709a6675eb24fcc2b25b95e4079dc58712219162de5515"
+}

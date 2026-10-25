@@ -100,7 +100,14 @@ compilation passes. The separate [diagnostic acceptance packet](../validation/mi
 records 39 focused passing cases and native macOS controls/dialog/reopen results:
 retained history, default-off reopen, full Status/export equality and both pending
 host-command close branches. Native Quit's modal refusal is a separate observation;
-Windows/Linux dialog runtime remains unqualified.
+that historical packet does not qualify Windows/Linux dialog runtime. The later
+[Windows/Linux diagnostic packet](../validation/midi-diagnostics-cross-platform_20261021/README.md)
+adds complete native Windows and Linux Xwayland control/reopen/export and pending
+close-event cohorts, full Status/JSON parity and the same 43 desktop plus one
+isolated journal case passing on each host. Linux captures six independent ALSA
+messages; Windows uses explicit no-output dispatcher refusals. Native Wayland
+and Windows MIDI/BLE delivery remain unqualified. Final Windows preservation
+metadata collection is pending in the newer packet.
 
 
 Earlier device session: [Q-PC MIDI pedal experiment](../validation/midi-pedal_20261017/README.md)

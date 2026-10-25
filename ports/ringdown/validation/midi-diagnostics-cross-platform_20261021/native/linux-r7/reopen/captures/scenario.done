@@ -1,0 +1,8 @@
+RESULT ok
+captured 01_reopened_default_off
+captured 01b_reopened_status_scrolled
+waited 0 frames
+capture 01_reopened_default_off 1318x720 digest=b42d037bcbbd9700 file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/reopen/captures/01_reopened_default_off.png
+capture 01b_reopened_status_scrolled 1318x720 digest=7b00c16dcd037f76 file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/reopen/captures/01b_reopened_status_scrolled.png
+frames: 2 captured, 0 blank, 2 distinct digests
+presentation: 19 frames, 19 redraws, 0 unpresented redraws

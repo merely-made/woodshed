@@ -3,6 +3,8 @@ click .pill Settings
 click .side-item Audio and MIDI
 act midi-checkpoint reopened
 capture 01_reopened_default_off
+wheel 0 1000 px at 600 400
+capture 01b_reopened_status_scrolled
 act diagnostic-await reopened
 wait 100000
 assert snap diagnostic-gate-released == true

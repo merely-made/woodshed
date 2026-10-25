@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "retained_events": 20,
+  "reopen_default_off": true,
+  "native_cancel_save_and_close": true,
+  "full_status_parity": true,
+  "exports_sha256": {
+    "controls": "84861980eca4f9187028c0068d5182c07a012b7ce23febe56faff71305cee47a",
+    "close-save": "f128228b53538652b9ff8104f9e35e4e0f1a1240d1826fdfde4081689ee160fd"
+  },
+  "independent_midi_packets": [
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ],
+    [
+      176,
+      67,
+      127
+    ],
+    [
+      176,
+      67,
+      0
+    ]
+  ],
+  "binary_sha256": "ba12cdb4f448d6b2cf37ad7a33a3ba1f4ec8c1811916d5b37df5d74cd209016a"
+}

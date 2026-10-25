@@ -1,0 +1,24 @@
+{
+  "command": [
+    "C:\\t\\cargo-targets\\woodshed\\debug\\woodshed-genet.exe",
+    "--midi-pedal-stdio"
+  ],
+  "environment": {
+    "APPDATA": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\profile",
+    "LOCALAPPDATA": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\local",
+    "WOODSHED_WIDTH": "1400",
+    "WOODSHED_HEIGHT": "950",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_SCENARIO": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\reopen\\executed.scn",
+    "WOODSHED_CAPTURE_DIR": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\reopen\\captures",
+    "WOODSHED_RECEIPT": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\reopen\\captures\\scenario.done",
+    "WOODSHED_SETTINGS": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\profile\\settings.json",
+    "WOODSHED_STATE": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\profile\\practice.bin",
+    "XDG_DATA_HOME": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\data",
+    "XDG_CONFIG_HOME": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\config",
+    "XDG_CACHE_HOME": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\cache",
+    "MERE_ROOT": "C:\\Users\\mark_\\Code\\testing\\woodshed\\midi-diagnostics-cross-platform_20261021\\suite-r3\\mere",
+    "GRAPHSHELL_APP_ENDPOINT": "\\\\.\\pipe\\woodshed-diagnostics-d472d50353d6"
+  },
+  "startup_recording_opt_in": false
+}

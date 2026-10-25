@@ -1,0 +1,29 @@
+RESULT ok
+captured 01_default_off
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 02_retained_history
+captured 02b_history_scrolled
+waited 0 frames
+waited 2 frames
+captured 03_cancelled
+waited 0 frames
+waited 4 frames
+captured 04_exported
+captured 04b_export_notice_scrolled
+waited 0 frames
+captured 05_recording_before_exit
+capture 01_default_off 1318x720 digest=cc27451357b728d0 file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/01_default_off.png
+capture 02_retained_history 1318x720 digest=6e6d4794bfba37f3 file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/02_retained_history.png
+capture 02b_history_scrolled 1318x720 digest=92350359861ebb6c file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/02b_history_scrolled.png
+capture 03_cancelled 1318x720 digest=76e48bef72fadbe3 file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/03_cancelled.png
+capture 04_exported 1318x720 digest=6e1fe5b37e2224db file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/04_exported.png
+capture 04b_export_notice_scrolled 1318x720 digest=a9c92019295f60ba file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/04b_export_notice_scrolled.png
+capture 05_recording_before_exit 1318x720 digest=cc2ad61937300a92 file=/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/controls/captures/05_recording_before_exit.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 84 frames, 84 redraws, 0 unpresented redraws

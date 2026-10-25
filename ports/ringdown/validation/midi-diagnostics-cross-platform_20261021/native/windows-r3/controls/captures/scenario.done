@@ -1,0 +1,27 @@
+RESULT ok
+captured 01_default_off
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+waited 0 frames
+captured 02_retained_history
+captured 02b_history_scrolled
+waited 0 frames
+waited 19 frames
+captured 03_cancelled
+waited 0 frames
+waited 14 frames
+captured 04_exported
+captured 04b_export_notice_scrolled
+waited 0 frames
+captured 05_recording_before_exit
+capture 01_default_off 2464x1504 digest=372ecc3baa9da17f file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\01_default_off.png
+capture 02_retained_history 2464x1504 digest=9ba2388a939e90f3 file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\02_retained_history.png
+capture 02b_history_scrolled 2464x1504 digest=cb6a07dcdc273740 file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\02b_history_scrolled.png
+capture 03_cancelled 2464x1504 digest=bbf1d5f51820fd2a file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\03_cancelled.png
+capture 04_exported 2464x1504 digest=909165ffb15d445b file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\04_exported.png
+capture 04b_export_notice_scrolled 2464x1504 digest=0ed232a4d62af873 file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\04b_export_notice_scrolled.png
+capture 05_recording_before_exit 2464x1504 digest=ff24ea43104734de file=C:\Users\mark_\Code\testing\woodshed\midi-diagnostics-cross-platform_20261021\suite-r3\controls\captures\05_recording_before_exit.png
+frames: 7 captured, 0 blank, 7 distinct digests
+presentation: 104 frames, 104 redraws, 0 unpresented redraws

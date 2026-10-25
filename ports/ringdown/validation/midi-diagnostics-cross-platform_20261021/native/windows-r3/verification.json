@@ -1,0 +1,13 @@
+{
+  "reopen_default_off": true,
+  "close-cancel": true,
+  "close-save": true,
+  "midi_delivery_qualified": false,
+  "success": true,
+  "platform": "win32",
+  "retained_events": 8,
+  "status_export_equal": true,
+  "stopped_history_unchanged": true,
+  "midi_data_lane": "dispatcher-refusals-no-output",
+  "binary_sha256": "99c4468965e32da45e709a6675eb24fcc2b25b95e4079dc58712219162de5515"
+}

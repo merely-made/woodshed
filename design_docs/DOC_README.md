@@ -55,6 +55,13 @@ before any other doc in this directory.
   adds actual picker/clock controls, exact receiver parity, explicit hotplug
   refusal/rearm, and a zero-message guitar lifecycle check (36 focused cases,
   fourteen native captures).
+  [Desktop diagnostics on Windows/Linux](../ports/ringdown/validation/midi-diagnostics-cross-platform_20261021/README.md)
+  adds complete native control/reopen/export and pending-close cohorts on
+  Windows and Linux Xwayland, full Status/JSON parity, and the same 43 desktop
+  plus one isolated journal case passing on each host. Linux independently
+  receives six ALSA messages; Windows exercises no-output refusal diagnostics.
+  Native Wayland and Windows MIDI/BLE delivery remain open; final Windows
+  preservation metadata collection is pending in the packet.
 
 
 
