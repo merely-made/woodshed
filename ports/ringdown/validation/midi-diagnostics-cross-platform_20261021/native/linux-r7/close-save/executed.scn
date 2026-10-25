@@ -1,0 +1,18 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option None
+click .t-btn Record MIDI diagnostics
+click .t-btn Stop MIDI diagnostics
+click .t-btn Export MIDI diagnostics…
+act midi-checkpoint close-dialog
+act diagnostic-await close-dialog
+wait 100000
+assert snap diagnostic-gate-released == true
+act midi-checkpoint close-held
+act diagnostic-await close-held
+wait 100000
+assert snap diagnostic-gate-released == true
+act midi-checkpoint should-not-survive-close

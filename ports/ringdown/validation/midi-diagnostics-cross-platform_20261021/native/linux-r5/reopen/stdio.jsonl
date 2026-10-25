@@ -1,0 +1,4 @@
+{"bindings":{"effect_next":{"channel":1,"enabled":true,"kind":"control-change","number":67,"release":0,"value":127},"effect_previous":{"channel":1,"enabled":true,"kind":"control-change","number":66,"release":0,"value":127},"inputs":{"effect_next":{"controller":{"channel":2,"kind":"control-change","number":20},"keyboard":{"alt":false,"key":"n","shift":false}},"effect_previous":{"controller":{"channel":3,"kind":"note","number":36},"keyboard":{"alt":false,"key":"p","shift":false}}}},"diagnostics":null,"id":"status-reopened","output":{"accepted":0,"attempted":0,"connected":null,"disconnects":0,"error":null,"failed":0,"generation":null,"last_failure":null,"pedal_failure":null,"ready":false,"rearm_required":false,"revision":0,"settled_revision":0,"status":null},"pedal":null}
+woodshed-genet: captured 01_reopened_default_off
+woodshed-genet: waited 0 frames
+woodshed-genet: RESULT ok (17 frames, 1 captures)

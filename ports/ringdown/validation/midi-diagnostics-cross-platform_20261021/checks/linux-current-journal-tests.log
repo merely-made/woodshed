@@ -1,0 +1,23 @@
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#64d47ac4)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: unused variable: `generation`
+   --> crates/woodshed-instrument/src/midi.rs:446:9
+    |
+446 |         generation: Option<u64>,
+    |         ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_generation`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: `woodshed-instrument` (lib) generated 1 warning (run `cargo fix --lib -p woodshed-instrument` to apply 1 suggestion)
+   Compiling woodshed-instrument v0.1.0 (/home/markik/Code/worktrees/woodshed-midi-diagnostics/crates/woodshed-instrument)
+    Finished `test` profile [unoptimized] target(s) in 1.21s
+     Running tests/diagnostics.rs (/home/markik/Code/repos/woodshed/target/debug/deps/diagnostics-a933bd0ee3b2b6cc)
+
+running 1 test
+test runtime_opt_in_stop_retains_and_restart_appends_without_off_capture ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

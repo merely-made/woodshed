@@ -1,0 +1,7 @@
+{"event":"open","epoch":1}
+{"event":"packet","epoch":1,"micros":5027722,"bytes":[176, 67, 127]}
+{"event":"packet","epoch":1,"micros":5078057,"bytes":[176, 67, 0]}
+{"event":"packet","epoch":1,"micros":6390443,"bytes":[176, 67, 127]}
+{"event":"packet","epoch":1,"micros":6440982,"bytes":[176, 67, 0]}
+{"event":"packet","epoch":1,"micros":7753899,"bytes":[176, 67, 127]}
+{"event":"packet","epoch":1,"micros":7804369,"bytes":[176, 67, 0]}

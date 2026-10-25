@@ -1,0 +1,13 @@
+{
+  "reopen_default_off": true,
+  "close-cancel": true,
+  "close-save": true,
+  "independently_received_messages": 6,
+  "success": true,
+  "platform": "linux",
+  "retained_events": 20,
+  "status_export_equal": true,
+  "stopped_history_unchanged": true,
+  "midi_data_lane": "ALSA-independent-receiver",
+  "binary_sha256": "ba12cdb4f448d6b2cf37ad7a33a3ba1f4ec8c1811916d5b37df5d74cd209016a"
+}

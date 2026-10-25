@@ -1,0 +1,63 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+act midi-checkpoint default
+capture 01_default_off
+act diagnostic-await default
+wait 100000
+assert snap diagnostic-gate-released == true
+click .t-btn Refresh ports
+click role:combobox @aria-label=MIDI output
+click role:option Diagnostic receiver c9b70ef9
+act midi-await-ready
+wait 100000
+click .t-btn Record MIDI diagnostics
+click .t-btn Trigger Effect Next
+act midi-await-count 2
+wait 100000
+click .t-btn Stop MIDI diagnostics
+act midi-checkpoint stopped
+act diagnostic-await stopped
+wait 100000
+assert snap diagnostic-gate-released == true
+click .t-btn Trigger Effect Next
+act midi-await-count 4
+wait 100000
+act midi-checkpoint off-send
+act diagnostic-await off-send
+wait 100000
+assert snap diagnostic-gate-released == true
+click .t-btn Record MIDI diagnostics
+click .t-btn Trigger Effect Next
+act midi-await-count 6
+wait 100000
+click .t-btn Stop MIDI diagnostics
+click .t-btn Show latest events
+act midi-checkpoint retained
+capture 02_retained_history
+act diagnostic-await retained
+wait 100000
+assert snap diagnostic-gate-released == true
+click .t-btn Export MIDI diagnostics…
+act midi-checkpoint cancel-dialog
+act diagnostic-await cancel-dialog
+wait 100000
+assert snap diagnostic-gate-released == true
+act midi-checkpoint cancelled
+capture 03_cancelled
+act diagnostic-await cancelled
+wait 100000
+assert snap diagnostic-gate-released == true
+click .t-btn Export MIDI diagnostics…
+act midi-checkpoint save-dialog
+act diagnostic-await save-dialog
+wait 100000
+assert snap diagnostic-gate-released == true
+act midi-checkpoint saved
+capture 04_exported
+act diagnostic-await saved
+wait 100000
+assert snap diagnostic-gate-released == true
+click .t-btn Record MIDI diagnostics
+act midi-checkpoint exit-recording
+capture 05_recording_before_exit

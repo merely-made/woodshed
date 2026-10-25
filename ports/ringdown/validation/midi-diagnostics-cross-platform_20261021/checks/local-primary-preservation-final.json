@@ -1,0 +1,10 @@
+{
+  "paths_checked": 1011,
+  "hash_mismatches": [],
+  "primary_status_unchanged": true,
+  "status_options": [
+    "--porcelain=v1",
+    "--untracked-files=all"
+  ],
+  "head_unchanged": true
+}

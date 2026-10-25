@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/home/markik/Code/repos/woodshed/target/debug/woodshed-genet",
+    "--midi-pedal-stdio"
+  ],
+  "environment": {
+    "XDG_SESSION_TYPE": "tty",
+    "XAUTHORITY": "/run/user/1000/.mutter-Xwaylandauth.2TCAX3",
+    "XDG_SESSION_CLASS": "user",
+    "DISPLAY": ":0",
+    "XDG_SESSION_ID": "176",
+    "XDG_RUNTIME_DIR": "/run/user/1000",
+    "XDG_DATA_DIRS": "/home/markik/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share",
+    "GDK_BACKEND": "x11",
+    "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
+    "WOODSHED_WIDTH": "1400",
+    "WOODSHED_HEIGHT": "950",
+    "WOODSHED_PRESENTATION_TIMEOUT_SECS": "60",
+    "WOODSHED_SCENARIO": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/close-save/executed.scn",
+    "WOODSHED_CAPTURE_DIR": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/close-save/captures",
+    "WOODSHED_RECEIPT": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/close-save/captures/scenario.done",
+    "WOODSHED_SETTINGS": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/profile/settings.json",
+    "WOODSHED_STATE": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/profile/practice.bin",
+    "APPDATA": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/profile",
+    "XDG_DATA_HOME": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/data",
+    "XDG_CONFIG_HOME": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/config",
+    "XDG_CACHE_HOME": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/cache",
+    "MERE_ROOT": "/home/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/suite-r7/mere",
+    "GRAPHSHELL_APP_ENDPOINT": "/tmp/woodshed-diagnostics-b8ba61818b2a"
+  },
+  "startup_recording_opt_in": false
+}

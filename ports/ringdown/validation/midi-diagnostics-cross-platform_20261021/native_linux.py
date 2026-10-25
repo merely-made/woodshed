@@ -3,7 +3,7 @@
 import argparse,ctypes as C,ctypes.util,json,time,os
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--pid',type=int,required=True);p.add_argument('--action',choices=['inspect','save','cancel','close'],required=True);p.add_argument('--destination');p.add_argument('--capture');a=p.parse_args()
-x=C.CDLL(ctypes.util.find_library('X11'));xt=C.CDLL(ctypes.util.find_library('Xtst'))
+x=C.CDLL(ctypes.util.find_library('X11'))
 x.XOpenDisplay.argtypes=[C.c_char_p];x.XOpenDisplay.restype=C.c_void_p;d=x.XOpenDisplay(None);assert d,'X11 display unavailable'
 x.XDefaultRootWindow.argtypes=[C.c_void_p];x.XDefaultRootWindow.restype=C.c_ulong
 x.XInternAtom.argtypes=[C.c_void_p,C.c_char_p,C.c_int];x.XInternAtom.restype=C.c_ulong
@@ -48,25 +48,43 @@ if a.capture:
  Gdk.init([])
  win=GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(),w)
  pix=Gdk.pixbuf_get_from_window(win,0,0,win.get_width(),win.get_height());assert pix and pix.get_width()>200 and pix.get_height()>100;pix.savev(a.capture,'png',[],[])
-x.XSetInputFocus.argtypes=[C.c_void_p,C.c_ulong,C.c_int,C.c_ulong];x.XSetInputFocus(d,w,2,0);x.XFlush(d)
-x.XKeysymToKeycode.argtypes=[C.c_void_p,C.c_ulong];x.XKeysymToKeycode.restype=C.c_ubyte
-x.XkbKeycodeToKeysym.argtypes=[C.c_void_p,C.c_ubyte,C.c_int,C.c_int];x.XkbKeycodeToKeysym.restype=C.c_ulong
-xt.XTestFakeKeyEvent.argtypes=[C.c_void_p,C.c_uint,C.c_int,C.c_ulong]
-def key(sym,down):assert xt.XTestFakeKeyEvent(d,x.XKeysymToKeycode(d,sym),down,0)
-def press(sym):key(sym,True);key(sym,False);x.XFlush(d)
-def text(s):
- for ch in s:
-  sym=ord(ch);code=x.XKeysymToKeycode(d,sym);assert code,(ch,sym)
-  shifted=x.XkbKeycodeToKeysym(d,code,0,0)!=sym
-  if shifted:assert x.XkbKeycodeToKeysym(d,code,0,1)==sym,ch;key(0xffe1,True)
-  press(sym)
-  if shifted:key(0xffe1,False)
- x.XFlush(d)
-if a.action=='cancel':press(0xff1b)
-elif a.action=='save':
- assert a.destination and not Path(a.destination).exists()
- key(0xffe3,True);press(ord('l'));key(0xffe3,False);x.XFlush(d);time.sleep(.3)
- text(a.destination);press(0xff0d);time.sleep(1)
- # GTK Save mode may first accept the location, then await Save confirmation.
- if not Path(a.destination).exists():press(0xff0d)
-print(json.dumps({'action':a.action,'owned':owned,'destination':a.destination}))
+# Invoke the owned GTK dialog's actual accessible controls. This avoids
+# compositor keyboard focus and Escape binding ambiguity on Xwayland.
+import gi
+gi.require_version('Atspi','2.0')
+from gi.repository import Atspi
+accessible=[]
+def descend(node,depth=0):
+ if depth>20 or len(accessible)>800:return
+ accessible.append(node)
+ for i in range(node.get_child_count()):
+  child=node.get_child_at_index(i)
+  if child:descend(child,depth+1)
+desktop=Atspi.get_desktop(0)
+apps=[desktop.get_child_at_index(i) for i in range(desktop.get_child_count())]
+for application in apps:
+ if application.get_process_id()==a.pid:descend(application)
+dialogs=[node for node in accessible if node.get_name()=='Export MIDI diagnostics to a new file']
+assert len(dialogs)==1,[(node.get_name(),node.get_role_name()) for node in accessible if node.get_role_name() in ['frame','dialog','file chooser']]
+root=dialogs[0];accessible=[];descend(root)
+controls=[];buttons={};entry=None
+for node in accessible:
+ name=node.get_name();role=node.get_role_name()
+ if name in ['Cancel','Save'] and node.is_action():
+  buttons[name]=node
+  controls.append({'name':name,'role':role,'actions':[node.get_action_name(i) for i in range(node.get_n_actions())]})
+ if node.is_editable_text():
+  value=Atspi.Text.get_text(node,0,-1)
+  controls.append({'name':name,'role':role,'text':value})
+  if value=='midi-diagnostics.json':entry=node
+print(json.dumps({'action':a.action,'owned':owned,'controls':controls,'destination':a.destination}),flush=True)
+if a.action in ['save','cancel']:
+ label='Save' if a.action=='save' else 'Cancel'
+ assert label in buttons,{'controls':controls,'nodes':[(n.get_name(),n.get_role_name()) for n in accessible]}
+ if a.action=='save':
+  assert a.destination and not Path(a.destination).exists()
+  assert entry,'Native filename entry missing'
+  assert entry.set_text_contents(a.destination),'Native filename edit refused'
+ button=buttons[label]
+ assert button.get_n_actions()>0
+ assert button.do_action(0),'Native dialog action refused'

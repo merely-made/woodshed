@@ -1,18 +1,18 @@
 {
-  "status": "native-runs-await-ssh-agent-unlock",
+  "status": "windows-linux-native-passed-final-metadata-transfer-pending",
   "date": "2026-10-21",
-  "native_windows_runtime": "not yet run",
-  "native_linux_runtime": "not yet run",
-  "linux_build": "app and synthetic fixture passed on thinkpad-l14-f",
-  "windows_build": "active existing SSH exec session; result not yet available",
+  "native_windows_runtime": "suite-r3 complete pass: controls, reopen, full JSON/Status parity and both native WM_CLOSE cancel/save branches",
+  "native_linux_runtime": "suite-r5 and suite-r7 complete passes; scrolled captures reviewed; independent JSON/Status rechecks pass",
+  "linux_build": "merged main 71ac17e compiled; 1240 source hashes verified",
+  "windows_build": "Merged main 71ac17e native desktop build passed",
   "mac_checks": {
     "desktop_compile": "passed",
     "export_lifecycle_regressions": 2
   },
   "portability_fix": "rfd declared for all desktop targets; GTK backend on Linux; one existing chooser and worker",
   "lock_audit": "checks/lock-audit.json",
-  "ssh_blocker": "Configured Djinn SSH agent reports no identities; fresh BatchMode connections to both target hosts fail public-key authentication",
-  "source_manifest": "/Users/markik/Code/testing/woodshed/midi-diagnostics-cross-platform_20261021/source-files.json",
+  "ssh_blocker": "Native tests passed; final Windows metadata/preservation receipt retrieval awaits reopened Djinn prompt",
+  "source_manifest": "checks/current-product-source-files.json",
   "receipt_budget_bytes": 100000000,
   "retained_for_this_task": {
     "windows_source_worktree": "C:/Users/mark_/Code/worktrees/woodshed-midi-diagnostics",
@@ -25,7 +25,43 @@
   "isolated_cargo_homes_created": false,
   "source_primaries_edited": false,
   "guitar_used": false,
-  "pending_human_input": "Q-PC installed Djinn resident PID54928 remains locked after reported unlock; follow-up requested its native Unlock action or report of UI/status disagreement",
+  "pending_human_input": "Complete the open native Djinn prompt if still locked",
   "evidence_policy": "No Windows/Linux controls or dialog acceptance claim until native runs and source/preservation checks finish",
-  "source_snapshot_check": "checks/source-current.json: 1137 files match, zero mismatches"
+  "source_snapshot_check": "Old 1137-file snapshot and new 1240-file overlay checked on each host; final Linux source/preservation receipt retrieved, Windows final preservation retrieval pending.",
+  "linux_focused_tests": {
+    "desktop_midi_diagnostic": 43,
+    "isolated_journal": 1
+  },
+  "windows_focused_tests": {
+    "desktop_midi_diagnostic": 43,
+    "isolated_journal": 1
+  },
+  "native_binaries": {
+    "linux": "ba12cdb4f448d6b2cf37ad7a33a3ba1f4ec8c1811916d5b37df5d74cd209016a",
+    "windows": "99c4468965e32da45e709a6675eb24fcc2b25b95e4079dc58712219162de5515"
+  },
+  "source_commit": "71ac17e15b6ae86ac58f2a14d3a3e62e2a4887a7",
+  "source_admission": {
+    "files": 1240,
+    "hash_mismatches": 0,
+    "previous_snapshot_files_checked": 1137,
+    "authority": "exact source overlay manifest; detached carrier HEADs are not tested product commit identifiers"
+  },
+  "accepted_native_cohorts": {
+    "linux": "native/linux-r7",
+    "windows": "native/windows-r3",
+    "earlier_complete_linux": "native/linux-r5"
+  },
+  "independent_local_rechecks": {
+    "linux": true,
+    "windows": true
+  },
+  "qualification_limits": [
+    "Linux app and GTK chooser use Xwayland/X11 inside a GNOME Wayland session; native Wayland is unqualified.",
+    "Windows diagnostic inputs are explicit no-output dispatcher refusals; no MIDI/BLE delivery is qualified.",
+    "Linux MIDI receipt is independent virtual ALSA reception; no physical instrument or BLE delivery is qualified.",
+    "Close checks inject native OS close events into owned windows; they are not physical mouse clicks."
+  ],
+  "retained_reason": "Exact admitted source, recoverable native failures and acceptance receipts remain for reproduction; shared stable Cargo targets are retained for ongoing builds. No isolated Cargo homes.",
+  "local_primary_preservation": "checks/local-primary-preservation-final.json"
 }

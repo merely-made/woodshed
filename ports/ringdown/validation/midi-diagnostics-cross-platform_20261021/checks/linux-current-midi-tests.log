@@ -1,0 +1,135 @@
+warning: patch `mere-webrtc-carrier v0.0.1 (https://github.com/merely-made/murm.git?branch=main#64d47ac4)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-audio/src/capture_feed.rs:33:14
+   |
+33 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+33 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+33 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |generation| {
+   |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:552:14
+    |
+552 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+552 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+552 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:600:14
+    |
+600 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+600 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+600 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: use of deprecated method `std::sync::atomic::Atomic::<usize>::fetch_update`: renamed to `try_update` for consistency
+   --> crates/woodshed-audio/src/output_runtime.rs:621:14
+    |
+621 |             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |              ^^^^^^^^^^^^
+    |
+help: replace the use of the deprecated method
+    |
+621 -             .fetch_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+621 +             .try_update(Ordering::AcqRel, Ordering::Acquire, |n| {
+    |
+
+warning: function `window_control_node` is never used
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:113:4
+    |
+113 | fn window_control_node<D>(dom: &D, root: NodeId, accessible_label: &str) -> Option<NodeId>
+    |    ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `window_control_rect` is never used
+   --> vendor/cambium-genet-winit-host/src/decorations.rs:139:15
+    |
+139 | pub(crate) fn window_control_rect<D>(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: `woodshed-audio` (lib) generated 4 warnings (run `cargo fix --lib -p woodshed-audio` to apply 4 suggestions)
+warning: `cambium-genet-winit-host` (lib) generated 2 warnings
+warning: use of deprecated method `std::sync::atomic::Atomic::<u64>::fetch_update`: renamed to `try_update` for consistency
+  --> crates/woodshed-views/src/stage/music_editor/practice.rs:98:14
+   |
+98 |             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+   |              ^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+help: replace the use of the deprecated method
+   |
+98 -             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+98 +             .try_update(Ordering::Relaxed, Ordering::Relaxed, |current| {
+   |
+
+warning: `woodshed-views` (lib) generated 1 warning (run `cargo fix --lib -p woodshed-views` to apply 1 suggestion)
+   Compiling woodshed-genet v0.1.0 (/home/markik/Code/worktrees/woodshed-midi-diagnostics/crates/woodshed-genet)
+    Finished `test` profile [unoptimized] target(s) in 14.28s
+     Running unittests src/main.rs (/home/markik/Code/repos/woodshed/target/debug/deps/woodshed_genet-9c8cd643b3bcfa7a)
+
+running 43 tests
+test midi::pedal::tests::pedal_admission_refuses_disabled_unready_stale_selection_and_generation ... ok
+test midi::controller::tests::source_and_receiver_changes_need_disarm_ack_and_fresh_release ... ok
+test midi::controller::tests::editing_a_mapping_cannot_keep_the_old_armed_authority ... ok
+test midi::controller::tests::unarmed_history_is_observed_without_replaying_on_arm ... ok
+test midi::controller::tests::callback_busy_refuses_instead_of_retaining_a_later_action ... ok
+test midi::output_request_tests::production_channel_supersedes_pending_and_dedupes_failed_target ... ok
+test midi::pedal::tests::pedal_one_slot_and_dropped_request_give_terminal_result_and_allow_fresh_action ... ok
+test midi::pedal::tests::pedal_closed_worker_refuses_instead_of_leaving_queued ... ok
+test midi::controller::tests::callback_admits_without_frame_poll_and_holds_cannot_retrigger ... ok
+test midi::worker::tests::cancelled_pending_open_is_closed_and_never_published ... ok
+test midi::worker::tests::close_failure_does_not_disappear ... ok
+test midi::stdio::tests::pedal_stdio_terminal_input_error_stops_after_one_report ... ok
+test midi::worker::tests::disconnect_during_playback_has_no_stop_or_replay_into_new_peer ... ok
+test midi::stdio::tests::pedal_stdio_rejects_missing_target_unknown_action_and_extra_fields ... ok
+test midi::stdio::tests::pedal_stdio_invalid_json_and_generation_and_id_lengths_refuse ... ok
+test midi::worker::tests::disconnected_start_and_reconnect_require_new_arm ... ok
+test midi::worker::tests::failed_start_is_latched_and_no_tick_hides_it ... ok
+test midi::worker::tests::failed_tick_stops_clock_until_explicit_rearm_and_retains_history ... ok
+test midi::worker::tests::pedal_close_between_press_and_release_reports_incomplete_without_compensation ... ok
+test midi::worker::tests::note_previous_and_keyboard_binding_reach_identical_writer_messages ... ok
+test midi::output_request_tests::closed_worker_clears_accepted_connection_and_reports_failure ... ok
+test midi::worker::tests::pedal_explicit_none_retains_incomplete_in_closed_readout ... ok
+test midi::worker::tests::pedal_first_writer_error_is_uncertain_and_never_sends_release ... ok
+test midi::worker::tests::pedal_disconnect_replacement_selection_and_expiry_before_press_refuse_without_send ... ok
+test midi::worker::tests::pedal_release_writer_error_reports_one_accepted_and_no_retry ... ok
+test midi::worker::tests::replacement_between_polls_pauses_without_replay ... ok
+test midi::stdio::tests::pedal_stdio_oversized_line_is_drained_and_next_command_survives ... ok
+test midi::worker::tests::retire_does_not_send_stop_to_replacement ... ok
+test midi::worker::tests::pedal_disconnect_replacement_selection_and_expiry_after_press_cancel_release ... ok
+test midi::worker::tests::stop_is_attempted_once_and_failed_outcome_is_retained ... ok
+test midi::worker::tests::superseded_open_is_not_started ... ok
+test midi::stdio::tests::pedal_stdio_status_duplicate_id_and_disabled_trigger_never_send ... ok
+test midi::worker::tests::pedal_press_release_exact_once_and_clock_progresses_in_gap ... ok
+test sync::midi_selection_tests::disappeared_output_becomes_none_instead_of_another_port ... ok
+test sync::midi_selection_tests::refresh_preserves_output_name_across_reordering ... ok
+test sync::tests::midi_sync_keeps_requested_and_accepted_output_distinct ... ok
+test sync::tests::midi_sync_forwards_return_to_accepted_route_to_cancel_pending_replacement ... ok
+test midi_diagnostics::tests::cancelled_or_failed_job_releases_busy_state_and_keeps_ui_history ... ok
+test sync::tests::midi_sync_rescan_keeps_route_by_name ... ok
+test persona::tests::persona_reset_preserves_process_midi_routing_and_inventory ... ok
+test sync::tests::midi_sync_error_reaches_settings_status ... ok
+test tests::midi_pedal_real_controls_suppress_key_repeat_and_refuse_disabled_or_disconnected ... ok
+test midi_diagnostics::tests::pending_export_defers_native_close_until_cancel_save_or_failure_is_observed ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 275 filtered out; finished in 2.42s
+

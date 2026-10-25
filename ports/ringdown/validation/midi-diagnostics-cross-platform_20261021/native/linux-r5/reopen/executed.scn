@@ -1,0 +1,8 @@
+settle 8
+click .pill Settings
+click .side-item Audio and MIDI
+act midi-checkpoint reopened
+capture 01_reopened_default_off
+act diagnostic-await reopened
+wait 100000
+assert snap diagnostic-gate-released == true

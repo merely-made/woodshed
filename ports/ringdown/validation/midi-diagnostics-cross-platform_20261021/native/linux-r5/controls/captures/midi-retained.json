@@ -1,0 +1,204 @@
+{
+  "bindings": {
+    "effect_next": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 67,
+      "release": 0,
+      "value": 127
+    },
+    "effect_previous": {
+      "channel": 1,
+      "enabled": true,
+      "kind": "control-change",
+      "number": 66,
+      "release": 0,
+      "value": 127
+    },
+    "inputs": {
+      "effect_next": {
+        "controller": {
+          "channel": 2,
+          "kind": "control-change",
+          "number": 20
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "n",
+          "shift": false
+        }
+      },
+      "effect_previous": {
+        "controller": {
+          "channel": 3,
+          "kind": "note",
+          "number": 36
+        },
+        "keyboard": {
+          "alt": false,
+          "key": "p",
+          "shift": false
+        }
+      }
+    }
+  },
+  "clock_enabled": false,
+  "diagnostics": {
+    "available": true,
+    "busy": false,
+    "capacity": 512,
+    "history_available": true,
+    "notice": "Recording stopped; captured history is retained for export.",
+    "overwritten": 0,
+    "recent_events": [
+      "#9 · 341.404 ms · terminal · request 1 · rev Some(1) / gen None · [] · Effect Next #1: Accepted · 2 message(s) accepted by OS · All messages accepted by OS; musical result unobserved",
+      "#10 · 936.694 ms · recording-stop · request — · rev None / gen None · [] · Desktop session recording control",
+      "#11 · 2715.486 ms · recording-start · request — · rev None / gen None · [] · Desktop session recording control",
+      "#12 · 3009.033 ms · admission · request 3 · rev None / gen None · [] · action=EffectNext; binding=Binding { enabled: true, channel: 1, kind: ControlChange, number: 67, value: 127, release: Some(0) }",
+      "#13 · 3009.048 ms · planned-message · request 3 · rev Some(1) / gen None · [176, 67, 127] · index=0; action=EffectNext",
+      "#14 · 3009.050 ms · planned-message · request 3 · rev Some(1) / gen None · [176, 67, 0] · index=1; action=EffectNext",
+      "#15 · 3016.899 ms · writer-send-start · request 3 · rev Some(1) / gen None · [176, 67, 127] · index=0; action=EffectNext; due_late_us=7830",
+      "#16 · 3017.127 ms · writer-send-result · request 3 · rev Some(1) / gen None · [176, 67, 127] · index=0; os_accepted=true; error=None",
+      "#17 · 3067.474 ms · writer-send-start · request 3 · rev Some(1) / gen None · [176, 67, 0] · index=1; action=EffectNext; due_late_us=330",
+      "#18 · 3067.695 ms · writer-send-result · request 3 · rev Some(1) / gen None · [176, 67, 0] · index=1; os_accepted=true; error=None",
+      "#19 · 3067.706 ms · terminal · request 3 · rev Some(1) / gen None · [] · Effect Next #3: Accepted · 2 message(s) accepted by OS · All messages accepted by OS; musical result unobserved",
+      "#20 · 3656.068 ms · recording-stop · request — · rev None / gen None · [] · Desktop session recording control"
+    ],
+    "recording": false,
+    "retained_events": 20,
+    "show_history": true,
+    "truncated_events": 0
+  },
+  "input": {
+    "armed": false,
+    "connected": null,
+    "learn_controller": null,
+    "learn_key": null,
+    "notice": "Output connection changed; pedal inputs disarmed",
+    "pending": null,
+    "pending_target": null,
+    "selected_index": 0,
+    "target": {
+      "generation": null,
+      "revision": 1
+    }
+  },
+  "output": {
+    "accepted": 6,
+    "attempted": 6,
+    "connected": "Desktop MIDI receiving fixture:Diagnostic receiver c9b70ef9 128:0",
+    "disconnects": 0,
+    "error": null,
+    "failed": 0,
+    "generation": null,
+    "last_failure": null,
+    "pedal_failure": null,
+    "ready": true,
+    "rearm_required": false,
+    "revision": 1,
+    "settled_revision": 1,
+    "status": "OS MIDI output open · OS accepted 6; refused/uncertain 0"
+  },
+  "pedal": {
+    "accepted_messages": 2,
+    "action": "effect-next",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 3,
+    "outcome": "accepted"
+  },
+  "playing": false,
+  "saved_settings": {
+    "board_layout": "Two pane",
+    "bpm": 120.0,
+    "context": {
+      "enabled": true,
+      "node_limit": 24
+    },
+    "distinguish_root": false,
+    "marker_style": "Sharp",
+    "midi_pedal": {
+      "effect_next": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 67,
+        "release": 0,
+        "value": 127
+      },
+      "effect_previous": {
+        "channel": 1,
+        "enabled": true,
+        "kind": "control-change",
+        "number": 66,
+        "release": 0,
+        "value": 127
+      },
+      "inputs": {
+        "effect_next": {
+          "controller": {
+            "channel": 2,
+            "kind": "control-change",
+            "number": 20
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "n",
+            "shift": false
+          }
+        },
+        "effect_previous": {
+          "controller": {
+            "channel": 3,
+            "kind": "note",
+            "number": 36
+          },
+          "keyboard": {
+            "alt": false,
+            "key": "p",
+            "shift": false
+          }
+        }
+      }
+    },
+    "neck_end": null,
+    "neck_start": 0,
+    "orientation": "Horizontal",
+    "reduce_motion": false,
+    "related": {
+      "arrangement": "Radial",
+      "dismissed_ids": [],
+      "graph_scope": "Selection",
+      "relation_depth": 1,
+      "show_neighborhood": true,
+      "use_history": true
+    },
+    "set_arrangement": "Snake",
+    "set_graph_height": 260,
+    "set_graph_reading": "Set",
+    "set_graph_width": 520,
+    "settings_page": "AudioMidi",
+    "text_scale": "Normal",
+    "theme": "Slate",
+    "tuning_idx": 0,
+    "visible_set_relations": [
+      "Next"
+    ],
+    "window": {
+      "height": 1050.0,
+      "maximized": false,
+      "width": 1180.0,
+      "x": 690.0,
+      "y": 195.0
+    }
+  },
+  "selected_index": 2,
+  "ui_notice": "OS MIDI output open · OS accepted 6; refused/uncertain 0",
+  "ui_pedal": {
+    "accepted_messages": 2,
+    "action": "effect-next",
+    "detail": "All messages accepted by OS; musical result unobserved",
+    "id": 3,
+    "outcome": "accepted"
+  }
+}
