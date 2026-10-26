@@ -8,7 +8,9 @@ struct StreamOwner {
 }
 impl Drop for StreamOwner {
     fn drop(&mut self) {
-        let _ = self.dropped.send((self.constructed, std::thread::current().id()));
+        let _ = self
+            .dropped
+            .send((self.constructed, std::thread::current().id()));
     }
 }
 
@@ -22,12 +24,27 @@ struct Trial {
 }
 fn plan(owner: u64) -> LoopPlan {
     let set = woodshed_core::working_sets::WorkingSetId(owner);
-    LoopPlan { owner: set, name: "Worker input trial".into(), one_shot: true, click: false,
-        segments: (0..3).map(|index| woodshed_core::loop_plan::LoopSegment {
-            id: LoopSegmentId { set, card: woodshedding::rehearsal::CardId(index + 7) },
-            label: format!("Card {index}"), bpm: 6000.0, beats: 1, bars: 1, seconds: None,
-            pitches_hz: vec![220.0], phrase: None,
-        }).collect() }
+    LoopPlan {
+        owner: set,
+        name: "Worker input trial".into(),
+        one_shot: true,
+        click: false,
+        segments: (0..3)
+            .map(|index| woodshed_core::loop_plan::LoopSegment {
+                id: LoopSegmentId {
+                    set,
+                    card: woodshedding::rehearsal::CardId(index + 7),
+                },
+                label: format!("Card {index}"),
+                bpm: 6000.0,
+                beats: 1,
+                bars: 1,
+                seconds: None,
+                pitches_hz: vec![220.0],
+                phrase: None,
+            })
+            .collect(),
+    }
 }
 fn trial(rate: u32) -> Trial {
     let mut audio = CpalBackend::offline_for_test();
@@ -49,20 +66,34 @@ fn trial(rate: u32) -> Trial {
         gate.recv().map_err(|e| e.to_string())?;
         InputSession::open_with(|mut builder| {
             builder.prepare_analyzers(rate);
-            Ok(InputStream::TestOwner { _owner: Box::new(StreamOwner {
-                constructed: std::thread::current().id(), dropped: retired.clone(), _not_send: PhantomData,
-            }) })
+            Ok(InputStream::TestOwner {
+                _owner: Box::new(StreamOwner {
+                    constructed: std::thread::current().id(),
+                    dropped: retired.clone(),
+                    _not_send: PhantomData,
+                }),
+            })
         })
     }));
     audio.set_loop_plan(&plan(1)).unwrap();
     audio.process_for_test(1);
-    Trial { audio, entered: began, release, opened, authorized, dropped }
+    Trial {
+        audio,
+        entered: began,
+        release,
+        opened,
+        authorized,
+        dropped,
+    }
 }
 fn settle_worker(audio: &mut CpalBackend) {
     let limit = Instant::now() + Duration::from_secs(2);
     while audio.input_admission.in_flight {
         audio.service();
-        assert!(Instant::now() < limit, "fake worker completion not serviced");
+        assert!(
+            Instant::now() < limit,
+            "fake worker completion not serviced"
+        );
         std::thread::yield_now();
     }
 }
@@ -88,12 +119,20 @@ fn explicit_consent_wait_excludes_more_than_ten_seconds_and_never_opens_hal_befo
     prompted.recv_timeout(Duration::from_secs(2)).unwrap();
     // Virtual elapsed time, no sleep or native prompt. The queued waiting event
     // was published before the initial deadline, even though UI polling is late.
-    assert!(t.audio.input_admission.poll(Instant::now() + Duration::from_secs(60)).is_none());
+    assert!(
+        t.audio
+            .input_admission
+            .poll(Instant::now() + Duration::from_secs(60))
+            .is_none()
+    );
     assert!(t.audio.input_admission.awaiting_permission());
     assert!(t.audio.input_admission.deadline.is_none());
     assert!(t.audio.loop_capture_busy() && t.audio.needs_service());
     assert_eq!(t.opened.load(Ordering::SeqCst), 0);
-    assert!(matches!(t.entered.try_recv(), Err(mpsc::TryRecvError::Empty)));
+    assert!(matches!(
+        t.entered.try_recv(),
+        Err(mpsc::TryRecvError::Empty)
+    ));
     let pending = t.audio.recorder_observation(None);
     assert!(pending.input_permission_pending);
     let granted_after = Instant::now();
@@ -105,21 +144,30 @@ fn explicit_consent_wait_excludes_more_than_ten_seconds_and_never_opens_hal_befo
     let deadline = t.audio.input_admission.deadline.unwrap();
     assert!(deadline >= granted_after + OPEN_TIMEOUT);
     assert!(deadline <= hardware_started_before + OPEN_TIMEOUT);
-    assert!(t.audio.loop_capture_busy(), "grant alone does not finish hardware opening");
+    assert!(
+        t.audio.loop_capture_busy(),
+        "grant alone does not finish hardware opening"
+    );
     let opening = t.audio.recorder_observation(None);
     assert!(!opening.input_permission_pending);
     assert_eq!(opening.capture_epoch, pending.capture_epoch);
     t.release.send(()).unwrap();
     settle_worker(&mut t.audio);
     assert_eq!(t.audio.recorder_observation(None).capture_target, Some(1));
-    assert_eq!(t.audio.recorder_observation(None).capture_epoch, pending.capture_epoch);
+    assert_eq!(
+        t.audio.recorder_observation(None).capture_epoch,
+        pending.capture_epoch
+    );
     assert!(t.audio.input.as_ref().unwrap().capture.is_enabled());
     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
 }
 
 #[test]
 fn denied_or_restricted_authorization_clears_intent_without_native_open() {
-    for refusal in ["Microphone permission denied", "Microphone access restricted"] {
+    for refusal in [
+        "Microphone permission denied",
+        "Microphone access restricted",
+    ] {
         let (mut t, prompted, answer) = permission_trial();
         t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
         prompted.recv_timeout(Duration::from_secs(2)).unwrap();
@@ -133,7 +181,10 @@ fn denied_or_restricted_authorization_clears_intent_without_native_open() {
         assert!(t.audio.error().unwrap().contains(refusal));
         assert_eq!(t.opened.load(Ordering::SeqCst), 0);
         assert_eq!(t.authorized.load(Ordering::SeqCst), 1);
-        assert!(matches!(t.entered.try_recv(), Err(mpsc::TryRecvError::Empty)));
+        assert!(matches!(
+            t.entered.try_recv(),
+            Err(mpsc::TryRecvError::Empty)
+        ));
     }
 }
 
@@ -150,7 +201,10 @@ fn cancelled_record_cannot_resurrect_after_late_permission_grant() {
     assert!(!t.audio.loop_capture_busy());
     assert!(t.audio.pending_capture.is_none());
     let cancelled = t.audio.recorder_observation(None);
-    assert!(cancelled.input_permission_pending, "OS consent remains pending after Record cancellation");
+    assert!(
+        cancelled.input_permission_pending,
+        "OS consent remains pending after Record cancellation"
+    );
     assert!(!cancelled.capture_busy && !cancelled.capture_armed);
     assert!(cancelled.capture_target.is_none() && cancelled.capture_epoch.is_none());
     answer.send(Ok(())).unwrap();
@@ -192,14 +246,24 @@ fn checking_authorization_without_explicit_consent_wait_remains_bounded() {
 fn blocked_native_opener_does_not_block_service_and_reserves_original_card() {
     let mut t = trial(48_000);
     t.audio.service();
-    assert_eq!(t.opened.load(Ordering::SeqCst), 0, "no opening before explicit request");
-    assert_eq!(t.authorized.load(Ordering::SeqCst), 0, "no permission request before explicit input request");
+    assert_eq!(
+        t.opened.load(Ordering::SeqCst),
+        0,
+        "no opening before explicit request"
+    );
+    assert_eq!(
+        t.authorized.load(Ordering::SeqCst),
+        0,
+        "no permission request before explicit input request"
+    );
     let selected = plan(1).segments[1].id;
     t.audio.loop_arm_record(selected).unwrap();
     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
     // The opener remains blocked until this test releases it. All these UI
     // operations complete before release; no timing heuristic proves safety.
-    for _ in 0..10 { t.audio.service(); }
+    for _ in 0..10 {
+        t.audio.service();
+    }
     assert!(t.audio.needs_service());
     let pending = t.audio.recorder_observation(None);
     assert!(pending.capture_busy && pending.capture_armed);
@@ -212,7 +276,12 @@ fn blocked_native_opener_does_not_block_service_and_reserves_original_card() {
     assert!(t.audio.try_set_song(&SongDoc::default()).is_err());
     // Inspection/transport can move before input admission. The reserved Card
     // must still arm explicitly rather than reading the later output cursor.
-    t.audio.output.as_mut().unwrap().queue(woodshed_audio::PendingChange::SeekTo { bar_idx: 2 }).unwrap();
+    t.audio
+        .output
+        .as_mut()
+        .unwrap()
+        .queue(woodshed_audio::PendingChange::SeekTo { bar_idx: 2 })
+        .unwrap();
     t.release.send(()).unwrap();
     settle_worker(&mut t.audio);
     let admitted = t.audio.recorder_observation(None);
@@ -304,7 +373,10 @@ fn timeout_is_visible_bounded_and_late_success_never_arms_or_spawns_a_second_wor
     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
     t.release.send(()).unwrap();
     settle_worker(&mut t.audio);
-    assert!(t.audio.input.is_none(), "expired completion is retired, not admitted");
+    assert!(
+        t.audio.input.is_none(),
+        "expired completion is retired, not admitted"
+    );
     assert!(!t.audio.loop_capture_busy());
     assert!(!t.audio.output_snapshot().unwrap().click_playing);
     // Explicit retry retrieves the worker's retained session, without reopening.
@@ -312,7 +384,11 @@ fn timeout_is_visible_bounded_and_late_success_never_arms_or_spawns_a_second_wor
     settle_worker(&mut t.audio);
     assert_eq!(t.audio.recorder_observation(None).capture_target, Some(2));
     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
-    assert_eq!(t.authorized.load(Ordering::SeqCst), 1, "retained native session needs no repeat authorization");
+    assert_eq!(
+        t.authorized.load(Ordering::SeqCst),
+        1,
+        "retained native session needs no repeat authorization"
+    );
 }
 
 #[test]
@@ -348,18 +424,32 @@ fn late_ready_rechecks_native_output_without_treating_historical_error_as_device
         settle_worker(&mut t.audio);
         assert_eq!(t.audio.output_observation_id(), output_id);
         assert_eq!(t.audio.captures.plan, original_plan);
-        assert_eq!(t.audio.initial_error.as_deref(), Some("audio output: historical diagnostic"));
+        assert_eq!(
+            t.audio.initial_error.as_deref(),
+            Some("audio output: historical diagnostic")
+        );
         let input = t.audio.input.as_ref().unwrap();
         if lost_output {
             assert!(!t.audio.loop_capture_busy());
-            assert!(!t.audio.capture_attached, "no input feed attachment after output loss");
-            assert!(!input.capture.is_enabled(), "no capture producer start after output loss");
+            assert!(
+                !t.audio.capture_attached,
+                "no input feed attachment after output loss"
+            );
+            assert!(
+                !input.capture.is_enabled(),
+                "no capture producer start after output loss"
+            );
             let snapshot = t.audio.output_snapshot().unwrap();
             assert!(!snapshot.capture_armed && !snapshot.recording);
             let error = t.audio.error().unwrap();
-            assert!(error.contains("historical diagnostic") && error.contains("became unavailable"));
+            assert!(
+                error.contains("historical diagnostic") && error.contains("became unavailable")
+            );
         } else {
-            assert!(t.audio.loop_capture_busy(), "historical error alone must not refuse healthy output");
+            assert!(
+                t.audio.loop_capture_busy(),
+                "historical error alone must not refuse healthy output"
+            );
             assert!(t.audio.capture_attached && input.capture.is_enabled());
             assert_eq!(t.audio.recorder_observation(None).capture_target, Some(1));
         }
@@ -373,14 +463,25 @@ fn worker_completion_rechecks_capture_quota_before_enabling_input() {
     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
     // The normal restore seam refuses busy replacement. Inject a full inactive
     // bank to exercise completion's quota check independently of dispatch guards.
-    t.audio.captures.restore((1..=256).map(|card| CaptureSnapshot {
-        id: LoopSegmentId {
-            set: woodshed_core::working_sets::WorkingSetId(9),
-            card: woodshedding::rehearsal::CardId(card),
-        },
-        bpm: 6000.0, beats: 1, bars: 1, seconds: None, legacy_clock: false,
-        buffer: woodshed_audio::SampleBuffer::new(vec![0.25; 480], 48_000),
-    }).collect()).unwrap();
+    t.audio
+        .captures
+        .restore(
+            (1..=256)
+                .map(|card| CaptureSnapshot {
+                    id: LoopSegmentId {
+                        set: woodshed_core::working_sets::WorkingSetId(9),
+                        card: woodshedding::rehearsal::CardId(card),
+                    },
+                    bpm: 6000.0,
+                    beats: 1,
+                    bars: 1,
+                    seconds: None,
+                    legacy_clock: false,
+                    buffer: woodshed_audio::SampleBuffer::new(vec![0.25; 480], 48_000),
+                })
+                .collect(),
+        )
+        .unwrap();
     t.release.send(()).unwrap();
     settle_worker(&mut t.audio);
     assert!(!t.audio.loop_capture_busy());
@@ -394,7 +495,11 @@ fn legacy_saved_clear_refuses_pending_input_without_mutating_pcm_or_reservation(
     let mut doc = SongDoc::default();
     doc.click = false;
     doc.bars = vec![Default::default(), Default::default()];
-    for bar in &mut doc.bars { bar.bpm = 6000.0; bar.beats = 1; bar.length = 1; }
+    for bar in &mut doc.bars {
+        bar.bpm = 6000.0;
+        bar.beats = 1;
+        bar.length = 1;
+    }
     t.audio.try_set_song(&doc).unwrap();
     let mut song = t.audio.output.as_ref().unwrap().song();
     let original_pcm = woodshed_audio::SampleBuffer::new(vec![0.25; 480], 48_000);
@@ -414,9 +519,17 @@ fn legacy_saved_clear_refuses_pending_input_without_mutating_pcm_or_reservation(
     assert_eq!(after.capture_epoch, before.capture_epoch);
     assert!(after.recording_bar.is_none() && after.input_rate.is_none());
     assert_eq!(t.audio.backing_revision, revision);
-    let retained = t.audio.output.as_ref().unwrap().song().bars[0].audio_buffer.clone().unwrap();
+    let retained = t.audio.output.as_ref().unwrap().song().bars[0]
+        .audio_buffer
+        .clone()
+        .unwrap();
     assert!(Arc::ptr_eq(&retained.data, &original_pcm.data));
-    assert!(retained.data.iter().all(|sample| sample.to_bits() == 0.25_f32.to_bits()));
+    assert!(
+        retained
+            .data
+            .iter()
+            .all(|sample| sample.to_bits() == 0.25_f32.to_bits())
+    );
     let error = t.audio.error().unwrap();
     assert!(error.contains("retained diagnostic") && error.contains("before clearing a saved bar"));
     // The clear refusal did not cancel or retarget the accepted Record.
@@ -427,7 +540,10 @@ fn legacy_saved_clear_refuses_pending_input_without_mutating_pcm_or_reservation(
     assert_eq!(admitted.capture_target, before.capture_target);
     assert_eq!(admitted.capture_epoch, before.capture_epoch);
     assert!(t.audio.input.as_ref().unwrap().capture.is_enabled());
-    let retained = t.audio.output.as_ref().unwrap().song().bars[0].audio_buffer.clone().unwrap();
+    let retained = t.audio.output.as_ref().unwrap().song().bars[0]
+        .audio_buffer
+        .clone()
+        .unwrap();
     assert!(Arc::ptr_eq(&retained.data, &original_pcm.data));
 }
 
@@ -438,7 +554,11 @@ fn worker_admitted_saved_bar_keeps_follow_traversal_and_reuses_input() {
     doc.click = false;
     doc.one_shot = false;
     doc.bars = vec![Default::default(), Default::default(), Default::default()];
-    for bar in &mut doc.bars { bar.bpm = 6000.0; bar.beats = 1; bar.length = 1; }
+    for bar in &mut doc.bars {
+        bar.bpm = 6000.0;
+        bar.beats = 1;
+        bar.length = 1;
+    }
     t.audio.try_set_song(&doc).unwrap();
     t.audio.process_for_test(1);
     t.audio.recorder_arm_saved(1).unwrap();
@@ -447,7 +567,10 @@ fn worker_admitted_saved_bar_keeps_follow_traversal_and_reuses_input() {
     settle_worker(&mut t.audio);
     t.audio.set_song_transport(true);
     t.audio.process_for_test(480 * 2 + 1);
-    assert_eq!(t.audio.recorder_observation(Some(&doc)).recording_bar, Some(2));
+    assert_eq!(
+        t.audio.recorder_observation(Some(&doc)).recording_bar,
+        Some(2)
+    );
     t.audio.loop_stop_record();
     t.audio.process_for_test(1);
     t.audio.set_tuner_enabled(true);
@@ -491,7 +614,9 @@ fn native_owner_constructs_and_drops_only_on_worker_without_send_or_ui_join() {
 fn admitted_handles_wake_service_without_another_user_command() {
     let mut t = trial(48_000);
     let (wake, woke) = mpsc::channel();
-    t.audio.input_admission.set_wake(Arc::new(move || { let _ = wake.send(()); }));
+    t.audio.input_admission.set_wake(Arc::new(move || {
+        let _ = wake.send(());
+    }));
     t.audio.set_tuner_enabled(true);
     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
     assert!(t.audio.needs_service());
@@ -504,4 +629,82 @@ fn admitted_handles_wake_service_without_another_user_command() {
     t.audio.service();
     assert!(t.audio.input.as_ref().unwrap().tuner.is_enabled());
     assert!(!t.audio.input_admission_pending());
+}
+
+#[test]
+fn observed_availability_tracks_permission_refusal_opening_and_actual_tuner_activation() {
+    let (mut t, prompted, answer) = permission_trial();
+    t.audio.set_tuner_enabled(true);
+    assert_eq!(t.audio.availability().input, AudioStreamStatus::Requested);
+    prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+    t.audio.service();
+    assert_eq!(
+        t.audio.availability().input,
+        AudioStreamStatus::AwaitingPermission
+    );
+    assert!(!t.audio.availability().tuner_active);
+    answer
+        .send(Err("microphone permission refused".into()))
+        .unwrap();
+    settle_worker(&mut t.audio);
+    assert!(
+        matches!(t.audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("permission refused"))
+    );
+    assert_eq!(t.audio.availability().output, AudioStreamStatus::Offline);
+    for _ in 0..10 {
+        t.audio.set_tuner_enabled(true);
+        t.audio.service();
+    }
+    assert_eq!(t.authorized.load(Ordering::SeqCst), 1);
+    assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+    t.audio.set_tuner_enabled(false);
+    t.audio.set_tuner_enabled(true);
+    prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+    answer.send(Ok(())).unwrap();
+    t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+    t.audio.service();
+    assert_eq!(t.audio.availability().input, AudioStreamStatus::Requested);
+    assert!(!t.audio.availability().tuner_active);
+    t.release.send(()).unwrap();
+    settle_worker(&mut t.audio);
+    assert_eq!(t.audio.availability().input, AudioStreamStatus::Admitted);
+    assert!(t.audio.availability().tuner_active);
+    t.audio.set_tuner_enabled(false);
+    assert!(!t.audio.availability().tuner_active);
+    assert_eq!(t.audio.availability().input, AudioStreamStatus::Admitted);
+}
+
+#[test]
+fn explicit_retry_retires_failed_worker_cached_stream_and_keeps_old_fault_latched() {
+    let mut t = trial(48_000);
+    t.audio.set_tuner_enabled(true);
+    t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+    t.release.send(()).unwrap();
+    settle_worker(&mut t.audio);
+    let old = t.audio.input.as_ref().unwrap().health.clone();
+    old.report_failure("stream disconnected after admission");
+    for _ in 0..10 {
+        t.audio.service();
+        t.audio.set_tuner_enabled(true);
+    }
+    assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+    assert!(!t.audio.availability().tuner_active);
+    t.audio.set_tuner_enabled(false);
+    t.audio.set_tuner_enabled(true);
+    t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+    assert_eq!(
+        t.opened.load(Ordering::SeqCst),
+        2,
+        "worker must reopen instead of returning cached failed handles"
+    );
+    let (constructed, dropped) = t.dropped.recv_timeout(Duration::from_secs(2)).unwrap();
+    assert_eq!(
+        constructed, dropped,
+        "old native session retires on its worker owner"
+    );
+    t.release.send(()).unwrap();
+    settle_worker(&mut t.audio);
+    assert!(t.audio.input.as_ref().unwrap().health.failure().is_none());
+    assert!(t.audio.availability().tuner_active);
+    assert!(old.failure().is_some());
 }

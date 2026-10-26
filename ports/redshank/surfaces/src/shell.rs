@@ -547,6 +547,7 @@ mod tests {
         let mut empty = RedshankSurfaceState::default();
         empty.compact.transport = TransportState::Empty;
         let mut recording = state_with(TransportState::Playing);
+        recording.compact.voice_capture_active = true;
         recording.compact.recording = Some(Recording {
             elapsed_ms: 4_000,
             anchor_ms: 84_000,

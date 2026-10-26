@@ -1,0 +1,15 @@
+[woodshed] identity pending (djinn is not reachable: transport failed: No such file or directory (os error 2)); practice is not saved
+[woodshed] identity pending: practice is not being saved
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+[cambium-winit] accessibility Installed, 297 nodes projected
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.
+woodshed-genet: captured 01_general_offline_lazy_input
+woodshed-genet: captured 02_tools_offline_tuner_off
+woodshed-genet: captured 03_close_guard
+woodshed-genet: Native offline-output availability complete; no input request made
+woodshed-genet: RESULT ok (33 frames, 3 captures)
+[woodshed] could not persist settings: backend: Identity pending: this session is not being saved.

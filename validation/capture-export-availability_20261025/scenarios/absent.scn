@@ -1,0 +1,24 @@
+settle 12
+ui-zoom 1
+click .pill Settings
+click .side-item General
+assert text Audio output: unavailable
+assert text Audio input: unavailable
+capture 01_general_absent
+click .pill Tools
+click .lens Tuner
+assert text Tuner is off
+capture 02_tools_tuner_off
+click .t-btn Start listening
+settle 4
+assert text Tuner unavailable: audio input is unavailable.
+capture 03_tools_requested_no_input
+click .pill Settings
+click .side-item Tuner
+assert text Tuner unavailable: audio input is unavailable.
+capture 04_settings_requested_no_input
+act diagnostic-request-close
+settle 4
+assert text Practice is not confirmed saved
+capture 05_close_guard
+log Native absent-backend availability complete; awaiting explicit fixture discard

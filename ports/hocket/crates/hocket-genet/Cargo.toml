@@ -63,7 +63,7 @@ tabard-workshop = { workspace = true }
 sprigging = { workspace = true }
 luggage = { workspace = true }
 velopack = { workspace = true }
-cambium-genet-winit-host = { workspace = true }
+cambium-desktop = { workspace = true }
 genet-clipboard = { workspace = true }
 taproot = { workspace = true }
 mere-surface-api = { workspace = true }

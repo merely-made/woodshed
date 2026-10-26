@@ -1,0 +1,84 @@
+diff --git a/ports/redshank/desktop/src/main.rs b/ports/redshank/desktop/src/main.rs
+index 4a232796..e9c9de48 100644
+--- a/ports/redshank/desktop/src/main.rs
++++ b/ports/redshank/desktop/src/main.rs
+@@ -2527,6 +2527,29 @@ mod tests {
+         (item, saved)
+     }
+ 
++    #[test]
++    fn annotation_export_stems_keep_complete_identity_and_bounded_filenames() {
++        let first = ItemId("local:/takes/a/b.wav".into());
++        let second = ItemId("local:/takes/a-b.wav".into());
++        assert_ne!(
++            export_stem(&first),
++            export_stem(&second),
++            "sanitizer collisions must not overwrite another item's export"
++        );
++        for id in [first, second, ItemId("/🔥?".repeat(600))] {
++            let stem = export_stem(&id);
++            assert!(stem.len() <= 128, "export filename must stay bounded");
++            assert!(
++                stem.chars()
++                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
++            );
++            assert!(
++                stem.ends_with(blake3::hash(id.0.as_bytes()).to_hex().as_str()),
++                "destination includes complete ItemId digest"
++            );
++        }
++    }
++
+     #[test]
+     fn transcript_response_belongs_to_requested_item_after_selection_changes() {
+         let directory = tempfile::tempdir().unwrap();
+diff --git a/ports/redshank/surfaces/src/dock.rs b/ports/redshank/surfaces/src/dock.rs
+index 041b6a49..0594d734 100644
+--- a/ports/redshank/surfaces/src/dock.rs
++++ b/ports/redshank/surfaces/src/dock.rs
+@@ -702,6 +702,45 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn dock_voice_release_survives_the_host_recording_projection() {
++        let mut dock = runner(compact_surface);
++        dock.update(|state| state.voice_capture_available = true);
++        let voice = node_with_label(
++            &dock.dom().borrow(),
++            dock.root(),
++            "Hold to record voice note",
++        );
++        dock.dispatch_pointer_down(
++            voice,
++            PointerEvent::new(PointerPhase::Down, (1.0, 1.0), (10.0, 10.0)),
++        );
++        let mut commands = Vec::new();
++        dock.update(|state| {
++            commands.extend(state.drain_commands());
++            state.voice_capture_active = true;
++            state.recording = Some(Recording {
++                elapsed_ms: 40,
++                anchor_ms: 62_000,
++                paused_for_capture: true,
++            });
++        });
++        assert_eq!(commands, [CompactCommand::BeginVoiceNote]);
++        dock.dispatch_pointer_up(PointerEvent::new(
++            PointerPhase::Up,
++            (1.0, 1.0),
++            (10.0, 10.0),
++        ));
++        dock.update(|state| commands.extend(state.drain_commands()));
++        assert_eq!(
++            commands,
++            [
++                CompactCommand::BeginVoiceNote,
++                CompactCommand::FinishVoiceNote
++            ]
++        );
++    }
++
+     /// Unavailable keeps the controls in place, rejects transport, shows the
+     /// item-scoped message, and offers Retry.
+     #[test]

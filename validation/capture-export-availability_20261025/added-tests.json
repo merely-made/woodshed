@@ -1,0 +1,98 @@
+[
+  {
+    "path": "crates/woodshed-audio/src/input.rs",
+    "name": "stream_failure_latches_across_observers_and_wakes_without_analyzer_polling"
+  },
+  {
+    "path": "crates/woodshed-genet/src/audio.rs",
+    "name": "availability_keeps_stream_facts_independent_of_input_and_operation_failures"
+  },
+  {
+    "path": "crates/woodshed-genet/src/audio.rs",
+    "name": "input_failure_retires_a_running_calibration_without_reopening"
+  },
+  {
+    "path": "crates/woodshed-genet/src/audio.rs",
+    "name": "post_admission_input_failure_wakes_and_requires_fresh_explicit_reenable"
+  },
+  {
+    "path": "crates/woodshed-genet/src/audio/input_admission/tests.rs",
+    "name": "explicit_retry_retires_failed_worker_cached_stream_and_keeps_old_fault_latched"
+  },
+  {
+    "path": "crates/woodshed-genet/src/audio/input_admission/tests.rs",
+    "name": "observed_availability_tracks_permission_refusal_opening_and_actual_tuner_activation"
+  },
+  {
+    "path": "crates/woodshed-genet/src/drive.rs",
+    "name": "audio_observation_refreshes_availability_and_clears_unobserved_tuner_readings"
+  },
+  {
+    "path": "crates/woodshed-genet/src/layout_tests.rs",
+    "name": "absent_audio_backend_never_claims_open_streams_or_a_listening_tuner"
+  },
+  {
+    "path": "crates/woodshed-genet/src/layout_tests.rs",
+    "name": "audio_availability_is_consistent_across_general_tools_settings_stage_and_overview"
+  },
+  {
+    "path": "crates/woodshed-genet/src/layout_tests.rs",
+    "name": "tuner_readings_and_offline_output_never_override_host_availability"
+  },
+  {
+    "path": "crates/woodshed-genet/src/persona.rs",
+    "name": "admitted_persona_keeps_host_availability_without_promoting_tuner_intent"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "annotation_export_worker_keeps_colliding_item_json_separate_and_atomically_replaces_same_item"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "cap_blob_failure_and_close_keep_prefix_and_target_until_retry_succeeds"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "capture_limit_auto_saves_exact_accepted_prefix_and_reopens_original_target"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "explicit_cancel_discards_retained_capture_and_publishes_pending_note_deletion"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "failed_durable_save_retains_same_note_and_pcm_across_close_and_retry"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "input_failure_stops_acquisition_but_retains_prefix_for_finish_and_unwinds_controls_once"
+  },
+  {
+    "path": "ports/redshank/desktop/src/capture_export_tests.rs",
+    "name": "model_admission_failure_keeps_audio_and_frozen_target_for_explicit_retry"
+  },
+  {
+    "path": "ports/redshank/desktop/src/main.rs",
+    "name": "annotation_export_stems_keep_complete_identity_and_bounded_filenames"
+  },
+  {
+    "path": "ports/redshank/desktop/src/voice.rs",
+    "name": "accepted_prefix_and_limit_are_invariant_across_callback_chunks"
+  },
+  {
+    "path": "ports/redshank/desktop/src/voice.rs",
+    "name": "blob_write_failure_preserves_stopped_samples_for_exact_retry_or_explicit_cancel"
+  },
+  {
+    "path": "ports/redshank/desktop/src/voice.rs",
+    "name": "conflicting_existing_blob_is_not_acknowledged_or_allowed_to_release_pcm"
+  },
+  {
+    "path": "ports/redshank/surfaces/src/dock.rs",
+    "name": "dock_voice_release_survives_the_host_recording_projection"
+  },
+  {
+    "path": "ports/redshank/surfaces/src/dock.rs",
+    "name": "stopped_capture_release_is_harmless_and_retained_surface_offers_explicit_retry"
+  }
+]

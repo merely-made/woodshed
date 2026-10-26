@@ -10,6 +10,30 @@
 pub const TRANSPORT_MIN_BPM: f32 = 1.0;
 pub const TRANSPORT_MAX_BPM: f32 = 400.0;
 
+/// Host-observed stream/configuration availability, independent of user intent.
+/// `Admitted` records accepted native resources, not physical audibility.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub enum AudioStreamStatus {
+    #[default]
+    Unavailable,
+    Unopened,
+    Requested,
+    AwaitingPermission,
+    Admitted,
+    /// A prepared software output engine without a native device stream.
+    Offline,
+    Failed(String),
+}
+
+/// Transient host facts. Never persisted as persona preferences or inferred
+/// from an enabled control. A host that has not reported defaults unavailable.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct AudioAvailability {
+    pub output: AudioStreamStatus,
+    pub input: AudioStreamStatus,
+    pub tuner_active: bool,
+}
+
 /// One tuner analysis snapshot, host-agnostic.
 #[derive(Clone, Debug, PartialEq)]
 pub struct TunerReading {
@@ -90,7 +114,8 @@ pub enum CalibrationStatus {
     Unavailable,
 }
 
-/// Whether the tuner is listening, and the latest reading a host polled.
+/// Desired tuner enablement and the latest reading a host polled.
+/// Actual activation is reported separately through `AudioAvailability`.
 #[derive(Clone, Debug, Default)]
 pub struct TunerState {
     pub enabled: bool,
@@ -160,9 +185,12 @@ pub struct CardPreviewRequest {
 impl PartialEq for CardPreviewRequest {
     fn eq(&self, other: &Self) -> bool {
         std::sync::Arc::ptr_eq(&self.session, &other.session)
-            && self.owner == other.owner && self.card_id == other.card_id
-            && self.instruction == other.instruction && self.fallback_bpm_bits == other.fallback_bpm_bits
-            && self.run_epoch == other.run_epoch && self.preview == other.preview
+            && self.owner == other.owner
+            && self.card_id == other.card_id
+            && self.instruction == other.instruction
+            && self.fallback_bpm_bits == other.fallback_bpm_bits
+            && self.run_epoch == other.run_epoch
+            && self.preview == other.preview
     }
 }
 
@@ -188,7 +216,8 @@ impl PartialEq for AuditionRequest {
     fn eq(&self, other: &Self) -> bool {
         std::sync::Arc::ptr_eq(&self.session, &other.session)
             && std::sync::Arc::ptr_eq(&self.ticket, &other.ticket)
-            && self.preview == other.preview && self.observation == other.observation
+            && self.preview == other.preview
+            && self.observation == other.observation
     }
 }
 

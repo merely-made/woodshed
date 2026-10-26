@@ -370,9 +370,13 @@ pub(crate) fn text_note_button(state: &CompactPlayerState) -> CompactView {
 /// press, so the command pair is a pointer pair, never a click.
 pub(crate) fn voice_note_button(state: &CompactPlayerState) -> CompactView {
     let active = state.voice_capture_active;
-    let available = state.transport_enabled() && state.voice_capture_available;
+    let retained = state.recording.is_some();
+    let available =
+        active || retained || state.transport_enabled() && state.voice_capture_available;
     let name = if active {
         "Release to save voice note"
+    } else if retained {
+        "Retry saving voice note"
     } else {
         "Hold to record voice note"
     };
@@ -402,7 +406,11 @@ pub(crate) fn voice_note_button(state: &CompactPlayerState) -> CompactView {
             }
             match event.phase {
                 PointerPhase::Down if !state.voice_capture_active => {
-                    state.request(CompactCommand::BeginVoiceNote);
+                    state.request(if state.recording.is_some() {
+                        CompactCommand::FinishVoiceNote
+                    } else {
+                        CompactCommand::BeginVoiceNote
+                    });
                     event.prop.prevent_default();
                 },
                 PointerPhase::Up if state.voice_capture_active => {
@@ -423,6 +431,16 @@ fn capture_group(state: &CompactPlayerState) -> CompactView {
             vec![text_note_button(state), voice_note_button(state)],
         )
         .attr("class", "rs-capture")
+        // Keep the captured node mounted while the recording actions occupy
+        // the fixed phone grid; visibility does not retire its pointer owner.
+        .attr(
+            "style",
+            if state.recording.is_some() {
+                "display:none"
+            } else {
+                ""
+            },
+        )
         .attr("role", "group")
         .attr("aria-label", "Capture"),
     )
@@ -443,8 +461,22 @@ fn recording_controls(state: &CompactPlayerState) -> Vec<CompactView> {
         }),
     ];
     let card: Vec<CompactView> = vec![
-        Box::new(el("span", ()).attr("class", "rs-rec-dot")),
-        span("rs-rec-word", "RECORDING"),
+        Box::new(el("span", ()).attr(
+            "class",
+            if state.voice_capture_active {
+                "rs-rec-dot"
+            } else {
+                "rs-rec-retained"
+            },
+        )),
+        span(
+            "rs-rec-word",
+            if state.voice_capture_active {
+                "RECORDING"
+            } else {
+                "CAPTURE RETAINED"
+            },
+        ),
         span("rs-rec-elapsed", format_time(recording.elapsed_ms)),
         Box::new(el("span", anchor).attr("class", "rs-rec-anchor")),
     ];
@@ -453,10 +485,21 @@ fn recording_controls(state: &CompactPlayerState) -> Vec<CompactView> {
             el("div", card)
                 .attr("class", "rs-recording")
                 .attr("role", "status")
-                .attr("aria-label", "Recording voice note"),
+                .attr(
+                    "aria-label",
+                    if state.voice_capture_active {
+                        "Recording voice note"
+                    } else {
+                        "Stopped voice capture retained"
+                    },
+                ),
         ),
         control(
-            vec![label("Finish")],
+            vec![label(if state.voice_capture_active {
+                "Finish"
+            } else {
+                "Retry save"
+            })],
             "rs-btn rs-btn-primary rs-btn-wide",
             "Finish voice note".into(),
             Some("R"),
@@ -475,17 +518,18 @@ fn recording_controls(state: &CompactPlayerState) -> Vec<CompactView> {
 }
 
 fn transport_row(state: &CompactPlayerState, with_capture: bool) -> CompactView {
-    let mut children = if state.recording.is_some() {
+    let changing = if state.recording.is_some() {
         recording_controls(state)
     } else {
-        let mut children = transport_controls(state);
-        if with_capture {
-            children.push(capture_group(state));
-        }
-        children
+        transport_controls(state)
     };
-    if children.is_empty() {
-        children.push(Box::new(el("span", ()).attr("class", "rs-spacer")));
+    // The capture group remains the same sibling while recording replaces
+    // transport contents. Its captured voice button must survive until Up.
+    let mut children: Vec<CompactView> = vec![Box::new(
+        el("span", changing).attr("class", "rs-transport-state"),
+    )];
+    if with_capture {
+        children.push(capture_group(state));
     }
     Box::new(el("div", children).attr("class", "rs-transport-row rs-transport"))
 }
@@ -702,6 +746,93 @@ mod tests {
         );
     }
 
+    #[test]
+    fn dock_voice_release_survives_the_host_recording_projection() {
+        let mut dock = runner(compact_surface);
+        dock.update(|state| state.voice_capture_available = true);
+        let voice = node_with_label(
+            &dock.dom().borrow(),
+            dock.root(),
+            "Hold to record voice note",
+        );
+        dock.dispatch_pointer_down(
+            voice,
+            PointerEvent::new(PointerPhase::Down, (1.0, 1.0), (10.0, 10.0)),
+        );
+        let mut commands = Vec::new();
+        dock.update(|state| {
+            commands.extend(state.drain_commands());
+            state.voice_capture_active = true;
+            state.recording = Some(Recording {
+                elapsed_ms: 40,
+                anchor_ms: 62_000,
+                paused_for_capture: true,
+            });
+        });
+        assert_eq!(commands, [CompactCommand::BeginVoiceNote]);
+        dock.dispatch_pointer_up(PointerEvent::new(
+            PointerPhase::Up,
+            (1.0, 1.0),
+            (10.0, 10.0),
+        ));
+        dock.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::BeginVoiceNote,
+                CompactCommand::FinishVoiceNote
+            ]
+        );
+    }
+
+    #[test]
+    fn stopped_capture_release_is_harmless_and_retained_surface_offers_explicit_retry() {
+        let mut dock = runner(compact_surface);
+        dock.update(|state| state.voice_capture_available = true);
+        let voice = node_with_label(
+            &dock.dom().borrow(),
+            dock.root(),
+            "Hold to record voice note",
+        );
+        dock.dispatch_pointer_down(
+            voice,
+            PointerEvent::new(PointerPhase::Down, (1.0, 1.0), (10.0, 10.0)),
+        );
+        let mut commands = Vec::new();
+        dock.update(|state| {
+            commands.extend(state.drain_commands());
+            state.voice_capture_active = false;
+            state.recording = Some(Recording {
+                elapsed_ms: 600_000,
+                anchor_ms: 62_000,
+                paused_for_capture: false,
+            });
+        });
+        dock.dispatch_pointer_up(PointerEvent::new(
+            PointerPhase::Up,
+            (1.0, 1.0),
+            (10.0, 10.0),
+        ));
+        dock.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(commands, [CompactCommand::BeginVoiceNote]);
+        let markup = dock.dom().borrow().outer_html(dock.root());
+        assert!(
+            markup.contains("CAPTURE RETAINED")
+                && markup.contains("Stopped voice capture retained")
+        );
+        assert!(!markup.contains(">RECORDING<"));
+        let retry = node_with_label(&dock.dom().borrow(), dock.root(), "Finish voice note");
+        dock.dispatch_click(retry, PointerClick::at((1.0, 1.0)));
+        dock.update(|state| commands.extend(state.drain_commands()));
+        assert_eq!(
+            commands,
+            [
+                CompactCommand::BeginVoiceNote,
+                CompactCommand::FinishVoiceNote
+            ]
+        );
+    }
+
     /// Unavailable keeps the controls in place, rejects transport, shows the
     /// item-scoped message, and offers Retry.
     #[test]
@@ -759,6 +890,7 @@ mod tests {
     fn recording_swaps_the_transport_row_and_keeps_the_rows() {
         let mut runner = runner(compact_surface);
         runner.update(|state| {
+            state.voice_capture_active = true;
             state.recording = Some(Recording {
                 elapsed_ms: 4_000,
                 anchor_ms: 84_000,

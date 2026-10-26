@@ -19,7 +19,7 @@ serde_json.workspace = true
 url.workspace = true
 timed-text.workspace = true
 blake3.workspace = true
-cambium-genet-winit-host.workspace = true
+cambium-desktop.workspace = true
 cpal.workspace = true
 # Taproot supplies the scenario grammar; Mesquite owns driving and captures.
 taproot.workspace = true
@@ -35,6 +35,6 @@ redshank-surfaces.workspace = true
 rfd.workspace = true
 tempfile.workspace = true
 fetch.workspace = true
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000", default-features = false }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208", default-features = false }
 fleece = { package = "mere-fleece", git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["portable-clip"] }
 pollster = "0.4"

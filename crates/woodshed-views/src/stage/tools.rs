@@ -1,6 +1,6 @@
 use cambium::{clickable, el, text};
 
-use super::{board, ToolPage, UiChild, UiState};
+use super::{ToolPage, UiChild, UiState, board};
 
 fn tool_nav(ui: &UiState) -> UiChild {
     let pages = [
@@ -31,8 +31,13 @@ fn metronome(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Metronome")).attr("class", "settings-heading"),
-                audio_pack_views::panel(ui.audio_pack.as_ref(), &ui.pack_notice, ui.pack_busy, false,
-                    |ui: &mut UiState, action| ui.pack_actions.push(action)),
+                audio_pack_views::panel(
+                    ui.audio_pack.as_ref(),
+                    &ui.pack_notice,
+                    ui.pack_busy,
+                    false,
+                    |ui: &mut UiState, action| ui.pack_actions.push(action),
+                ),
                 el(
                     "div",
                     (
@@ -71,32 +76,14 @@ fn metronome(ui: &UiState) -> UiChild {
 }
 
 fn tuner(ui: &UiState) -> UiChild {
-    let reading = match &ui.tuner.reading {
-        Some(reading) => format!(
-            "{}{} {:+.0} cents{}",
-            reading.note,
-            reading.octave,
-            reading.cents,
-            if reading.in_tune { " · in tune" } else { "" }
-        ),
-        None if ui.tuner.enabled => "Listening…".to_string(),
-        None => "Tuner is off".to_string(),
-    };
+    let reading = ui.tuner_status();
     Box::new(
         el(
             "div",
             (
                 el("div", text("Tuner")).attr("class", "settings-heading"),
                 clickable(
-                    el(
-                        "div",
-                        text(if ui.tuner.enabled {
-                            "Stop listening"
-                        } else {
-                            "Start listening"
-                        }),
-                    )
-                    .attr("class", "t-btn t-hear"),
+                    el("div", text(ui.tuner_action_label())).attr("class", "t-btn t-hear"),
                     |ui: &mut UiState, _| {
                         ui.tuner.enabled = !ui.tuner.enabled;
                         if !ui.tuner.enabled {

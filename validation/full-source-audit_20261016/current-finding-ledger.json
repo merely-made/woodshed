@@ -350,10 +350,10 @@
     },
     {
       "id": "evidence:O1",
-      "classification": "source cohort aligned; scoped receiving CPU qualified",
+      "classification": "historical scoped receiving CPU qualified; current root cohort independently advanced",
       "package": "Q5",
-      "current_observation": "Relationship-recipe lock matches root Mere a07a375e, Genet7d1d89db and Netrenderec15eb26. The October22 pool receiving receipt binds this exact lock and eleven passing recipe cases with one ignored case; older metadata-only observation is superseded.",
-      "qualification": "Historical locked/offline receiving CPU gate at cbda7166 exits0,11 passed,1 ignored. No new native/physical instrument claim from this recheck.",
+      "current_observation": "The October22 relationship-recipe receipt retains eleven passing cases and one ignore on its original Merea07a375e/Genet7d1d89db cohort atcbda7166. Root main91b independently advanced to Mere7632bbd32a/Genet2b5c01811e; old cohort-to-root alignment wording is superseded. This batch leaves recipe and nested consumer pins unchanged.",
+      "qualification": "Historical locked/offline11-case receiving result only; no new recipe runtime or cross-cohort qualification.",
       "detail": "../stack-family_20261011/pool-cohort-20261022.json",
       "before_frontier_recheck_20261023": {
         "classification": "source cohort alignment corrected; current instrument execution not requalified here",
@@ -361,7 +361,15 @@
         "qualification": "targeted current source/metadata comparison; historical receipts retain original inputs",
         "detail": "current/evidence-tooling-current.json",
         "limits": null
-      }
+      },
+      "before_capture_availability_20261025": {
+        "classification": "source cohort aligned; scoped receiving CPU qualified",
+        "current_observation": "Relationship-recipe lock matches root Mere a07a375e, Genet7d1d89db and Netrenderec15eb26. The October22 pool receiving receipt binds this exact lock and eleven passing recipe cases with one ignored case; older metadata-only observation is superseded.",
+        "qualification": "Historical locked/offline receiving CPU gate at cbda7166 exits0,11 passed,1 ignored. No new native/physical instrument claim from this recheck.",
+        "detail": "../stack-family_20261011/pool-cohort-20261022.json",
+        "limits": null
+      },
+      "limits": "Independent consumer cohorts are not automatically a product defect or authorization for a broad repin."
     },
     {
       "id": "hocket:H1",
@@ -985,22 +993,35 @@
     },
     {
       "id": "redshank:R05",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B9",
-      "current_observation": "Dock projection removes pointer release target",
+      "current_observation": "Mounted dock capture target survives host recording projection and receives release; late release is idempotent before/after auto-finish.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "focused_cpu": "287 distinct passes;8 existing ignores",
+        "build": "locked desktop; Redshank also locked Wasm check",
+        "native": "unqualified by this receipt",
+        "publication": "source merged and pushed; fetched evidence binding in publication.json"
       },
       "canonical_id": "redshank:R05",
-      "limits": "Full press \u2192 recording render \u2192 release remains unqualified.",
-      "detail": "current/ports.json",
+      "limits": "Deterministic PCM/fake input, real storage/export and mounted pointer dispatch; no Redshank native microphone/long-hold/cap or physical-device acceptance.",
+      "detail": "../capture-export-availability_20261025/receipt.json",
       "original_index_title": "R05 \u2014 Keep the voice gesture owner alive until release [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_capture_availability_20261025": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Dock projection removes pointer release target",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Full press \u2192 recording render \u2192 release remains unqualified."
+      },
+      "source_revision": "951c7822511ba21f2d5e89cacfaf81ea48bd73d8"
     },
     {
       "id": "redshank:R06",
@@ -1086,41 +1107,67 @@
     },
     {
       "id": "redshank:R08",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B10",
-      "current_observation": "Sanitized ItemIds collide and overwrite export",
+      "current_observation": "Bounded readable prefix plus full complete-ItemId digest separates export destinations; real worker/file regression proves distinct Shareable JSON and atomic same-item replacement.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "focused_cpu": "287 distinct passes;8 existing ignores",
+        "build": "locked desktop; Redshank also locked Wasm check",
+        "native": "unqualified by this receipt",
+        "publication": "source merged and pushed; fetched evidence binding in publication.json"
       },
       "canonical_id": "redshank:R08",
-      "limits": "Current worker and sanitizer reread; destination custody stays host-owned.",
-      "detail": "current/ports.json",
+      "limits": "Deterministic PCM/fake input, real storage/export and mounted pointer dispatch; no Redshank native microphone/long-hold/cap or physical-device acceptance.",
+      "detail": "../capture-export-availability_20261025/receipt.json",
       "original_index_title": "R08 \u2014 Preserve full item identity in annotation-export destinations [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_capture_availability_20261025": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Sanitized ItemIds collide and overwrite export",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Current worker and sanitizer reread; destination custody stays host-owned."
+      },
+      "source_revision": "951c7822511ba21f2d5e89cacfaf81ea48bd73d8"
     },
     {
       "id": "redshank:R09",
-      "classification": "unchanged_finding_mechanism",
+      "classification": "implemented; scoped CPU/build qualified",
       "package": "B9 / D3",
-      "current_observation": "Ten-minute sample cap silently drops tail",
+      "current_observation": "Accepted sample frames own elapsed and saved duration. Capacity stops acquisition and auto-saves the accepted prefix with persistent limit wording; failed blob/model/durable admission and close preserve PCM/body/anchor/note identity for retry, with explicit Cancel and single playback/duck unwind.",
       "qualification": {
-        "focused_regression": "unassessed",
-        "integration_build": "unassessed",
-        "native": "unassessed",
-        "fresh_process": "unassessed",
-        "physical_device": "unassessed",
-        "publication": "unassessed"
+        "focused_cpu": "287 distinct passes;8 existing ignores",
+        "build": "locked desktop; Redshank also locked Wasm check",
+        "native": "unqualified by this receipt",
+        "publication": "source merged and pushed; fetched evidence binding in publication.json"
       },
       "canonical_id": "redshank:R09",
-      "limits": "Accepted frames differ from host wall-clock duration; no long capture executed.",
-      "detail": "current/ports.json",
+      "limits": "Deterministic PCM/fake input, real storage/export and mounted pointer dispatch; no Redshank native microphone/long-hold/cap or physical-device acceptance.",
+      "detail": "../capture-export-availability_20261025/receipt.json",
       "original_index_title": "R09 \u2014 Report capture capacity instead of silently discarding the tail [P2]",
-      "original_report": "redshank-report.md"
+      "original_report": "redshank-report.md",
+      "before_capture_availability_20261025": {
+        "classification": "unchanged_finding_mechanism",
+        "current_observation": "Ten-minute sample cap silently drops tail",
+        "qualification": {
+          "focused_regression": "unassessed",
+          "integration_build": "unassessed",
+          "native": "unassessed",
+          "fresh_process": "unassessed",
+          "physical_device": "unassessed",
+          "publication": "unassessed"
+        },
+        "detail": "current/ports.json",
+        "limits": "Accepted frames differ from host wall-clock duration; no long capture executed."
+      },
+      "source_revision": "951c7822511ba21f2d5e89cacfaf81ea48bd73d8"
     },
     {
       "id": "redshank:R10",
@@ -2068,14 +2115,28 @@
     },
     {
       "id": "views:V03",
-      "classification": "unchanged implementation/current reachability confirmed",
+      "classification": "implemented; scoped CPU/build qualified; bounded native availability presentation qualified",
       "package": "B7",
-      "current_observation": "Frozen-byte Settings/Tools infer both streams open from no error and listening from requested tuner.enabled. New consent worker has explicit lazy/pending/refused facts but those views do not project them.",
-      "qualification": "unassessed",
+      "current_observation": "General/Tools/Settings/Stage/overview consume observed output/input/tuner facts. Latched native input health wakes the host, blocks stale readings and requires fresh explicit retry; persona install retains observations and operation refusal does not masquerade as stream failure.",
+      "qualification": {
+        "focused_cpu": "866 distinct parent/integration passes;8 existing ignores;5 child invocations separate",
+        "build": "locked desktop",
+        "native": "two successful processes/eight reviewed availability captures",
+        "publication": "source merged and pushed; fetched evidence binding in publication.json"
+      },
       "alias_of": null,
-      "detail": "current/runtime.json",
+      "detail": "../capture-export-availability_20261025/receipt.json",
       "original_index_title": "V03 \u2014 P2: Project accepted audio availability into every audio surface",
-      "original_report": "views-report.md"
+      "original_report": "views-report.md",
+      "before_capture_availability_20261025": {
+        "classification": "unchanged implementation/current reachability confirmed",
+        "current_observation": "Frozen-byte Settings/Tools infer both streams open from no error and listening from requested tuner.enabled. New consent worker has explicit lazy/pending/refused facts but those views do not project them.",
+        "qualification": "unassessed",
+        "detail": "current/runtime.json",
+        "limits": null
+      },
+      "source_revision": "770f54435dcefe0a9d4a6a46a367a1684184e8b9",
+      "limits": "Availability presentation only; real input, physical audio, native fault/retry/permission and second host remain unqualified."
     },
     {
       "id": "views:V04",
@@ -2143,5 +2204,20 @@
       "Q2\u2013Q5",
       "K1\u2013K3"
     ]
+  },
+  "capture_availability_followup_20261025": {
+    "refreshed_main_revision": "91b2dd5b905b190ad38295cdad8576196cf3970e",
+    "source_revision": "770f54435dcefe0a9d4a6a46a367a1684184e8b9",
+    "redshank_source_revision": "951c7822511ba21f2d5e89cacfaf81ea48bd73d8",
+    "scope": [
+      "redshank:R05",
+      "redshank:R09",
+      "redshank:R08",
+      "views:V03"
+    ],
+    "detail": "../capture-export-availability_20261025/receipt.json",
+    "status": "Three approved slices implemented;1153 distinct CPU passes,16 existing ignores,5 child invocations separately;two locked desktop builds,Wasm check,two native availability processes/eight reviewed captures. Source published; other-host access blocked.",
+    "ownership": "P5a completed reservation remains retired; no P5a changes.",
+    "untouched_rows": "Earlier observations and qualification bounds remain dated; this is not a full97-row re-audit."
   }
 }

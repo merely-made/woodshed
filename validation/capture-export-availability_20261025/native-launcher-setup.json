@@ -1,0 +1,7 @@
+{
+  "first_attempt": "Launcher refused before creating output or starting a product process because frozen copy lacked execute permission.",
+  "launcher_exit": 2,
+  "parent_exit": 1,
+  "correction": "Restored source executable permissions; binary bytes/hash unchanged.",
+  "counted_as_native_pass": false
+}

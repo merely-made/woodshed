@@ -5,6 +5,8 @@ mod appearance_host;
 #[cfg(test)]
 mod appearance_tests;
 mod appearance_view;
+#[cfg(test)]
+mod capture_export_tests;
 mod diagnostics;
 #[cfg(test)]
 mod diagnostics_worker_tests;
@@ -394,7 +396,7 @@ struct PendingCacheRemoval {
 struct VoiceSession {
     anchor: CaptureAnchor,
     resume_playback: bool,
-    started: Instant,
+    note_id: Option<AnnotationId>,
 }
 
 struct PendingVoiceRemoval {
@@ -598,10 +600,12 @@ impl Desktop {
     fn host_facts(&self) -> HostFacts {
         HostFacts {
             now_ms: now_ms(),
-            recording: self.voice_session.as_ref().map(|voice| Recording {
-                elapsed_ms: voice.started.elapsed().as_millis() as u64,
-                anchor_ms: voice.anchor.offset_ms,
-                paused_for_capture: voice.resume_playback,
+            recording: self.voice_session.as_ref().and_then(|voice| {
+                self.voice_capture.progress().map(|progress| Recording {
+                    elapsed_ms: progress.duration_ms(),
+                    anchor_ms: voice.anchor.offset_ms,
+                    paused_for_capture: voice.resume_playback,
+                })
             }),
             microphone_label: self.microphone_label.clone(),
         }
@@ -614,6 +618,10 @@ impl Desktop {
     ) {
         let facts = self.host_facts();
         self.session.project(state, snapshot, &facts);
+        state.compact.voice_capture_active = self
+            .voice_capture
+            .progress()
+            .is_some_and(|progress| !progress.stopped);
         state.note_clip_export_available = true;
         self.project_recovery(state);
         for feed in &mut state.feeds {
@@ -653,7 +661,10 @@ impl Desktop {
     fn settle_duck(&mut self, state: &RedshankSurfaceState) {
         if self.ducked
             && state.text_capture.is_none()
-            && self.voice_session.is_none()
+            && self
+                .voice_capture
+                .progress()
+                .is_none_or(|progress| progress.stopped)
             && self.send(PlaybackCommand::Unduck).is_ok()
         {
             self.ducked = false;
@@ -831,7 +842,7 @@ impl Desktop {
         self.voice_session = Some(VoiceSession {
             anchor,
             resume_playback,
-            started: Instant::now(),
+            note_id: None,
         });
         state.compact.voice_capture_active = true;
         state.notice = Some("Recording voice noteâ€¦ release to save".into());
@@ -839,55 +850,131 @@ impl Desktop {
     }
 
     fn finish_voice_note(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
-        let capture = self
-            .voice_session
-            .take()
-            .ok_or("No voice note is recording")?;
+        let Some(capture) = self.voice_session.as_ref() else {
+            // A release queued before an automatic limit/save completion is
+            // harmless once that exact capture has already finished.
+            return Ok(());
+        };
+        let anchor = capture.anchor.clone();
+        let previous_id = capture.note_id.clone();
+        self.voice_capture.stop()?;
         state.compact.voice_capture_active = false;
-        let result = self.voice_capture.finish_capture().and_then(|body| {
-            let id = self.next_annotation_id();
-            let blob_id = match &body {
-                NoteBody::Audio { blob_id, .. } => blob_id.clone(),
-                NoteBody::Text { .. } => return Err("Microphone returned a text note".into()),
-            };
+        let resume_error = self.resume_after_voice_stop().err();
+        self.settle_duck(state);
+        let body = self
+            .voice_capture
+            .finish_capture()
+            .map_err(|error| self.retained_voice_notice(&error))?;
+        let id = previous_id.unwrap_or_else(|| self.next_annotation_id());
+        if let Some(existing) = self.session.model.annotations.get(&id) {
+            if existing.target != anchor || existing.body != body {
+                return Err(self
+                    .retained_voice_notice("The pending voice note changed before it was saved"));
+            }
+        } else {
             let privacy = self.session.model.settings.note_privacy;
             if let Err(error) = self.session.model.add_annotation(Annotation {
-                id,
-                target: capture.anchor,
+                id: id.clone(),
+                target: anchor,
                 body,
                 created_at_ms: now_ms(),
                 privacy,
             }) {
-                let _ = LocalVoiceCapture::remove_blob(&self.data_root, &blob_id);
-                return Err(format!("Could not add voice note: {error:?}"));
+                return Err(
+                    self.retained_voice_notice(&format!("Could not add voice note: {error:?}"))
+                );
             }
             self.persistence.changed();
-            self.voice_save_revision = Some(self.persistence.revision);
-            state.notice = Some("Saving voice noteâ€¦".into());
-            Ok(())
-        });
-        if capture.resume_playback
-            && let Err(error) = self.send(PlaybackCommand::Play)
-        {
-            return Err(match result {
-                Ok(()) => error,
-                Err(capture_error) => {
-                    format!("{capture_error}; playback could not resume: {error}")
-                },
-            });
+            self.voice_session
+                .as_mut()
+                .expect("capture remains owned")
+                .note_id = Some(id);
         }
-        result
+        self.voice_save_revision = Some(self.persistence.revision);
+        self.persistence.failed = false;
+        self.persistence
+            .flush(&self.session.model)
+            .map_err(|error| self.retained_voice_notice(&error))?;
+        state.notice = Some(format!(
+            "{}Saving voice note; captured audio stays here until saving succeeds.",
+            self.voice_limit_notice()
+        ));
+        if let Some(error) = resume_error {
+            state.notice = Some(format!(
+                "{} Playback could not resume: {error}",
+                state.notice.as_deref().unwrap_or_default()
+            ));
+        }
+        Ok(())
+    }
+
+    fn resume_after_voice_stop(&mut self) -> Result<(), String> {
+        let resume = self.voice_session.as_mut().and_then(|capture| {
+            std::mem::take(&mut capture.resume_playback).then(|| capture.anchor.item_id.clone())
+        });
+        if resume
+            .as_ref()
+            .is_some_and(|item| self.session.selected.as_ref() == Some(item))
+        {
+            self.send(PlaybackCommand::Play)?;
+        }
+        Ok(())
+    }
+
+    fn voice_limit_notice(&self) -> String {
+        self.voice_capture
+            .progress()
+            .filter(|progress| progress.limit_reached)
+            .map_or_else(String::new, |progress| {
+                format!(
+                    "Recording stopped at the {} limit. ",
+                    redshank_surfaces::format_time(progress.duration_ms())
+                )
+            })
+    }
+
+    fn retained_voice_notice(&self, error: &str) -> String {
+        format!(
+            "{}{error}. Captured audio and its original target are retained. Finish retries saving; Cancel discards this capture.",
+            self.voice_limit_notice()
+        )
     }
 
     /// Discard a recording without saving it, restoring playback if it paused.
     fn cancel_voice_note(&mut self, state: &mut RedshankSurfaceState) -> Result<(), String> {
-        let capture = self
-            .voice_session
-            .take()
-            .ok_or("No voice note is recording")?;
+        let Some(capture) = self.voice_session.take() else {
+            return Ok(());
+        };
         state.compact.voice_capture_active = false;
         let cancelled = self.voice_capture.cancel_capture();
-        if capture.resume_playback {
+        self.voice_save_revision = None;
+        if let Some(id) = capture.note_id {
+            let blob_id =
+                self.session
+                    .model
+                    .annotations
+                    .get(&id)
+                    .and_then(|note| match &note.body {
+                        NoteBody::Audio { blob_id, .. } => Some(blob_id.clone()),
+                        _ => None,
+                    });
+            if self.session.model.annotations.contains_key(&id) {
+                self.session
+                    .model
+                    .delete_annotation(&id)
+                    .map_err(|error| format!("Could not discard voice note: {error:?}"))?;
+                self.persistence.changed();
+                if let Some(blob_id) = blob_id {
+                    self.voice_removals.push(PendingVoiceRemoval {
+                        revision: self.persistence.revision,
+                        blob_id,
+                    });
+                }
+            }
+        }
+        if capture.resume_playback
+            && self.session.selected.as_ref() == Some(&capture.anchor.item_id)
+        {
             self.send(PlaybackCommand::Play)?;
         }
         cancelled?;
@@ -950,11 +1037,7 @@ impl Desktop {
         thread::Builder::new()
             .name("redshank-export".into())
             .spawn(move || {
-                let result = std::fs::create_dir_all(
-                    worker_path.parent().unwrap_or(std::path::Path::new(".")),
-                )
-                .and_then(|()| std::fs::write(&worker_path, json))
-                .map_err(|error| format!("Could not write annotation export: {error}"));
+                let result = write_annotation_export(&worker_path, json.as_bytes());
                 let _ = sender.send(IoReply::Exported {
                     path: worker_path,
                     result,
@@ -1418,6 +1501,16 @@ impl Desktop {
                 self.persistence.changed();
             },
             CompactCommand::RemoveLibraryItem(id) => {
+                if self
+                    .voice_session
+                    .as_ref()
+                    .is_some_and(|capture| capture.anchor.item_id == id)
+                {
+                    return Err(
+                        "Finish or cancel the retained voice note before removing its recording"
+                            .into(),
+                    );
+                }
                 let was_selected = self.session.selected.as_ref() == Some(&id);
                 let removed_voice_notes: Vec<_> = self
                     .session
@@ -1496,6 +1589,17 @@ impl Desktop {
                 self.persistence.changed();
             },
             CompactCommand::DeleteNote(id) => {
+                if self
+                    .voice_session
+                    .as_ref()
+                    .and_then(|capture| capture.note_id.as_ref())
+                    == Some(&id)
+                {
+                    return Err(
+                        "Finish or cancel the pending voice capture before deleting its note"
+                            .into(),
+                    );
+                }
                 if state.editing_note.as_ref() == Some(&id) {
                     return Err("Close the note editor before deleting this note".into());
                 }
@@ -1866,7 +1970,11 @@ impl Desktop {
                         .acknowledge_with_cause(revision, &result, execution);
                     match result {
                         Err(error) => {
-                            state.notice = Some(error);
+                            state.notice = Some(if self.voice_session.is_some() {
+                                self.retained_voice_notice(&error)
+                            } else {
+                                error
+                            });
                             self.closing = false;
                         },
                         Ok(()) => {
@@ -1877,7 +1985,11 @@ impl Desktop {
                                 .is_some_and(|voice_revision| voice_revision <= revision)
                             {
                                 self.voice_save_revision = None;
-                                state.notice = Some("Voice note saved".into());
+                                let limit = self.voice_limit_notice();
+                                self.voice_session = None;
+                                self.voice_capture.acknowledge_saved();
+                                state.compact.voice_capture_active = false;
+                                state.notice = Some(format!("{limit}Voice note saved"));
                             }
                             if self
                                 .saved_draft
@@ -1908,14 +2020,25 @@ impl Desktop {
                 },
             }
         }
-        if let Some(error) = self.voice_capture.active_error() {
-            let _ = self.voice_capture.cancel_capture();
-            let capture = self.voice_session.take();
-            state.compact.voice_capture_active = false;
-            if capture.is_some_and(|capture| capture.resume_playback) {
-                let _ = self.send(PlaybackCommand::Play);
+        if self
+            .voice_capture
+            .progress()
+            .is_some_and(|progress| !progress.stopped && progress.limit_reached)
+        {
+            if let Err(error) = self.finish_voice_note(state) {
+                state.notice = Some(error);
+                self.closing = false;
             }
-            state.notice = Some(error);
+        } else if self
+            .voice_capture
+            .progress()
+            .is_some_and(|progress| !progress.stopped)
+            && let Some(error) = self.voice_capture.active_error()
+        {
+            let _ = self.voice_capture.stop();
+            let _ = self.resume_after_voice_stop();
+            state.compact.voice_capture_active = false;
+            state.notice = Some(self.retained_voice_notice(&format!("Input stopped: {error}")));
         }
         let snapshot = self.runtime.snapshot();
         if self
@@ -1959,7 +2082,11 @@ impl Desktop {
         if self.persistence.recovery_error.is_none()
             && let Err(error) = self.persistence.flush(&self.session.model)
         {
-            state.notice = Some(error);
+            state.notice = Some(if self.voice_session.is_some() {
+                self.retained_voice_notice(&error)
+            } else {
+                error
+            });
             self.persistence.failed = true;
             self.closing = false;
         }
@@ -1974,9 +2101,11 @@ impl Desktop {
         self.pending_note_open = None;
         self.span_stop_ms = None;
         self.send(PlaybackCommand::Pause)?;
-        if self.voice_session.take().is_some() {
-            self.voice_capture.cancel_capture()?;
-            state.compact.voice_capture_active = false;
+        if self.voice_session.is_some() {
+            // Closing pauses the player; stopping this capture must not resume
+            // it while the durable close barrier is still pending.
+            self.voice_session.as_mut().unwrap().resume_playback = false;
+            self.finish_voice_note(state)?;
         }
         if let Some(capture) = &state.text_capture {
             let text = state.text_editor.text().to_owned();
@@ -2011,13 +2140,36 @@ fn export_stem(id: &ItemId) -> String {
                     '-'
                 }
             })
+            .take(48)
             .collect();
     let stem = stem.trim_matches('-').to_owned();
-    if stem.is_empty() {
-        "annotations".into()
+    let readable = if stem.is_empty() {
+        "annotations"
     } else {
-        stem
-    }
+        &stem
+    };
+    format!("{readable}-{}", blake3::hash(id.0.as_bytes()).to_hex())
+}
+
+fn write_annotation_export(path: &std::path::Path, bytes: &[u8]) -> Result<(), String> {
+    use std::io::Write;
+    let parent = path
+        .parent()
+        .ok_or("Annotation export has no parent directory")?;
+    std::fs::create_dir_all(parent)
+        .map_err(|error| format!("Could not create annotation export directory: {error}"))?;
+    let mut temporary = tempfile::Builder::new()
+        .prefix(".annotations-")
+        .tempfile_in(parent)
+        .map_err(|error| format!("Could not prepare annotation export: {error}"))?;
+    temporary
+        .write_all(bytes)
+        .and_then(|()| temporary.as_file().sync_all())
+        .map_err(|error| format!("Could not write annotation export: {error}"))?;
+    temporary
+        .persist(path)
+        .map_err(|error| format!("Could not publish annotation export: {}", error.error))?;
+    Ok(())
 }
 
 /// An attribute of the focused text field's wrapper. The surfaces mark the
@@ -2061,7 +2213,7 @@ fn is_text_field<D: layout_dom_api::LayoutDom>(dom: &D, node: D::NodeId) -> bool
     cambium_textbox
         || dom
             .element_name(node)
-            .is_some_and(|name| name.local.as_ref() == "textarea")
+            .is_some_and(|name| &*name.local == "textarea")
 }
 
 fn note_editor_focused(runner: &AppRunner) -> bool {
@@ -2170,13 +2322,13 @@ fn key_intercept(runner: &mut AppRunner, key: &KeyPress) -> bool {
                 Some(CompactCommand::SkipForward(state.settings.skip_forward_ms))
             },
             Key::Character(c) if c.eq_ignore_ascii_case("n") => Some(CompactCommand::BeginTextNote),
-            Key::Character(c) if c.eq_ignore_ascii_case("r") => {
-                Some(if state.compact.voice_capture_active {
+            Key::Character(c) if c.eq_ignore_ascii_case("r") => Some(
+                if state.compact.voice_capture_active || state.compact.recording.is_some() {
                     CompactCommand::FinishVoiceNote
                 } else {
                     CompactCommand::BeginVoiceNote
-                })
-            },
+                },
+            ),
             _ => None,
         }
     } else {
@@ -2525,6 +2677,29 @@ mod tests {
             source: "WEBVTT\n\n00:01.000 --> 00:02.000\nA".into(),
         };
         (item, saved)
+    }
+
+    #[test]
+    fn annotation_export_stems_keep_complete_identity_and_bounded_filenames() {
+        let first = ItemId("local:/takes/a/b.wav".into());
+        let second = ItemId("local:/takes/a-b.wav".into());
+        assert_ne!(
+            export_stem(&first),
+            export_stem(&second),
+            "sanitizer collisions must not overwrite another item's export"
+        );
+        for id in [first, second, ItemId("/🔥?".repeat(600))] {
+            let stem = export_stem(&id);
+            assert!(stem.len() <= 128, "export filename must stay bounded");
+            assert!(
+                stem.chars()
+                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
+            );
+            assert!(
+                stem.ends_with(blake3::hash(id.0.as_bytes()).to_hex().as_str()),
+                "destination includes complete ItemId digest"
+            );
+        }
     }
 
     #[test]
@@ -3047,7 +3222,7 @@ mod tests {
         assert!(capture.seal(&RedshankSurfaceState::default()).is_ok());
     }
 
-    fn desktop(directory: &std::path::Path) -> Desktop {
+    pub(super) fn desktop(directory: &std::path::Path) -> Desktop {
         let mut model = RedshankModel::default();
         model
             .add_item(LibraryItem::LocalAudio {

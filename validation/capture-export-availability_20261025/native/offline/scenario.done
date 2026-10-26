@@ -1,0 +1,11 @@
+RESULT ok
+captured 01_general_offline_lazy_input
+captured 02_tools_offline_tuner_off
+captured 03_close_guard
+Native offline-output availability complete; no input request made
+capture 01_general_offline_lazy_input 2200x1400 digest=ab9003047d89c4b5 file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/offline/01_general_offline_lazy_input.png
+capture 02_tools_offline_tuner_off 2200x1400 digest=c9f6a118d120f74f file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/offline/02_tools_offline_tuner_off.png
+capture 03_close_guard 2200x1400 digest=c9f940fc353a2f6d file=/Users/markik/Code/testing/woodshed-audit-next-20261025/native/offline/03_close_guard.png
+frames: 3 captured, 0 blank, 3 distinct digests
+presentation: 33 frames, 35 redraws, 2 unpresented redraws
+a11y-publication {"sampled_at_lane_frame":33,"snapshot":{"host":1,"publication":{"adapter":"installed","outcome":{"contribution_issues":0,"nodes":48,"phase":"submitted"}},"sequence":36}}

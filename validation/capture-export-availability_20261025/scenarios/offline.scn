@@ -1,0 +1,16 @@
+settle 12
+ui-zoom 1
+click .pill Settings
+click .side-item General
+assert text Audio output: offline engine; no device stream
+assert text Audio input: not opened
+capture 01_general_offline_lazy_input
+click .pill Tools
+click .lens Tuner
+assert text Tuner is off
+capture 02_tools_offline_tuner_off
+act diagnostic-request-close
+settle 4
+assert text Practice is not confirmed saved
+capture 03_close_guard
+log Native offline-output availability complete; no input request made

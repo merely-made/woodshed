@@ -572,10 +572,6 @@ fn persona_line(ui: &UiState) -> String {
 }
 
 fn general_page(ui: &UiState) -> UiChild {
-    let audio_line = match &ui.audio_error {
-        Some(err) => format!("Audio: {err}"),
-        None => "Audio: output and input streams open.".to_string(),
-    };
     Box::new(
         el(
             "div",
@@ -586,7 +582,9 @@ fn general_page(ui: &UiState) -> UiChild {
                     text(format!("Woodshed {} · desktop alpha", env!("CARGO_PKG_VERSION"))),
                 )
                 .attr("class", "settings-line"),
-                el("div", text(audio_line)).attr("class", "settings-line"),
+                el("div", text(ui.audio_output_status())).attr("class", "settings-line"),
+                el("div", text(ui.audio_input_status())).attr("class", "settings-line"),
+                ui.audio_error.as_ref().map(|reason| el("div", text(format!("Audio operation: {reason}"))).attr("class", "settings-line")),
                 el(
                     "div",
                     text("Selections, Set, practice history, tempo, theme, and layout restore on launch."),
@@ -969,16 +967,9 @@ fn tuner_page(ui: &UiState) -> UiChild {
             "div",
             (
                 el("div", text("Tuner")).attr("class", "settings-heading"),
+                el("div", text(ui.tuner_status())).attr("class", "settings-line"),
                 clickable(
-                    el(
-                        "div",
-                        text(if ui.tuner.enabled {
-                            "Listening: on"
-                        } else {
-                            "Listening: off"
-                        }),
-                    )
-                    .attr("class", "t-btn"),
+                    el("div", text(ui.tuner_action_label())).attr("class", "t-btn"),
                     |ui: &mut UiState, _| {
                         ui.tuner.enabled = !ui.tuner.enabled;
                         if !ui.tuner.enabled {

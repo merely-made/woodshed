@@ -55,9 +55,12 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
         let mut h = harness(width, 664.0);
         h.update(|ui| {
             ui.now_ms = Some(1_000);
-            ui.toggle_rehearsal(); crate::tests::acknowledge_card_preview_fixture(ui);
+            ui.toggle_rehearsal();
+            crate::tests::acknowledge_card_preview_fixture(ui);
             ui.song_playing = true;
             ui.tuner.enabled = true;
+            ui.audio_availability.input = woodshed_core::audio::AudioStreamStatus::Admitted;
+            ui.audio_availability.tuner_active = true;
         });
         let originals = serde_json::to_value(&h.state().set).unwrap();
         let history_len = h.state().practice_history.len();
@@ -228,7 +231,10 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
         let b = serde_json::to_value(&h.state().set).unwrap();
         let sound_b = h.state().preview_voicing().unwrap();
         assert_ne!(sound_a.0, sound_b.0);
-        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
+        assert_eq!(
+            h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
+            sound_a
+        );
         assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
         assert!(h.click_on(&Selector::class("overview-new-set")));
         let owner_c = h.state().working_sets.active_id;
@@ -268,7 +274,10 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
             ui.search = cambium::TextInput::new("Minor");
         });
         let config_b = serde_json::to_value(h.state().capture_exploration()).unwrap();
-        assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), sound_a);
+        assert_eq!(
+            h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
+            sound_a
+        );
         assert!(h.click_on(&Selector::class("staging-target").containing("Working Set 1 copy")));
         assert_eq!(h.state().working_sets.active_id, owner_b);
         assert_eq!(h.state().catalog_explorations.active_id, exploration_b);
@@ -402,7 +411,7 @@ fn background_runner_inherits_the_starting_exploration_setup() {
     assert!(h.state().set.cards[0].setting.tuning.is_none());
     let inherited = h.state().preview_voicing().unwrap();
     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
-        h.update(crate::tests::acknowledge_card_preview_fixture);
+    h.update(crate::tests::acknowledge_card_preview_fixture);
     assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
     assert!(h.click_on(&Selector::class("overview-new-exploration")));
     h.update(|ui| {
@@ -412,11 +421,15 @@ fn background_runner_inherits_the_starting_exploration_setup() {
     assert_ne!(
         h.state()
             .stage
-            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm).unwrap()
+            .card_sounding_pitches_at_tempo(&h.state().set.cards[0], h.state().transport.bpm)
+            .unwrap()
             .0,
         inherited.0
     );
-    assert_eq!(h.state().rehearsal_sounding_pitches().unwrap().unwrap(), inherited);
+    assert_eq!(
+        h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
+        inherited
+    );
     assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
     assert!(h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running")));
     assert!(h.click_on(&Selector::class("overview-pause-rehearsal")));
@@ -535,6 +548,194 @@ fn narrow_stage_preserves_graph_width_and_horizontal_scroll() {
 }
 
 #[test]
+fn absent_audio_backend_never_claims_open_streams_or_a_listening_tuner() {
+    let mut h = harness(1_100.0, 700.0);
+    h.update(|ui| {
+        ui.section = woodshed_core::storage::AppSection::Settings;
+        ui.app_settings.page = woodshed_core::settings::SettingsPage::General;
+    });
+    let general = |h: &Harness<UiState, crate::sync::Logic, UiChild>, text: &str| {
+        let dom = h.runner().dom();
+        let dom = dom.borrow();
+        !taproot::matching_classes(&dom, &Selector::class("settings-line").containing(text))
+            .is_empty()
+    };
+    assert!(
+        general(&h, "Audio output: unavailable"),
+        "an absent backend must be visible"
+    );
+    assert!(general(&h, "Audio input: unavailable"));
+    assert!(!general(&h, "output and input streams open"));
+    h.update(|ui| {
+        ui.section = woodshed_core::storage::AppSection::Tools;
+        ui.tool_page = woodshed_views::stage::ToolPage::Tuner;
+        ui.tuner.enabled = true;
+    });
+    let dom = h.runner().dom();
+    let dom = dom.borrow();
+    assert!(
+        taproot::matching_classes(
+            &dom,
+            &Selector::class("tool-reading").containing("Listening…")
+        )
+        .is_empty(),
+        "requested tuner state is not observed microphone admission"
+    );
+    assert!(
+        !taproot::matching_classes(
+            &dom,
+            &Selector::class("tool-reading").containing("unavailable")
+        )
+        .is_empty()
+    );
+}
+
+#[test]
+fn audio_availability_is_consistent_across_general_tools_settings_stage_and_overview() {
+    use woodshed_core::audio::{AudioAvailability, AudioStreamStatus};
+    use woodshed_core::settings::SettingsPage;
+    use woodshed_core::storage::AppSection;
+    use woodshed_views::stage::ToolPage;
+    let cases = [
+        (
+            AudioStreamStatus::Unopened,
+            false,
+            "audio input has not opened",
+        ),
+        (AudioStreamStatus::Requested, false, "Opening audio input…"),
+        (
+            AudioStreamStatus::AwaitingPermission,
+            false,
+            "Waiting for microphone permission…",
+        ),
+        (
+            AudioStreamStatus::Failed("microphone permission refused".into()),
+            false,
+            "microphone permission refused",
+        ),
+        (AudioStreamStatus::Admitted, false, "waiting for activation"),
+        (AudioStreamStatus::Admitted, true, "Listening…"),
+    ];
+    for (input, active, expected) in cases {
+        let mut h = harness(1_100.0, 700.0);
+        h.update(|ui| {
+            ui.audio_availability = AudioAvailability {
+                output: AudioStreamStatus::Admitted,
+                input: input.clone(),
+                tuner_active: active,
+            };
+            ui.tuner.enabled = true;
+            ui.section = AppSection::Settings;
+            ui.app_settings.page = SettingsPage::General;
+        });
+        let has = |h: &Harness<UiState, crate::sync::Logic, UiChild>, class: &str, text: &str| {
+            let dom = h.runner().dom();
+            let dom = dom.borrow();
+            !taproot::matching_classes(&dom, &Selector::class(class).containing(text)).is_empty()
+        };
+        assert!(has(&h, "settings-line", "Audio output: stream admitted"));
+        assert!(!has(&h, "settings-line", "output and input streams open"));
+        h.update(|ui| {
+            ui.section = AppSection::Tools;
+            ui.tool_page = ToolPage::Tuner;
+        });
+        assert!(has(&h, "tool-reading", expected), "tools: {expected}");
+        assert_eq!(has(&h, "tool-reading", "Listening…"), active);
+        h.update(|ui| {
+            ui.section = AppSection::Settings;
+            ui.app_settings.page = SettingsPage::Tuner;
+        });
+        assert!(has(&h, "settings-line", expected), "settings: {expected}");
+        h.update(|ui| {
+            ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
+        });
+        assert!(has(&h, "t-readout", expected), "stage: {expected}");
+        let snapshot = woodshed_views::stage::overview_snapshot(h.state());
+        assert_eq!(
+            snapshot.nodes.iter().any(|node| node.id
+                == woodshed_core::session_overview::OverviewNodeId::Process(
+                    woodshed_core::session_overview::OverviewProcess::Tuner
+                )),
+            active
+        );
+    }
+}
+
+#[test]
+fn tuner_readings_and_offline_output_never_override_host_availability() {
+    use woodshed_core::audio::{AudioAvailability, AudioStreamStatus, TunerReading};
+    let mut h = harness(1_100.0, 700.0);
+    h.update(|ui| {
+        ui.section = woodshed_core::storage::AppSection::Tools;
+        ui.tool_page = woodshed_views::stage::ToolPage::Tuner;
+        ui.tuner.enabled = true;
+        ui.tuner.reading = Some(TunerReading {
+            note: "A".into(),
+            octave: 4,
+            cents: 0.0,
+            in_tune: true,
+            level: 0.1,
+        });
+        ui.audio_availability = AudioAvailability {
+            output: AudioStreamStatus::Offline,
+            input: AudioStreamStatus::Failed("microphone unavailable".into()),
+            tuner_active: false,
+        };
+    });
+    let has = |h: &Harness<UiState, crate::sync::Logic, UiChild>, class: &str, text: &str| {
+        let dom = h.runner().dom();
+        let dom = dom.borrow();
+        !taproot::matching_classes(&dom, &Selector::class(class).containing(text)).is_empty()
+    };
+    assert!(has(&h, "tool-reading", "microphone unavailable"));
+    assert!(!has(&h, "tool-reading", "A4"));
+    h.update(|ui| {
+        ui.audio_availability.input = AudioStreamStatus::Admitted;
+        ui.audio_availability.tuner_active = true;
+    });
+    assert!(has(&h, "tool-reading", "A4 +0 cents · in tune"));
+    h.update(|ui| {
+        ui.section = woodshed_core::storage::AppSection::Settings;
+        ui.app_settings.page = woodshed_core::settings::SettingsPage::General;
+    });
+    assert!(has(
+        &h,
+        "settings-line",
+        "Audio output: offline engine; no device stream"
+    ));
+    h.update(|ui| {
+        ui.audio_error = Some("backing admission refused".into());
+    });
+    assert!(has(
+        &h,
+        "settings-line",
+        "Audio operation: backing admission refused"
+    ));
+    assert!(has(
+        &h,
+        "settings-line",
+        "Audio output: offline engine; no device stream"
+    ));
+    h.update(|ui| {
+        ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
+    });
+    assert!(has(&h, "audio-notice", "backing admission refused"));
+    h.update(|ui| {
+        ui.section = woodshed_core::storage::AppSection::Settings;
+        ui.app_settings.page = woodshed_core::settings::SettingsPage::General;
+    });
+    h.update(|ui| {
+        ui.audio_availability.output = AudioStreamStatus::Failed("output disconnected".into());
+    });
+    assert!(has(
+        &h,
+        "settings-line",
+        "Audio output: failed: output disconnected"
+    ));
+    assert!(has(&h, "settings-line", "Audio input: stream admitted"));
+}
+
+#[test]
 fn settings_uses_the_shared_page_scroll_owner() {
     let mut harness = harness(1_100.0, 300.0);
     harness.update(|ui| {
@@ -580,13 +781,24 @@ fn narrow_settings_navigation_stacks_and_selects_a_page() {
 #[test]
 fn rehearsal_board_scroll_preserves_extent_and_note_hits() {
     let mut h = harness(420.0, 900.0);
-    h.update(|ui| ui.section = woodshed_core::storage::AppSection::Rehearsal);
-    // Card paragraphs can grow above the board. Bring the whole board into
-    // the native viewport before choosing a physical note hit below.
+    h.update(|ui| ui.select_app_section(woodshed_core::storage::AppSection::Rehearsal));
+    // Card paragraphs and contextual navigation can grow above the board.
+    // Wheel inside its real page scroll owner, then choose a physical note
+    // hit below. A fixed window coordinate can instead hit the navigation.
+    let page = rect(&h, "workspace-screen");
     let initial = rect(&h, "rehearsal-board-viewport");
-    h.move_to(30.0, 130.0);
-    h.wheel(0.0, (initial.1 - 350.0).max(0.0));
+    let before_page_scroll = h.element_scroll_total();
+    h.move_to(page.0 + 8.0, page.1 + 8.0);
+    h.wheel(0.0, (initial.1 - (page.1 + 20.0)).max(0.0));
     let viewport = rect(&h, "rehearsal-board-viewport");
+    assert!(
+        h.element_scroll_total() > before_page_scroll,
+        "the rehearsal page must scroll"
+    );
+    assert!(
+        viewport.1 < initial.1,
+        "the page wheel must bring the board into view: {initial:?} -> {viewport:?}"
+    );
     let before = rect(&h, "fretboard-stack");
     assert!(viewport.0 >= 0.0 && viewport.0 + viewport.2 <= 420.0);
     assert!(
@@ -935,7 +1147,8 @@ fn reopened_scale_editor_has_no_empty_chord_discovery_panels() {
         "an ordinary scale must not render chord-to-scale discovery"
     );
     assert!(
-        taproot::matching_classes(&dom, &Selector::class("t-btn").containing("Discover ")).is_empty(),
+        taproot::matching_classes(&dom, &Selector::class("t-btn").containing("Discover "))
+            .is_empty(),
         "an ordinary scale must not render chord-to-arpeggio discovery"
     );
     assert_eq!(
@@ -1027,8 +1240,9 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
         (board_size.0 as f32, board_size.1 as f32)
     );
     assert_eq!(h.state().preview_voicing().unwrap(), heard);
-    let dwell =
-        woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm).unwrap().unwrap();
+    let dwell = woodshed_core::card_dwell(&h.state().set.cards[1], h.state().transport.bpm)
+        .unwrap()
+        .unwrap();
     assert!(
         (dwell.as_secs_f32() - 3.0).abs() < 0.001,
         "one bar inherits the 80 BPM runner tempo"
@@ -1069,7 +1283,7 @@ fn discovered_scale_uses_its_saved_ukulele_board_and_physical_solo_contact() {
         ui.now_ms = Some(1_000);
     });
     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
-        h.update(crate::tests::acknowledge_card_preview_fixture);
+    h.update(crate::tests::acknowledge_card_preview_fixture);
     assert!(
         matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request))
         if request.preview.0.len() == 1 && (request.preview.0[0] - d4_hz).abs() < 0.001)
@@ -1245,7 +1459,7 @@ fn scale_pattern_controls_preserve_order_source_and_occurrences_in_wide_and_narr
             );
             assert_eq!(h.state().practice_history.total_practiced_ms(&subject), 0);
             assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
-        h.update(crate::tests::acknowledge_card_preview_fixture);
+            h.update(crate::tests::acknowledge_card_preview_fixture);
             assert!(
                 matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request)) if request.preview.0 == heard.0)
             );
@@ -1458,7 +1672,7 @@ fn adjacent_chord_approach_controls_preserve_physical_pairs_shapes_and_originals
             let subject = catalog_id_for_card(&h.state().set.cards[2]).unwrap();
             assert_ne!(subject, "chord:Major 7");
             assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
-        h.update(crate::tests::acknowledge_card_preview_fixture);
+            h.update(crate::tests::acknowledge_card_preview_fixture);
             assert!(
                 matches!(h.state().audio_requests.last(), Some(AudioRequest::CardPreview(request)) if request.preview.0 == heard.0)
             );

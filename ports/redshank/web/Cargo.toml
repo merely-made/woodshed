@@ -18,7 +18,7 @@ redshank-model = { path = "../model" }
 # The Mere pin this workspace is on.
 cambium = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-rootstock = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-cambium-genet-web-host = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium-web = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 
 # The browser, declared for wasm32 only so a native workspace build resolves
 # none of it and this crate compiles to nothing off wasm.

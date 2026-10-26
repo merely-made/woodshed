@@ -409,6 +409,8 @@ fn install_persona_state(
 ) {
     let practice_clock_managed = ui.practice_clock_managed;
     let event_clock = ui.event_clock;
+    let audio_availability = ui.audio_availability.clone();
+    let audio_error = ui.audio_error.clone();
     let appearance = std::mem::take(&mut ui.appearance);
     // Port inventory and routing belong to the running host, not a persona.
     let midi = std::mem::take(&mut ui.midi);
@@ -421,6 +423,8 @@ fn install_persona_state(
     *ui = incoming;
     ui.practice_clock_managed = practice_clock_managed;
     ui.event_clock = event_clock;
+    ui.audio_availability = audio_availability;
+    ui.audio_error = audio_error;
     ui.appearance = appearance;
     // Definitions and the shared editor survive, while cached paint, queued
     // application choices and font drafts belong to the outgoing persona.
@@ -464,6 +468,28 @@ mod tests {
         assert!(ui.midi.clock_out);
         assert_eq!(ui.midi.connected_out.as_deref(), Some("synth"));
         assert_eq!(ui.midi.error.as_deref(), Some("pending diagnostic"));
+    }
+
+    #[test]
+    fn admitted_persona_keeps_host_availability_without_promoting_tuner_intent() {
+        use woodshed_core::audio::{AudioAvailability, AudioStreamStatus};
+        let mut ui = UiState::new();
+        ui.audio_availability = AudioAvailability {
+            output: AudioStreamStatus::Offline,
+            input: AudioStreamStatus::AwaitingPermission,
+            tuner_active: false,
+        };
+        ui.audio_error = Some("retained operation diagnostic".into());
+        let observed = ui.audio_availability.clone();
+        let mut incoming = UiState::new();
+        incoming.tuner.enabled = true;
+        install_persona_state(&mut ui, incoming);
+        assert_eq!(ui.audio_availability, observed);
+        assert_eq!(
+            ui.audio_error.as_deref(),
+            Some("retained operation diagnostic")
+        );
+        assert!(ui.tuner.enabled && !ui.tuner_is_listening());
     }
 
     #[test]

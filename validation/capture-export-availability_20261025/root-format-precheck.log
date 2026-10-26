@@ -1,0 +1,2448 @@
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:663:
+ 
+ impl InputHealth {
+     pub fn failure(&self) -> Option<String> {
+-        self.state.lock().unwrap_or_else(|error| error.into_inner()).failure.clone()
++        self.state
++            .lock()
++            .unwrap_or_else(|error| error.into_inner())
++            .failure
++            .clone()
+     }
+ 
+     /// The native error callback owns this report. Explicit input adapters may
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:671:
+     pub fn report_failure(&self, reason: impl Into<String>) {
+         let wake = {
+             let mut state = self.state.lock().unwrap_or_else(|error| error.into_inner());
+-            if state.failure.is_some() { return; }
++            if state.failure.is_some() {
++                return;
++            }
+             state.failure = Some(reason.into());
+             state.wake.clone()
+         };
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:678:
+-        if let Some(wake) = wake { wake(); }
++        if let Some(wake) = wake {
++            wake();
++        }
+     }
+ 
+     pub fn set_wake(&self, wake: Arc<dyn Fn() + Send + Sync>) {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:684:
+             state.wake = Some(wake.clone());
+             state.failure.is_some()
+         };
+-        if failed { wake(); }
++        if failed {
++            wake();
++        }
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:709:
+         }
+     }
+ 
+-    pub fn health_handle(&self) -> InputHealth { self.health.clone() }
++    pub fn health_handle(&self) -> InputHealth {
++        self.health.clone()
++    }
+ 
+     /// Register an arbitrary analyzer. The caller is responsible for
+     /// holding a handle into its shared state (typically returned by
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:812:
+ }
+ 
+ impl InputEngine {
+-    pub fn health_handle(&self) -> InputHealth { self.health.clone() }
++    pub fn health_handle(&self) -> InputHealth {
++        self.health.clone()
++    }
+ 
+     pub fn sample_rate_hz(&self) -> f32 {
+         self.source_rate as f32
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:867:
+         let observer = health.clone();
+         let wakes = Arc::new(AtomicUsize::new(0));
+         let counter = wakes.clone();
+-        health.set_wake(Arc::new(move || { counter.fetch_add(1, Ordering::SeqCst); }));
++        health.set_wake(Arc::new(move || {
++            counter.fetch_add(1, Ordering::SeqCst);
++        }));
+         assert!(observer.failure().is_none());
+         // This is the same report path invoked by CPAL's error callback.
+         health.report_failure("native input disconnected");
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/input.rs:874:
+         health.report_failure("later duplicate status");
+-        assert_eq!(observer.failure().as_deref(), Some("native input disconnected"));
++        assert_eq!(
++            observer.failure().as_deref(),
++            Some("native input disconnected")
++        );
+         assert_eq!(wakes.load(Ordering::SeqCst), 1);
+-        assert!(InputEngineBuilder::new().health_handle().failure().is_none(),
+-            "a fresh stream owns a fresh latch; old observers never reset");
++        assert!(
++            InputEngineBuilder::new()
++                .health_handle()
++                .failure()
++                .is_none(),
++            "a fresh stream owns a fresh latch; old observers never reset"
++        );
+     }
+ 
+     #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-audio/src/lib.rs:49:
+ pub use chord_audio::{ChordRender, render_chord};
+ pub use engine::AudioError;
+ pub use input::{
+-    Analyzer, DetectedNote, DetectedNoteName, DetectorKind, InputEngine, InputEngineBuilder, InputHealth,
+-    LooperCaptureAnalyzer, LooperCaptureHandle, PitchAnalyzer, TunerEngine, TunerHandle,
+-    TunerSnapshot,
++    Analyzer, DetectedNote, DetectedNoteName, DetectorKind, InputEngine, InputEngineBuilder,
++    InputHealth, LooperCaptureAnalyzer, LooperCaptureHandle, PitchAnalyzer, TunerEngine,
++    TunerHandle, TunerSnapshot,
+ };
+ pub use looper::Looper;
+ pub use midi::{
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-core/src/audio.rs:185:
+ impl PartialEq for CardPreviewRequest {
+     fn eq(&self, other: &Self) -> bool {
+         std::sync::Arc::ptr_eq(&self.session, &other.session)
+-            && self.owner == other.owner && self.card_id == other.card_id
+-            && self.instruction == other.instruction && self.fallback_bpm_bits == other.fallback_bpm_bits
+-            && self.run_epoch == other.run_epoch && self.preview == other.preview
++            && self.owner == other.owner
++            && self.card_id == other.card_id
++            && self.instruction == other.instruction
++            && self.fallback_bpm_bits == other.fallback_bpm_bits
++            && self.run_epoch == other.run_epoch
++            && self.preview == other.preview
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-core/src/audio.rs:213:
+     fn eq(&self, other: &Self) -> bool {
+         std::sync::Arc::ptr_eq(&self.session, &other.session)
+             && std::sync::Arc::ptr_eq(&self.ticket, &other.ticket)
+-            && self.preview == other.preview && self.observation == other.observation
++            && self.preview == other.preview
++            && self.observation == other.observation
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:12:
+ use woodshed_audio::output_runtime::{OutputError, OutputRuntime};
+ use woodshed_audio::{
+     Bar, CalibrationOutcome, CalibrationSession, ChordRef, InputEngine, InputEngineBuilder,
+-    InputHealth, LooperCaptureHandle, OnsetAnalyzer, OnsetHandle, SequencerPattern, Song, Sound, Step,
+-    Subdivision, TimeSignature, Track, TunerHandle,
++    InputHealth, LooperCaptureHandle, OnsetAnalyzer, OnsetHandle, SequencerPattern, Song, Sound,
++    Step, Subdivision, TimeSignature, Track, TunerHandle,
+ };
+-use woodshed_core::audio::{AudioAvailability, AudioBackend, AudioStreamStatus, CalibrationStatus, TransportState, TunerReading};
++use woodshed_core::audio::{
++    AudioAvailability, AudioBackend, AudioStreamStatus, CalibrationStatus, TransportState,
++    TunerReading,
++};
+ use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId};
+ use woodshed_core::song::SongDoc;
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:22:
+-mod loop_projection;
+-mod practice_clock;
+-mod music_program;
+-mod music_clock;
+ mod input_admission;
++mod loop_projection;
+ mod microphone_access;
+ #[cfg(test)]
+ mod mixed_loop_tests;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:30:
++mod music_clock;
++mod music_program;
++mod practice_clock;
+ pub(crate) use loop_projection::CaptureSnapshot;
+ use loop_projection::LoopCaptures;
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:108:
+     #[cfg(test)]
+     Test,
+     #[cfg(test)]
+-    TestOwner { _owner: Box<dyn std::any::Any> },
++    TestOwner {
++        _owner: Box<dyn std::any::Any>,
++    },
+ }
+ 
+ struct InputSession {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:291:
+                 let pending = if self.input_admission.awaiting_permission() {
+                     if self.pending_capture.is_some() {
+                         "Waiting for microphone permission in macOS. Stop cancels pending Record; recording has not started."
+-                    } else { "Waiting for microphone permission in macOS." }
+-                } else { "Opening audio input… Stop cancels pending Record." };
+-                self.error().map_or_else(|| pending.into(), |error| format!("{error}; {pending}"))
+-            } else { self.error().map(str::to_owned).unwrap_or_else(|| {
+-                if output_rate.is_none() {
+-                    "Audio output is unavailable.".into()
+-                } else if self.input.is_none() {
+-                    "One shared output · input opens on Record".into()
++                    } else {
++                        "Waiting for microphone permission in macOS."
++                    }
+                 } else {
+-                    "One shared output · input configuration opened".into()
+-                }
+-            }) },
++                    "Opening audio input… Stop cancels pending Record."
++                };
++                self.error()
++                    .map_or_else(|| pending.into(), |error| format!("{error}; {pending}"))
++            } else {
++                self.error().map(str::to_owned).unwrap_or_else(|| {
++                    if output_rate.is_none() {
++                        "Audio output is unavailable.".into()
++                    } else if self.input.is_none() {
++                        "One shared output · input opens on Record".into()
++                    } else {
++                        "One shared output · input configuration opened".into()
++                    }
++                })
++            },
+         }
+     }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:439:
+     }
+ 
+     pub fn needs_service(&self) -> bool {
+-        self.input_admission_pending() || self.pending_capture.is_some() || self.pending_calibration
++        self.input_admission_pending()
++            || self.pending_capture.is_some()
++            || self.pending_calibration
+             || ((!self.native_output || self.output_stream_count() != 0)
+-            && self
+-                .output
+-                .as_ref()
+-                .is_some_and(OutputRuntime::needs_service))
++                && self
++                    .output
++                    .as_ref()
++                    .is_some_and(OutputRuntime::needs_service))
+     }
+ 
+     /// Register both completion wakeups and the bounded idle context service.
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:451:
+     pub fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) {
+         self.input_admission.set_wake(wake.clone());
+         self.input_wake = Some(wake.clone());
+-        if let Some(input) = &self.input { input.health.set_wake(wake.clone()); }
++        if let Some(input) = &self.input {
++            input.health.set_wake(wake.clone());
++        }
+         if let Some(output) = &mut self.output {
+             output.set_wake(wake.clone());
+             self.heartbeat = Some(OutputHeartbeat::start(wake));
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:489:
+     /// A failed stream cannot finish a retained calibration or revive delayed
+     /// capture work. Keep its handles failed until an explicit new request.
+     fn retire_failed_input(&mut self) -> bool {
+-        let Some(reason) = self.input.as_ref().and_then(|input| input.health.failure()) else { return false; };
++        let Some(reason) = self.input.as_ref().and_then(|input| input.health.failure()) else {
++            return false;
++        };
+         if let Some(input) = &self.input {
+             input.tuner.set_enabled(false);
+             input.onset.set_enabled(false);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:513:
+ 
+     /// Exact control-side admission for an already resolved Card request.
+     /// Return this operation's result, not an unrelated persistent error.
+-    pub(crate) fn admit_card_preview(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+-        let output = self.output.as_mut().ok_or_else(|| "Audio output is unavailable.".to_string())?;
++    pub(crate) fn admit_card_preview(
++        &mut self,
++        preview: &woodshed_core::card_timing::CardPreview,
++    ) -> Result<(), String> {
++        let output = self
++            .output
++            .as_mut()
++            .ok_or_else(|| "Audio output is unavailable.".to_string())?;
+         // The view checks unmarked availability before declaring silence.
+         // Silence still requires the output to retire the preceding preview.
+-        if preview.0.is_empty() { return output.cancel_preview().map_err(|error| error.to_string()); }
+-        output.preview_card_pitches(&preview.0, preview.1, preview.2).map_err(|error| error.to_string())
++        if preview.0.is_empty() {
++            return output.cancel_preview().map_err(|error| error.to_string());
++        }
++        output
++            .preview_card_pitches(&preview.0, preview.1, preview.2)
++            .map_err(|error| error.to_string())
+     }
+ 
+     fn start_admitted_calibration(&mut self) {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:525:
+-        if self.input.as_ref().is_none_or(|input| input.health.failure().is_some()) { return; }
++        if self
++            .input
++            .as_ref()
++            .is_none_or(|input| input.health.failure().is_some())
++        {
++            return;
++        }
+         self.pending_calibration = false;
+         let Some(onset) = self.input.as_ref().map(|input| input.onset.clone()) else {
+             return;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:543:
+     /// Resource and admission facts shared by every native audio surface.
+     pub(crate) fn availability(&self) -> AudioAvailability {
+         let output = match &self.output {
+-            None => self.initial_error.as_ref().map(|reason| AudioStreamStatus::Failed(reason.clone()))
++            None => self
++                .initial_error
++                .as_ref()
++                .map(|reason| AudioStreamStatus::Failed(reason.clone()))
+                 .unwrap_or(AudioStreamStatus::Unavailable),
+             Some(_) if !self.native_output => AudioStreamStatus::Offline,
+-            Some(_) if self.output_stream_count() == 0 => AudioStreamStatus::Failed("The output stream is no longer active.".into()),
++            Some(_) if self.output_stream_count() == 0 => {
++                AudioStreamStatus::Failed("The output stream is no longer active.".into())
++            },
+             Some(_) => AudioStreamStatus::Admitted,
+         };
+         let input = if let Some(input) = &self.input {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:553:
+-            input.health.failure().map(AudioStreamStatus::Failed).unwrap_or(AudioStreamStatus::Admitted)
++            input
++                .health
++                .failure()
++                .map(AudioStreamStatus::Failed)
++                .unwrap_or(AudioStreamStatus::Admitted)
+         } else if self.input_admission.awaiting_permission() {
+             AudioStreamStatus::AwaitingPermission
+         } else if self.input_admission_pending() {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:563:
+         AudioAvailability {
+             output,
+             input,
+-            tuner_active: self.input.as_ref().is_some_and(|input| input.health.failure().is_none() && input.tuner.is_enabled()),
++            tuner_active: self
++                .input
++                .as_ref()
++                .is_some_and(|input| input.health.failure().is_none() && input.tuner.is_enabled()),
+         }
+     }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:570:
+     /// Observed catalog sound must be a complete playable request. The generic
+     /// runtime's empty/filtered no-op result is not an audition receipt.
+-    pub(crate) fn admit_audition_preview(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
+-        if preview.0.is_empty() || preview.0.iter().any(|pitch| !pitch.is_finite() || *pitch <= 0.0) {
++    pub(crate) fn admit_audition_preview(
++        &mut self,
++        preview: &woodshed_core::card_timing::CardPreview,
++    ) -> Result<(), String> {
++        if preview.0.is_empty()
++            || preview
++                .0
++                .iter()
++                .any(|pitch| !pitch.is_finite() || *pitch <= 0.0)
++        {
+             return Err("The selected material has no complete playable pitch sequence.".into());
+         }
+         self.admit_card_preview(preview)
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:679:
+     /// session is reused for every feature for the backend's lifetime.
+     fn ensure_input(&mut self) -> bool {
+         if let Some(input) = &self.input {
+-            if input.health.failure().is_none() { return true; }
++            if input.health.failure().is_none() {
++                return true;
++            }
+             input.tuner.set_enabled(false);
+             input.onset.set_enabled(false);
+             input.capture.set_enabled(false);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:686:
+         }
+-        if self.input.take().is_some() { self.capture_attached = false; }
++        if self.input.take().is_some() {
++            self.capture_attached = false;
++        }
+         #[cfg(test)]
+         if let Some(factory) = self.input_factory.as_mut() {
+             let result = factory();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:691:
+             return match result {
+                 Ok(input) => {
+-                    if let Some(wake) = &self.input_wake { input.health.set_wake(wake.clone()); }
++                    if let Some(wake) = &self.input_wake {
++                        input.health.set_wake(wake.clone());
++                    }
+                     input.tuner.set_enabled(self.tuner_requested);
+                     self.input = Some(input);
+                     self.error = self.initial_error.clone();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:697:
+                     self.input_problem = None;
+                     true
+                 },
+-                Err(error) => { self.input_error(error); false },
++                Err(error) => {
++                    self.input_error(error);
++                    false
++                },
+             };
+         }
+         let result = self.input_admission.request(std::time::Instant::now());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:707:
+                 self.error = self.initial_error.clone();
+                 false
+             },
+-            Err(error) => { self.input_error(error); false },
++            Err(error) => {
++                self.input_error(error);
++                false
++            },
+         }
+     }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:722:
+         // Only explicit request admission can open/retry input. A delayed
+         // capture completion must not reopen a stream that has since failed.
+         let input = self.input.as_ref().ok_or("Audio input is unavailable.")?;
+-        if let Some(reason) = input.health.failure() { return Err(reason); }
++        if let Some(reason) = input.health.failure() {
++            return Err(reason);
++        }
+         let source_rate = input.capture.source_rate();
+         let output_rate = self.output.as_ref().expect("output exists").sample_rate();
+         if source_rate == 0 || source_rate != output_rate {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:767:
+     }
+ 
+     /// The existing click lane consumes the same hydrated pattern as export.
+-    pub(crate) fn sync_pack(&mut self, selection: Option<&audio_packs::PackSelection>, transport: TransportState) -> Result<(), String> {
++    pub(crate) fn sync_pack(
++        &mut self,
++        selection: Option<&audio_packs::PackSelection>,
++        transport: TransportState,
++    ) -> Result<(), String> {
+         let revision = selection.map(audio_packs::PackSelection::revision);
+-        if self.pack_pattern.as_ref().map(|p| &p.0) == revision.as_ref() { return Ok(()); }
+-        if self.loop_capture_busy() { return Err("Stop recording / armed capture before updating the drum kit.".into()); }
++        if self.pack_pattern.as_ref().map(|p| &p.0) == revision.as_ref() {
++            return Ok(());
++        }
++        if self.loop_capture_busy() {
++            return Err("Stop recording / armed capture before updating the drum kit.".into());
++        }
+         let mut pattern = match selection {
+             Some(selection) => selection.hydrated_pattern().map_err(|e| e.to_string())?,
+             None => click_pattern(transport.bpm),
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:777:
+         };
+         pattern.bpm = transport.bpm;
+-        self.with_output(|output| if selection.is_some() { output.set_pack_pattern_playing(pattern.clone(), transport.playing) } else { output.set_click_pattern_playing(pattern.clone(), transport.playing) })?;
++        self.with_output(|output| {
++            if selection.is_some() {
++                output.set_pack_pattern_playing(pattern.clone(), transport.playing)
++            } else {
++                output.set_click_pattern_playing(pattern.clone(), transport.playing)
++            }
++        })?;
+         self.pack_pattern = revision.map(|revision| (revision, pattern));
+         self.last_metronome = Some(transport);
+         Ok(())
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:801:
+             return;
+         }
+         let restore_pattern = self.last_metronome.is_none();
+-        let mut pattern = self.pack_pattern.as_ref().map(|p| p.1.clone()).unwrap_or_else(|| click_pattern(transport.bpm));
++        let mut pattern = self
++            .pack_pattern
++            .as_ref()
++            .map(|p| p.1.clone())
++            .unwrap_or_else(|| click_pattern(transport.bpm));
+         pattern.bpm = transport.bpm;
+         let packed = self.pack_pattern.is_some();
+         if self
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:808:
+             .with_output(|output| {
+                 if restore_pattern {
+-                    if packed { output.set_pack_pattern_playing(pattern, transport.playing) }
+-                    else { output.set_click_pattern_playing(pattern, transport.playing) }
++                    if packed {
++                        output.set_pack_pattern_playing(pattern, transport.playing)
++                    } else {
++                        output.set_click_pattern_playing(pattern, transport.playing)
++                    }
+                 } else {
+                     output.set_metronome(transport.bpm, transport.playing)
+                 }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:835:
+ 
+     fn tuner_reading(&self) -> Option<TunerReading> {
+         let input = self.input.as_ref()?;
+-        if input.health.failure().is_some() { return None; }
++        if input.health.failure().is_some() {
++            return None;
++        }
+         let tuner = &input.tuner;
+         if !tuner.is_enabled() {
+             return None;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:938:
+     }
+ 
+     fn loop_capture_busy(&self) -> bool {
+-        self.pending_capture.is_some() || self.output
+-            .as_ref()
+-            .is_some_and(OutputRuntime::capture_busy)
++        self.pending_capture.is_some()
++            || self
++                .output
++                .as_ref()
++                .is_some_and(OutputRuntime::capture_busy)
+     }
+ 
+     fn loop_stop_record(&mut self) {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1006:
+     }
+ 
+     fn calibration_poll(&mut self) -> CalibrationStatus {
+-        if self.retire_failed_input() { return CalibrationStatus::Unavailable; }
++        if self.retire_failed_input() {
++            return CalibrationStatus::Unavailable;
++        }
+         if self.pending_calibration {
+             return CalibrationStatus::Running {
+                 clicks_fired: 0,
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1201:
+             std::thread::yield_now();
+         }
+         let starts = audio.output_snapshot().unwrap().preview_starts;
+-        for pitches in [vec![], vec![f32::NAN], vec![440.0, -1.0], vec![f32::INFINITY]] {
++        for pitches in [
++            vec![],
++            vec![f32::NAN],
++            vec![440.0, -1.0],
++            vec![f32::INFINITY],
++        ] {
+             let mut refused = request(&mut ui);
+             refused.preview.0 = pitches;
+             crate::drive::service_audition_request(&mut ui, &mut audio, &refused);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1214:
+         too_large.preview.1 = 1.0e10;
+         crate::drive::service_audition_request(&mut ui, &mut audio, &too_large);
+         assert_eq!(ui.practice_history.len(), 1);
+-        assert!(ui.audition_notice.as_ref().unwrap().contains("resource bounds"));
++        assert!(
++            ui.audition_notice
++                .as_ref()
++                .unwrap()
++                .contains("resource bounds")
++        );
+         assert_eq!(audio.output_observation_id(), runtime);
+         assert!(audio.preview_voice_count() > 0);
+         let retry = request(&mut ui);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1240:
+     fn preservation_refuses_an_armed_capture_without_retiring_its_token() {
+         use woodshed_core::storage::SessionStore;
+         use woodshed_views::stage::UiState;
+-        let store = SessionStore::new(Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend);
++        let store = SessionStore::new(
++            Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend
++        );
+         let shared = crate::shared::Shared::with_store(Some(store), None, None);
+         let mut shared = shared.borrow_mut();
+         let mut ui = UiState::new();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1251:
+         audio.song_arm_record(0);
+         assert!(audio.loop_capture_busy());
+         let epoch = ui.audio_session.clone();
+-        assert!(matches!(crate::capture_persistence::preserve_request(&mut shared, &mut ui),
+-            crate::capture_persistence::Preservation::Blocked(_)));
++        assert!(matches!(
++            crate::capture_persistence::preserve_request(&mut shared, &mut ui),
++            crate::capture_persistence::Preservation::Blocked(_)
++        ));
+         assert!(shared.backend.as_ref().unwrap().loop_capture_busy());
+         assert!(Arc::ptr_eq(&epoch, &ui.audio_session));
+-        assert!(crate::capture_persistence::close_request(&mut shared, &mut ui));
++        assert!(crate::capture_persistence::close_request(
++            &mut shared,
++            &mut ui
++        ));
+         assert!(ui.practice_close_pending);
+         ui.practice_discard_close = true;
+-        assert!(!crate::capture_persistence::close_request(&mut shared, &mut ui));
++        assert!(!crate::capture_persistence::close_request(
++            &mut shared,
++            &mut ui
++        ));
+     }
+ 
+     #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1337:
+         let count = attempts.clone();
+         let mut audio = backend(Box::new(move || {
+             count.set(count.get() + 1);
+-            if count.get() == 1 { Err("microphone permission refused".into()) } else { successful_input() }
++            if count.get() == 1 {
++                Err("microphone permission refused".into())
++            } else {
++                successful_input()
++            }
+         }));
+-        assert_eq!(audio.availability(), AudioAvailability { output: AudioStreamStatus::Offline, input: AudioStreamStatus::Unopened, tuner_active: false });
++        assert_eq!(
++            audio.availability(),
++            AudioAvailability {
++                output: AudioStreamStatus::Offline,
++                input: AudioStreamStatus::Unopened,
++                tuner_active: false
++            }
++        );
+         audio.set_tuner_enabled(true);
+         assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+-        assert!(matches!(audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("permission refused")));
+-        for _ in 0..10 { audio.set_tuner_enabled(true); audio.service(); }
++        assert!(
++            matches!(audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("permission refused"))
++        );
++        for _ in 0..10 {
++            audio.set_tuner_enabled(true);
++            audio.service();
++        }
+         assert_eq!(attempts.get(), 1);
+         audio.set_tuner_enabled(false);
+         audio.set_tuner_enabled(true);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1355:
+         // This is an operation refusal on a still-present software output,
+         // rather than a device-stream failure.
+         audio.preview_note(440.0, f32::NAN);
+-        assert!(audio.error().is_some_and(|reason| reason.contains("finite duration")));
++        assert!(
++            audio
++                .error()
++                .is_some_and(|reason| reason.contains("finite duration"))
++        );
+         assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+         audio.native_output = true;
+-        assert!(matches!(audio.availability().output, AudioStreamStatus::Failed(_)), "a retired native stream cannot be claimed admitted");
++        assert!(
++            matches!(audio.availability().output, AudioStreamStatus::Failed(_)),
++            "a retired native stream cannot be claimed admitted"
++        );
+     }
+ 
+     #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1366:
+         use std::sync::atomic::AtomicUsize;
+         let attempts = Rc::new(Cell::new(0));
+         let count = attempts.clone();
+-        let mut audio = backend(Box::new(move || { count.set(count.get() + 1); successful_input() }));
++        let mut audio = backend(Box::new(move || {
++            count.set(count.get() + 1);
++            successful_input()
++        }));
+         audio.set_tuner_enabled(true);
+         let old_health = audio.input.as_ref().unwrap().health.clone();
+         let wakes = Arc::new(AtomicUsize::new(0));
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1373:
+         let wake_count = wakes.clone();
+         // Install the same native health wake without creating an output
+         // heartbeat; input callbacks must independently wake an idle host.
+-        old_health.set_wake(Arc::new(move || { wake_count.fetch_add(1, Ordering::SeqCst); }));
++        old_health.set_wake(Arc::new(move || {
++            wake_count.fetch_add(1, Ordering::SeqCst);
++        }));
+         old_health.report_failure("microphone disconnected");
+         assert_eq!(wakes.load(Ordering::SeqCst), 1);
+-        assert!(!audio.availability().tuner_active, "known failure blocks listening before service");
+-        assert!(matches!(audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("disconnected")));
++        assert!(
++            !audio.availability().tuner_active,
++            "known failure blocks listening before service"
++        );
++        assert!(
++            matches!(audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("disconnected"))
++        );
+         assert!(audio.tuner_reading().is_none());
+-        for _ in 0..10 { audio.service(); audio.set_tuner_enabled(true); }
++        for _ in 0..10 {
++            audio.service();
++            audio.set_tuner_enabled(true);
++        }
+         assert_eq!(attempts.get(), 1);
+         assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+         audio.set_tuner_enabled(false);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1387:
+         assert_eq!(attempts.get(), 2);
+         assert!(audio.availability().tuner_active);
+         assert_eq!(audio.availability().input, AudioStreamStatus::Admitted);
+-        assert!(old_health.failure().is_some(), "retired health never becomes valid again");
++        assert!(
++            old_health.failure().is_some(),
++            "retired health never becomes valid again"
++        );
+         assert!(audio.input.as_ref().unwrap().health.failure().is_none());
+     }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1395:
+     fn input_failure_retires_a_running_calibration_without_reopening() {
+         let attempts = Rc::new(Cell::new(0));
+         let count = attempts.clone();
+-        let mut audio = backend(Box::new(move || { count.set(count.get() + 1); successful_input() }));
++        let mut audio = backend(Box::new(move || {
++            count.set(count.get() + 1);
++            successful_input()
++        }));
+         audio.calibration_start();
+         render(&mut audio, 32);
+-        assert_eq!(audio.calib.phase(), woodshed_audio::calibration::CalibrationPhase::Running);
++        assert_eq!(
++            audio.calib.phase(),
++            woodshed_audio::calibration::CalibrationPhase::Running
++        );
+         assert!(audio.output_snapshot().unwrap().click_playing);
+-        audio.input.as_ref().unwrap().health.report_failure("microphone disconnected during calibration");
++        audio
++            .input
++            .as_ref()
++            .unwrap()
++            .health
++            .report_failure("microphone disconnected during calibration");
+         // Poll must refuse retained onset history even before ordinary service.
+         assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable);
+-        assert_eq!(audio.calib.phase(), woodshed_audio::calibration::CalibrationPhase::Idle);
++        assert_eq!(
++            audio.calib.phase(),
++            woodshed_audio::calibration::CalibrationPhase::Idle
++        );
+         assert!(!audio.input.as_ref().unwrap().onset.is_enabled());
+         render(&mut audio, 32);
+         assert!(!audio.output_snapshot().unwrap().click_playing);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1410:
+-        for _ in 0..5 { audio.service(); assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable); }
++        for _ in 0..5 {
++            audio.service();
++            assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable);
++        }
+         assert_eq!(attempts.get(), 1);
+         assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+-        assert!(matches!(audio.availability().input, AudioStreamStatus::Failed(_)));
++        assert!(matches!(
++            audio.availability().input,
++            AudioStreamStatus::Failed(_)
++        ));
+     }
+ 
+     #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1502:
+             one_shot: false,
+             click: false,
+             segments: vec![woodshed_core::loop_plan::LoopSegment {
+-            seconds: None,
++                seconds: None,
+                 id: LoopSegmentId {
+                     set: woodshed_core::working_sets::WorkingSetId(owner),
+                     card: woodshedding::rehearsal::CardId(7),
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1573:
+         let mut producer = LooperCaptureAnalyzer::new();
+         producer.prepare(48_000);
+         let capture = producer.handle();
+-        let mut audio = backend(Box::new(move || Ok(InputSession {
+-            _stream: InputStream::Test,
+-            health: InputHealth::default(),
+-            tuner: PitchAnalyzer::new().handle(),
+-            onset: OnsetAnalyzer::new().handle(),
+-            capture: capture.clone(),
+-        })));
++        let mut audio = backend(Box::new(move || {
++            Ok(InputSession {
++                _stream: InputStream::Test,
++                health: InputHealth::default(),
++                tuner: PitchAnalyzer::new().handle(),
++                onset: OnsetAnalyzer::new().handle(),
++                capture: capture.clone(),
++            })
++        }));
+         let mut plan = owned_plan(1);
+         let base = plan.segments[0].clone();
+-        plan.segments = (0..3).map(|index| {
+-            let mut segment = base.clone();
+-            segment.id.card = woodshedding::rehearsal::CardId(index + 7);
+-            // Accelerated deterministic musical clocks keep this host-route
+-            // test small; the processor suite covers authored Bars/Seconds.
+-            segment.bpm = 6_000.0;
+-            segment.beats = index as u8 + 1;
+-            segment.bars = 1;
+-            segment
+-        }).collect();
+-        let old: Vec<_> = [0usize, 2].into_iter().map(|index| {
+-            let segment = &plan.segments[index];
+-            let bar = Bar { bpm: segment.bpm,
+-                time_signature: TimeSignature::new(segment.beats, 4),
+-                length: segment.bars, ..Default::default() };
+-            CaptureSnapshot { id: segment.id, bpm: segment.bpm,
+-                beats: segment.beats, bars: segment.bars, seconds: None,
+-                legacy_clock: false,
+-                buffer: woodshed_audio::SampleBuffer::new(
+-                    vec![if index == 0 { 0.25 } else { -0.25 }; bar.duration_samples(48_000.0) as usize], 48_000) }
+-        }).collect();
++        plan.segments = (0..3)
++            .map(|index| {
++                let mut segment = base.clone();
++                segment.id.card = woodshedding::rehearsal::CardId(index + 7);
++                // Accelerated deterministic musical clocks keep this host-route
++                // test small; the processor suite covers authored Bars/Seconds.
++                segment.bpm = 6_000.0;
++                segment.beats = index as u8 + 1;
++                segment.bars = 1;
++                segment
++            })
++            .collect();
++        let old: Vec<_> = [0usize, 2]
++            .into_iter()
++            .map(|index| {
++                let segment = &plan.segments[index];
++                let bar = Bar {
++                    bpm: segment.bpm,
++                    time_signature: TimeSignature::new(segment.beats, 4),
++                    length: segment.bars,
++                    ..Default::default()
++                };
++                CaptureSnapshot {
++                    id: segment.id,
++                    bpm: segment.bpm,
++                    beats: segment.beats,
++                    bars: segment.bars,
++                    seconds: None,
++                    legacy_clock: false,
++                    buffer: woodshed_audio::SampleBuffer::new(
++                        vec![
++                            if index == 0 { 0.25 } else { -0.25 };
++                            bar.duration_samples(48_000.0) as usize
++                        ],
++                        48_000,
++                    ),
++                }
++            })
++            .collect();
+         audio.restore_loop_captures(old.clone()).unwrap();
+         audio.set_loop_plan(&plan).unwrap();
+         render(&mut audio, 32);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1623:
+         render(&mut audio, 32);
+         let takes = audio.capture_snapshot();
+         assert_eq!(takes.len(), 3);
+-        let selected = takes.iter().find(|take| take.id == plan.segments[1].id).unwrap();
++        let selected = takes
++            .iter()
++            .find(|take| take.id == plan.segments[1].id)
++            .unwrap();
+         assert_eq!(selected.buffer.len(), 960);
+         assert!(selected.buffer.data.iter().all(|sample| *sample > 0.0));
+         for prior in old {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:1803:
+         let buffer = woodshed_audio::SampleBuffer::new(vec![0.25; frames], rate);
+         (1..=count)
+             .map(|card| CaptureSnapshot {
+-            seconds: None,
++                seconds: None,
+                 legacy_clock: false,
+                 id: LoopSegmentId {
+                     set: woodshed_core::working_sets::WorkingSetId(2),
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:2262:
+         doc.bars[0].toggle_silent();
+         let muted = to_song(&doc);
+         assert!(muted.bars[0].chord_ref.is_none());
+-        assert_eq!(muted.bars[0].duration_samples(48_000.0), voiced.bars[0].duration_samples(48_000.0));
+-        let mut reopened: SongDoc = serde_json::from_slice(&serde_json::to_vec(&doc).unwrap()).unwrap();
++        assert_eq!(
++            muted.bars[0].duration_samples(48_000.0),
++            voiced.bars[0].duration_samples(48_000.0)
++        );
++        let mut reopened: SongDoc =
++            serde_json::from_slice(&serde_json::to_vec(&doc).unwrap()).unwrap();
+         assert!(to_song(&reopened).bars[0].chord_ref.is_none());
+         reopened.bars[0].toggle_silent();
+         assert_eq!(serde_json::to_value(&reopened).unwrap(), original);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio.rs:2271:
+         let before = voiced.bars[0].chord_ref.as_ref().unwrap();
+         let after = restored.bars[0].chord_ref.as_ref().unwrap();
+         assert_eq!(after.root_freq_hz.to_bits(), before.root_freq_hz.to_bits());
+-        assert_eq!(after.pitches_hz.iter().map(|f| f.to_bits()).collect::<Vec<_>>(),
+-                   before.pitches_hz.iter().map(|f| f.to_bits()).collect::<Vec<_>>());
++        assert_eq!(
++            after
++                .pitches_hz
++                .iter()
++                .map(|f| f.to_bits())
++                .collect::<Vec<_>>(),
++            before
++                .pitches_hz
++                .iter()
++                .map(|f| f.to_bits())
++                .collect::<Vec<_>>()
++        );
+     }
+ 
+     #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:16:
+ }
+ impl Handles {
+     fn from_session(session: &InputSession) -> Self {
+-        Self { tuner: session.tuner.clone(), onset: session.onset.clone(), capture: session.capture.clone(), health: session.health.clone() }
++        Self {
++            tuner: session.tuner.clone(),
++            onset: session.onset.clone(),
++            capture: session.capture.clone(),
++            health: session.health.clone(),
++        }
+     }
+     fn into_session(self) -> InputSession {
+-        InputSession { _stream: InputStream::Worker, tuner: self.tuner, onset: self.onset, capture: self.capture, health: self.health }
++        InputSession {
++            _stream: InputStream::Worker,
++            tuner: self.tuner,
++            onset: self.onset,
++            capture: self.capture,
++            health: self.health,
++        }
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:34:
+     awaiting_permission: bool,
+     wake: Option<Arc<dyn Fn() + Send + Sync>>,
+ }
+-enum Reply { Ready(Handles), Failed(String), Retired }
++enum Reply {
++    Ready(Handles),
++    Failed(String),
++    Retired,
++}
+ enum Event {
+     WaitingPermission(Instant),
+     Opening(Instant),
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:42:
+ }
+ impl Event {
+     fn at(&self) -> Instant {
+-        match self { Self::WaitingPermission(at) | Self::Opening(at) | Self::Complete(at, _) => *at }
++        match self {
++            Self::WaitingPermission(at) | Self::Opening(at) | Self::Complete(at, _) => *at,
++        }
+     }
+ }
+ impl Worker {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:49:
+     pub(super) fn new() -> Self {
+-        Self { requests: None, replies: None, opener: Some(Box::new(InputSession::open)),
++        Self {
++            requests: None,
++            replies: None,
++            opener: Some(Box::new(InputSession::open)),
+             authorizer: Some(Box::new(super::microphone_access::authorize)),
+-            in_flight: false, deadline: None, expired: false, awaiting_permission: false, wake: None }
++            in_flight: false,
++            deadline: None,
++            expired: false,
++            awaiting_permission: false,
++            wake: None,
++        }
+     }
+     pub(super) fn request(&mut self, now: Instant) -> Result<(), String> {
+         if self.in_flight {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:56:
+-            return if self.expired { Err("Audio input is still opening after timeout; wait for the OS before retrying.".into()) } else { Ok(()) };
++            return if self.expired {
++                Err(
++                    "Audio input is still opening after timeout; wait for the OS before retrying."
++                        .into(),
++                )
++            } else {
++                Ok(())
++            };
+         }
+         if self.requests.is_none() {
+-            let mut open = self.opener.take().ok_or("Audio input worker is unavailable.")?;
+-            let mut authorize = self.authorizer.take().ok_or("Microphone authorization worker is unavailable.")?;
++            let mut open = self
++                .opener
++                .take()
++                .ok_or("Audio input worker is unavailable.")?;
++            let mut authorize = self
++                .authorizer
++                .take()
++                .ok_or("Microphone authorization worker is unavailable.")?;
+             let (requests, commands) = mpsc::channel();
+             let (results, replies) = mpsc::channel();
+             let wake = self.wake.clone();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:64:
+             // Neither InputSession nor InputEngine needs Send: both are created,
+             // retained, and finally dropped inside this closure.
+-            std::thread::Builder::new().name("woodshed-input-admission".into()).spawn(move || {
+-                let mut session: Option<InputSession> = None;
+-                let emit = |event| {
+-                    let delivered = results.send(event).is_ok();
+-                    if delivered { if let Some(wake) = &wake { wake(); } }
+-                    delivered
+-                };
+-                while commands.recv().is_ok() {
+-                    // Only an explicit request reaches this point. Retire a
+-                    // failed native session on its owning worker before reopening.
+-                    if session.as_ref().is_some_and(|session| session.health.failure().is_some()) {
+-                        session = None;
+-                    }
+-                    let result = if let Some(session) = &session {
+-                        Ok(Handles::from_session(session))
+-                    } else {
+-                        let mut notified = false;
+-                        let authorized = authorize(&mut || {
+-                            if !notified {
+-                                notified = true;
+-                                emit(Event::WaitingPermission(Instant::now()));
++            std::thread::Builder::new()
++                .name("woodshed-input-admission".into())
++                .spawn(move || {
++                    let mut session: Option<InputSession> = None;
++                    let emit = |event| {
++                        let delivered = results.send(event).is_ok();
++                        if delivered {
++                            if let Some(wake) = &wake {
++                                wake();
+                             }
+-                        });
+-                        match authorized {
+-                            Err(error) => Err(error),
+-                            Ok(()) => {
+-                                // Hardware time starts here, after explicit consent,
+-                                // rather than at UI dispatch or delayed UI polling.
+-                                if !emit(Event::Opening(Instant::now())) { break; }
+-                                open().map(|opened| {
+-                                    if let Some(wake) = &wake { opened.health.set_wake(wake.clone()); }
+-                                    opened.tuner.set_enabled(false);
+-                                    opened.onset.set_enabled(false);
+-                                    opened.capture.set_enabled(false);
+-                                    let handles = Handles::from_session(&opened);
+-                                    session = Some(opened);
+-                                    handles
+-                                })
+-                            },
+                         }
++                        delivered
+                     };
+-                    if !emit(Event::Complete(Instant::now(), result)) { break; }
+-                }
+-                // Native Drop, including a late successful open after backend
+-                // destruction, happens here. Never join this worker on UI Drop.
+-            }).map_err(|error| format!("Audio input worker: {error}"))?;
++                    while commands.recv().is_ok() {
++                        // Only an explicit request reaches this point. Retire a
++                        // failed native session on its owning worker before reopening.
++                        if session
++                            .as_ref()
++                            .is_some_and(|session| session.health.failure().is_some())
++                        {
++                            session = None;
++                        }
++                        let result = if let Some(session) = &session {
++                            Ok(Handles::from_session(session))
++                        } else {
++                            let mut notified = false;
++                            let authorized = authorize(&mut || {
++                                if !notified {
++                                    notified = true;
++                                    emit(Event::WaitingPermission(Instant::now()));
++                                }
++                            });
++                            match authorized {
++                                Err(error) => Err(error),
++                                Ok(()) => {
++                                    // Hardware time starts here, after explicit consent,
++                                    // rather than at UI dispatch or delayed UI polling.
++                                    if !emit(Event::Opening(Instant::now())) {
++                                        break;
++                                    }
++                                    open().map(|opened| {
++                                        if let Some(wake) = &wake {
++                                            opened.health.set_wake(wake.clone());
++                                        }
++                                        opened.tuner.set_enabled(false);
++                                        opened.onset.set_enabled(false);
++                                        opened.capture.set_enabled(false);
++                                        let handles = Handles::from_session(&opened);
++                                        session = Some(opened);
++                                        handles
++                                    })
++                                },
++                            }
++                        };
++                        if !emit(Event::Complete(Instant::now(), result)) {
++                            break;
++                        }
++                    }
++                    // Native Drop, including a late successful open after backend
++                    // destruction, happens here. Never join this worker on UI Drop.
++                })
++                .map_err(|error| format!("Audio input worker: {error}"))?;
+             self.requests = Some(requests);
+             self.replies = Some(replies);
+         }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:115:
+-        self.requests.as_ref().unwrap().send(()).map_err(|_| "Audio input worker disconnected.".to_string())?;
++        self.requests
++            .as_ref()
++            .unwrap()
++            .send(())
++            .map_err(|_| "Audio input worker disconnected.".to_string())?;
+         self.in_flight = true;
+         self.expired = false;
+         self.awaiting_permission = false;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:120:
+         Ok(())
+     }
+     fn poll(&mut self, now: Instant) -> Option<Reply> {
+-        if !self.in_flight { return None; }
++        if !self.in_flight {
++            return None;
++        }
+         // Apply queued phase events before comparing UI time. Their actual
+         // worker timestamps distinguish consent time from hardware-open time.
+         loop {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:127:
+             match self.replies.as_ref()?.try_recv() {
+                 Ok(event) => {
+-                    let timed_out = !self.expired && self.deadline.is_some_and(|deadline| event.at() >= deadline);
+-                    if timed_out { self.expire(); }
++                    let timed_out = !self.expired
++                        && self.deadline.is_some_and(|deadline| event.at() >= deadline);
++                    if timed_out {
++                        self.expire();
++                    }
+                     match event {
+                         Event::WaitingPermission(_) if !self.expired => {
+                             self.awaiting_permission = true;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:141:
+                             self.in_flight = false;
+                             self.deadline = None;
+                             self.awaiting_permission = false;
+-                            return Some(if timed_out { Self::timeout_reply() } else if self.expired { Reply::Retired } else {
+-                                match result { Ok(handles) => Reply::Ready(handles), Err(error) => Reply::Failed(error) }
++                            return Some(if timed_out {
++                                Self::timeout_reply()
++                            } else if self.expired {
++                                Reply::Retired
++                            } else {
++                                match result {
++                                    Ok(handles) => Reply::Ready(handles),
++                                    Err(error) => Reply::Failed(error),
++                                }
+                             });
+                         },
+                         _ => {},
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:149:
+                     }
+-                    if timed_out { return Some(Self::timeout_reply()); }
++                    if timed_out {
++                        return Some(Self::timeout_reply());
++                    }
+                 },
+                 Err(mpsc::TryRecvError::Empty) => break,
+                 Err(mpsc::TryRecvError::Disconnected) => {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:172:
+     fn timeout_reply() -> Reply {
+         Reply::Failed("Audio input opening timed out after 10 seconds outside explicit consent waiting. The OS worker may still be opening. Retry after it returns.".into())
+     }
+-    pub(super) fn needs_service(&self) -> bool { self.in_flight && !self.expired }
+-    pub(super) fn awaiting_permission(&self) -> bool { self.awaiting_permission && self.needs_service() }
+-    pub(super) fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) { self.wake = Some(wake); }
++    pub(super) fn needs_service(&self) -> bool {
++        self.in_flight && !self.expired
++    }
++    pub(super) fn awaiting_permission(&self) -> bool {
++        self.awaiting_permission && self.needs_service()
++    }
++    pub(super) fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) {
++        self.wake = Some(wake);
++    }
+ }
+ 
+ pub(super) struct CaptureReservation {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:191:
+     pub(super) fn input_error(&mut self, error: String) -> String {
+         self.input_problem = Some(error.clone());
+         let message = match self.initial_error.as_ref() {
+-            Some(initial) => format!("{initial}; {error}"), None => error,
++            Some(initial) => format!("{initial}; {error}"),
++            None => error,
+         };
+         self.error = Some(message.clone());
+         message
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:203:
+ 
+     pub(super) fn request_capture(&mut self, index: usize, selected: bool) -> Result<(), String> {
+         self.finish_session_reset()?;
+-        if self.loop_capture_busy() { return Err("Capture is already armed or active.".into()); }
++        if self.loop_capture_busy() {
++            return Err("Capture is already armed or active.".into());
++        }
+         self.check_set_capture_quota()?;
+         let output = self.output.as_ref().ok_or("Audio output is unavailable.")?;
+-        if index >= output.song().bars.len() { return Err("Recording target is not in the accepted backing.".into()); }
++        if index >= output.song().bars.len() {
++            return Err("Recording target is not in the accepted backing.".into());
++        }
+         self.recorder_capture_epoch = self.recorder_capture_epoch.wrapping_add(1);
+         self.recorder_capture_target = Some(index);
+         self.pending_capture = Some(CaptureReservation {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:213:
+-            index, selected, epoch: self.recorder_capture_epoch, session: self.input_session_epoch,
+-            backing: self.backing_revision, output: output.observation_id(), plan: self.captures.plan.clone(),
++            index,
++            selected,
++            epoch: self.recorder_capture_epoch,
++            session: self.input_session_epoch,
++            backing: self.backing_revision,
++            output: output.observation_id(),
++            plan: self.captures.plan.clone(),
+         });
+         if !self.ensure_input() {
+-            if self.input_admission.needs_service() { return Ok(()); }
++            if self.input_admission.needs_service() {
++                return Ok(());
++            }
+             self.pending_capture = None;
+             self.recorder_capture_target = None;
+-            return Err(self.error.clone().unwrap_or_else(|| "Audio input is unavailable.".into()));
++            return Err(self
++                .error
++                .clone()
++                .unwrap_or_else(|| "Audio input is unavailable.".into()));
+         }
+         self.arm_reserved_capture()
+     }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:224:
+ 
+     fn arm_reserved_capture(&mut self) -> Result<(), String> {
+-        let Some(reservation) = self.pending_capture.take() else { return Ok(()); };
+-        if reservation.session != self.input_session_epoch || reservation.backing != self.backing_revision
++        let Some(reservation) = self.pending_capture.take() else {
++            return Ok(());
++        };
++        if reservation.session != self.input_session_epoch
++            || reservation.backing != self.backing_revision
+             || reservation.epoch != self.recorder_capture_epoch
+             || self.recorder_capture_target != Some(reservation.index)
+             || reservation.plan != self.captures.plan
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:239:
+         self.ensure_capture_input()?;
+         let input = self.input.as_ref().ok_or("Audio input is unavailable.")?;
+         input.capture.set_enabled(true);
+-        let result = self.with_output(|output| if reservation.selected {
+-            output.arm_selected_capture(reservation.index)
+-        } else {
+-            output.arm_capture(reservation.index, false)
++        let result = self.with_output(|output| {
++            if reservation.selected {
++                output.arm_selected_capture(reservation.index)
++            } else {
++                output.arm_capture(reservation.index, false)
++            }
+         });
+         if result.is_err() {
+-            if let Some(input) = &self.input { input.capture.set_enabled(false); }
++            if let Some(input) = &self.input {
++                input.capture.set_enabled(false);
++            }
+         }
+         result
+     }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:255:
+             Some(Reply::Ready(handles)) => {
+                 let input = handles.into_session();
+                 let failed = input.health.failure();
+-                input.tuner.set_enabled(self.tuner_requested && failed.is_none());
++                input
++                    .tuner
++                    .set_enabled(self.tuner_requested && failed.is_none());
+                 self.input = Some(input);
+                 if let Some(reason) = failed {
+                     self.pending_capture = None;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission.rs:265:
+                 }
+                 self.error = self.initial_error.clone();
+                 self.input_problem = None;
+-                if let Err(error) = self.arm_reserved_capture() { self.input_error(error); }
+-                if std::mem::take(&mut self.pending_calibration) { self.start_admitted_calibration(); }
++                if let Err(error) = self.arm_reserved_capture() {
++                    self.input_error(error);
++                }
++                if std::mem::take(&mut self.pending_calibration) {
++                    self.start_admitted_calibration();
++                }
+             },
+             Some(Reply::Failed(error)) => {
+                 self.pending_capture = None;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:8:
+ }
+ impl Drop for StreamOwner {
+     fn drop(&mut self) {
+-        let _ = self.dropped.send((self.constructed, std::thread::current().id()));
++        let _ = self
++            .dropped
++            .send((self.constructed, std::thread::current().id()));
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:22:
+ }
+ fn plan(owner: u64) -> LoopPlan {
+     let set = woodshed_core::working_sets::WorkingSetId(owner);
+-    LoopPlan { owner: set, name: "Worker input trial".into(), one_shot: true, click: false,
+-        segments: (0..3).map(|index| woodshed_core::loop_plan::LoopSegment {
+-            id: LoopSegmentId { set, card: woodshedding::rehearsal::CardId(index + 7) },
+-            label: format!("Card {index}"), bpm: 6000.0, beats: 1, bars: 1, seconds: None,
+-            pitches_hz: vec![220.0], phrase: None,
+-        }).collect() }
++    LoopPlan {
++        owner: set,
++        name: "Worker input trial".into(),
++        one_shot: true,
++        click: false,
++        segments: (0..3)
++            .map(|index| woodshed_core::loop_plan::LoopSegment {
++                id: LoopSegmentId {
++                    set,
++                    card: woodshedding::rehearsal::CardId(index + 7),
++                },
++                label: format!("Card {index}"),
++                bpm: 6000.0,
++                beats: 1,
++                bars: 1,
++                seconds: None,
++                pitches_hz: vec![220.0],
++                phrase: None,
++            })
++            .collect(),
++    }
+ }
+ fn trial(rate: u32) -> Trial {
+     let mut audio = CpalBackend::offline_for_test();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:49:
+         gate.recv().map_err(|e| e.to_string())?;
+         InputSession::open_with(|mut builder| {
+             builder.prepare_analyzers(rate);
+-            Ok(InputStream::TestOwner { _owner: Box::new(StreamOwner {
+-                constructed: std::thread::current().id(), dropped: retired.clone(), _not_send: PhantomData,
+-            }) })
++            Ok(InputStream::TestOwner {
++                _owner: Box::new(StreamOwner {
++                    constructed: std::thread::current().id(),
++                    dropped: retired.clone(),
++                    _not_send: PhantomData,
++                }),
++            })
+         })
+     }));
+     audio.set_loop_plan(&plan(1)).unwrap();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:58:
+     audio.process_for_test(1);
+-    Trial { audio, entered: began, release, opened, authorized, dropped }
++    Trial {
++        audio,
++        entered: began,
++        release,
++        opened,
++        authorized,
++        dropped,
++    }
+ }
+ fn settle_worker(audio: &mut CpalBackend) {
+     let limit = Instant::now() + Duration::from_secs(2);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:63:
+     while audio.input_admission.in_flight {
+         audio.service();
+-        assert!(Instant::now() < limit, "fake worker completion not serviced");
++        assert!(
++            Instant::now() < limit,
++            "fake worker completion not serviced"
++        );
+         std::thread::yield_now();
+     }
+ }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:88:
+     prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+     // Virtual elapsed time, no sleep or native prompt. The queued waiting event
+     // was published before the initial deadline, even though UI polling is late.
+-    assert!(t.audio.input_admission.poll(Instant::now() + Duration::from_secs(60)).is_none());
++    assert!(
++        t.audio
++            .input_admission
++            .poll(Instant::now() + Duration::from_secs(60))
++            .is_none()
++    );
+     assert!(t.audio.input_admission.awaiting_permission());
+     assert!(t.audio.input_admission.deadline.is_none());
+     assert!(t.audio.loop_capture_busy() && t.audio.needs_service());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:95:
+     assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+-    assert!(matches!(t.entered.try_recv(), Err(mpsc::TryRecvError::Empty)));
++    assert!(matches!(
++        t.entered.try_recv(),
++        Err(mpsc::TryRecvError::Empty)
++    ));
+     let pending = t.audio.recorder_observation(None);
+     assert!(pending.input_permission_pending);
+     let granted_after = Instant::now();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:105:
+     let deadline = t.audio.input_admission.deadline.unwrap();
+     assert!(deadline >= granted_after + OPEN_TIMEOUT);
+     assert!(deadline <= hardware_started_before + OPEN_TIMEOUT);
+-    assert!(t.audio.loop_capture_busy(), "grant alone does not finish hardware opening");
++    assert!(
++        t.audio.loop_capture_busy(),
++        "grant alone does not finish hardware opening"
++    );
+     let opening = t.audio.recorder_observation(None);
+     assert!(!opening.input_permission_pending);
+     assert_eq!(opening.capture_epoch, pending.capture_epoch);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:112:
+     t.release.send(()).unwrap();
+     settle_worker(&mut t.audio);
+     assert_eq!(t.audio.recorder_observation(None).capture_target, Some(1));
+-    assert_eq!(t.audio.recorder_observation(None).capture_epoch, pending.capture_epoch);
++    assert_eq!(
++        t.audio.recorder_observation(None).capture_epoch,
++        pending.capture_epoch
++    );
+     assert!(t.audio.input.as_ref().unwrap().capture.is_enabled());
+     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+ }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:119:
+ 
+ #[test]
+ fn denied_or_restricted_authorization_clears_intent_without_native_open() {
+-    for refusal in ["Microphone permission denied", "Microphone access restricted"] {
++    for refusal in [
++        "Microphone permission denied",
++        "Microphone access restricted",
++    ] {
+         let (mut t, prompted, answer) = permission_trial();
+         t.audio.loop_arm_record(plan(1).segments[1].id).unwrap();
+         prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:133:
+         assert!(t.audio.error().unwrap().contains(refusal));
+         assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+         assert_eq!(t.authorized.load(Ordering::SeqCst), 1);
+-        assert!(matches!(t.entered.try_recv(), Err(mpsc::TryRecvError::Empty)));
++        assert!(matches!(
++            t.entered.try_recv(),
++            Err(mpsc::TryRecvError::Empty)
++        ));
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:150:
+     assert!(!t.audio.loop_capture_busy());
+     assert!(t.audio.pending_capture.is_none());
+     let cancelled = t.audio.recorder_observation(None);
+-    assert!(cancelled.input_permission_pending, "OS consent remains pending after Record cancellation");
++    assert!(
++        cancelled.input_permission_pending,
++        "OS consent remains pending after Record cancellation"
++    );
+     assert!(!cancelled.capture_busy && !cancelled.capture_armed);
+     assert!(cancelled.capture_target.is_none() && cancelled.capture_epoch.is_none());
+     answer.send(Ok(())).unwrap();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:192:
+ fn blocked_native_opener_does_not_block_service_and_reserves_original_card() {
+     let mut t = trial(48_000);
+     t.audio.service();
+-    assert_eq!(t.opened.load(Ordering::SeqCst), 0, "no opening before explicit request");
+-    assert_eq!(t.authorized.load(Ordering::SeqCst), 0, "no permission request before explicit input request");
++    assert_eq!(
++        t.opened.load(Ordering::SeqCst),
++        0,
++        "no opening before explicit request"
++    );
++    assert_eq!(
++        t.authorized.load(Ordering::SeqCst),
++        0,
++        "no permission request before explicit input request"
++    );
+     let selected = plan(1).segments[1].id;
+     t.audio.loop_arm_record(selected).unwrap();
+     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:200:
+     // The opener remains blocked until this test releases it. All these UI
+     // operations complete before release; no timing heuristic proves safety.
+-    for _ in 0..10 { t.audio.service(); }
++    for _ in 0..10 {
++        t.audio.service();
++    }
+     assert!(t.audio.needs_service());
+     let pending = t.audio.recorder_observation(None);
+     assert!(pending.capture_busy && pending.capture_armed);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:212:
+     assert!(t.audio.try_set_song(&SongDoc::default()).is_err());
+     // Inspection/transport can move before input admission. The reserved Card
+     // must still arm explicitly rather than reading the later output cursor.
+-    t.audio.output.as_mut().unwrap().queue(woodshed_audio::PendingChange::SeekTo { bar_idx: 2 }).unwrap();
++    t.audio
++        .output
++        .as_mut()
++        .unwrap()
++        .queue(woodshed_audio::PendingChange::SeekTo { bar_idx: 2 })
++        .unwrap();
+     t.release.send(()).unwrap();
+     settle_worker(&mut t.audio);
+     let admitted = t.audio.recorder_observation(None);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:304:
+     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+     t.release.send(()).unwrap();
+     settle_worker(&mut t.audio);
+-    assert!(t.audio.input.is_none(), "expired completion is retired, not admitted");
++    assert!(
++        t.audio.input.is_none(),
++        "expired completion is retired, not admitted"
++    );
+     assert!(!t.audio.loop_capture_busy());
+     assert!(!t.audio.output_snapshot().unwrap().click_playing);
+     // Explicit retry retrieves the worker's retained session, without reopening.
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:312:
+     settle_worker(&mut t.audio);
+     assert_eq!(t.audio.recorder_observation(None).capture_target, Some(2));
+     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+-    assert_eq!(t.authorized.load(Ordering::SeqCst), 1, "retained native session needs no repeat authorization");
++    assert_eq!(
++        t.authorized.load(Ordering::SeqCst),
++        1,
++        "retained native session needs no repeat authorization"
++    );
+ }
+ 
+ #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:348:
+         settle_worker(&mut t.audio);
+         assert_eq!(t.audio.output_observation_id(), output_id);
+         assert_eq!(t.audio.captures.plan, original_plan);
+-        assert_eq!(t.audio.initial_error.as_deref(), Some("audio output: historical diagnostic"));
++        assert_eq!(
++            t.audio.initial_error.as_deref(),
++            Some("audio output: historical diagnostic")
++        );
+         let input = t.audio.input.as_ref().unwrap();
+         if lost_output {
+             assert!(!t.audio.loop_capture_busy());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:355:
+-            assert!(!t.audio.capture_attached, "no input feed attachment after output loss");
+-            assert!(!input.capture.is_enabled(), "no capture producer start after output loss");
++            assert!(
++                !t.audio.capture_attached,
++                "no input feed attachment after output loss"
++            );
++            assert!(
++                !input.capture.is_enabled(),
++                "no capture producer start after output loss"
++            );
+             let snapshot = t.audio.output_snapshot().unwrap();
+             assert!(!snapshot.capture_armed && !snapshot.recording);
+             let error = t.audio.error().unwrap();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:360:
+-            assert!(error.contains("historical diagnostic") && error.contains("became unavailable"));
++            assert!(
++                error.contains("historical diagnostic") && error.contains("became unavailable")
++            );
+         } else {
+-            assert!(t.audio.loop_capture_busy(), "historical error alone must not refuse healthy output");
++            assert!(
++                t.audio.loop_capture_busy(),
++                "historical error alone must not refuse healthy output"
++            );
+             assert!(t.audio.capture_attached && input.capture.is_enabled());
+             assert_eq!(t.audio.recorder_observation(None).capture_target, Some(1));
+         }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:373:
+     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+     // The normal restore seam refuses busy replacement. Inject a full inactive
+     // bank to exercise completion's quota check independently of dispatch guards.
+-    t.audio.captures.restore((1..=256).map(|card| CaptureSnapshot {
+-        id: LoopSegmentId {
+-            set: woodshed_core::working_sets::WorkingSetId(9),
+-            card: woodshedding::rehearsal::CardId(card),
+-        },
+-        bpm: 6000.0, beats: 1, bars: 1, seconds: None, legacy_clock: false,
+-        buffer: woodshed_audio::SampleBuffer::new(vec![0.25; 480], 48_000),
+-    }).collect()).unwrap();
++    t.audio
++        .captures
++        .restore(
++            (1..=256)
++                .map(|card| CaptureSnapshot {
++                    id: LoopSegmentId {
++                        set: woodshed_core::working_sets::WorkingSetId(9),
++                        card: woodshedding::rehearsal::CardId(card),
++                    },
++                    bpm: 6000.0,
++                    beats: 1,
++                    bars: 1,
++                    seconds: None,
++                    legacy_clock: false,
++                    buffer: woodshed_audio::SampleBuffer::new(vec![0.25; 480], 48_000),
++                })
++                .collect(),
++        )
++        .unwrap();
+     t.release.send(()).unwrap();
+     settle_worker(&mut t.audio);
+     assert!(!t.audio.loop_capture_busy());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:394:
+     let mut doc = SongDoc::default();
+     doc.click = false;
+     doc.bars = vec![Default::default(), Default::default()];
+-    for bar in &mut doc.bars { bar.bpm = 6000.0; bar.beats = 1; bar.length = 1; }
++    for bar in &mut doc.bars {
++        bar.bpm = 6000.0;
++        bar.beats = 1;
++        bar.length = 1;
++    }
+     t.audio.try_set_song(&doc).unwrap();
+     let mut song = t.audio.output.as_ref().unwrap().song();
+     let original_pcm = woodshed_audio::SampleBuffer::new(vec![0.25; 480], 48_000);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:414:
+     assert_eq!(after.capture_epoch, before.capture_epoch);
+     assert!(after.recording_bar.is_none() && after.input_rate.is_none());
+     assert_eq!(t.audio.backing_revision, revision);
+-    let retained = t.audio.output.as_ref().unwrap().song().bars[0].audio_buffer.clone().unwrap();
++    let retained = t.audio.output.as_ref().unwrap().song().bars[0]
++        .audio_buffer
++        .clone()
++        .unwrap();
+     assert!(Arc::ptr_eq(&retained.data, &original_pcm.data));
+-    assert!(retained.data.iter().all(|sample| sample.to_bits() == 0.25_f32.to_bits()));
++    assert!(
++        retained
++            .data
++            .iter()
++            .all(|sample| sample.to_bits() == 0.25_f32.to_bits())
++    );
+     let error = t.audio.error().unwrap();
+     assert!(error.contains("retained diagnostic") && error.contains("before clearing a saved bar"));
+     // The clear refusal did not cancel or retarget the accepted Record.
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:427:
+     assert_eq!(admitted.capture_target, before.capture_target);
+     assert_eq!(admitted.capture_epoch, before.capture_epoch);
+     assert!(t.audio.input.as_ref().unwrap().capture.is_enabled());
+-    let retained = t.audio.output.as_ref().unwrap().song().bars[0].audio_buffer.clone().unwrap();
++    let retained = t.audio.output.as_ref().unwrap().song().bars[0]
++        .audio_buffer
++        .clone()
++        .unwrap();
+     assert!(Arc::ptr_eq(&retained.data, &original_pcm.data));
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:438:
+     doc.click = false;
+     doc.one_shot = false;
+     doc.bars = vec![Default::default(), Default::default(), Default::default()];
+-    for bar in &mut doc.bars { bar.bpm = 6000.0; bar.beats = 1; bar.length = 1; }
++    for bar in &mut doc.bars {
++        bar.bpm = 6000.0;
++        bar.beats = 1;
++        bar.length = 1;
++    }
+     t.audio.try_set_song(&doc).unwrap();
+     t.audio.process_for_test(1);
+     t.audio.recorder_arm_saved(1).unwrap();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:447:
+     settle_worker(&mut t.audio);
+     t.audio.set_song_transport(true);
+     t.audio.process_for_test(480 * 2 + 1);
+-    assert_eq!(t.audio.recorder_observation(Some(&doc)).recording_bar, Some(2));
++    assert_eq!(
++        t.audio.recorder_observation(Some(&doc)).recording_bar,
++        Some(2)
++    );
+     t.audio.loop_stop_record();
+     t.audio.process_for_test(1);
+     t.audio.set_tuner_enabled(true);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:491:
+ fn admitted_handles_wake_service_without_another_user_command() {
+     let mut t = trial(48_000);
+     let (wake, woke) = mpsc::channel();
+-    t.audio.input_admission.set_wake(Arc::new(move || { let _ = wake.send(()); }));
++    t.audio.input_admission.set_wake(Arc::new(move || {
++        let _ = wake.send(());
++    }));
+     t.audio.set_tuner_enabled(true);
+     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+     assert!(t.audio.needs_service());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:513:
+     assert_eq!(t.audio.availability().input, AudioStreamStatus::Requested);
+     prompted.recv_timeout(Duration::from_secs(2)).unwrap();
+     t.audio.service();
+-    assert_eq!(t.audio.availability().input, AudioStreamStatus::AwaitingPermission);
++    assert_eq!(
++        t.audio.availability().input,
++        AudioStreamStatus::AwaitingPermission
++    );
+     assert!(!t.audio.availability().tuner_active);
+-    answer.send(Err("microphone permission refused".into())).unwrap();
++    answer
++        .send(Err("microphone permission refused".into()))
++        .unwrap();
+     settle_worker(&mut t.audio);
+-    assert!(matches!(t.audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("permission refused")));
++    assert!(
++        matches!(t.audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("permission refused"))
++    );
+     assert_eq!(t.audio.availability().output, AudioStreamStatus::Offline);
+-    for _ in 0..10 { t.audio.set_tuner_enabled(true); t.audio.service(); }
++    for _ in 0..10 {
++        t.audio.set_tuner_enabled(true);
++        t.audio.service();
++    }
+     assert_eq!(t.authorized.load(Ordering::SeqCst), 1);
+     assert_eq!(t.opened.load(Ordering::SeqCst), 0);
+     t.audio.set_tuner_enabled(false);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:548:
+     settle_worker(&mut t.audio);
+     let old = t.audio.input.as_ref().unwrap().health.clone();
+     old.report_failure("stream disconnected after admission");
+-    for _ in 0..10 { t.audio.service(); t.audio.set_tuner_enabled(true); }
++    for _ in 0..10 {
++        t.audio.service();
++        t.audio.set_tuner_enabled(true);
++    }
+     assert_eq!(t.opened.load(Ordering::SeqCst), 1);
+     assert!(!t.audio.availability().tuner_active);
+     t.audio.set_tuner_enabled(false);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/audio/input_admission/tests.rs:555:
+     t.audio.set_tuner_enabled(true);
+     t.entered.recv_timeout(Duration::from_secs(2)).unwrap();
+-    assert_eq!(t.opened.load(Ordering::SeqCst), 2, "worker must reopen instead of returning cached failed handles");
++    assert_eq!(
++        t.opened.load(Ordering::SeqCst),
++        2,
++        "worker must reopen instead of returning cached failed handles"
++    );
+     let (constructed, dropped) = t.dropped.recv_timeout(Duration::from_secs(2)).unwrap();
+-    assert_eq!(constructed, dropped, "old native session retires on its worker owner");
++    assert_eq!(
++        constructed, dropped,
++        "old native session retires on its worker owner"
++    );
+     t.release.send(()).unwrap();
+     settle_worker(&mut t.audio);
+     assert!(t.audio.input.as_ref().unwrap().health.failure().is_none());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/drive.rs:5:
+ //! Returns whether any of them wants another frame — the host keeps frames
+ //! coming while it does, and sleeps when it does not.
+ 
+-use woodshed_core::audio::{
+-    AudioBackend, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM,
+-};
++use woodshed_core::audio::{AudioBackend, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM};
+ use woodshed_core::midi::MidiBackend as _;
+ use woodshed_views::stage::UiState;
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/drive.rs:78:
+         ui.song_loop_bars = self.loops;
+         ui.audio_error = self.error;
+         ui.audio_availability = self.availability;
+-        if !ui.audio_availability.tuner_active { ui.tuner.reading = None; }
++        if !ui.audio_availability.tuner_active {
++            ui.tuner.reading = None;
++        }
+         ui.recorder_observation = self.recorder;
+     }
+ }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/drive.rs:112:
+         if let Some(backend) = shared.backend.as_mut() {
+             backend.service();
+             ui.audio_availability = backend.availability();
+-            if !ui.audio_availability.tuner_active { ui.tuner.reading = None; }
++            if !ui.audio_availability.tuner_active {
++                ui.tuner.reading = None;
++            }
+             return backend.needs_service();
+         }
+-        ui.audio_availability = shared.backend.as_ref().map(crate::audio::CpalBackend::availability).unwrap_or_default();
+-        if !ui.audio_availability.tuner_active { ui.tuner.reading = None; }
++        ui.audio_availability = shared
++            .backend
++            .as_ref()
++            .map(crate::audio::CpalBackend::availability)
++            .unwrap_or_default();
++        if !ui.audio_availability.tuner_active {
++            ui.tuner.reading = None;
++        }
+         return false;
+     }
+     let mut animating = crate::sync::poll_midi_state(ui, &mut shared.midi);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/drive.rs:367:
+         let mut backend = crate::audio::CpalBackend::offline_for_test();
+         let mut ui = UiState::new();
+         ui.tuner.enabled = true;
+-        ui.tuner.reading = Some(woodshed_core::audio::TunerReading { note: "A".into(), octave: 4, cents: 0.0, in_tune: true, level: 0.1 });
++        ui.tuner.reading = Some(woodshed_core::audio::TunerReading {
++            note: "A".into(),
++            octave: 4,
++            cents: 0.0,
++            in_tune: true,
++            level: 0.1,
++        });
+         let observation = observe_audio(&mut backend);
+         assert!(observation.changed(&ui));
+         observation.apply(&mut ui);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/drive.rs:374:
+-        assert_eq!(ui.audio_availability.output, woodshed_core::audio::AudioStreamStatus::Offline);
+-        assert_eq!(ui.audio_availability.input, woodshed_core::audio::AudioStreamStatus::Unopened);
++        assert_eq!(
++            ui.audio_availability.output,
++            woodshed_core::audio::AudioStreamStatus::Offline
++        );
++        assert_eq!(
++            ui.audio_availability.input,
++            woodshed_core::audio::AudioStreamStatus::Unopened
++        );
+         assert!(ui.tuner.enabled && !ui.tuner_is_listening());
+         assert!(ui.tuner.reading.is_none());
+         assert!(!observe_audio(&mut backend).changed(&ui));
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/layout_tests.rs:597:
+     use woodshed_core::storage::AppSection;
+     use woodshed_views::stage::ToolPage;
+     let cases = [
+-        (AudioStreamStatus::Unopened, false, "audio input has not opened"),
++        (
++            AudioStreamStatus::Unopened,
++            false,
++            "audio input has not opened",
++        ),
+         (AudioStreamStatus::Requested, false, "Opening audio input…"),
+-        (AudioStreamStatus::AwaitingPermission, false, "Waiting for microphone permission…"),
+-        (AudioStreamStatus::Failed("microphone permission refused".into()), false, "microphone permission refused"),
++        (
++            AudioStreamStatus::AwaitingPermission,
++            false,
++            "Waiting for microphone permission…",
++        ),
++        (
++            AudioStreamStatus::Failed("microphone permission refused".into()),
++            false,
++            "microphone permission refused",
++        ),
+         (AudioStreamStatus::Admitted, false, "waiting for activation"),
+         (AudioStreamStatus::Admitted, true, "Listening…"),
+     ];
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/layout_tests.rs:607:
+     for (input, active, expected) in cases {
+         let mut h = harness(1_100.0, 700.0);
+         h.update(|ui| {
+-            ui.audio_availability = AudioAvailability { output: AudioStreamStatus::Admitted, input: input.clone(), tuner_active: active };
++            ui.audio_availability = AudioAvailability {
++                output: AudioStreamStatus::Admitted,
++                input: input.clone(),
++                tuner_active: active,
++            };
+             ui.tuner.enabled = true;
+             ui.section = AppSection::Settings;
+             ui.app_settings.page = SettingsPage::General;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/layout_tests.rs:619:
+         };
+         assert!(has(&h, "settings-line", "Audio output: stream admitted"));
+         assert!(!has(&h, "settings-line", "output and input streams open"));
+-        h.update(|ui| { ui.section = AppSection::Tools; ui.tool_page = ToolPage::Tuner; });
++        h.update(|ui| {
++            ui.section = AppSection::Tools;
++            ui.tool_page = ToolPage::Tuner;
++        });
+         assert!(has(&h, "tool-reading", expected), "tools: {expected}");
+         assert_eq!(has(&h, "tool-reading", "Listening…"), active);
+-        h.update(|ui| { ui.section = AppSection::Settings; ui.app_settings.page = SettingsPage::Tuner; });
++        h.update(|ui| {
++            ui.section = AppSection::Settings;
++            ui.app_settings.page = SettingsPage::Tuner;
++        });
+         assert!(has(&h, "settings-line", expected), "settings: {expected}");
+-        h.update(|ui| { ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice); });
++        h.update(|ui| {
++            ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
++        });
+         assert!(has(&h, "t-readout", expected), "stage: {expected}");
+         let snapshot = woodshed_views::stage::overview_snapshot(h.state());
+-        assert_eq!(snapshot.nodes.iter().any(|node| node.id == woodshed_core::session_overview::OverviewNodeId::Process(woodshed_core::session_overview::OverviewProcess::Tuner)), active);
++        assert_eq!(
++            snapshot.nodes.iter().any(|node| node.id
++                == woodshed_core::session_overview::OverviewNodeId::Process(
++                    woodshed_core::session_overview::OverviewProcess::Tuner
++                )),
++            active
++        );
+     }
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/layout_tests.rs:639:
+         ui.section = woodshed_core::storage::AppSection::Tools;
+         ui.tool_page = woodshed_views::stage::ToolPage::Tuner;
+         ui.tuner.enabled = true;
+-        ui.tuner.reading = Some(TunerReading { note: "A".into(), octave: 4, cents: 0.0, in_tune: true, level: 0.1 });
+-        ui.audio_availability = AudioAvailability { output: AudioStreamStatus::Offline, input: AudioStreamStatus::Failed("microphone unavailable".into()), tuner_active: false };
++        ui.tuner.reading = Some(TunerReading {
++            note: "A".into(),
++            octave: 4,
++            cents: 0.0,
++            in_tune: true,
++            level: 0.1,
++        });
++        ui.audio_availability = AudioAvailability {
++            output: AudioStreamStatus::Offline,
++            input: AudioStreamStatus::Failed("microphone unavailable".into()),
++            tuner_active: false,
++        };
+     });
+     let has = |h: &Harness<UiState, crate::sync::Logic, UiChild>, class: &str, text: &str| {
+-        let dom = h.runner().dom(); let dom = dom.borrow();
++        let dom = h.runner().dom();
++        let dom = dom.borrow();
+         !taproot::matching_classes(&dom, &Selector::class(class).containing(text)).is_empty()
+     };
+     assert!(has(&h, "tool-reading", "microphone unavailable"));
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/layout_tests.rs:650:
+     assert!(!has(&h, "tool-reading", "A4"));
+-    h.update(|ui| { ui.audio_availability.input = AudioStreamStatus::Admitted; ui.audio_availability.tuner_active = true; });
++    h.update(|ui| {
++        ui.audio_availability.input = AudioStreamStatus::Admitted;
++        ui.audio_availability.tuner_active = true;
++    });
+     assert!(has(&h, "tool-reading", "A4 +0 cents · in tune"));
+-    h.update(|ui| { ui.section = woodshed_core::storage::AppSection::Settings; ui.app_settings.page = woodshed_core::settings::SettingsPage::General; });
+-    assert!(has(&h, "settings-line", "Audio output: offline engine; no device stream"));
+-    h.update(|ui| { ui.audio_error = Some("backing admission refused".into()); });
+-    assert!(has(&h, "settings-line", "Audio operation: backing admission refused"));
+-    assert!(has(&h, "settings-line", "Audio output: offline engine; no device stream"));
+-    h.update(|ui| { ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice); });
++    h.update(|ui| {
++        ui.section = woodshed_core::storage::AppSection::Settings;
++        ui.app_settings.page = woodshed_core::settings::SettingsPage::General;
++    });
++    assert!(has(
++        &h,
++        "settings-line",
++        "Audio output: offline engine; no device stream"
++    ));
++    h.update(|ui| {
++        ui.audio_error = Some("backing admission refused".into());
++    });
++    assert!(has(
++        &h,
++        "settings-line",
++        "Audio operation: backing admission refused"
++    ));
++    assert!(has(
++        &h,
++        "settings-line",
++        "Audio output: offline engine; no device stream"
++    ));
++    h.update(|ui| {
++        ui.activate_workspace_panel(woodshed_views::workspace::WorkspacePanel::Practice);
++    });
+     assert!(has(&h, "audio-notice", "backing admission refused"));
+-    h.update(|ui| { ui.section = woodshed_core::storage::AppSection::Settings; ui.app_settings.page = woodshed_core::settings::SettingsPage::General; });
+-    h.update(|ui| { ui.audio_availability.output = AudioStreamStatus::Failed("output disconnected".into()); });
+-    assert!(has(&h, "settings-line", "Audio output: failed: output disconnected"));
++    h.update(|ui| {
++        ui.section = woodshed_core::storage::AppSection::Settings;
++        ui.app_settings.page = woodshed_core::settings::SettingsPage::General;
++    });
++    h.update(|ui| {
++        ui.audio_availability.output = AudioStreamStatus::Failed("output disconnected".into());
++    });
++    assert!(has(
++        &h,
++        "settings-line",
++        "Audio output: failed: output disconnected"
++    ));
+     assert!(has(&h, "settings-line", "Audio input: stream admitted"));
+ }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/layout_tests.rs:719:
+     h.move_to(page.0 + 8.0, page.1 + 8.0);
+     h.wheel(0.0, (initial.1 - (page.1 + 20.0)).max(0.0));
+     let viewport = rect(&h, "rehearsal-board-viewport");
+-    assert!(h.element_scroll_total() > before_page_scroll, "the rehearsal page must scroll");
+-    assert!(viewport.1 < initial.1, "the page wheel must bring the board into view: {initial:?} -> {viewport:?}");
++    assert!(
++        h.element_scroll_total() > before_page_scroll,
++        "the rehearsal page must scroll"
++    );
++    assert!(
++        viewport.1 < initial.1,
++        "the page wheel must bring the board into view: {initial:?} -> {viewport:?}"
++    );
+     let before = rect(&h, "fretboard-stack");
+     assert!(viewport.0 >= 0.0 && viewport.0 + viewport.2 <= 420.0);
+     assert!(
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:37:
+ mod midi_diagnostics;
+ mod music_export;
+ mod pack_io;
+-mod pedal_inputs;
+ mod paths;
++mod pedal_inputs;
+ mod persona;
+ #[cfg(test)]
+ mod persona_store_receipt;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:293:
+     let scale = window.scale_factor() as f32;
+     ui.set_viewport_width(size_w as f32 / scale);
+     ui.set_viewport_height(size_h as f32 / scale);
+-    ui.audio_availability = backend.as_ref().map(CpalBackend::availability).unwrap_or_default();
++    ui.audio_availability = backend
++        .as_ref()
++        .map(CpalBackend::availability)
++        .unwrap_or_default();
+     ui.audio_error = backend
+         .as_ref()
+         .and_then(|backend| backend.error().map(String::from));
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:578:
+                     if let Some(backend) = shared.backend.as_mut() {
+                         backend.service();
+                     }
+-                    let availability = shared.backend.as_ref().map(CpalBackend::availability).unwrap_or_default();
++                    let availability = shared
++                        .backend
++                        .as_ref()
++                        .map(CpalBackend::availability)
++                        .unwrap_or_default();
+                     if ctx.runner.state().audio_availability != availability {
+                         ctx.runner.update(|ui| {
+                             ui.audio_availability = availability.clone();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:585:
+-                            if !ui.audio_availability.tuner_active { ui.tuner.reading = None; }
++                            if !ui.audio_availability.tuner_active {
++                                ui.tuner.reading = None;
++                            }
+                         });
+                     }
+                     return;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:675:
+                 Init {
+                     sheet: appearance::stylesheet(&ui),
+                     state: ui,
+-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, WindowFrame::Host)) as Logic,
++                    logic: Box::new(move |ui: &UiState| {
++                        desktop_root(ui, &commands, WindowFrame::Host)
++                    }) as Logic,
+                     fonts: vec![],
+                     images: vec![],
+                 }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:818:
+                 Init {
+                     sheet: appearance::stylesheet(&ui),
+                     state: ui,
+-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, WindowFrame::Host)) as Logic,
++                    logic: Box::new(move |ui: &UiState| {
++                        desktop_root(ui, &commands, WindowFrame::Host)
++                    }) as Logic,
+                     fonts: Vec::new(),
+                     images: Vec::new(),
+                 }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:1012:
+         appearance_harness_for_frame(WindowFrame::App)
+     }
+ 
+-    fn appearance_harness_for_frame(frame: WindowFrame) -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
++    fn appearance_harness_for_frame(
++        frame: WindowFrame,
++    ) -> cambium_genet_winit_host::Harness<UiState, Logic, UiChild> {
+         let mut ui = UiState::new();
+         ui.appearance_authoring_available = true;
+         ui.appearance
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:1024:
+                 let sheet = appearance::stylesheet(&ui);
+                 Init {
+                     state: ui,
+-                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, frame)) as Logic,
++                    logic: Box::new(move |ui: &UiState| desktop_root(ui, &commands, frame))
++                        as Logic,
+                     sheet,
+                     fonts: vec![],
+                     images: vec![],
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/main.rs:1121:
+             )
+         });
+         assert_eq!(direct_chrome, (0, 0));
+-        let editor = h.with_dom(|dom| taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]);
++        let editor = h.with_dom(|dom| {
++            taproot::matching_classes(dom, &Selector::class("woodshed-workshop"))[0]
++        });
+         assert!(h.visible_rect(editor).is_some());
+     }
+ }
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/persona.rs:474:
+     fn admitted_persona_keeps_host_availability_without_promoting_tuner_intent() {
+         use woodshed_core::audio::{AudioAvailability, AudioStreamStatus};
+         let mut ui = UiState::new();
+-        ui.audio_availability = AudioAvailability { output: AudioStreamStatus::Offline,
+-            input: AudioStreamStatus::AwaitingPermission, tuner_active: false };
++        ui.audio_availability = AudioAvailability {
++            output: AudioStreamStatus::Offline,
++            input: AudioStreamStatus::AwaitingPermission,
++            tuner_active: false,
++        };
+         ui.audio_error = Some("retained operation diagnostic".into());
+         let observed = ui.audio_availability.clone();
+         let mut incoming = UiState::new();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/persona.rs:482:
+         incoming.tuner.enabled = true;
+         install_persona_state(&mut ui, incoming);
+         assert_eq!(ui.audio_availability, observed);
+-        assert_eq!(ui.audio_error.as_deref(), Some("retained operation diagnostic"));
++        assert_eq!(
++            ui.audio_error.as_deref(),
++            Some("retained operation diagnostic")
++        );
+         assert!(ui.tuner.enabled && !ui.tuner_is_listening());
+     }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/sync.rs:55:
+ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
+     let mut sheet = None;
+     let mut persisted_settings: Option<String> = None;
+-    let availability = shared.backend.as_ref().map(crate::audio::CpalBackend::availability).unwrap_or_default();
++    let availability = shared
++        .backend
++        .as_ref()
++        .map(crate::audio::CpalBackend::availability)
++        .unwrap_or_default();
+     if ctx.runner.state().audio_availability != availability {
+         ctx.runner.update(|ui| {
+             ui.audio_availability = availability.clone();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/sync.rs:62:
+-            if !ui.audio_availability.tuner_active { ui.tuner.reading = None; }
++            if !ui.audio_availability.tuner_active {
++                ui.tuner.reading = None;
++            }
+         });
+     }
+ 
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-genet/src/sync.rs:298:
+             ui.song_loop_bars = backend.song_loop_bars();
+             ui.audio_error = backend.error().map(str::to_owned);
+             ui.audio_availability = backend.availability();
+-            if !ui.audio_availability.tuner_active { ui.tuner.reading = None; }
++            if !ui.audio_availability.tuner_active {
++                ui.tuner.reading = None;
++            }
+             ui.recorder_observation = backend.recorder_observation(last_song.as_ref());
+         } else {
+             ui.audio_availability = Default::default();
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage.rs:55:
+ mod connected;
+ mod connected_scales;
+ mod context;
++mod context_card;
+ #[cfg(test)]
+ mod context_tests;
+ mod contextual_navigation;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage.rs:61:
+-mod context_card;
+ mod instances;
+ mod looper;
+ pub mod music_editor;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage.rs:80:
+     OVERVIEW_GRAPH_LEAF_KEY, overview_snapshot, overview_source_swatch, overview_swatch,
+ };
+ pub use relationship::{RELATIONSHIP_GRAPH_LEAF_KEY, relationship_swatch};
++mod audio_status;
+ mod pitch_motion;
+ mod rehearsal;
+ mod related;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage.rs:89:
+ mod shapes;
+ mod templates;
+ mod tools;
+-mod audio_status;
+ 
+ pub const NEIGHBORHOOD_LEAF_KEY: u64 = 0x5753_4e42;
+ pub const SET_GRAPH_LEAF_KEY: u64 = 0x5753_5347;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage.rs:2860:
+     } else {
+         "Tuner: off"
+     };
+-    let readout = if matches!(ui.audio_availability.output, woodshed_core::audio::AudioStreamStatus::Failed(_)) {
++    let readout = if matches!(
++        ui.audio_availability.output,
++        woodshed_core::audio::AudioStreamStatus::Failed(_)
++    ) {
+         ui.audio_output_status()
+     } else if ui.tuner.enabled || ui.tuner_is_listening() {
+         ui.tuner_status()
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage.rs:2901:
+                     },
+                 ),
+                 el("div", text(readout)).attr("class", "t-readout"),
+-                ui.audio_error.as_ref().map(|reason| el("div", text(format!("Audio operation: {reason}"))).attr("class", "audio-notice")),
++                ui.audio_error.as_ref().map(|reason| {
++                    el("div", text(format!("Audio operation: {reason}")))
++                        .attr("class", "audio-notice")
++                }),
+                 el("span", ()).attr("class", "header-gap"),
+                 clickable(
+                     el("div", text("Stage")).attr("class", "t-btn"),
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:193:
+ ) {
+     let sx = width.saturating_sub(14).max(1) as f32;
+     let sy = height.saturating_sub(14).max(1) as f32;
+-    let movable: Vec<_> = nodes.iter().enumerate().filter_map(|(index, node)| {
+-        (matches!(node.id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_)))
+-            && !retained.contains_key(&node.id)).then_some(index)
+-    }).collect();
++    let movable: Vec<_> = nodes
++        .iter()
++        .enumerate()
++        .filter_map(|(index, node)| {
++            (matches!(
++                node.id,
++                OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))
++            ) && !retained.contains_key(&node.id))
++            .then_some(index)
++        })
++        .collect();
+     // The shared label is bounded to 160 px. Allow its node/target clearance
+     // and a full label on either side of a neighboring node.
+     let clear = |a: (f32, f32), b: (f32, f32)| {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:203:
+         (a.0 - b.0).abs() * sx >= 380.0 || (a.1 - b.1).abs() * sy >= 40.0
+     };
+-    let mut occupied: Vec<_> = nodes.iter().enumerate()
++    let mut occupied: Vec<_> = nodes
++        .iter()
++        .enumerate()
+         .filter(|(index, _)| !movable.contains(index))
+-        .map(|(_, node)| node.position).collect();
++        .map(|(_, node)| node.position)
++        .collect();
+     for index in movable {
+         let home = nodes[index].position;
+         let mut candidates = vec![home];
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:214:
+             }
+         }
+         candidates.sort_by(|a, b| {
+-            let distance = |p: &(f32, f32)| ((p.0-home.0)*sx).powi(2) + ((p.1-home.1)*sy).powi(2);
++            let distance =
++                |p: &(f32, f32)| ((p.0 - home.0) * sx).powi(2) + ((p.1 - home.1) * sy).powi(2);
+             distance(a).total_cmp(&distance(b))
+         });
+         // A completely packed canvas retains its existing default; this does
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:221:
+         // not claim to solve arbitrary user-authored overlaps.
+-        let position = candidates.into_iter()
++        let position = candidates
++            .into_iter()
+             .find(|&at| occupied.iter().all(|&other| clear(at, other)))
+             .unwrap_or(home);
+         nodes[index].position = position;
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:393:
+     }
+ 
+     pub fn move_overview_selection(&mut self, delta: (f32, f32)) {
+-        if self.overview_focus.as_ref().is_some_and(|id| self.overview_folds.contains(id)) {
++        if self
++            .overview_focus
++            .as_ref()
++            .is_some_and(|id| self.overview_folds.contains(id))
++        {
+             return;
+         }
+         let Some(id) = self.overview_focus.clone() else {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:512:
+                         owner: id,
+                         panel: WorkspacePanel::Set,
+                     },
+-                    Some(super::contextual_navigation::WoodshedScopeAnchor::OverviewNode(
+-                        OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)),
+-                    )),
++                    Some(
++                        super::contextual_navigation::WoodshedScopeAnchor::OverviewNode(
++                            OverviewNodeId::Artifact(SessionArtifactId::WorkingSetInstance(id)),
++                        ),
++                    ),
+                 );
+             },
+             OverviewNodeId::Artifact(SessionArtifactId::Exploration(id)) => {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:574:
+                     if !ui.overview_folds.contains(&drag.id)
+                         && !ui.overview_folds.selecting
+                         && overview_snapshot(ui)
+-                        .nodes
+-                        .iter()
+-                        .any(|node| node.id == drag.id)
++                            .nodes
++                            .iter()
++                            .any(|node| node.id == drag.id)
+                     {
+                         ui.reconcile_overview_dynamics();
+                         match drag.phase {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:707:
+                 el(
+                     "div",
+                     (
+-                        el("div", text(node.label.clone())).attr("class", "overview-node-title").attr("data-key", node.id.wire_key()),
++                        el("div", text(node.label.clone()))
++                            .attr("class", "overview-node-title")
++                            .attr("data-key", node.id.wire_key()),
+                         el(
+                             "div",
+                             text(match node.id {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:726:
+                 .attr(
+                     "class",
+                     if ui.overview_focus.as_ref() == Some(&node.id)
+-                        || (ui.overview_folds.selecting && ui.overview_folds.selected.contains(&node.id))
++                        || (ui.overview_folds.selecting
++                            && ui.overview_folds.selected.contains(&node.id))
+                     {
+                         "overview-node overview-node-selected"
+                     } else {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:1364:
+         ui.set_viewport_width(1100.0);
+         let before = overview_swatch(&ui);
+         // Version-1 positions contain every old node, but no take identity.
+-        let retained: BTreeMap<_, _> = before.graph.nodes.into_iter()
+-            .map(|node| (node.id, node.position)).collect();
++        let retained: BTreeMap<_, _> = before
++            .graph
++            .nodes
++            .into_iter()
++            .map(|node| (node.id, node.position))
++            .collect();
+         ui.overview_positions = retained.clone();
+-        let ids: Vec<_> = ui.set.cards.iter().map(|card| take_id(ui.working_sets.active_id, card.id)).collect();
++        let ids: Vec<_> = ui
++            .set
++            .cards
++            .iter()
++            .map(|card| take_id(ui.working_sets.active_id, card.id))
++            .collect();
+         with_takes(&mut ui, &ids);
+         let swatch = overview_swatch(&ui);
+         for node in &swatch.graph.nodes {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:1377:
+         }
+         let projected = swatch.projected_positions();
+         for (id, a) in &projected {
+-            if !matches!(id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))) { continue; }
++            if !matches!(id, OverviewNodeId::Artifact(SessionArtifactId::LoopTake(_))) {
++                continue;
++            }
+             for (other, b) in &projected {
+-                if id == other { continue; }
+-                assert!((a.0-b.0).abs() >= 379.0 || (a.1-b.1).abs() >= 39.0,
+-                    "new take {id:?} collided with {other:?}");
++                if id == other {
++                    continue;
++                }
++                assert!(
++                    (a.0 - b.0).abs() >= 379.0 || (a.1 - b.1).abs() >= 39.0,
++                    "new take {id:?} collided with {other:?}"
++                );
+             }
+         }
+         assert_eq!(ui.overview_positions, retained);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:1388:
+         let take = take_node(ids[0]);
+         ui.overview_positions.insert(take.clone(), (0.31, 0.52));
+-        assert_eq!(overview_swatch(&ui).graph.nodes.iter().find(|n| n.id == take).unwrap().position, (0.31, 0.52));
++        assert_eq!(
++            overview_swatch(&ui)
++                .graph
++                .nodes
++                .iter()
++                .find(|n| n.id == take)
++                .unwrap()
++                .position,
++            (0.31, 0.52)
++        );
+     }
+ 
+     #[test]
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:1420:
+         assert!((position.0 - 0.21).abs() < 0.001 && (position.1 - 0.67).abs() < 0.001);
+         let session = ui.to_persisted();
+         let json = session.overview_presentation_json.clone().unwrap();
+-        assert_eq!(serde_json::from_str::<serde_json::Value>(&json).unwrap()["version"], 3);
++        assert_eq!(
++            serde_json::from_str::<serde_json::Value>(&json).unwrap()["version"],
++            3
++        );
+         let decoded = serde_json::from_str(&serde_json::to_string(&session).unwrap()).unwrap();
+         let mut reopened = UiState::new();
+         reopened.apply_persisted(&decoded, Default::default());
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/overview.rs:1580:
+         ui.approach_source = Some(old);
+         ui.card_rename_for = None;
+         let owner = ui.working_sets.active_id;
+-        ui.toggle_rehearsal(); ui.admit_previews_for_test();
++        ui.toggle_rehearsal();
++        ui.admit_previews_for_test();
+         assert!(ui.open_retained_set(id));
+         assert_ne!(ui.set.cards[0].id, old);
+         assert_ne!(ui.set.cards[0].id, CardId::UNASSIGNED);
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/settings.rs:969:
+                 el("div", text("Tuner")).attr("class", "settings-heading"),
+                 el("div", text(ui.tuner_status())).attr("class", "settings-line"),
+                 clickable(
+-                    el(
+-                        "div",
+-                        text(ui.tuner_action_label()),
+-                    )
+-                    .attr("class", "t-btn"),
++                    el("div", text(ui.tuner_action_label())).attr("class", "t-btn"),
+                     |ui: &mut UiState, _| {
+                         ui.tuner.enabled = !ui.tuner.enabled;
+                         if !ui.tuner.enabled {
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/tools.rs:1:
+ use cambium::{clickable, el, text};
+ 
+-use super::{board, ToolPage, UiChild, UiState};
++use super::{ToolPage, UiChild, UiState, board};
+ 
+ fn tool_nav(ui: &UiState) -> UiChild {
+     let pages = [
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/tools.rs:31:
+             "div",
+             (
+                 el("div", text("Metronome")).attr("class", "settings-heading"),
+-                audio_pack_views::panel(ui.audio_pack.as_ref(), &ui.pack_notice, ui.pack_busy, false,
+-                    |ui: &mut UiState, action| ui.pack_actions.push(action)),
++                audio_pack_views::panel(
++                    ui.audio_pack.as_ref(),
++                    &ui.pack_notice,
++                    ui.pack_busy,
++                    false,
++                    |ui: &mut UiState, action| ui.pack_actions.push(action),
++                ),
+                 el(
+                     "div",
+                     (
+Diff in /Users/markik/Code/worktrees/woodshed-audit-next-20261025/crates/woodshed-views/src/stage/tools.rs:78:
+             (
+                 el("div", text("Tuner")).attr("class", "settings-heading"),
+                 clickable(
+-                    el(
+-                        "div",
+-                        text(ui.tuner_action_label()),
+-                    )
+-                    .attr("class", "t-btn t-hear"),
++                    el("div", text(ui.tuner_action_label())).attr("class", "t-btn t-hear"),
+                     |ui: &mut UiState, _| {
+                         ui.tuner.enabled = !ui.tuner.enabled;
+                         if !ui.tuner.enabled {

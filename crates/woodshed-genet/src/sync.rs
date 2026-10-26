@@ -55,6 +55,19 @@ pub fn after_dispatch(shared: &mut Shared, ctx: &mut Ctx<'_>) {
 fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
     let mut sheet = None;
     let mut persisted_settings: Option<String> = None;
+    let availability = shared
+        .backend
+        .as_ref()
+        .map(crate::audio::CpalBackend::availability)
+        .unwrap_or_default();
+    if ctx.runner.state().audio_availability != availability {
+        ctx.runner.update(|ui| {
+            ui.audio_availability = availability.clone();
+            if !ui.audio_availability.tuner_active {
+                ui.tuner.reading = None;
+            }
+        });
+    }
 
     if !crate::capture_persistence::session_current(shared, ctx.runner.state()) {
         shared.wav_export.revoke_session();
@@ -290,8 +303,14 @@ fn push_backend(shared: &mut Shared, ctx: &mut Ctx<'_>) {
             ui.song_recording = backend.loop_capture_busy();
             ui.song_loop_bars = backend.song_loop_bars();
             ui.audio_error = backend.error().map(str::to_owned);
+            ui.audio_availability = backend.availability();
+            if !ui.audio_availability.tuner_active {
+                ui.tuner.reading = None;
+            }
             ui.recorder_observation = backend.recorder_observation(last_song.as_ref());
         } else {
+            ui.audio_availability = Default::default();
+            ui.tuner.reading = None;
             let mut retained_requests = Vec::new();
             for request in std::mem::take(&mut ui.audio_requests) {
                 match request {

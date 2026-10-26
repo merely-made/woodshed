@@ -1,10 +1,10 @@
 # Woodshed source authority audit and remediation
 
-Date: 2026-10-16; coordination closure: 2026-10-17; updated 2026-10-23.
+Date: 2026-10-16; coordination closure: 2026-10-17; updated 2026-10-25.
 Status: complete collective read of frozen `d12201bf`; current-source finding
 reconciliation complete and published through `8204688`. Remediation remains open;
 H3/H5 and Q1 process/link implementation is CPU qualified and published through `6e6498a`.
-B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9`, published through `fd9fb82`; its original shared-view paint gate limit stays historical. D1 has bounded CPU/macOS/native/reopen qualification at `8bf59b31`. P11 rechecks main `3ce93675` and CPU/build qualifies B8 playback at `046b0bf4` with 167 distinct passes; remaining work is ordered below. The frozen
+B1–B3 runtime authority corrections are CPU qualified and published through `b1c9dfd`. B4 PCM/onset/calibration corrections are CPU qualified at `5dd01ae` and published through `8da953b`. B5 shared Recorder admission is CPU qualified at `b804d901` and published through `4fab895`. The requested B6 Recorder runtime slice is CPU qualified at `7b161a9`, published through `fd9fb82`; its original shared-view paint gate limit stays historical. D1 has bounded CPU/macOS/native/reopen qualification at `8bf59b31`. P11 rechecks main `3ce93675` and CPU/build qualifies B8 playback at `046b0bf4` with 167 distinct passes. P12 implements R05/R09 capture and R08 export at `951c7822`, plus V03 observed availability at `770f5443`: 1,153 distinct CPU passes, two desktop builds, Wasm and bounded native availability presentation (two processes/eight reviewed captures). Remaining work is ordered below. The frozen
 audit closure itself adds no product fixes or product qualification.
 
 ## Scope and result
@@ -292,55 +292,115 @@ Done-conditions:
    CPU/decoded-source evidence does not establish physical sound or a new native
    acceptance claim.
 
+### P12 Capture preservation, export identity and observed audio availability (2026-10-25)
+
+**Status: implemented, source merged/pushed and scoped qualification complete.**
+Redshank capture/export source is `951c7822`; Woodshed availability source is
+`770f5443`. The [receipt](../validation/capture-export-availability_20261025/README.md)
+records 1,153 distinct passes, 16 existing ignores, five nested invocations counted
+separately, 24 new executed tests, two locked desktop builds and the Redshank
+Wasm check. Two native Woodshed processes and eight individually reviewed
+captures qualify absent/offline availability presentation only. No real input,
+physical audio, Redshank native capture or second-host acceptance is inferred.
+
+The maintainer
+approved all three next slices and commit/push/merge/prune, with refreshed
+upstream and cross-computer alignment where access permits. Local M4 main was
+clean at `da66d6c0`; HTTPS fetch and fast-forward brought it to `91b2dd5b`.
+SSH GitHub authentication failed, so publication uses the existing authenticated
+HTTPS route without changing stored remote configuration. Local Woodshed had
+no uncommitted work or stray registered worktrees at intake. Retained archive
+refs are intentional recovery material, not disposable stray checkouts.
+
+Incoming work adds contextual navigation, playback-clock behavior and a newer
+root supplier graph. Targeted source review finds no adjacent P1 regression or
+reason to widen this batch: R05/R09, R08 and V03 were present at `91b2dd5b`
+intake and are now implemented as recorded above. Root and
+Redshank have deliberately independent locked supplier cohorts; run each actual
+consumer lane and retain historical qualification on its original source.
+Do not turn source-cohort differences alone into an automatic repin project.
+
+| Slice | Sole code owner / shared seams | Done-condition |
+|---|---|---|
+| **1 R05/R09 capture** | Redshank owner: desktop main/voice and dock/rail/capture surfaces/tests | Full dock press → host recording projection → release retains its gesture owner. Accepted sample count supplies duration. Reaching capacity stops capture and finishes through the ordinary note-save path with clear limit wording. Failed blob/admission/durable-save and close attempts retain the frozen target and captured prefix for retry; explicit Cancel alone discards. Fake-feed and mounted-host regressions exercise capacity, failures and exact retained data without using a microphone. |
+| **2 R08 export identity** | Same Redshank owner owns desktop main and export helper/tests | Different complete ItemIds with the same readable sanitized stem export independently using bounded names plus a complete-identity digest. Replacement of one item's own export is atomic; actual bytes and export worker outcomes are checked. |
+| **3 V03 availability** | Woodshed owner: core neutral facts, host audio/input/sync/drive/main/persona, shared view wording and mounted tests | General/Tools/Settings/Stage consume observed output/input/tuner facts. Absent backend, unopened input, request/permission wait/refusal and admitted listening remain distinct. Microphone refusal does not hide usable output. Retained process observations survive persona installation; desired enabled alone never means listening. Existing explicit retry edges remain, without frame-by-frame reopening. |
+
+The Redshank owner owns both slices' shared `desktop/main.rs`; no second writer
+integrates that seam. The Woodshed owner owns its separate host/model/view seam.
+A third lane reviews upstream and both implementations read-only. The coordinator
+alone owns Cargo/native scheduling, receipts, canonical docs/ledger and Git.
+
+Focused tests are added before production changes where the seam permits.
+Initial device-free baseline runs reproduce the full-dock release loss and
+export collision (each actual Cargo exit101, stable source). The root V03
+baseline also reproduced its absent-backend General assertion failure on the new
+supplier graph (actual Cargo101, stable source). At baseline the capacity/retention
+seam required a concrete input Stream; the implemented bounded host seam now
+exercises deterministic accepted PCM, failure/retry and exact retained data.
+Those controls remain distinct from a microphone claim.
+
+Remote host intake was read-only: the SSH agent had no identities, three hosts
+refused authentication, and o-pc timed out. The maintainer was asked to unlock
+the normal SSH identity while local work continues. Do not reset, stash or
+bulk-merge remote checkouts from stale inventory. Refresh and fast-forward only
+clean current branches after access is available; preserve/report divergent or
+dirty work. Scope cleanup to proven completed Woodshed checkouts and this batch.
+
 ## Current findings and next implementation order
 
-**Rechecked 2026-10-23 at fetched/pulled `3ce93675`.** This is targeted source
-reconciliation of the remaining frontier, not a new exhaustive audit or a transfer
-of historical qualification to today's suppliers. The [recheck record](../validation/audit-playback_20261023/recheck.json)
-binds named current-source observations. The mutable [per-finding ledger](../validation/full-source-audit_20261016/current-finding-ledger.json)
-retains every one of the 93 original raw rows, O1 and the separately named
-LO-4/LO-5/LO-K1; earlier frozen reports retain their original inputs and limits.
+**Refreshed 2026-10-25 at fetched/pulled `91b2dd5b`; selected corrections
+qualified through `770f5443`.** This is targeted source reconciliation of the
+remaining frontier, not a new exhaustive audit or a transfer of historical
+qualification to today's suppliers. The [P11 recheck](../validation/audit-playback_20261023/recheck.json)
+and [P12 receipt](../validation/capture-export-availability_20261025/receipt.json)
+retain their respective source boundaries. The mutable [per-finding ledger](../validation/full-source-audit_20261016/current-finding-ledger.json)
+retains all 97 named rows (93 original raw rows, O1 and LO-4/LO-5/LO-K1).
 
-1. **B8 playback admission and effective controls is the selected slice.**
-   Current Redshank cached-integrity refusal can reborrow a live mutable backend
-   borrow and panic. Worker recreation then exposes reset rate/volume/duck behind
-   surviving UI values. Shared preview output can ignore desired mute, rate
-   bypasses the controller, and exact EOF can remain Loading. Three new baseline
-   regressions reproduced the cache panic and backend/worker EOF failures. P11
-   now records the implemented correction and scoped CPU/build qualification.
-2. **Preservation/identity and bounded P5a are implemented.** No scoped A1–A5/D1
-   P1 mechanism was re-established. D1 closes the old singleton-store finding at
-   `8bf59b31`; the ledger now cites its actual CPU/macOS/native/reopen receipt.
-   Hocket H3/H5 and malformed-model admission retain their scoped CPU receipts;
-   Hocket real-custody/native receiving remains separate. Bounded P5a was already
-   qualified; retire its completed reservation rather than redo the frozen
-   overlay. Generic Path/Walk Hear parity (LO-4) remains distinct. LO-5 stays the
-   resolved B1 alias. Q1 and B1–B6 retain their named scoped historical receipts.
-3. **Next product seams are capture custody, export identity and availability.**
-   Redshank R05/R09 still lose a dock release owner and silently stop accepting
-   capture samples while the elapsed display advances. R08 still lets sanitized
-   export identities collide. R04's native scheduling predicate now includes
+1. **B11 Hocket staged Apply/feed and handoff is the next product slice to
+   recheck.** The last targeted source review found staged Apply re-resolving
+   its feed and media-proportional handoff preparation on the UI thread. Recheck
+   those concrete receiving paths against then-current main before changing
+   them; preserve admitted model/media/custody and keep one owner per shared
+   seam. This priority is a remaining source-supported defect queue, not a new
+   native or physical qualification claim.
+2. **B8 and the approved capture/export/availability slices are implemented.**
+   P11 qualifies cache refusal, worker controls/recovery and exact-end completion
+   at `046b0bf4`. P12 qualifies R05/R09 capture preservation and R08 complete
+   export identity at `951c7822`, plus V03 observed availability at `770f5443`.
+   Capture uses deterministic PCM and mounted dispatch with actual storage/export
+   workers; its native microphone/hold/cap lane remains open. V03's native lane
+   covers absent/offline presentation only. R04's scheduling predicate includes
    alignment/export work; actual idle native completion is not newly qualified.
-   B7 V03 still infers stream/listening facts from absent errors or desired input.
-   The public shared Recorder diagnostic finding S4 is already implemented and
-   CPU qualified; do not duplicate that work under V03.
-4. **B11–B14 and C1–C5 remain component-scoped work.** Hocket staged Apply still
-   re-resolves its feed and handoff performs media-proportional preparation on
-   the UI thread. Current paint/native-text, navigation/motion/visibility,
-   musical reading and catalog mechanisms retain source-supported follow-ups.
-   The old private instrument Connection/Session/example moved out of the
-   standards-based Woodshed instrument crate into optional Ringdown research.
-   Live public/optional protocol and receipt findings stay open there; they are
-   not a current Woodshed GUI RPC path or permission for hardware operations.
-5. **Q2–Q5 and K1–K3 follow reachable product defects.** Obsolete scenario targets,
-   release build/binary/architecture binding, scorer input/source admission and
-   bounded diagnostics remain evidence/maintenance work. Do not silently remove
-   public compatibility contracts, saved formats, PCM, inactive media or reachable
-   orphan-clear paths. Product release status removes unnecessary legacy data
-   migration obligations; it does not make an incomplete receipt a success.
-   Q5's old-cohort/metadata-only observation is superseded: the October 22 pool
-   receipt binds the aligned recipe lock and eleven receiving CPU passes with
-   one ignore. That receiving result adds no native or instrument-device claim.
+   Shared Recorder diagnostic S4 already has its own implemented CPU receipt.
+3. **Preservation/identity and bounded P5a retain their existing results.** No
+   scoped A1–A5/D1 P1 mechanism was re-established. D1's `8bf59b31` receipt
+   retains bounded CPU/macOS/native/reopen qualification. H3/H5 and malformed
+   model admission retain scoped CPU qualification; real-custody/native Hocket
+   receiving stays separate. P5a's completed reservation is retired; this batch
+   changes none of its code. Generic Path/Walk Hear parity (LO-4) remains distinct
+   and LO-5 is the resolved B1 alias. Q1 and B1–B6 keep their dated receipts.
+4. **B12–B14 and C1–C5 remain component-scoped follow-ups.** Paint/native-text,
+   navigation/motion/visibility, musical reading and catalog findings need their
+   own current-source slices. The old private instrument Connection/Session and
+   example now live in optional Ringdown research; live public/optional protocol
+   findings stay with that owner. This is not a current Woodshed GUI RPC path or
+   authorization for additional hardware operations.
+5. **Q2–Q5 and K1–K3 follow reachable product defects.** Scenario targets,
+   release binary/source/architecture binding, scorer admission and bounded
+   diagnostics retain their evidence/maintenance work. Q5 preserves the October
+   22 eleven-case/one-ignore receiving result at `cbda7166` on its old
+   Mere/Genet cohort. Incoming root main advanced independently; historical
+   recipe-to-root alignment wording is superseded, with no automatic repin or
+   new cross-cohort qualification. Unreleased status removes unnecessary legacy
+   migration obligations while every receipt still needs actual execution.
+
+The three approved slices remain the complete scope of this batch. Additional
+input-health/retry receiving corrections belong within V03; the incoming
+navigation geometry required a test-fixture correction, not a fourth product
+feature. Local main and GitHub are aligned after publication. Other computers
+remain unsynchronized/unverified until SSH access permits fresh source and
+working-tree checks; no remote tree was changed from stale inventory.
 
 ## Existing rulings and authority boundaries
 
@@ -432,3 +492,53 @@ source bindings,23 evidence files and the three canonical/index/ledger files
 match the fetched remote tree. The [publication record](../validation/audit-playback_20261023/publication.json)
 records that observation; its metadata commit extends no qualification claim.
 The completed clean checkout/branch are pruned after that publication.
+
+
+2026-10-25 P12 source feedback: V03 also requires input-device errors to reach
+observed health rather than only stderr, wake an idle host, and retire a failed
+cached input session before an explicit retry. Output operation/capture refusal
+must remain separate from actual stream failure. The same availability owner
+covers those producer-to-view seams with injected fault/retry controls. Capture
+review requires accepting/saving the prefix at capacity with persistent limit
+wording, idempotent late release, retained PCM/body/anchor/note identity through
+durable save, and playback/duck restoration at actual input stop rather than
+final data acknowledgement. Export acceptance uses real worker/file results for
+two colliding readable stems. These are required receiving paths within the
+approved three slices; no new supplier/hardware workstream is inferred.
+
+
+2026-10-25 P12 qualification: Redshank source `951c7822` and Woodshed source
+`770f5443` are merged and pushed. Final selected gates pass 1,153 distinct cases,
+with 16 existing ignores, five child invocations counted separately and 24 new
+executed test functions. Both locked desktop builds and Redshank's Wasm check
+pass. The [receipt](../validation/capture-export-availability_20261025/README.md)
+preserves three reproduced baseline failures and all failed/control/superseded
+runs. The export fixture's private/Shareable correction retains actual distinct
+payload assertions. The incoming rehearsal geometry failure reproduces on clean
+`91b2dd5b`; its corrected fixture retains visibility/extent/hit assertions and
+adds actual page movement. One intermediate probe reused a stale control binary
+and is excluded; an explicit four-local-package clean restored a source-bound
+363-case host executable before final successful gates. Stable source alone did
+not establish executable freshness.
+
+Two successful native processes at the source-bound `770f5443` binary produce
+eight reviewed nonblank captures of absent/offline availability and visible close
+guards. Each scenario completes before explicit fixture discard-and-close;
+process exits are zero, with no timeout or persona-owned files written. Real
+microphone/output, native fault/retry/permission and Redshank native capture are
+not covered. Publication binding and completed-checkout pruning follow. The
+other computers remain inaccessible through current SSH credentials; their
+checkout revisions and dirtiness are unverified and no remote mutation occurred.
+
+
+2026-10-25 P12 publication: source, evidence and updated frontier are merged and
+pushed through `dc21232d`. Advertised/fetched/local main agree. All 644
+source bindings, 64 evidence files including their manifest, and the three
+canonical plan/index/ledger files match the fetched remote tree. The
+[publication record](../validation/capture-export-availability_20261025/publication.json)
+records that observation. Both completed task/control checkouts are removed,
+the merged task branch is deleted, and only the primary checkout remains
+registered. Intentional archive refs and normal build caches are preserved.
+The metadata commit extends no source/native/device claim. Other-host checkout
+synchronization remains blocked by access; local/GitHub publication does not
+establish their state.

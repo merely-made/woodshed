@@ -5,9 +5,7 @@
 //! Returns whether any of them wants another frame — the host keeps frames
 //! coming while it does, and sleeps when it does not.
 
-use woodshed_core::audio::{
-    AudioBackend, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM,
-};
+use woodshed_core::audio::{AudioBackend, CalibrationStatus, TRANSPORT_MAX_BPM, TRANSPORT_MIN_BPM};
 use woodshed_core::midi::MidiBackend as _;
 use woodshed_views::stage::UiState;
 
@@ -54,6 +52,7 @@ pub struct AudioObservation {
     capture_busy: bool,
     loops: Vec<bool>,
     error: Option<String>,
+    availability: woodshed_core::audio::AudioAvailability,
     recorder: woodshed_views::stage::RecorderObservation,
 }
 
@@ -64,6 +63,7 @@ impl AudioObservation {
             || self.capture_busy != ui.song_recording
             || self.loops != ui.song_loop_bars
             || self.error != ui.audio_error
+            || self.availability != ui.audio_availability
             || self.recorder != ui.recorder_observation
     }
 
@@ -75,6 +75,10 @@ impl AudioObservation {
         ui.song_recording = self.capture_busy;
         ui.song_loop_bars = self.loops;
         ui.audio_error = self.error;
+        ui.audio_availability = self.availability;
+        if !ui.audio_availability.tuner_active {
+            ui.tuner.reading = None;
+        }
         ui.recorder_observation = self.recorder;
     }
 }
@@ -96,6 +100,7 @@ fn observe_audio(backend: &mut crate::audio::CpalBackend) -> AudioObservation {
         capture_busy: backend.loop_capture_busy(),
         loops: backend.song_loop_bars(),
         error: backend.error().map(str::to_owned),
+        availability: backend.availability(),
         recorder: backend.recorder_observation(None),
     }
 }
@@ -106,7 +111,19 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     if !crate::capture_persistence::session_current(shared, ui) {
         if let Some(backend) = shared.backend.as_mut() {
             backend.service();
+            ui.audio_availability = backend.availability();
+            if !ui.audio_availability.tuner_active {
+                ui.tuner.reading = None;
+            }
             return backend.needs_service();
+        }
+        ui.audio_availability = shared
+            .backend
+            .as_ref()
+            .map(crate::audio::CpalBackend::availability)
+            .unwrap_or_default();
+        if !ui.audio_availability.tuner_active {
+            ui.tuner.reading = None;
         }
         return false;
     }
@@ -130,6 +147,8 @@ pub fn frame(shared: &mut Shared, ui: &mut UiState) -> bool {
     ui.now_ms = wall_time_ms();
 
     let Some(backend) = shared.backend.as_mut() else {
+        ui.audio_availability = Default::default();
+        ui.tuner.reading = None;
         if ui.practice_clock_managed && ui.rehearsal_running {
             ui.stop_rehearsal();
             ui.card_timing_notice =
@@ -350,6 +369,34 @@ fn rehearsal_dwell(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn audio_observation_refreshes_availability_and_clears_unobserved_tuner_readings() {
+        let mut backend = crate::audio::CpalBackend::offline_for_test();
+        let mut ui = UiState::new();
+        ui.tuner.enabled = true;
+        ui.tuner.reading = Some(woodshed_core::audio::TunerReading {
+            note: "A".into(),
+            octave: 4,
+            cents: 0.0,
+            in_tune: true,
+            level: 0.1,
+        });
+        let observation = observe_audio(&mut backend);
+        assert!(observation.changed(&ui));
+        observation.apply(&mut ui);
+        assert_eq!(
+            ui.audio_availability.output,
+            woodshed_core::audio::AudioStreamStatus::Offline
+        );
+        assert_eq!(
+            ui.audio_availability.input,
+            woodshed_core::audio::AudioStreamStatus::Unopened
+        );
+        assert!(ui.tuner.enabled && !ui.tuner_is_listening());
+        assert!(ui.tuner.reading.is_none());
+        assert!(!observe_audio(&mut backend).changed(&ui));
+    }
 
     #[test]
     fn accepted_one_shot_status_stops_the_ui_without_restarting_or_retargeting_backing() {

@@ -12,21 +12,24 @@ use std::time::Duration;
 use woodshed_audio::output_runtime::{OutputError, OutputRuntime};
 use woodshed_audio::{
     Bar, CalibrationOutcome, CalibrationSession, ChordRef, InputEngine, InputEngineBuilder,
-    LooperCaptureHandle, OnsetAnalyzer, OnsetHandle, SequencerPattern, Song, Sound, Step,
-    Subdivision, TimeSignature, Track, TunerHandle,
+    InputHealth, LooperCaptureHandle, OnsetAnalyzer, OnsetHandle, SequencerPattern, Song, Sound,
+    Step, Subdivision, TimeSignature, Track, TunerHandle,
 };
-use woodshed_core::audio::{AudioBackend, CalibrationStatus, TransportState, TunerReading};
+use woodshed_core::audio::{
+    AudioAvailability, AudioBackend, AudioStreamStatus, CalibrationStatus, TransportState,
+    TunerReading,
+};
 use woodshed_core::loop_plan::{LoopPlan, LoopSegmentId};
 use woodshed_core::song::SongDoc;
 
-mod loop_projection;
-mod practice_clock;
-mod music_program;
-mod music_clock;
 mod input_admission;
+mod loop_projection;
 mod microphone_access;
 #[cfg(test)]
 mod mixed_loop_tests;
+mod music_clock;
+mod music_program;
+mod practice_clock;
 pub(crate) use loop_projection::CaptureSnapshot;
 use loop_projection::LoopCaptures;
 
@@ -108,7 +111,9 @@ enum InputStream {
     #[cfg(test)]
     Test,
     #[cfg(test)]
-    TestOwner { _owner: Box<dyn std::any::Any> },
+    TestOwner {
+        _owner: Box<dyn std::any::Any>,
+    },
 }
 
 struct InputSession {
@@ -116,6 +121,7 @@ struct InputSession {
     tuner: TunerHandle,
     onset: OnsetHandle,
     capture: LooperCaptureHandle,
+    health: InputHealth,
 }
 
 impl InputSession {
@@ -138,11 +144,13 @@ impl InputSession {
             .with_looper_capture();
         let (builder, tuner) = builder.with_pitch();
         tuner.set_enabled(false);
+        let health = builder.health_handle();
         Ok(Self {
             _stream: open_stream(builder)?,
             tuner,
             onset,
             capture,
+            health,
         })
     }
 }
@@ -163,6 +171,7 @@ pub struct CpalBackend {
     /// disabling features so all analyzers keep sharing one cpal stream.
     input: Option<InputSession>,
     input_admission: input_admission::Worker,
+    input_wake: Option<Arc<dyn Fn() + Send + Sync>>,
     pending_capture: Option<input_admission::CaptureReservation>,
     pending_calibration: bool,
     input_session_epoch: u64,
@@ -184,6 +193,7 @@ pub struct CpalBackend {
     captures: LoopCaptures,
     /// Output failures survive an input retry.
     initial_error: Option<String>,
+    input_problem: Option<String>,
     error: Option<String>,
 }
 
@@ -286,18 +296,25 @@ impl CpalBackend {
                 let pending = if self.input_admission.awaiting_permission() {
                     if self.pending_capture.is_some() {
                         "Waiting for microphone permission in macOS. Stop cancels pending Record; recording has not started."
-                    } else { "Waiting for microphone permission in macOS." }
-                } else { "Opening audio input… Stop cancels pending Record." };
-                self.error().map_or_else(|| pending.into(), |error| format!("{error}; {pending}"))
-            } else { self.error().map(str::to_owned).unwrap_or_else(|| {
-                if output_rate.is_none() {
-                    "Audio output is unavailable.".into()
-                } else if self.input.is_none() {
-                    "One shared output · input opens on Record".into()
+                    } else {
+                        "Waiting for microphone permission in macOS."
+                    }
                 } else {
-                    "One shared output · input configuration opened".into()
-                }
-            }) },
+                    "Opening audio input… Stop cancels pending Record."
+                };
+                self.error()
+                    .map_or_else(|| pending.into(), |error| format!("{error}; {pending}"))
+            } else {
+                self.error().map(str::to_owned).unwrap_or_else(|| {
+                    if output_rate.is_none() {
+                        "Audio output is unavailable.".into()
+                    } else if self.input.is_none() {
+                        "One shared output · input opens on Record".into()
+                    } else {
+                        "One shared output · input configuration opened".into()
+                    }
+                })
+            },
         }
     }
 
@@ -434,17 +451,23 @@ impl CpalBackend {
     }
 
     pub fn needs_service(&self) -> bool {
-        self.input_admission_pending() || self.pending_capture.is_some() || self.pending_calibration
+        self.input_admission_pending()
+            || self.pending_capture.is_some()
+            || self.pending_calibration
             || ((!self.native_output || self.output_stream_count() != 0)
-            && self
-                .output
-                .as_ref()
-                .is_some_and(OutputRuntime::needs_service))
+                && self
+                    .output
+                    .as_ref()
+                    .is_some_and(OutputRuntime::needs_service))
     }
 
     /// Register both completion wakeups and the bounded idle context service.
     pub fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) {
         self.input_admission.set_wake(wake.clone());
+        self.input_wake = Some(wake.clone());
+        if let Some(input) = &self.input {
+            input.health.set_wake(wake.clone());
+        }
         if let Some(output) = &mut self.output {
             output.set_wake(wake.clone());
             self.heartbeat = Some(OutputHeartbeat::start(wake));
@@ -462,6 +485,7 @@ impl CpalBackend {
             }
         }
         self.service_input_admission();
+        self.retire_failed_input();
         if let Some(output) = &self.output {
             self.captures.remember(&output.song());
         }
@@ -478,6 +502,26 @@ impl CpalBackend {
         }
     }
 
+    /// A failed stream cannot finish a retained calibration or revive delayed
+    /// capture work. Keep its handles failed until an explicit new request.
+    fn retire_failed_input(&mut self) -> bool {
+        let Some(reason) = self.input.as_ref().and_then(|input| input.health.failure()) else {
+            return false;
+        };
+        if let Some(input) = &self.input {
+            input.tuner.set_enabled(false);
+            input.onset.set_enabled(false);
+            input.capture.set_enabled(false);
+        }
+        self.pending_capture = None;
+        self.pending_calibration = false;
+        if self.calib.phase() == woodshed_audio::calibration::CalibrationPhase::Running {
+            self.calibration_cancel();
+        }
+        self.input_error(reason);
+        true
+    }
+
     fn output_failure(&mut self, error: OutputError) -> String {
         let message = format!("audio output: {error}");
         self.initial_error = Some(message.clone());
@@ -487,18 +531,100 @@ impl CpalBackend {
 
     /// Exact control-side admission for an already resolved Card request.
     /// Return this operation's result, not an unrelated persistent error.
-    pub(crate) fn admit_card_preview(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
-        let output = self.output.as_mut().ok_or_else(|| "Audio output is unavailable.".to_string())?;
+    pub(crate) fn admit_card_preview(
+        &mut self,
+        preview: &woodshed_core::card_timing::CardPreview,
+    ) -> Result<(), String> {
+        let output = self
+            .output
+            .as_mut()
+            .ok_or_else(|| "Audio output is unavailable.".to_string())?;
         // The view checks unmarked availability before declaring silence.
         // Silence still requires the output to retire the preceding preview.
-        if preview.0.is_empty() { return output.cancel_preview().map_err(|error| error.to_string()); }
-        output.preview_card_pitches(&preview.0, preview.1, preview.2).map_err(|error| error.to_string())
+        if preview.0.is_empty() {
+            return output.cancel_preview().map_err(|error| error.to_string());
+        }
+        output
+            .preview_card_pitches(&preview.0, preview.1, preview.2)
+            .map_err(|error| error.to_string())
+    }
+
+    fn start_admitted_calibration(&mut self) {
+        if self
+            .input
+            .as_ref()
+            .is_none_or(|input| input.health.failure().is_some())
+        {
+            return;
+        }
+        self.pending_calibration = false;
+        let Some(onset) = self.input.as_ref().map(|input| input.onset.clone()) else {
+            return;
+        };
+        let Some(output) = self.output.as_mut() else {
+            return;
+        };
+        let result = self.calib.start(output, &onset);
+        if let Err(error) = result {
+            self.output_failure(error);
+            onset.set_enabled(false);
+            // The atomic start retained prior output. Ordinary sync must
+            // nevertheless restore its full request before caching it again.
+            self.last_metronome = None;
+        }
+    }
+
+    /// Resource and admission facts shared by every native audio surface.
+    pub(crate) fn availability(&self) -> AudioAvailability {
+        let output = match &self.output {
+            None => self
+                .initial_error
+                .as_ref()
+                .map(|reason| AudioStreamStatus::Failed(reason.clone()))
+                .unwrap_or(AudioStreamStatus::Unavailable),
+            Some(_) if !self.native_output => AudioStreamStatus::Offline,
+            Some(_) if self.output_stream_count() == 0 => {
+                AudioStreamStatus::Failed("The output stream is no longer active.".into())
+            },
+            Some(_) => AudioStreamStatus::Admitted,
+        };
+        let input = if let Some(input) = &self.input {
+            input
+                .health
+                .failure()
+                .map(AudioStreamStatus::Failed)
+                .unwrap_or(AudioStreamStatus::Admitted)
+        } else if self.input_admission.awaiting_permission() {
+            AudioStreamStatus::AwaitingPermission
+        } else if self.input_admission_pending() {
+            AudioStreamStatus::Requested
+        } else if let Some(reason) = &self.input_problem {
+            AudioStreamStatus::Failed(reason.clone())
+        } else {
+            AudioStreamStatus::Unopened
+        };
+        AudioAvailability {
+            output,
+            input,
+            tuner_active: self
+                .input
+                .as_ref()
+                .is_some_and(|input| input.health.failure().is_none() && input.tuner.is_enabled()),
+        }
     }
 
     /// Observed catalog sound must be a complete playable request. The generic
     /// runtime's empty/filtered no-op result is not an audition receipt.
-    pub(crate) fn admit_audition_preview(&mut self, preview: &woodshed_core::card_timing::CardPreview) -> Result<(), String> {
-        if preview.0.is_empty() || preview.0.iter().any(|pitch| !pitch.is_finite() || *pitch <= 0.0) {
+    pub(crate) fn admit_audition_preview(
+        &mut self,
+        preview: &woodshed_core::card_timing::CardPreview,
+    ) -> Result<(), String> {
+        if preview.0.is_empty()
+            || preview
+                .0
+                .iter()
+                .any(|pitch| !pitch.is_finite() || *pitch <= 0.0)
+        {
             return Err("The selected material has no complete playable pitch sequence.".into());
         }
         self.admit_card_preview(preview)
@@ -543,6 +669,7 @@ impl CpalBackend {
             song_transport_requested: false,
             input: None,
             input_admission: input_admission::Worker::new(),
+            input_wake: None,
             pending_capture: None,
             pending_calibration: false,
             input_session_epoch: 0,
@@ -558,6 +685,7 @@ impl CpalBackend {
             latency_ms: None,
             captures: LoopCaptures::default(),
             initial_error: error.clone(),
+            input_problem: None,
             error,
         }
     }
@@ -604,26 +732,48 @@ impl CpalBackend {
     /// Explicit input requests can retry an earlier failure. A successful
     /// session is reused for every feature for the backend's lifetime.
     fn ensure_input(&mut self) -> bool {
-        if self.input.is_some() {
-            return true;
+        if let Some(input) = &self.input {
+            if input.health.failure().is_none() {
+                return true;
+            }
+            input.tuner.set_enabled(false);
+            input.onset.set_enabled(false);
+            input.capture.set_enabled(false);
+        }
+        if self.input.take().is_some() {
+            self.capture_attached = false;
         }
         #[cfg(test)]
         if let Some(factory) = self.input_factory.as_mut() {
             let result = factory();
             return match result {
                 Ok(input) => {
+                    if let Some(wake) = &self.input_wake {
+                        input.health.set_wake(wake.clone());
+                    }
                     input.tuner.set_enabled(self.tuner_requested);
                     self.input = Some(input);
                     self.error = self.initial_error.clone();
+                    self.input_problem = None;
                     true
                 },
-                Err(error) => { self.input_error(error); false },
+                Err(error) => {
+                    self.input_error(error);
+                    false
+                },
             };
         }
         let result = self.input_admission.request(std::time::Instant::now());
         match result {
-            Ok(()) => false,
-            Err(error) => { self.input_error(error); false },
+            Ok(()) => {
+                self.input_problem = None;
+                self.error = self.initial_error.clone();
+                false
+            },
+            Err(error) => {
+                self.input_error(error);
+                false
+            },
         }
     }
 
@@ -635,13 +785,12 @@ impl CpalBackend {
                 .clone()
                 .unwrap_or_else(|| "Audio output is unavailable.".into()));
         }
-        if !self.ensure_input() {
-            return Err(self
-                .error
-                .clone()
-                .unwrap_or_else(|| "Audio input is unavailable.".into()));
+        // Only explicit request admission can open/retry input. A delayed
+        // capture completion must not reopen a stream that has since failed.
+        let input = self.input.as_ref().ok_or("Audio input is unavailable.")?;
+        if let Some(reason) = input.health.failure() {
+            return Err(reason);
         }
-        let input = self.input.as_ref().expect("input was opened");
         let source_rate = input.capture.source_rate();
         let output_rate = self.output.as_ref().expect("output exists").sample_rate();
         if source_rate == 0 || source_rate != output_rate {
@@ -686,16 +835,30 @@ impl CpalBackend {
     }
 
     /// The existing click lane consumes the same hydrated pattern as export.
-    pub(crate) fn sync_pack(&mut self, selection: Option<&audio_packs::PackSelection>, transport: TransportState) -> Result<(), String> {
+    pub(crate) fn sync_pack(
+        &mut self,
+        selection: Option<&audio_packs::PackSelection>,
+        transport: TransportState,
+    ) -> Result<(), String> {
         let revision = selection.map(audio_packs::PackSelection::revision);
-        if self.pack_pattern.as_ref().map(|p| &p.0) == revision.as_ref() { return Ok(()); }
-        if self.loop_capture_busy() { return Err("Stop recording / armed capture before updating the drum kit.".into()); }
+        if self.pack_pattern.as_ref().map(|p| &p.0) == revision.as_ref() {
+            return Ok(());
+        }
+        if self.loop_capture_busy() {
+            return Err("Stop recording / armed capture before updating the drum kit.".into());
+        }
         let mut pattern = match selection {
             Some(selection) => selection.hydrated_pattern().map_err(|e| e.to_string())?,
             None => click_pattern(transport.bpm),
         };
         pattern.bpm = transport.bpm;
-        self.with_output(|output| if selection.is_some() { output.set_pack_pattern_playing(pattern.clone(), transport.playing) } else { output.set_click_pattern_playing(pattern.clone(), transport.playing) })?;
+        self.with_output(|output| {
+            if selection.is_some() {
+                output.set_pack_pattern_playing(pattern.clone(), transport.playing)
+            } else {
+                output.set_click_pattern_playing(pattern.clone(), transport.playing)
+            }
+        })?;
         self.pack_pattern = revision.map(|revision| (revision, pattern));
         self.last_metronome = Some(transport);
         Ok(())
@@ -720,14 +883,21 @@ impl AudioBackend for CpalBackend {
             return;
         }
         let restore_pattern = self.last_metronome.is_none();
-        let mut pattern = self.pack_pattern.as_ref().map(|p| p.1.clone()).unwrap_or_else(|| click_pattern(transport.bpm));
+        let mut pattern = self
+            .pack_pattern
+            .as_ref()
+            .map(|p| p.1.clone())
+            .unwrap_or_else(|| click_pattern(transport.bpm));
         pattern.bpm = transport.bpm;
         let packed = self.pack_pattern.is_some();
         if self
             .with_output(|output| {
                 if restore_pattern {
-                    if packed { output.set_pack_pattern_playing(pattern, transport.playing) }
-                    else { output.set_click_pattern_playing(pattern, transport.playing) }
+                    if packed {
+                        output.set_pack_pattern_playing(pattern, transport.playing)
+                    } else {
+                        output.set_click_pattern_playing(pattern, transport.playing)
+                    }
                 } else {
                     output.set_metronome(transport.bpm, transport.playing)
                 }
@@ -745,14 +915,19 @@ impl AudioBackend for CpalBackend {
             return;
         }
         if let Some(input) = self.input.as_ref() {
-            if input.tuner.is_enabled() != enabled {
-                input.tuner.set_enabled(enabled);
+            let active = enabled && input.health.failure().is_none();
+            if input.tuner.is_enabled() != active {
+                input.tuner.set_enabled(active);
             }
         }
     }
 
     fn tuner_reading(&self) -> Option<TunerReading> {
-        let tuner = &self.input.as_ref()?.tuner;
+        let input = self.input.as_ref()?;
+        if input.health.failure().is_some() {
+            return None;
+        }
+        let tuner = &input.tuner;
         if !tuner.is_enabled() {
             return None;
         }
@@ -854,9 +1029,11 @@ impl AudioBackend for CpalBackend {
     }
 
     fn loop_capture_busy(&self) -> bool {
-        self.pending_capture.is_some() || self.output
-            .as_ref()
-            .is_some_and(OutputRuntime::capture_busy)
+        self.pending_capture.is_some()
+            || self
+                .output
+                .as_ref()
+                .is_some_and(OutputRuntime::capture_busy)
     }
 
     fn loop_stop_record(&mut self) {
@@ -918,24 +1095,13 @@ impl AudioBackend for CpalBackend {
             self.pending_calibration = self.input_admission_pending();
             return;
         }
-        self.pending_calibration = false;
-        let Some(onset) = self.input.as_ref().map(|input| input.onset.clone()) else {
-            return;
-        };
-        let Some(output) = self.output.as_mut() else {
-            return;
-        };
-        let result = self.calib.start(output, &onset);
-        if let Err(error) = result {
-            self.output_failure(error);
-            onset.set_enabled(false);
-            // The atomic start retained prior output. Ordinary sync must
-            // nevertheless restore its full request before caching it again.
-            self.last_metronome = None;
-        }
+        self.start_admitted_calibration();
     }
 
     fn calibration_poll(&mut self) -> CalibrationStatus {
+        if self.retire_failed_input() {
+            return CalibrationStatus::Unavailable;
+        }
         if self.pending_calibration {
             return CalibrationStatus::Running {
                 clicks_fired: 0,
@@ -1130,7 +1296,12 @@ mod tests {
             std::thread::yield_now();
         }
         let starts = audio.output_snapshot().unwrap().preview_starts;
-        for pitches in [vec![], vec![f32::NAN], vec![440.0, -1.0], vec![f32::INFINITY]] {
+        for pitches in [
+            vec![],
+            vec![f32::NAN],
+            vec![440.0, -1.0],
+            vec![f32::INFINITY],
+        ] {
             let mut refused = request(&mut ui);
             refused.preview.0 = pitches;
             crate::drive::service_audition_request(&mut ui, &mut audio, &refused);
@@ -1143,7 +1314,12 @@ mod tests {
         too_large.preview.1 = 1.0e10;
         crate::drive::service_audition_request(&mut ui, &mut audio, &too_large);
         assert_eq!(ui.practice_history.len(), 1);
-        assert!(ui.audition_notice.as_ref().unwrap().contains("resource bounds"));
+        assert!(
+            ui.audition_notice
+                .as_ref()
+                .unwrap()
+                .contains("resource bounds")
+        );
         assert_eq!(audio.output_observation_id(), runtime);
         assert!(audio.preview_voice_count() > 0);
         let retry = request(&mut ui);
@@ -1169,7 +1345,9 @@ mod tests {
     fn preservation_refuses_an_armed_capture_without_retiring_its_token() {
         use woodshed_core::storage::SessionStore;
         use woodshed_views::stage::UiState;
-        let store = SessionStore::new(Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend);
+        let store = SessionStore::new(
+            Box::new(muniment::MemoryBackend::default()) as crate::storage::HostBackend
+        );
         let shared = crate::shared::Shared::with_store(Some(store), None, None);
         let mut shared = shared.borrow_mut();
         let mut ui = UiState::new();
@@ -1180,14 +1358,22 @@ mod tests {
         audio.song_arm_record(0);
         assert!(audio.loop_capture_busy());
         let epoch = ui.audio_session.clone();
-        assert!(matches!(crate::capture_persistence::preserve_request(&mut shared, &mut ui),
-            crate::capture_persistence::Preservation::Blocked(_)));
+        assert!(matches!(
+            crate::capture_persistence::preserve_request(&mut shared, &mut ui),
+            crate::capture_persistence::Preservation::Blocked(_)
+        ));
         assert!(shared.backend.as_ref().unwrap().loop_capture_busy());
         assert!(Arc::ptr_eq(&epoch, &ui.audio_session));
-        assert!(crate::capture_persistence::close_request(&mut shared, &mut ui));
+        assert!(crate::capture_persistence::close_request(
+            &mut shared,
+            &mut ui
+        ));
         assert!(ui.practice_close_pending);
         ui.practice_discard_close = true;
-        assert!(!crate::capture_persistence::close_request(&mut shared, &mut ui));
+        assert!(!crate::capture_persistence::close_request(
+            &mut shared,
+            &mut ui
+        ));
     }
 
     #[test]
@@ -1258,6 +1444,147 @@ mod tests {
             assert_eq!(attempts.get(), 1);
             assert!(tuner.is_enabled());
         }
+    }
+
+    #[test]
+    fn availability_keeps_stream_facts_independent_of_input_and_operation_failures() {
+        let attempts = Rc::new(Cell::new(0));
+        let count = attempts.clone();
+        let mut audio = backend(Box::new(move || {
+            count.set(count.get() + 1);
+            if count.get() == 1 {
+                Err("microphone permission refused".into())
+            } else {
+                successful_input()
+            }
+        }));
+        assert_eq!(
+            audio.availability(),
+            AudioAvailability {
+                output: AudioStreamStatus::Offline,
+                input: AudioStreamStatus::Unopened,
+                tuner_active: false
+            }
+        );
+        audio.set_tuner_enabled(true);
+        assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+        assert!(
+            matches!(audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("permission refused"))
+        );
+        for _ in 0..10 {
+            audio.set_tuner_enabled(true);
+            audio.service();
+        }
+        assert_eq!(attempts.get(), 1);
+        audio.set_tuner_enabled(false);
+        audio.set_tuner_enabled(true);
+        assert_eq!(audio.availability().input, AudioStreamStatus::Admitted);
+        assert!(audio.availability().tuner_active);
+        audio.set_tuner_enabled(false);
+        assert_eq!(audio.availability().input, AudioStreamStatus::Admitted);
+        assert!(!audio.availability().tuner_active);
+        // This is an operation refusal on a still-present software output,
+        // rather than a device-stream failure.
+        audio.preview_note(440.0, f32::NAN);
+        assert!(
+            audio
+                .error()
+                .is_some_and(|reason| reason.contains("finite duration"))
+        );
+        assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+        audio.native_output = true;
+        assert!(
+            matches!(audio.availability().output, AudioStreamStatus::Failed(_)),
+            "a retired native stream cannot be claimed admitted"
+        );
+    }
+
+    #[test]
+    fn post_admission_input_failure_wakes_and_requires_fresh_explicit_reenable() {
+        use std::sync::atomic::AtomicUsize;
+        let attempts = Rc::new(Cell::new(0));
+        let count = attempts.clone();
+        let mut audio = backend(Box::new(move || {
+            count.set(count.get() + 1);
+            successful_input()
+        }));
+        audio.set_tuner_enabled(true);
+        let old_health = audio.input.as_ref().unwrap().health.clone();
+        let wakes = Arc::new(AtomicUsize::new(0));
+        let wake_count = wakes.clone();
+        // Install the same native health wake without creating an output
+        // heartbeat; input callbacks must independently wake an idle host.
+        old_health.set_wake(Arc::new(move || {
+            wake_count.fetch_add(1, Ordering::SeqCst);
+        }));
+        old_health.report_failure("microphone disconnected");
+        assert_eq!(wakes.load(Ordering::SeqCst), 1);
+        assert!(
+            !audio.availability().tuner_active,
+            "known failure blocks listening before service"
+        );
+        assert!(
+            matches!(audio.availability().input, AudioStreamStatus::Failed(ref reason) if reason.contains("disconnected"))
+        );
+        assert!(audio.tuner_reading().is_none());
+        for _ in 0..10 {
+            audio.service();
+            audio.set_tuner_enabled(true);
+        }
+        assert_eq!(attempts.get(), 1);
+        assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+        audio.set_tuner_enabled(false);
+        audio.set_tuner_enabled(true);
+        assert_eq!(attempts.get(), 2);
+        assert!(audio.availability().tuner_active);
+        assert_eq!(audio.availability().input, AudioStreamStatus::Admitted);
+        assert!(
+            old_health.failure().is_some(),
+            "retired health never becomes valid again"
+        );
+        assert!(audio.input.as_ref().unwrap().health.failure().is_none());
+    }
+
+    #[test]
+    fn input_failure_retires_a_running_calibration_without_reopening() {
+        let attempts = Rc::new(Cell::new(0));
+        let count = attempts.clone();
+        let mut audio = backend(Box::new(move || {
+            count.set(count.get() + 1);
+            successful_input()
+        }));
+        audio.calibration_start();
+        render(&mut audio, 32);
+        assert_eq!(
+            audio.calib.phase(),
+            woodshed_audio::calibration::CalibrationPhase::Running
+        );
+        assert!(audio.output_snapshot().unwrap().click_playing);
+        audio
+            .input
+            .as_ref()
+            .unwrap()
+            .health
+            .report_failure("microphone disconnected during calibration");
+        // Poll must refuse retained onset history even before ordinary service.
+        assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable);
+        assert_eq!(
+            audio.calib.phase(),
+            woodshed_audio::calibration::CalibrationPhase::Idle
+        );
+        assert!(!audio.input.as_ref().unwrap().onset.is_enabled());
+        render(&mut audio, 32);
+        assert!(!audio.output_snapshot().unwrap().click_playing);
+        for _ in 0..5 {
+            audio.service();
+            assert_eq!(audio.calibration_poll(), CalibrationStatus::Unavailable);
+        }
+        assert_eq!(attempts.get(), 1);
+        assert_eq!(audio.availability().output, AudioStreamStatus::Offline);
+        assert!(matches!(
+            audio.availability().input,
+            AudioStreamStatus::Failed(_)
+        ));
     }
 
     #[test]
@@ -1349,7 +1676,7 @@ mod tests {
             one_shot: false,
             click: false,
             segments: vec![woodshed_core::loop_plan::LoopSegment {
-            seconds: None,
+                seconds: None,
                 id: LoopSegmentId {
                     set: woodshed_core::working_sets::WorkingSetId(owner),
                     card: woodshedding::rehearsal::CardId(7),
@@ -1420,35 +1747,56 @@ mod tests {
         let mut producer = LooperCaptureAnalyzer::new();
         producer.prepare(48_000);
         let capture = producer.handle();
-        let mut audio = backend(Box::new(move || Ok(InputSession {
-            _stream: InputStream::Test,
-            tuner: PitchAnalyzer::new().handle(),
-            onset: OnsetAnalyzer::new().handle(),
-            capture: capture.clone(),
-        })));
+        let mut audio = backend(Box::new(move || {
+            Ok(InputSession {
+                _stream: InputStream::Test,
+                health: InputHealth::default(),
+                tuner: PitchAnalyzer::new().handle(),
+                onset: OnsetAnalyzer::new().handle(),
+                capture: capture.clone(),
+            })
+        }));
         let mut plan = owned_plan(1);
         let base = plan.segments[0].clone();
-        plan.segments = (0..3).map(|index| {
-            let mut segment = base.clone();
-            segment.id.card = woodshedding::rehearsal::CardId(index + 7);
-            // Accelerated deterministic musical clocks keep this host-route
-            // test small; the processor suite covers authored Bars/Seconds.
-            segment.bpm = 6_000.0;
-            segment.beats = index as u8 + 1;
-            segment.bars = 1;
-            segment
-        }).collect();
-        let old: Vec<_> = [0usize, 2].into_iter().map(|index| {
-            let segment = &plan.segments[index];
-            let bar = Bar { bpm: segment.bpm,
-                time_signature: TimeSignature::new(segment.beats, 4),
-                length: segment.bars, ..Default::default() };
-            CaptureSnapshot { id: segment.id, bpm: segment.bpm,
-                beats: segment.beats, bars: segment.bars, seconds: None,
-                legacy_clock: false,
-                buffer: woodshed_audio::SampleBuffer::new(
-                    vec![if index == 0 { 0.25 } else { -0.25 }; bar.duration_samples(48_000.0) as usize], 48_000) }
-        }).collect();
+        plan.segments = (0..3)
+            .map(|index| {
+                let mut segment = base.clone();
+                segment.id.card = woodshedding::rehearsal::CardId(index + 7);
+                // Accelerated deterministic musical clocks keep this host-route
+                // test small; the processor suite covers authored Bars/Seconds.
+                segment.bpm = 6_000.0;
+                segment.beats = index as u8 + 1;
+                segment.bars = 1;
+                segment
+            })
+            .collect();
+        let old: Vec<_> = [0usize, 2]
+            .into_iter()
+            .map(|index| {
+                let segment = &plan.segments[index];
+                let bar = Bar {
+                    bpm: segment.bpm,
+                    time_signature: TimeSignature::new(segment.beats, 4),
+                    length: segment.bars,
+                    ..Default::default()
+                };
+                CaptureSnapshot {
+                    id: segment.id,
+                    bpm: segment.bpm,
+                    beats: segment.beats,
+                    bars: segment.bars,
+                    seconds: None,
+                    legacy_clock: false,
+                    buffer: woodshed_audio::SampleBuffer::new(
+                        vec![
+                            if index == 0 { 0.25 } else { -0.25 };
+                            bar.duration_samples(48_000.0) as usize
+                        ],
+                        48_000,
+                    ),
+                }
+            })
+            .collect();
         audio.restore_loop_captures(old.clone()).unwrap();
         audio.set_loop_plan(&plan).unwrap();
         render(&mut audio, 32);
@@ -1469,7 +1817,10 @@ mod tests {
         render(&mut audio, 32);
         let takes = audio.capture_snapshot();
         assert_eq!(takes.len(), 3);
-        let selected = takes.iter().find(|take| take.id == plan.segments[1].id).unwrap();
+        let selected = takes
+            .iter()
+            .find(|take| take.id == plan.segments[1].id)
+            .unwrap();
         assert_eq!(selected.buffer.len(), 960);
         assert!(selected.buffer.data.iter().all(|sample| *sample > 0.0));
         for prior in old {
@@ -1649,7 +2000,7 @@ mod tests {
         let buffer = woodshed_audio::SampleBuffer::new(vec![0.25; frames], rate);
         (1..=count)
             .map(|card| CaptureSnapshot {
-            seconds: None,
+                seconds: None,
                 legacy_clock: false,
                 id: LoopSegmentId {
                     set: woodshed_core::working_sets::WorkingSetId(2),
@@ -2108,8 +2459,12 @@ mod tests {
         doc.bars[0].toggle_silent();
         let muted = to_song(&doc);
         assert!(muted.bars[0].chord_ref.is_none());
-        assert_eq!(muted.bars[0].duration_samples(48_000.0), voiced.bars[0].duration_samples(48_000.0));
-        let mut reopened: SongDoc = serde_json::from_slice(&serde_json::to_vec(&doc).unwrap()).unwrap();
+        assert_eq!(
+            muted.bars[0].duration_samples(48_000.0),
+            voiced.bars[0].duration_samples(48_000.0)
+        );
+        let mut reopened: SongDoc =
+            serde_json::from_slice(&serde_json::to_vec(&doc).unwrap()).unwrap();
         assert!(to_song(&reopened).bars[0].chord_ref.is_none());
         reopened.bars[0].toggle_silent();
         assert_eq!(serde_json::to_value(&reopened).unwrap(), original);
@@ -2117,8 +2472,18 @@ mod tests {
         let before = voiced.bars[0].chord_ref.as_ref().unwrap();
         let after = restored.bars[0].chord_ref.as_ref().unwrap();
         assert_eq!(after.root_freq_hz.to_bits(), before.root_freq_hz.to_bits());
-        assert_eq!(after.pitches_hz.iter().map(|f| f.to_bits()).collect::<Vec<_>>(),
-                   before.pitches_hz.iter().map(|f| f.to_bits()).collect::<Vec<_>>());
+        assert_eq!(
+            after
+                .pitches_hz
+                .iter()
+                .map(|f| f.to_bits())
+                .collect::<Vec<_>>(),
+            before
+                .pitches_hz
+                .iter()
+                .map(|f| f.to_bits())
+                .collect::<Vec<_>>()
+        );
     }
 
     #[test]

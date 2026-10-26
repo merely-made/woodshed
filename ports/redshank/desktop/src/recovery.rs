@@ -537,6 +537,7 @@ impl Desktop {
                 && self.voice_session.is_none();
         }
         self.transcript_pending.is_none()
+            && self.voice_session.is_none()
             && self.persistence.durable == self.persistence.revision
             && self.cache_removals.is_empty()
             && self.cache_removals_in_flight == 0
