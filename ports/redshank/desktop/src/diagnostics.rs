@@ -4,7 +4,7 @@
 //! An opt-in bounded copy of persistence owner observations. No domain data,
 //! paths, model text or raw errors enter this payload or its causal references.
 
-use apparatus::{
+use apparatus_core::{
     Admission, Batch, Cursor, ObservationMetadata, ObservationStore, OperationId, RecordRef,
     RetentionLimits, RunId, SourceId,
 };

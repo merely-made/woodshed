@@ -9,7 +9,7 @@ fn observed_store() -> Diagnostics {
     Diagnostics::new(
         true,
         "worker-fixture".into(),
-        apparatus::RetentionLimits {
+        apparatus_core::RetentionLimits {
             max_records: 256,
             max_bytes: 262_144,
             max_age: Duration::from_secs(300),
@@ -17,7 +17,9 @@ fn observed_store() -> Diagnostics {
     )
 }
 
-fn receive(persistence: &Persistence) -> (u64, Result<(), String>, Option<apparatus::RecordRef>) {
+fn receive(
+    persistence: &Persistence,
+) -> (u64, Result<(), String>, Option<apparatus_core::RecordRef>) {
     match persistence
         .replies
         .recv_timeout(Duration::from_secs(5))

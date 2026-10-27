@@ -51,7 +51,7 @@ pub struct Product {
     observed: Observed,
     host_busy: bool,
     diagnostics: crate::diagnostics::Diagnostics,
-    diagnostic_cursor: Option<apparatus::Cursor>,
+    diagnostic_cursor: Option<apparatus_core::Cursor>,
     capture: Option<crate::diagnostics::CaptureContext>,
 }
 
@@ -861,7 +861,7 @@ mod tests {
             diagnostics: crate::diagnostics::Diagnostics::new(
                 false,
                 "scenario-test".into(),
-                apparatus::RetentionLimits {
+                apparatus_core::RetentionLimits {
                     max_records: 0,
                     max_bytes: 0,
                     max_age: std::time::Duration::ZERO,

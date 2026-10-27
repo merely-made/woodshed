@@ -10,7 +10,7 @@ license = "MPL-2.0"
 rust-version = "1.97.1"
 
 [workspace.dependencies]
-apparatus = { package = "mere-apparatus", git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["serde"] }
+apparatus-core = { version = "0.1.0", git = "https://github.com/merely-made/armillary.git", rev = "06340b08327b29c3485ecb0089bb5cafed20fd80", default-features = false, features = ["serde"] }
 mesquite = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
@@ -51,7 +51,7 @@ symphonia = { version = "0.5.5", default-features = false, features = ["aac", "i
 # off: a listener takes the handle over netfetcher and none of the page actor.
 fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false }
 rfd = "0.17"
-errand = { version = "0.4.0", git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
+errand = { version = "0.4.0", git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
 url = "2.5"
 
 # Root patches do not cross a git dependency boundary, so a standalone Redshank
@@ -69,18 +69,18 @@ accesskit = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 document-session-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # Promoted sources shared with immutable older Mere suppliers.
 # Canonical promoted families; keep registry and Git consumers type-identical.
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
-errand = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-finger-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-gemini-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-gopher-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-guppy-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-misfin = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-nex-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-scroll-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-spartan-protocol = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+errand = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+finger-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+gemini-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+gopher-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+guppy-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+misfin = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+nex-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+scroll-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+spartan-protocol = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
 # Dependency workspaces do not propagate patches. Keep the renderer and both
 # shader packages on the published Classic 0.11/wgpu-30 provider.
 netrender-vello = { git = "https://github.com/mark-ik/vello.git", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
@@ -94,13 +94,19 @@ vello_shaders = { git = "https://github.com/mark-ik/vello.git", rev = "276b46648
 ipc-channel = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 
 [patch."https://github.com/merely-made/mere.git"]
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
-errand = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+errand = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
 
 [patch."https://www.github.com/merely-made/mere.git"]
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
-errand = { git = "https://github.com/merely-made/errand.git", rev = "3d2ce3a568ffd63a98c0057fc5c798f3c999d2ab" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+errand = { git = "https://github.com/merely-made/errand.git", rev = "897fb963d184f0e379ab9041d68e17e726cb7763" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3" }
+
+# Keep the actor and apparatus-core on one published Armillary source identity
+# when older Git suppliers refer to its www.github.com URL.
+[patch."https://github.com/merely-made/armillary.git"]
+armillary = { git = "https://www.github.com/merely-made/armillary.git", rev = "864f107d44bf759111ad2ea3c9036b2cfbf03f4c" }
+apparatus-core = { git = "https://www.github.com/merely-made/armillary.git", rev = "06340b08327b29c3485ecb0089bb5cafed20fd80" }
