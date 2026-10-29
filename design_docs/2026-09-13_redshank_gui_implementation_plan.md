@@ -644,3 +644,11 @@ run against the same contract.
   This verifies the owner export controls and bytes; receiver custody/playback
   belongs to Turnstone's separate receipt, and microphone/acoustic qualification
   remains separate.
+
+- **2026-10-29, contract-only playback consumers.** `redshank-playback` now
+  separates its command/snapshot/fingerprint vocabulary from the `native`
+  decoder and device implementation. Standalone Redshank keeps `native` as
+  its default; embedding hosts can disable defaults and explicitly admit
+  native audio. The contract-only runtime reports unavailable, starts no
+  worker and refuses commands. Its executed regression passes; the native
+  implementation type-checks. Device/acoustic qualification is unchanged.
