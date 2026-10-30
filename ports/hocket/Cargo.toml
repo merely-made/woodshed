@@ -177,10 +177,9 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch 
 # reintroduced the pre-rename fork beside genet-stylo, and
 # `links = "servo_style_crate"` (one Stylo per graph) made that a hard error.
 #
-# The Stylo compatibility cone retired from Genet. Livery/Buckram use the
-# renamed `genet-taffy` fork and Genet's `genet-parley` directly; only Taffy
-# needs a row at this workspace root.
-taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.14.0" }
+# The Stylo compatibility cone retired from Genet. Livery/Buckram select the
+# published genet-taffy 0.16 and Genet's `genet-parley` directly, so no Taffy
+# row is needed here (as in Mere and Turnstone).
 # Genet's in-process ipc-channel fork is also a root-level Cargo patch.
 
 # Classic 0.11 and its encoding/shader types share the maintained wgpu-30

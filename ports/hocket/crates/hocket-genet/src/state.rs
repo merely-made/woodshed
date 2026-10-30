@@ -135,6 +135,10 @@ pub struct AppState {
     /// host with no clipboard. Host-local: it carries tokens and, later, audio,
     /// never project state.
     clipboard: Option<SystemClipboard>,
+    /// The last loop copied as audio. The OS clipboard carries only its text
+    /// label until custom formats arrive as a capability, so audio pastes
+    /// within this running Hocket come from here. Host-local, never project state.
+    copied_audio: Option<Vec<u8>>,
     /// The peer this session will be handed to, set by pasting their contact
     /// token or by accepting an incoming hand-off (which addresses the reply
     /// back to its sender). Host-local; a recipient is not project state.
@@ -246,6 +250,7 @@ impl AppState {
             } else {
                 SystemClipboard::new().ok()
             },
+            copied_audio: None,
             recipient: None,
             persona_switch: None,
             reshare_notice: false,
@@ -374,10 +379,11 @@ impl AppState {
         }
     }
 
-    /// Render the current loop mix and place it on the clipboard as `audio/wav`
-    /// (plus a plain-text label), so it can be pasted into another Hocket or a
-    /// MIME-aware app. Universal DAW paste wants a platform-native audio format,
-    /// a later refinement; this is the multi-format clipboard's audio lane.
+    /// Render the current loop mix as `audio/wav` with a plain-text label. The
+    /// OS clipboard receives the label (genet's system clipboard carries no
+    /// custom formats); the audio is kept for pasting within this running
+    /// Hocket. Pasting into another application waits for custom clipboard
+    /// formats as a capability through the family's capability door.
     pub fn copy_audio(&mut self) {
         if self.is_recording() {
             self.project_status =
@@ -405,17 +411,17 @@ impl AppState {
         };
         let label = format!("{} loop", self.project_label());
         let item = ClipboardItem::new()
-            .with_custom("audio/wav", bytes)
+            .with_custom("audio/wav", bytes.clone())
             .with_text(label);
-        match &mut self.clipboard {
+        self.copied_audio = Some(bytes);
+        self.project_status = match &mut self.clipboard {
             Some(clipboard) => match clipboard.write(&item) {
-                Ok(()) => self.project_status = ProjectStatus::AudioCopied,
-                Err(error) => {
-                    self.project_status = ProjectStatus::Error(format!("copy audio: {error}"))
-                },
+                Ok(()) => ProjectStatus::AudioCopied,
+                Err(error) => ProjectStatus::Error(format!("copy audio: {error}")),
             },
-            None => self.project_status = ProjectStatus::Error("clipboard unavailable".to_string()),
-        }
+            // The audio is still held for pasting in this Hocket.
+            None => ProjectStatus::AudioCopied,
+        };
     }
 
     /// Read `audio/wav` from the clipboard, decode it, and append it as a new
@@ -431,19 +437,15 @@ impl AppState {
                 ProjectStatus::Error("arm a track to paste audio into".to_string());
             return;
         };
-        let bytes = match &mut self.clipboard {
-            Some(clipboard) => match clipboard.read_format("audio/wav") {
-                Ok(bytes) => bytes,
-                Err(_) => {
-                    self.project_status =
-                        ProjectStatus::Error("no audio on the clipboard".to_string());
-                    return;
-                },
-            },
-            None => {
-                self.project_status = ProjectStatus::Error("clipboard unavailable".to_string());
-                return;
-            },
+        // A clipboard that carries audio wins; otherwise the loop this Hocket
+        // copied last.
+        let from_clipboard = self
+            .clipboard
+            .as_mut()
+            .and_then(|clipboard| clipboard.read_format("audio/wav").ok());
+        let Some(bytes) = from_clipboard.or_else(|| self.copied_audio.clone()) else {
+            self.project_status = ProjectStatus::Error("no audio on the clipboard".to_string());
+            return;
         };
         let mix = match hocket_project::export::decode_wav_bytes(&bytes) {
             Ok(mix) => mix,
