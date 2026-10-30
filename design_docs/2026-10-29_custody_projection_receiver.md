@@ -1,6 +1,6 @@
 # Independent custody client receiver
 
-Status: Feature migration delivered; native consumer checks pending.
+Status: Published; Woodshed and Hocket locked native checks passed. The relationship-recipe behavioral test remains unqualified.
 
 Woodshed, Hocket and the active relationship-recipe fixture explicitly select
 `graphshell-endpoint/custody-client`. Their existing custody imports remain
@@ -40,3 +40,23 @@ Resolved-edge reports are retained on T-PC under
 `woodshed-lock-normalized.json`, `hocket-lock-normalized.json` and
 `recipe-lock-normalized.json`. The shared runner uses 3 GiB memory, zero swap,
 150 percent CPU and one build job; further check results are recorded separately.
+
+## Native receiving results
+
+`root-split-remaining-receivers` completed both native checks successfully on
+published `914adc7`: `cargo check --locked -p woodshed-genet --tests` and, from
+`ports/hocket`, `cargo check --locked -p hocket-genet --tests`. Both returned
+exit code zero; the locks were unchanged. These compile the custody call sites
+and test code, including the ignored keeper-dependent tests.
+
+The same bundle then began the relationship-recipe command. Its remaining
+600-second bundle budget expired during dependencies, before the test ran.
+This is an incomplete qualification, not a failing behavioral test. It does
+not invalidate the two completed command results. The recipe retains its
+separate storage and presentation source boundaries; further runtime repair
+or qualification is outside the native consumer compilation result.
+
+Log SHA-256:
+`cf09073b2041e2dcd9bcdc059f337c52783acfde9e13b86c6093b2c0e9a19888`.
+Per-command exit codes are retained in
+`/home/markik/Code/testing/custody-projection-split-20261029/remaining-receiver-check-results.json`.
