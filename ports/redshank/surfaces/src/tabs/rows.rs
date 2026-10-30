@@ -303,7 +303,7 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
         .attr("class", "rs-note-identity")
     });
     let mut actions = Vec::new();
-    if note.kind() == NoteKind::Text {
+    if note.kind() == NoteKind::Text && state.note_row_actions == crate::NoteRowActions::Full {
         actions.push(action(
             "Edit",
             format!("Edit note at {at}"),
@@ -334,12 +334,14 @@ pub fn note_actions(state: &RedshankSurfaceState, note: &NoteSummary) -> FullVie
             privacy,
         },
     ));
-    actions.push(action(
-        "Delete",
-        format!("Delete note at {at}"),
-        "rs-row-action",
-        CompactCommand::DeleteNote(note.id.clone()),
-    ));
+    if state.note_row_actions == crate::NoteRowActions::Full {
+        actions.push(action(
+            "Delete",
+            format!("Delete note at {at}"),
+            "rs-row-action",
+            CompactCommand::DeleteNote(note.id.clone()),
+        ));
+    }
     let menu = overflow(
         state,
         MenuTarget::Note(note.id.clone()),

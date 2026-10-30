@@ -586,6 +586,26 @@ mod tests {
     }
 
     #[test]
+    fn privacy_only_note_menu_keeps_privacy_without_edit_or_delete() {
+        let mut state = with_notes();
+        state.note_row_actions = crate::NoteRowActions::PrivacyOnly;
+        let mut runner = runner(state, panel);
+        open_menu(&mut runner, "note at 0:46");
+        let html = markup_of(&runner);
+        assert!(html.contains("Make shareable: note at 0:46"));
+        assert!(!html.contains("Edit note at 0:46"));
+        assert!(!html.contains("Delete note at 0:46"));
+        click(&mut runner, "Make shareable: note at 0:46");
+        assert_eq!(
+            commands(&mut runner),
+            [CompactCommand::SetNotePrivacy {
+                id: AnnotationId("text-one".into()),
+                privacy: redshank_model::NotePrivacy::Shareable,
+            }]
+        );
+    }
+
+    #[test]
     fn playing_voice_note_reports_progress_and_stops() {
         let mut state = with_notes();
         state.notes[1].body = NoteSummaryBody::Voice {
