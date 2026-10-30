@@ -11,9 +11,9 @@ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use async_trait::async_trait;
 use directories::ProjectDirs;
-use graphshell_endpoint::door::custody::CustodyRefusal;
-use graphshell_endpoint::door::custody_client::CustodyClientError;
-use graphshell_endpoint::door::custody_identity::CustodyIdentity;
+use djinn::door::custody::CustodyRefusal;
+use djinn::door::custody_client::CustodyClientError;
+use djinn::door::custody_identity::CustodyIdentity;
 use muniment::backend::WriteOp;
 use muniment::{Backend, MemoryBackend, StoreError};
 use personae::{IdentityProvider, ProfileId};

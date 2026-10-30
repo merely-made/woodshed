@@ -72,7 +72,8 @@ paint_list_api = { workspace = true }
 muniment = { workspace = true, features = ["zip"] }
 armillary = { workspace = true }
 personae = { workspace = true }
-graphshell-endpoint = { workspace = true }
+djinn = { workspace = true }
+dramatis = { workspace = true }
 insigne = { workspace = true }
 # djinn's forwarding note naming the persona that holds Hocket's key.
 serde_json = { workspace = true }

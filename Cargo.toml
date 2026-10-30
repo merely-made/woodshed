@@ -166,7 +166,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 # Identity. Woodshed opens no vault: it calls djinn through Graphshell's
-# application door (`graphshell-endpoint`'s `custody-client` feature) over the custody
+# application door (Djinn's `custody-client` feature) over the custody
 # route (dramatis DR-C, D5) for the roster, a persona switch and the one
 # sealing key it needs. `personae` lends key types and sealing, `dramatis` the
 # roster's plain types, and `mere-persona-picker` the shared view over the
@@ -176,7 +176,7 @@ serde_json = "1.0"
 # since DR-D, pinned at the revision mere's workspace names, so one personae
 # reaches every graph.
 dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-graphshell-endpoint = { git = "https://github.com/merely-made/mere.git", branch = "main", features = ["custody-client"] }
+djinn = { git = "https://github.com/merely-made/armillary.git", rev = "721e17d41a8f258073f440adbbb39ad145250868", version = "0.0.3", default-features = false, features = ["custody-client"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 persona-picker = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 
