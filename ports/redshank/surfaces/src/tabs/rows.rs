@@ -357,8 +357,7 @@ pub fn note_row(state: &RedshankSurfaceState, note: &NoteSummary) -> FullView {
         el(
             "div",
             (
-                note_anchor(note),
-                note_body(note),
+                el("div", (note_anchor(note), note_body(note))).attr("class", "rs-note-heading"),
                 note_actions(state, note),
             ),
         )

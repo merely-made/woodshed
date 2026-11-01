@@ -1710,3 +1710,26 @@ The process receipt is recorded in Turnstone's
 `docs/receipts/2026-10-19_retained_custody/qualification.json`. These checks
 exercise owner supply, sealed reopen and memory decoding; renewed headed
 Turnstone Play interaction with custody and physical output remain open.
+
+
+## Retained note readability follow-up (2026-11-01)
+
+**Status:** supplier repair implemented and tested; Turnstone receiving verification pending. The model-free research qualification showed note text
+squeezed to a narrow sliver by copy-verification and navigation controls in the
+hosted Listen surface. Current upstream through `e1d93b0` retains that layout.
+
+Done when note content has the available row width, controls wrap beneath it,
+all existing note actions keep their identities, and the shared surface tests
+and Turnstone receiving checks pass. This changes presentation only; recording,
+privacy, exact source identity and copy-verification policy retain their owners.
+
+Findings: `ports/redshank/surfaces/src/tabs/mod.rs` lays out notes as
+`auto 1fr auto`, while the tail's unshrinking controls consume the third column.
+The narrow middle column clips the note body. The fix belongs in this shared
+surface rather than a Turnstone-specific override.
+
+Progress: 2026-11-01, fetched upstream and fast-forwarded the existing isolated
+notes worktree before beginning the repair. Run evidence belongs in
+`archive_docs/receipts/2026-09-01_listening_annotation_port_plan_receipts.md`.
+
+- 2026-11-01: note text and actions now occupy separate rows; source review and all shared-surface tests pass. Turnstone receiving layout and native checks remain separate.
