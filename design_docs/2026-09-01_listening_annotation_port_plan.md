@@ -1682,7 +1682,7 @@ receipt and are decoded from memory. A host blob never becomes a filesystem
 path or an HTTP request. A preview inherits the host reader; an absent reader or
 missing admitted body refuses. No new durable `MediaSource` variant or microphone
 adapter is needed. Shared contract and custody acceptance remain in
-`eidetic/design_docs/eidetic_docs/implementation_strategy/2026-10-11_eidetic_development_plan.md`.
+`eidetic/design_docs/eidetic_docs/implementation_strategy/2026-11-01_memory_gates_plan.md`.
 
 Done when the real decoder accepts a supplied WAV and reports its exact digest,
 refuses missing/invalid/over-budget blobs, preserves preview/main-controller
