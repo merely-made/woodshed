@@ -1714,7 +1714,7 @@ Turnstone Play interaction with custody and physical output remain open.
 
 ## Retained note readability follow-up (2026-11-01)
 
-**Status:** supplier repair implemented and tested; Turnstone receiving verification pending. The model-free research qualification showed note text
+**Status:** supplier repair and Turnstone receiving layout checks pass; fresh native interaction remains unqualified. The model-free research qualification showed note text
 squeezed to a narrow sliver by copy-verification and navigation controls in the
 hosted Listen surface. Current upstream through `e1d93b0` retains that layout.
 
@@ -1733,3 +1733,4 @@ notes worktree before beginning the repair. Run evidence belongs in
 `archive_docs/receipts/2026-09-01_listening_annotation_port_plan_receipts.md`.
 
 - 2026-11-01: note text and actions now occupy separate rows; source review and all shared-surface tests pass. Turnstone receiving layout and native checks remain separate.
+- 2026-11-01: Turnstone's actual admitted Notes surface passes the receiving layout regression at 600 by 420 pixels, including body width and the action row below it. Its full host suite passes (1423 passed, 21 ignored). The consumer remains pinned to supplier source `676d625`; this documentation update does not require repinning.
