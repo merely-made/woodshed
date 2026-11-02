@@ -150,7 +150,7 @@ The round is defined in
 Murm is one line on `main`: `fb6360c12b`, which merges the C1 callback fix
 and the in-process kind. That's `M`.
 
-The Knot handoff (`knot-editor/design_docs/2026-10-15_knot_codex_handoff.md`,
+The Knot handoff (`knot-editor/design_docs/archive_docs/2026-11-02/2026-10-15_knot_codex_handoff.md`,
 task 1) produces Mere `R2`. Wait for it, or ask Mark whether to start from
 current Mere `main` instead.
 
