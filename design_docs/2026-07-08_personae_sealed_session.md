@@ -5,7 +5,7 @@
 
 Woodshed is the first cross-app consumer of `personae`, the Merely suite's
 identity + carry crate (see
-`personae/design_docs/2026-07-08_personae_across_the_suite.md`). It proves the
+`repos/dramatis/design_docs/2026-07-08_personae_across_the_suite.md`). It proves the
 "one persona, many devices, encrypt-at-rest" pole with the smallest real slice:
 seal the private practice session at rest under a persona-derived key.
 
