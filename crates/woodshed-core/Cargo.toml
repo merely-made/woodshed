@@ -33,7 +33,7 @@ personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main
 # The portable persistence seam. woodshed's own Storage/SettingsStorage traits
 # were a two-slot, String-shaped restatement of muniment's SlotStore, with one
 # filesystem realization against muniment's shipped redb/zip/IndexedDB/memory.
-muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
 async-trait = "0.1"
 # muniment's Backend is async so a browser can await OPFS; woodshed's save path
 # is the sync event loop, and a filesystem backend returns ready futures, so
@@ -43,7 +43,7 @@ pollster = "0.4"
 # dated, branching engagements over stable catalog ids, with per-subject recency
 # and frequency maintained upstream. Already in the workspace through
 # woodshed-graph's catalog graph; the same sibling-repo git dep.
-chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "34105d63ec17826e0a58a5b461b65150357dd000" }
+chartulary = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208" }
 hex = "0.4"
 # Portable lossless companion storage; no audio driver or device dependency.
 wavicle = { git = "https://github.com/merely-made/wavicle.git", rev = "2c5a49fd48db7a54aeab9e712804fd065411aef9", default-features = false, features = ["encode", "decode"] }

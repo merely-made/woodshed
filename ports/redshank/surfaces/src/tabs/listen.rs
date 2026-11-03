@@ -586,6 +586,26 @@ mod tests {
     }
 
     #[test]
+    fn privacy_only_note_menu_keeps_privacy_without_edit_or_delete() {
+        let mut state = with_notes();
+        state.note_row_actions = crate::NoteRowActions::PrivacyOnly;
+        let mut runner = runner(state, panel);
+        open_menu(&mut runner, "note at 0:46");
+        let html = markup_of(&runner);
+        assert!(html.contains("Make shareable: note at 0:46"));
+        assert!(!html.contains("Edit note at 0:46"));
+        assert!(!html.contains("Delete note at 0:46"));
+        click(&mut runner, "Make shareable: note at 0:46");
+        assert_eq!(
+            commands(&mut runner),
+            [CompactCommand::SetNotePrivacy {
+                id: AnnotationId("text-one".into()),
+                privacy: redshank_model::NotePrivacy::Shareable,
+            }]
+        );
+    }
+
+    #[test]
     fn playing_voice_note_reports_progress_and_stops() {
         let mut state = with_notes();
         state.notes[1].body = NoteSummaryBody::Voice {
@@ -683,6 +703,20 @@ mod tests {
         let shut = act(&mut runner, "More actions for Episode 214");
         assert_eq!(shut, [CompactCommand::ToggleMenu(None)]);
         assert!(!markup_of(&runner).contains("role=\"menu\""));
+    }
+
+    #[test]
+    fn note_body_has_a_separate_wrapping_actions_row() {
+        let markup = markup(with_notes(), panel);
+        let row = markup.find("rs-row rs-note-row").expect("note row");
+        let heading = markup[row..].find("rs-note-heading").unwrap() + row;
+        let body = markup[heading..].find("rs-note-text").unwrap() + heading;
+        let tail = markup[body..].find("rs-row-tail").unwrap() + body;
+        assert!(
+            markup[body..tail].contains("</div>"),
+            "the body heading closes before actions"
+        );
+        assert!(markup[body..tail].contains("so worried I can't speak"));
     }
 
     /// A private note's menu offers to make it shareable, and the reverse.

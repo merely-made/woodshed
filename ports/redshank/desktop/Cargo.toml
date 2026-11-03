@@ -13,7 +13,7 @@ tinct.workspace = true
 tabard.workspace = true
 tabard-workshop = { workspace = true, features = ["native-host"] }
 directories = "6"
-apparatus.workspace = true
+apparatus-core.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 url.workspace = true
@@ -35,6 +35,6 @@ redshank-surfaces.workspace = true
 rfd.workspace = true
 tempfile.workspace = true
 fetch.workspace = true
-eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "aa94fe22eea29e9b54e01ed21e6991536ed4f208", default-features = false }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe93298025bf6d65ae310a7cb4270ea52e3", default-features = false }
 fleece = { package = "mere-fleece", git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["portable-clip"] }
 pollster = "0.4"

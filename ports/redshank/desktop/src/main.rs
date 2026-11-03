@@ -140,7 +140,7 @@ enum IoReply {
     Saved {
         revision: u64,
         result: Result<(), String>,
-        execution: Option<apparatus::RecordRef>,
+        execution: Option<apparatus_core::RecordRef>,
     },
     Opened(Option<PathBuf>),
     Cached {
@@ -165,7 +165,7 @@ enum IoReply {
 struct SaveRequest {
     revision: u64,
     model: RedshankModel,
-    request: Option<apparatus::RecordRef>,
+    request: Option<apparatus_core::RecordRef>,
 }
 
 /// Serial persistence is kept off the UI and audio threads. At most one save
@@ -354,7 +354,7 @@ impl Persistence {
         &mut self,
         revision: u64,
         result: &Result<(), String>,
-        execution: Option<apparatus::RecordRef>,
+        execution: Option<apparatus_core::RecordRef>,
     ) {
         if self.recovery_error.is_some() {
             return;

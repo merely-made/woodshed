@@ -47,11 +47,15 @@ pub const TABS_CSS: &str = r#"
 .rs-bar-done { background: var(--t-text-dim); }
 
 /* --- notes rows (Listen and Notes share them) ------------------------ */
-.rs-note-row { display: grid; grid-template-columns: auto 1fr auto;
-  align-items: center; gap: var(--space-10); }
+.rs-note-row { display: flex; flex-direction: column; align-items: stretch;
+  gap: var(--space-6); min-width: 0; }
+.rs-note-heading { display: flex; align-items: flex-start; gap: var(--space-10); min-width: 0; }
+.rs-note-row .rs-row-tail { flex-wrap: wrap; width: 100%; min-width: 0; }
+.rs-note-row .rs-note-identity, .rs-note-row .rs-note-alignment { min-width: 0; }
+.rs-note-row .rs-row-menu { margin-left: auto; }
 .rs-note-anchor { display: flex; flex-direction: column; align-items: center; width: 44px; }
 .rs-note-time { font-family: var(--font-mono); font-size: var(--text-ui-13); }
-.rs-note-text { font-size: var(--text-ui-13); overflow: hidden; }
+.rs-note-text { font-size: var(--text-ui-13); flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .rs-note-voice { display: flex; align-items: center; gap: var(--space-6); }
 .rs-note-voice-time { font-family: var(--font-mono); font-size: var(--text-ui-12);
   color: var(--t-text-dim); }

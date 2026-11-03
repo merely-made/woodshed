@@ -7,16 +7,22 @@ license.workspace = true
 rust-version = "1.97.1"
 publish = false
 
+[features]
+# Standalone Redshank keeps its existing native product default. Embedders
+# explicitly disable defaults and opt into the backend when installing audio.
+default = ["native"]
+native = ["dep:audio-primitives", "dep:blake3", "dep:firewheel", "dep:symphonia", "dep:servo-media-player", "dep:tempfile"]
+
 [dependencies]
 anyhow.workspace = true
-audio-primitives.workspace = true
-blake3.workspace = true
-firewheel.workspace = true
+audio-primitives = { workspace = true, optional = true }
+blake3 = { workspace = true, optional = true }
+firewheel = { workspace = true, optional = true }
 redshank-model.workspace = true
-symphonia.workspace = true
+symphonia = { workspace = true, optional = true }
 fetch.workspace = true
-servo-media-player.workspace = true
-tempfile.workspace = true
+servo-media-player = { workspace = true, optional = true }
+tempfile = { workspace = true, optional = true }
 
 [dev-dependencies]
 hound.workspace = true

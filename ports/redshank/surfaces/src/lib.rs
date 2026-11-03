@@ -405,6 +405,10 @@ pub struct CompactPlayerState {
     /// Effective playback rate in percent, as the backend reports it.
     pub rate_percent: u16,
     pub volume_percent: u8,
+    /// Host-supplied text capture capability. None retains the transport-based
+    /// standalone policy; an explicit value permits hosts without playback to
+    /// admit a capture independently of transport availability.
+    pub text_capture_available: Option<bool>,
     pub voice_capture_available: bool,
     pub voice_capture_active: bool,
     pub recording: Option<Recording>,
@@ -422,6 +426,7 @@ impl Default for CompactPlayerState {
             skip_forward_ms: 30_000,
             rate_percent: 100,
             volume_percent: 80,
+            text_capture_available: None,
             voice_capture_available: false,
             voice_capture_active: false,
             recording: None,
@@ -447,6 +452,13 @@ impl CompactPlayerState {
                 self.transport,
                 TransportState::Empty | TransportState::Buffering | TransportState::Unavailable(_)
             )
+    }
+
+    pub fn text_capture_enabled(&self) -> bool {
+        self.now_playing.is_some()
+            && self
+                .text_capture_available
+                .unwrap_or_else(|| self.transport_enabled())
     }
 }
 
@@ -492,6 +504,14 @@ pub struct NoteSummary {
     pub end_offset_ms: Option<u64>,
     pub body: NoteSummaryBody,
     pub private: bool,
+}
+
+/// Which note mutations the embedding host can carry through its owner model.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum NoteRowActions {
+    #[default]
+    Full,
+    PrivacyOnly,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -625,6 +645,8 @@ pub struct RecoveryState {
 
 #[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub struct RedshankSurfaceState {
+    /// Restrict the shared note row to the actions supported by this host.
+    pub note_row_actions: NoteRowActions,
     /// The embedding owner supplies a selected-note package writer.
     pub note_clip_export_available: bool,
     pub transcript: Option<(

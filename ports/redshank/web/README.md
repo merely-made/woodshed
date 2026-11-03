@@ -92,8 +92,8 @@ This crate is a member of the port workspace (`ports/redshank/Cargo.toml`), so
 it shares the workspace lockfile and builds with
 `--target wasm32-unknown-unknown` from the workspace manifest. `cambium`,
 `cambium-rootstock`, and `cambium-genet-web-host` are named at the workspace's
-Mere pin (`57b4893db6909d5ed9c4ccae30216f0d8164201a`), aligned with Genet
-`965b64e206a47d1c8808472de9aa461233638768`. The nested workspace retains the
+Mere pin (`b232631f3e5ef30d24b19b3e832ddf225177c381`), aligned with Genet
+`01d3f528a8ff3f7c69201a736cdfdf296acccea3`. The nested workspace retains the
 same Genet revision for its in-process IPC patch. Woodshed root and Hocket
 keep their independently qualified dependency families.
 

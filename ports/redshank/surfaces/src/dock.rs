@@ -350,7 +350,7 @@ fn transport_controls(state: &CompactPlayerState) -> Vec<CompactView> {
 }
 
 pub(crate) fn text_note_button(state: &CompactPlayerState) -> CompactView {
-    let enabled = state.transport_enabled();
+    let enabled = state.text_capture_enabled();
     control(
         vec![
             span("rs-cap-glyph", "T"),
@@ -709,6 +709,43 @@ mod tests {
         capture.dispatch_click(voice, PointerClick::at((1.0, 1.0)));
         capture.update(|state| commands.extend(state.drain_commands()));
         assert_eq!(commands, [CompactCommand::AddTextNote]);
+    }
+
+    #[test]
+    fn text_capture_availability_is_independent_when_explicitly_supplied() {
+        let mut capture = runner(capture_surface);
+        capture.update(|state| {
+            state.transport = TransportState::Unavailable("No output".into());
+        });
+        let note = node_with_label(&capture.dom().borrow(), capture.root(), "Add text note");
+        capture.dispatch_click(note, PointerClick::at((1.0, 1.0)));
+        capture.update(|state| assert_eq!(state.drain_commands().count(), 0));
+
+        capture.update(|state| state.text_capture_available = Some(true));
+        let note = node_with_label(&capture.dom().borrow(), capture.root(), "Add text note");
+        capture.dispatch_click(note, PointerClick::at((1.0, 1.0)));
+        capture.update(|state| {
+            assert_eq!(
+                state.drain_commands().collect::<Vec<_>>(),
+                [CompactCommand::AddTextNote]
+            )
+        });
+
+        capture.update(|state| {
+            state.transport = TransportState::Playing;
+            state.text_capture_available = Some(false);
+        });
+        let note = node_with_label(&capture.dom().borrow(), capture.root(), "Add text note");
+        capture.dispatch_click(note, PointerClick::at((1.0, 1.0)));
+        capture.update(|state| assert_eq!(state.drain_commands().count(), 0));
+
+        capture.update(|state| {
+            state.text_capture_available = Some(true);
+            state.now_playing = None;
+        });
+        let note = node_with_label(&capture.dom().borrow(), capture.root(), "Add text note");
+        capture.dispatch_click(note, PointerClick::at((1.0, 1.0)));
+        capture.update(|state| assert_eq!(state.drain_commands().count(), 0));
     }
 
     #[test]
