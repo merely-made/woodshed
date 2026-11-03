@@ -11,7 +11,10 @@ before any other doc in this directory.
 
 ## Active Plans
 
-- [Shared data-defined audio packs](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+- [Hocket current frontier](2026-11-03_hocket_frontier_plan.md) — In progress; product, display, handoff, release and platform gates remain scoped to their owners.
+
+
+- [Shared data-defined audio packs](../../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
   — **AP3 bounded native/project acceptance (2026-10-20).** Shared kit/step controls,
   a retained local draft in project saves, MIDI export and worker-rendered drum
   layers use existing app/recorder paths. Handoff carries rendered media;
@@ -28,10 +31,10 @@ before any other doc in this directory.
   rendered graph capture/replay/lifecycle tests and 19 reviewed native captures.
   Physical devices and latency remain separate acceptance gates.
 
-- [2026-05-18_initial_plan.md](2026-05-18_initial_plan.md) — Initial
+- [2026-05-18_initial_plan.md](archive_docs/2026-11-03/2026-05-18_initial_plan.md) **(historical record)** — Initial
   scaffold, workspace skeleton, and feature-target ladder from
   click-track engine through P2P session hand-off.
-- [2026-07-08_genet_host_refactor_plan.md](2026-07-08_genet_host_refactor_plan.md)
+- [2026-07-08_genet_host_refactor_plan.md](archive_docs/2026-11-03/2026-07-08_genet_host_refactor_plan.md) **(historical record)**
   — **Original host rebuild landed; shared extraction and Woodshed surface adoption implemented.**
   Shared model/project, device-free recorder controller and scoped Cambium
   surface are root libraries. Woodshed mounts the surface through borrowed
@@ -71,7 +74,7 @@ before any other doc in this directory.
   timeline scene, platen/forme arrangement, sprigging regions; hocket supplies
   the musical reading), and draws the doctrine line: provenance reading yes,
   editing from the timeline is the arrange-view canary.
-- [2026-07-24_auto-update_plan.md](2026-07-24_auto-update_plan.md)
+- [2026-07-24_auto-update_plan.md](archive_docs/2026-11-03/2026-07-24_auto-update_plan.md) **(historical record)**
   - **H1-H4 (Windows) LANDED**; its interim `HOCKET_UPDATE_POLICY` env setting
   retired 2026-08-06 by the update-settings plan above. Configurable auto-update: a platform-neutral
   policy/status layer (four real policies, a status variant per real state,
@@ -86,7 +89,7 @@ before any other doc in this directory.
   - How to cut a Hocket release: `cargo-packager` + `luggage-manifest`, the
   signing key, per-host formats, and the two silent packaging traps that
   will otherwise ship a mislabelled binary.
-- [2026-07-11_real_waveforms_meter_ballistics_plan.md](2026-07-11_real_waveforms_meter_ballistics_plan.md)
+- [2026-07-11_real_waveforms_meter_ballistics_plan.md](archive_docs/2026-11-03/2026-07-11_real_waveforms_meter_ballistics_plan.md) **(historical record)**
   - **LANDED.** Real cached summed/per-layer waveform projections through
   responsive Chisel leaves, plus shared configurable meter ballistics.
 - **WavPack codec — founded as wavicle, wired into Hocket.** The pure-Rust
@@ -158,7 +161,7 @@ section whenever a durable working insight emerges from a session.
   and meter drawing. Structure is native Cambium views plus tinct CSS. The
   Masonry application and fork were retired; the audio spine remains
   independent. See
-  [2026-07-08_genet_host_refactor_plan.md](2026-07-08_genet_host_refactor_plan.md).
+  [2026-07-08_genet_host_refactor_plan.md](archive_docs/2026-11-03/2026-07-08_genet_host_refactor_plan.md) **(historical record)**.
 - **Async-first collaboration**, never real-time multiplayer jamming.
   The product's identity is sequential turn-taking over Moothold; that
   shape must not erode into "everyone plays together over the net" as
@@ -200,7 +203,7 @@ section whenever a durable working insight emerges from a session.
   components and reuse the Woodshed sequencer before adding DSP or authoring.
   Bundled and user-installed TOML/JSON definitions plus assets compose supported
   devices through Firewheel, with parameter-generated controls. The
-  [shared plan](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+  [shared plan](../../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
   owns the assessment and admission contract. CLAP/VST3/LV2/AU and plugin GUI
   hosting remain outside v1; session/history remains Hocket's authority.
 - **Layers are primary.** A track is an append-only stack of captured layers.

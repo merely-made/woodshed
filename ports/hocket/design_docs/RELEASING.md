@@ -255,3 +255,12 @@ Mac, so `spctl` is the check that matters — not `codesign` alone.
   runs used local directory feeds.
 - One signing key in one place: the per-host acceptance keypairs are a test
   artefact, since a client trusts exactly one public key.
+
+
+## Release trust and distribution follow-up
+
+H1–H4's three-host update cycles were historical acceptance, with local feeds and per-host test keys. Before a public release, separately establish OS installation trust: on macOS prepare the appropriate Developer ID signing and notarization credentials and verify the packaged app; on Windows choose an appropriate code-signing arrangement and verify installation/trust on the target system. Verify present account, credentials and platform requirements at execution time. Signed artifact and manifest authenticity are distinct from OS installer trust. Use the product-specific stable Hocket manifest URL already required above, and a deliberate release signing key instead of the three acceptance keys. [Auto-update:329–357; RELEASING:9–13,22–30,55–69,95–100.]
+
+Update policy remains configurable: off, check-and-notify, download-then-ask and automatic, with channel and cadence; displayed states must correspond to actual operation. Verify signatures before apply, preserve a usable prior version on failure and refuse self-update for unsupported install channels. [Auto-update:16–28.] The device-local setting exists; an interactive settings editor and live worker restart remain separate product decisions.
+
+The old plan proposes future content-addressed P2P distribution with incremental blob transfer, manifest announcements over mesh and bytes over IP. This is a direction to reconcile with the current Luggage/Murm/transport owners, not evidence those current carriers implement it. Other historical optional work: cross-host Cargo.lock friction, ShortTtl relock enforcement and possible Velopack retirement after sufficient Luggage operation. [Auto-update:347–361.] Do not treat historical prices or provider availability as current.

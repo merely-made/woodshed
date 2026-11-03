@@ -65,10 +65,10 @@ shell, receipt-driven validation).
 | Doc | What's there |
 |---|---|
 | [`DOC_POLICY.md`](DOC_POLICY.md) | Documentation governance (canonical core + ringdown addendum). |
-| [`2026-08-27_ringdown_founding.md`](2026-08-27_ringdown_founding.md) | Product direction and protocol/hardware history; current Phase 3 targets desktop performance control and scripting. |
+| [`archive_docs/2026-11-03/2026-08-27_ringdown_founding.md`](archive_docs/2026-11-03/2026-08-27_ringdown_founding.md) | Product direction and protocol/hardware history; current Phase 3 targets desktop performance control and scripting. |
 | [`2026-09-01_effects_handoff.md`](2026-09-01_effects_handoff.md) | Historical H27–H38 session and experiment discipline; bank-creation limits were superseded by H47. |
 | [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | Current cross-platform performance plan: stack/ownership review, joint software stomp-box/Beats assessment, MIDI versus RPC paths, P0–P4 device/CLI/desktop/cue/scripting targets; independent default MIDI/Beats build with opt-in private RPC/PacketLogger, bounded runtime/release/MIDI-loopback and read-only guitar status acceptance; shared BLE-MIDI transport with Mac guitar trigger and three-platform compiler evidence; bounded actual desktop/endpoint-hotplug/guitar reconnect acceptance with 36 focused cases and 14 native captures; shared configurable Effect Next/Previous controls and same-owner desktop JSONL scripting with 57 focused cases, actual macOS save/reopen/independent partial-send capture and owner-confirmed guitar actions/reconnect; native Windows/Linux and timing remain open; bounded provenance/terms and standards assessment, A1–A7 evidence frontier and an unsent outreach draft; retains A–D typed/profile foundation. |
-| [Shared data-defined audio packs](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19) | AP2 offline pack export plus AP3 approved custom-file trial: exact copy and unchanged factory hashes; owner confirms Beats discovery and repeated playback, including after a power cycle. The five-bar 4/4 intro/loop and stop/start rule is confirmed; broader lengths/meters and remote Beats control stay in P3. Shared controls/project acceptance and Mere/FunDSP direction are owned by the root plan. |
+| [Shared data-defined audio packs](../../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19) | AP2 offline pack export plus AP3 approved custom-file trial: exact copy and unchanged factory hashes; owner confirms Beats discovery and repeated playback, including after a power cycle. The five-bar 4/4 intro/loop and stop/start rule is confirmed; broader lengths/meters and remote Beats control stay in P3. Shared controls/project acceptance and Mere/FunDSP direction are owned by the root plan. |
 
 Current production-transport slice: [shared BLE-MIDI implementation](2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
 reuses one supplier and MidiOut across all three platforms. Mac has one observed
@@ -141,3 +141,6 @@ records a 16-file source inventory and 124 package declarations, separates
 MIDI/SMF/audio from private RPC/codec/framing, qualifies the older legal
 claims and lists A1–A7 evidence gaps. The outreach draft is saved in that plan
 and has not been sent. This assessment is not a legal-clearance verdict.
+
+
+The [founding record](archive_docs/2026-11-03/2026-08-27_ringdown_founding.md) is preserved whole as historical protocol and provenance reference. The [client surface plan](2026-09-02_client_surface_plan.md) owns the current phase ledger and remaining gates.

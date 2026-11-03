@@ -23,9 +23,44 @@ qualification of the complete typed/profile path. Phase D closed on hardware
 2026-09-02: a client can create a playable bank (H47). Those older receipts
 do not establish behavior on the owner's recently updated firmware.
 
-Findings that ground this live in `2026-08-27_ringdown_founding.md` (H25–H38)
+Findings that ground this live in `archive_docs/2026-11-03/2026-08-27_ringdown_founding.md` (H25–H38)
 and the session handoff `2026-09-01_effects_handoff.md`. This plan does not
 restate them; it says what the client's surface becomes because of them.
+
+## Current phase ledger (2026-11-03)
+
+| Lane | Established scope | Remaining done conditions / owner |
+|---|---|---|
+| Foundation A–D | A–C typed/profile work has scripted-link evidence; H47 records a playable-bank creation on the observed device. `ReadConfig` stays guarded. | Broader configuration and current-firmware device evidence remain separate. P0 must identify the reference guitar and establish applicable capability with same-run positive controls. |
+| P1 actions and CLI | Shared MIDI/Beats split and bounded CLI/Mac output work exist. Mac guitar BLE MIDI owner observed one configured Effect Next action. | Maintained-session CLI, selection/capabilities, explicit lifecycle, outcomes, USB snapshot admission, dry-run/refusal behavior and physical guitar control on each advertised OS/transport. |
+| P2 desktop and input | Woodshed pedal controls, mapped inputs and diagnostics have bounded native cohorts. Linux Xwayland captures six ALSA messages; Windows refusal cohort sends zero MIDI messages. | Independently launchable Ringdown desktop, persisted mappings/tones and keyboard/MIDI inputs; focus, repeat, held input, disconnect, cancellation and explicit resume; Windows MIDI/BLE delivery and native Wayland. Final Windows preservation metadata remains pending in its original packet. |
+| P3 Beats and cues | Shared pack authoring/export and the exact tested guitar 4/4 file's one-bar intro/four-bar repeat have bounded observations. | Shipping guitar export profile, independent app integration, supported built-in pattern/tempo/start discovery, versioned cues, partial outcomes and explicit manual/unsupported controls. Other meters/lengths, device versions and phase accuracy need evidence. Do not infer Beats RPC, pedal start/stop or MIDI Clock reception. |
+| P4 sequence and hosts | Same-owner desktop JSONL scripting has bounded acceptance. | Shared CLI/desktop cue/session dispatch; manual cancellation, explicit timing/deadline/late policy and no stale actions after reconnect; owner multi-cue demonstration; separate browser/companion receipt. |
+| Transport and distribution | Mac one-action guitar trial and Windows/Linux compiler checks are bounded to their stated scope. | Native Windows/Linux pairing and delivery, encrypted interop, disconnect/congestion, MIDI Clock jitter/phase, broader pedal actions, GUI hardware, signed distribution and applicable conformance. |
+| Provenance and publication | Assessment and build split exist; private RPC/PacketLogger are opt-in. | Resolve or record decisions for A1–A7, including original APK/terms, codec and diagnostic derivation, standards/IP, Windows/Linux and source packaging, fixture privacy and any appropriate rights grant. Outreach is unsent. |
+
+Historical evidence: client plan sections `BLE-MIDI peripheral transport`, `Desktop diagnostic controls`, `Provenance, terms and standards audit`, P0–P4 and A–D; `ports/ringdown/validation/midi-diagnostics-cross-platform_20261021/README.md`; root `validation/audio-packs-ap3_20261020/README.md`. The existing plan retains exact counts, firmware, refusals and hashes. This ledger does not promote compiler or GUI evidence into physical delivery, and it makes no new legal conclusion.
+
+## P0 connection and preservation gates
+
+Determine whether the RPC central connection and pedal peripheral can coexist or steal the connection, including the physical pedal where available. Preserve the owner's tones and recordings; stop if the same-run positive control is lost, then use owner-led recovery. Factory reset or vendor-app connection may overwrite the profile. These are existing P0 done conditions and device-scoped precautions, not evidence that coexistence or recovery has been qualified. [Client plan:1185–1206.]
+
+## Founding record and evidence hierarchy
+
+The founding record (`archive_docs/2026-11-03/2026-08-27_ringdown_founding.md`) contains the original phases, recovered protocol findings F1 onward, first hardware observations H1 onward, licensing observations L1–L4 and decisions D1–D4. These are historical observations and hypotheses with their exact recorded device, firmware, command and positive controls, not a claim about all current hardware. The live client surface is the implementation and acceptance frontier. The whole founding file remains an archived reference; commit-pinned links and evidence fields retain their original context. [Founding:132–313, 313–519, 520–2338, 2339–2434.]
+
+The positive `GetStatus` control proves only the observed live path, not every protocol action. `ReadConfig` is guarded after H18/H19 and is not a prerequisite for proving working large transfers. H25 reported unavailable `ReadBank` readback on observed firmware; H47 later established playable bank creation. Phase A–C scripted-link qualification and H47's physical evidence have different bounds. Hardware acknowledgment is not automatically audible or durable success. [Founding:156–207, 230–254; client:1–24, 1361–1403, 2008 onward.]
+
+## Carry forward the unfinished frontier
+Original full-configuration parity remains incomplete: command families need their own valid evidence, and the old universal ReadBank round-trip gate is explicitly superseded for observed firmware. Advanced speaker filters, physical-control remapping through `SetController`, resonance visualization and bulk recording retrieval are follow-up possibilities; `SetController` is not established as the pedal MIDI binding interface. [Founding:209–273.]
+
+Phase 3 is owned by the existing client P0–P4 plan. Alternative firmware is a separate objective: first a distinct assessment with done conditions and the owner's sign-off; it is not a prerequisite for the client. Signing/access-control and `.hef` format facts remain unknown, and no absent-security inference follows from app-protocol observations. [Founding:275–309, D4 at 2422–2425.]
+
+D1 records MPL-2.0 selection; D2 records the 2026-08-27 `ringdown` 0.0.1 name reservation as a historical event. D3's performance direction is superseded by the October 17 P0–P4 assessment; D4 remains an explicit separate assessment decision. Preserve the original D/F/H/L keys and the detailed, individually scoped device questions in the archived founding record rather than recasting them as settled general facts. [Founding:2395–2431.]
+
+## Provenance and terms
+L1–L4 are earlier inspection reports, not present legal clearance. The original APK acquisition, exact artifact, full digest and trusted signer comparison remain unestablished in the later assessment; device behavior does not establish provenance or applicable terms. The existing client audit and A1–A7 ledger own the present evidence frontier, including codec/dictionary derivation, PacketLogger references, standards/IP and mark terms, binary/source packaging, fixture privacy and any vendor rights clarification. The unsent outreach draft stays unsent. No conclusion of infringement or exemption is made here. [Founding:2339–2393; client:742–888.]
+
 
 ## Objective
 
@@ -1293,7 +1328,7 @@ Done-conditions:
   no bar-quantized claim without a usable phase source and device proof.
 
 **Shared custom beat foundation (implemented at file/API level 2026-10-19).** Consume the
-[shared data-defined audio-pack work](../../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19):
+[shared data-defined audio-pack work](../../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19):
 bundled and installed TOML/JSON definitions plus assets, reuse of the existing
 Woodshed sequencer, and an AP0 Rust embedding assessment before new authoring
 or DSP implementation. Ringdown owns instrument-specific MIDI validation and

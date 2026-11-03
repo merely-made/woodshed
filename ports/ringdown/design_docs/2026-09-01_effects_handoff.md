@@ -1,12 +1,12 @@
 # Handoff: effects work on the HyVibe, 2026-09-01
 
 **Historical handoff.** The bank-creation limit below was superseded on
-2026-09-02 by H47 in the [founding findings](2026-08-27_ringdown_founding.md).
+2026-09-02 by H47 in the [founding findings](archive_docs/2026-11-03/2026-08-27_ringdown_founding.md).
 Instrument state is the state at this handoff, not a current device reading.
 The [client surface plan](2026-09-02_client_surface_plan.md) owns current work.
 
 Written at the end of a long hardware session, for whoever picks this up.
-Findings live in `2026-08-27_ringdown_founding.md` as H1–H38; this is the
+Findings live in `archive_docs/2026-11-03/2026-08-27_ringdown_founding.md` as H1–H38; this is the
 **state, the open questions, and the failure modes that cost the most time.**
 
 ## Read this first: how to not repeat the day's mistakes

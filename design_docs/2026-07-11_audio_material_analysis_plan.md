@@ -353,7 +353,7 @@ analysis runs at all.
 
 The current generation/comparison/inference map and the live voicing-search
 probe are recorded once in
-[the musical projections plan](2026-09-04_musical_projections_plan.md#musical-subsystem-research-2026-09-06).
+[the musical projections plan](archive_docs/2026-11-03/2026-09-04_musical_projections_plan.md#musical-subsystem-research-2026-09-06).
 The July references to Strophe mean Hocket. New inference integrations should
 target Mere's `esp::infer`; embeddings target `esp::embed`. Vates and Sibylla
 now re-export those contracts for compatibility. Woodshed currently has neither

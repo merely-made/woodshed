@@ -14,7 +14,7 @@ concurrent take-navigation main, `fe54425` repeats 361 affected cases, five chil
 invocations, the build and native seed/reopen with four new reviewed captures. The
 relationship editor, Related and Set preserve independent reasons inside the
 opened reader; exact member filters reduce only their own resting contribution.
-The [Stage plan](2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt
+The [Stage plan](archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt
 own the evidence. Other dependency families and nested port locks remain at
 their qualified inputs. Full Stage P4f, physical audio and later Mere P6/P7
 remain separately gated.
@@ -23,7 +23,7 @@ remain separately gated.
 from root `aba2c7343`. Mere P2 is qualified, the former O1–O8 questions are
 settled as L5–L12 (with independent reasons ruled as L13), and Mere's P3
 Chartulary/shared Graphshell slice is published at `ee324e517`. The
-[Stage plan](2026-07-11_stage_set_tools_plan.md) owns Woodshed's consumer work:
+[Stage plan](archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md) owns Woodshed's consumer work:
 personal-only withdrawal, generated claims read-only, exact source identity,
 and ordered before/after audition. The root lock alone advances to that supplier;
 other dependency families and nested port locks retain their recorded versions.
@@ -211,7 +211,7 @@ All of them move to `audio_primitives::frames_per_bar` (`click.rs:43-58`).
   for non-x/4 meters as *new* receipts (never edit old ones);
 - you've checked whether persisted `Song` and `LoopCaptureManifest` clocks
   need a migration (if they do, stop and bring Mark options);
-- the move is recorded in `2026-09-09_audio_ports_rehome_plan.md`.
+- the move is recorded in `archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md`.
 
 ### Task 3: shared pure-state DSP crate (after task 2)
 

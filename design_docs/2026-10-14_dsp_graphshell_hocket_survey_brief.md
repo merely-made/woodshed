@@ -9,7 +9,7 @@ read-only. Mark ruled on all six decisions the same day (see
 
 After the shared Hocket recorder landed in Woodshed's Looper
 ([adoption receipt](../validation/hocket-looper_20261013/receipt.json),
-[rehome plan F5](2026-09-09_audio_ports_rehome_plan.md)), Mark asked on
+[rehome plan F5](archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md)), Mark asked on
 2026-10-14 to look at the next layer and added: *"also... consider graphshell
 in woodshed... integration with hocket..."*
 
@@ -50,7 +50,7 @@ voicing constants (`hocket-engine/src/click.rs:19-46`, "matches
     frame with an exact `(bar_idx, sample_in_bar)` cursor
     (`woodshed-audio/src/output_runtime/processor.rs:751-808`).
   - The plans require both schedules to survive consolidation
-    ([Hocket host-refactor plan](../ports/hocket/design_docs/2026-07-08_genet_host_refactor_plan.md),
+    ([Hocket host-refactor plan](../ports/hocket/design_docs/archive_docs/2026-11-03/2026-07-08_genet_host_refactor_plan.md),
     step 4).
 - **Bar length (accidental).**
   - Hocket and `hocket-project` export use `audio_primitives::frames_per_bar`,
@@ -144,7 +144,7 @@ cross-repo path consumers.
   Graphshell's `projection_compile.rs` is only a re-export of `scenomise`,
   which Woodshed already uses.
 - **The ownership rule** is in the
-  [stage plan](2026-07-11_stage_set_tools_plan.md), lines 411-414: Graphshell
+  [stage plan](archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md), lines 411-414: Graphshell
   informs the separation of source bindings and retained navigation, and "is
   not imported as a second owner of Woodshed data".
 
@@ -153,7 +153,7 @@ cross-repo path consumers.
 | Reading | Status |
 |---|---|
 | (a) Woodshed hosts shared graph libraries over its own data | Largely true already. |
-| (b) Woodshed/Hocket publish projections that Graphshell consumes | Exists only as static host-dataset JSON exports plus a fixture co-op proof (two Graphshell browser surfaces passed admission, contribution and offline reopen; [musical projections plan](2026-09-04_musical_projections_plan.md), lines 690-706). A live `graphshell-endpoint` adapter needs stable ids and real revisions: `session_overview` stamps `Revision(0)` with positional `InstanceId`s (`session_overview.rs:603-688`). It also needs a hosting decision: an in-process admission-aware host, or a djinn `mere/{domain}` route with a Woodshed validator. |
+| (b) Woodshed/Hocket publish projections that Graphshell consumes | Exists only as static host-dataset JSON exports plus a fixture co-op proof (two Graphshell browser surfaces passed admission, contribution and offline reopen; [musical projections plan](archive_docs/2026-11-03/2026-09-04_musical_projections_plan.md), lines 690-706). A live `graphshell-endpoint` adapter needs stable ids and real revisions: `session_overview` stamps `Revision(0)` with positional `InstanceId`s (`session_overview.rs:603-688`). It also needs a hosting decision: an in-process admission-aware host, or a djinn `mere/{domain}` route with a Woodshed validator. |
 | (c) Graphshell surfaces mounted in `woodshed-genet` | Only client-side models and views are feasible, such as `mere-view` (which needs pictograph `signals`, while Woodshed enables only `canvas`). Graphshell's canvas controls, readers, editors and Forme session are `web`-feature-gated but host-neutral modules inside the port; reuse needs a Mere-side extraction. Woodshed must never construct `GraphshellApp`/`MereHost` (second authority). |
 
 ### Further findings
@@ -170,7 +170,7 @@ cross-repo path consumers.
   (`web/fixtures/woodshed-stage.json`). A second cross-repo include breaks in
   worktrees.
 - **Pin text disagrees.** Manifests pin Mere `0b9b7a9`. DOC_README, the
-  [Tabard plan](2026-10-08_tabard_adoption_plan.md) (line 25) and the Hocket
+  [Tabard plan](archive_docs/2026-11-03/2026-10-08_tabard_adoption_plan.md) (line 25) and the Hocket
   host-refactor plan (lines 470-472) cite the `8568f42`/`2c7ef73` family.
 
 ## 3. Hocket integration
@@ -257,7 +257,7 @@ cross-repo path consumers.
    because both touch the same manifests. *Landed 2026-10-15 for the root,
    `ports/hocket` and the recipe instrument, at Mere `90ce8f12d` with
    `graphshell_endpoint::door`; Redshank followed the same day.* See the
-   [rehome plan](2026-09-09_audio_ports_rehome_plan.md).
+   [rehome plan](archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md).
 5. **Hocket carrier: per-turn signed operations.** Each `HistoryNode` becomes
    one signed operation on a Stickleback domain, with blobs carried
    separately. A turn mark and per-node authorship enter `hocket-model`.

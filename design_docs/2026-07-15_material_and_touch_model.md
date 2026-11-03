@@ -1,7 +1,7 @@
 # Material and Touch: a unifying model
 
 A design reframe from a 2026-07-15 conversation. Extends, and partly reframes,
-[2026-07-11_stage_set_tools_plan.md](2026-07-11_stage_set_tools_plan.md). Not an
+[Stage and Set plan](2026-11-03_stage_set_tools_plan.md). Not an
 implementation plan yet: a shape to build toward, with the gaps named.
 
 ## The reframe

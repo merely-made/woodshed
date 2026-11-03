@@ -6,7 +6,7 @@ shows the note's essentials and plays it. This turns the board from a static
 diagram into something you interrogate, without leaving the Stage.
 
 Builds on the paint-leaf board and its per-marker label overlay (see
-[2026-07-14_instruments_and_fretboard_rendering_plan.md](2026-07-14_instruments_and_fretboard_rendering_plan.md)).
+[2026-07-14_instruments_and_fretboard_rendering_plan.md](archive_docs/2026-11-03/2026-07-14_instruments_and_fretboard_rendering_plan.md)).
 
 ## Decisions (locked 2026-07-15)
 
