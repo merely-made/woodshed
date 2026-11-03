@@ -67,3 +67,15 @@ have already been reconciled.
 - 2026-07-18: The remaining host-side work (recipient exchange, carrier, review
   UI, acceptance action) is carried forward into
   [2026-07-18_handoff-ui_plan.md](2026-07-18_handoff-ui_plan.md).
+
+## Current acceptance and carried work (2026-11-03)
+
+The bounded 2026-10-16 native project packet qualifies local self-addressed
+Save/Open/WAV export and signed handoff write/receive, review/discard/accept/adopt
+with fresh-process project/history/media reopening. Earlier native-gap wording
+below is historical to its dated step. That packet does not qualify two-peer or
+network transfer, encrypted transport, physical audio or signed per-turn
+operations. Branch conflict reconciliation/merge, FT9 Moothold wire-schema
+coordination and recipient/transport work remain with this plan and the live
+handoff UI/product frontier. A future branch chooser must use an explicit
+checkout target; retained sibling branches are not a merge policy.

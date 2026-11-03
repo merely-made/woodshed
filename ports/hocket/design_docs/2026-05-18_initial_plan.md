@@ -1712,3 +1712,19 @@ Captured here so the rationale survives the session:
     input stream.
   - All 17 hocket-engine tests pass (12 unit + 3 integration + 2
     transport carry-overs).
+
+## Closure carry-forward (2026-11-03)
+
+The compact completed project, export, history and settings records are
+archived whole; their surviving directions remain part of this live frontier.
+FT9 retains wire-schema/transport coordination, two-peer and signed-turn work;
+local self-addressed native acceptance is a narrower completed packet.
+Device-local preference persistence, live settings editing/worker restart and
+hot-plug remain host work where still applicable; they are not project history.
+A branch chooser must select an explicit checkout target, not invent merge.
+Storing already-compressed WavPack ZIP entries without Deflate is an optional
+format tidy, not a correctness requirement. The open/importable-format goal may
+be promoted into maintainer-owned PROJECT_DESCRIPTION only by the maintainer;
+archival authorizes no edit to that file. WAV remains the mix export and
+WavPack the implemented float-preserving media path, so the old FLAC research
+note is not an outstanding codec implementation mandate.

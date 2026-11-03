@@ -156,3 +156,12 @@ migration is separately reportable from release publication or main merge.
   audible replay, device restart, mixed-rate input capability and latency
   calibration remain open; no physical manual demo or native project-file
   persistence is claimed.
+
+## Closure carry-forward (2026-11-03)
+
+Archiving the landed per-launch device-selection and host-acceptance records
+preserves this plan's physical selection/restart, hot-plug, permissions,
+audible input/output, mixed-rate input/resampling and latency/calibration
+limits. The later native project packet qualifies bounded file dialogs and
+self-addressed workflow, not physical audio or a wider device matrix. Nothing
+in this administrative closure supplies a new manual audio demonstration.

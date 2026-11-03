@@ -477,3 +477,16 @@ Remaining refinements, in priority order:
   revealed, page unmoved, deck/caption fixed below); a short neck fits with no
   scrollbar; the cap re-fits on resize. The overlay still rides the leaf (it spills
   the clip, so it keeps it).
+
+## Prototype directions retained for reconciliation (2026-11-03)
+
+Carry shared musical context with independent catalog selections and a
+configurable neck window from compact voicing to full neck. Preserve the
+requested free tuner and explicit baritone presets. Reconcile early unclosed
+candidates against current theory/audio source before describing defects or
+completion: non-tertiary scale coverage, spelling-aware recognition,
+CAGED/playability and nuanced fingering, nearest-string tuner targeting,
+practice generators, minor-jazz progressions and diatonic-arpeggio exercises.
+The later horizontal/vertical setting governs orientation. Mobile fit, touch
+and accessible custom leaves retain their own evidence gates; obsolete tabs
+and widget lifetimes are not revived by archival.

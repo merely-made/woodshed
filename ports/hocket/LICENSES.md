@@ -2,8 +2,8 @@
 
 **This repository: MPL-2.0.** Every file Mark wrote carries Exhibit A and the
 SPDX tag `MPL-2.0`, per the
-[license posture brief](../mere/design_docs/2026-08-22_license_posture_brief.md)
-of 2026-08-22 (mere `design_docs/2026-08-22_license_posture_brief.md`). The full
+license posture brief of 2026-08-22 at
+`mere/design_docs/2026-08-22_license_posture_brief.md`. The full
 text is in [`LICENSE`](LICENSE).
 
 This file is the provenance ledger. It is the authority for what the relicense

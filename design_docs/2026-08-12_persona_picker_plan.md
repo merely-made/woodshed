@@ -248,3 +248,13 @@ In personae: `roster::open_profile` (the named-persona open, factored so
 both open paths unlock once) and `Unlock::passphrase` (so an application
 does not need a `zeroize` dependency to name a passphrase vault).
 **79 passed, 0 failed.**
+
+## Closure carry-forward (2026-11-03)
+
+The completed personae-sealed-session record is historical. Its persona-choice
+follow-on belongs to this picker and preservation D1, including current
+owner-specific store reopening and admission. Its restart-shaped suggestion and
+unsealed/plaintext-adoption behavior do not override later live-switch and D1
+rulings. Keep P3/create and remaining acceptance at their actual current scope.
+Actual cross-device transport/pairing of sealed practice remains with the
+family owner at `mere/design_docs/mere_docs/implementation_strategy/2026-10-28_device_pairing_plan.md`, rather than being claimed by local sealing.

@@ -8,7 +8,7 @@ transcription or reasoning model is selected for the product. The research
 refresh below narrows the next benchmark and identifies the current ESP owner.
 
 This plan supersedes the recommendation in
-[`2026-05-15_polyphonic_pitch_spike.md`](2026-05-15_polyphonic_pitch_spike.md).
+[`archive_docs/2026-11-03/2026-05-15_polyphonic_pitch_spike.md`](archive_docs/2026-11-03/2026-05-15_polyphonic_pitch_spike.md).
 That spike correctly identified guitar polyphony as difficult, but treated one
 embedded detector as the decision. The current question is broader: how a
 recording becomes inspectable musical evidence, catalog relations, and useful
@@ -433,3 +433,11 @@ claimed until R2-R4 produce held-out evidence.
   owns inference and actors, while Sibylla already owns Burn embedding and
   retrieval. The plan now adds only the missing structured audio-analysis tool
   seam and keeps agents and semantic retrieval in their existing owners.
+
+## Prototype research handoff (2026-11-03)
+
+The superseded polyphonic-pitch spike is preserved whole as research history.
+Chord recognition, exercise scoring and practice transcription remain possible
+consumers of model-neutral analysis, not model selections or promised shipping
+features. This benchmark owner governs corpus, comparison and quality evidence;
+the old tract recommendation supplies no current dependency mandate.

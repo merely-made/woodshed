@@ -22,22 +22,11 @@ before any other doc in this directory.
   remain open; richer composition and FunDSP stay planned.
 
 
-- [2026-10-16_native_project_handoff_plan.md](2026-10-16_native_project_handoff_plan.md) — Accepted bounded native save/open/export and self-addressed handoff workflow: two processes, seven reviewed captures, exact project/history/media reopening and WAV parity. Physical audio and two-peer transport remain separate.
-
-- [2026-10-16_project_worker_correlation_plan.md](2026-10-16_project_worker_correlation_plan.md) — Implemented and CPU/build qualified: request/session-scoped admission, explicit busy state and stale-reply rejection; 116 tests, all-target checks and desktop build pass. Native self-addressed handoff follow-through is recorded in the native project plan above.
-
 - [2026-10-11_firewheel_adoption_plan.md](2026-10-11_firewheel_adoption_plan.md) —
   **Consumer/native regression accepted; physical audio open.** Standalone
   Firewheel 0.14 at the exact owned fork revision, with 166 CPU checks, twelve
   rendered graph capture/replay/lifecycle tests and 19 reviewed native captures.
   Physical devices and latency remain separate acceptance gates.
-
-- [2026-10-11_host_acceptance_plan.md](2026-10-11_host_acceptance_plan.md) —
-  **Landed on isolated lane.** Tightens existing Mesquite close/readback and project-worker
-  boundaries, removes unused capture dependencies, and makes the manual audio
-  demo explicit and unsuccessful when execution fails. Seventy CPU checks,
-  five finite native processes, 19 reviewed captures and two appearance
-  reopens pass; actual hardware audio/custody remain separate gates.
 
 - [2026-05-18_initial_plan.md](2026-05-18_initial_plan.md) — Initial
   scaffold, workspace skeleton, and feature-target ladder from
@@ -55,45 +44,22 @@ before any other doc in this directory.
   `hocket_engine` spine wired in. The Masonry app + the `mark-ik/xilem` fork
   are deleted family-wide (hocket + woodshed). Deferred follow-ups listed in
   the plan's Progress log.
-- [2026-07-09_honest-local-session_plan.md](2026-07-09_honest-local-session_plan.md)
-  - **LANDED.** Empty-session startup, history-backed track creation, real
-  solo/stop behavior, and removal of collaboration/demo affordances that had
-  no backing subsystem. Persistence and sync remain separately scoped.
-- [2026-07-09_muniment-project-store_plan.md](2026-07-09_muniment-project-store_plan.md)
-  - October 11 extracts portable media/store/export/handoff/waveform into
-  `hocket-project`, keeping device execution in `hocket-engine` and preserving
-  model/media identity and existing project formats. All 84 relevant CPU tests
-  pass; combined desktop and native project acceptance follow integration.
-  - **LANDED.** Local project persistence over Muniment's generic backend seam,
-  with a Genet-host Redb API. The manifest retains Hocket's session/history
-  semantics and media keeps its existing `MediaRef` identity.
-- [2026-07-09_project-controls_plan.md](2026-07-09_project-controls_plan.md)
-  - **LANDED.** Native desktop open/save controls over the Muniment store, with
-  Armillary moving Redb work off the Genet kernel thread.
-- [2026-07-09_loop-export_plan.md](2026-07-09_loop-export_plan.md)
-  - **LANDED.** Loop-first WAV export through the existing project worker, with
-  explicit behavior for unequal free-capture loop lengths.
-- [2026-07-09_free-loop-export-duration_plan.md](2026-07-09_free-loop-export-duration_plan.md)
-  - **LANDED.** Explicit musical-bar export for unequal free-capture loops,
-  held as host-local export intent rather than project state.
-- [2026-07-09_audio-device-selection_plan.md](2026-07-09_audio-device-selection_plan.md)
-  - **LANDED.** Per-launch local input/output selection over Firewheel CPAL,
-  separate from project persistence and sync.
 - [2026-07-10_signed-handoff-envelope_plan.md](2026-07-10_signed-handoff-envelope_plan.md)
   - **PARTIAL.** Signed, complete, recipient-addressed project hand-off bytes
   with durable-sender attestation; raw bytes are not encrypted.
   Durable Windows host identity and portable `hocket-project` branch acceptance
   are landed. The file carrier, recipient exchange and review/accept gestures
-  are implemented; branch merge and current native project acceptance remain
-  separate work. Host sequencing is carried forward in the
+  are implemented; bounded native self-addressed acceptance is archived below.
+  Branch merge, two-peer transport and physical audio remain separate work. Host sequencing is carried forward in the
   hand-off UI plan below.
 - [2026-07-18_handoff-ui_plan.md](2026-07-18_handoff-ui_plan.md)
-  - **IMPLEMENTED; HOST ACCEPTANCE OPEN.** The pass-the-mic gesture: a file carrier over the
+  - **IMPLEMENTED; BOUNDED LOCAL NATIVE ACCEPTANCE RECORDED.** The pass-the-mic gesture: a file carrier over the
   existing project worker, a copyable contact token with auto-addressed replies,
   incoming staging and review in the circle, and same-session or new-session
   acceptance. Cleartext carrier, stated honestly; encryption and a network
   carrier are later. Project-worker reply correlation is implemented and CPU-qualified on October 16;
-  current native save/open/export/handoff qualification remains open.
+  bounded native save/open/export/self-addressed handoff passed in the archived
+  acceptance record. Two-peer/network transfer and physical audio remain open.
 - [2026-08-08_persona_timeline_design.md](2026-08-08_persona_timeline_design.md)
   - **DESIGN SKETCH** (from Mark, no implementation planned). A persona as a
   lens over the session: click a participant, see their contributions laid out
@@ -105,16 +71,6 @@ before any other doc in this directory.
   timeline scene, platen/forme arrangement, sprigging regions; hocket supplies
   the musical reading), and draws the doctrine line: provenance reading yes,
   editing from the timeline is the arrange-view canary.
-- [2026-08-06_update_settings_persistence_plan.md](2026-08-06_update_settings_persistence_plan.md)
-  - **LANDED.** Update policy becomes a stored device setting. `UpdateSettings`
-  persists to `update-settings.json` through `UpdateSettingsProvider` (atomic
-  tmp + rename) and is described at the `pelt/update` reference on Genet's
-  settings contract; the app and `--update-now` load the same file, so they
-  cannot disagree. Retires the interim `HOCKET_UPDATE_POLICY` env var, which is
-  no longer read; `HOCKET_SETTINGS` overrides the file for isolated runs.
-  Hocket's slice of Mere's cross-product configuration ownership umbrella at
-  `mere/design_docs/mere_docs/implementation_strategy/2026-08-06_configuration_ownership_settings_projection_plan.md`
-  (its C5).
 - [2026-07-24_auto-update_plan.md](2026-07-24_auto-update_plan.md)
   - **H1-H4 (Windows) LANDED**; its interim `HOCKET_UPDATE_POLICY` env setting
   retired 2026-08-06 by the update-settings plan above. Configurable auto-update: a platform-neutral
@@ -130,20 +86,9 @@ before any other doc in this directory.
   - How to cut a Hocket release: `cargo-packager` + `luggage-manifest`, the
   signing key, per-host formats, and the two silent packaging traps that
   will otherwise ship a mislabelled binary.
-- [2026-07-10_history-branches_plan.md](2026-07-10_history-branches_plan.md)
-  - **LANDED.** Retained history branches, cross-branch checkout, and validated
-  same-root graph integration; conflicting-edit reconciliation remains open.
 - [2026-07-11_real_waveforms_meter_ballistics_plan.md](2026-07-11_real_waveforms_meter_ballistics_plan.md)
   - **LANDED.** Real cached summed/per-layer waveform projections through
   responsive Chisel leaves, plus shared configurable meter ballistics.
-- [2026-07-14_open-project-format_plan.md](2026-07-14_open-project-format_plan.md)
-  - **DOCTRINE + FULLY LANDED.** A `.hock` file must be openable and its material
-  importable without Hocket — no lock-in. A `.hock` is a zip of `manifest.cbor`
-  (CBOR structure) + `media/<hash>.wv` (lossless WavPack via wavicle) +
-  `meta.json` (provenance), over a Muniment `ZipBackend` (the seam was kept, not
-  dropped). Hardened after an adversarial review. FLAC was evaluated and rejected
-  (it cannot hold `f32` audio both losslessly and importably); WavPack can, and a
-  pure-Rust codec for it (wavicle) was built to do it.
 - **WavPack codec — founded as wavicle, wired into Hocket.** The pure-Rust
   WavPack codec was founded 2026-07-15 as **wavicle**
   (github.com/merely-made/wavicle). Its plan lives in that repo's `design_docs/`; the
@@ -171,6 +116,25 @@ before any other doc in this directory.
   two fresh appearance reopens; physical audio qualification remains open.
 
 ## Archive
+
+### Archived checkpoint: 2026-11-03
+
+Completed bounded work and superseded prototypes are preserved whole.
+Open product and qualification work retains its current owner; archival
+adds no native, device or cross-platform acceptance.
+
+- [Audio Device Selection Plan](archive_docs/2026-11-03/2026-07-09_audio-device-selection_plan.md)
+- [Free-Loop Export Duration Plan](archive_docs/2026-11-03/2026-07-09_free-loop-export-duration_plan.md)
+- [Honest Local Session Plan](archive_docs/2026-11-03/2026-07-09_honest-local-session_plan.md)
+- [Loop Export Plan](archive_docs/2026-11-03/2026-07-09_loop-export_plan.md)
+- [History Branch Retention Plan](archive_docs/2026-11-03/2026-07-10_history-branches_plan.md)
+- [Open, Non-Lock-In Project Format](archive_docs/2026-11-03/2026-07-14_open-project-format_plan.md)
+- [Hocket Update Settings Persistence](archive_docs/2026-11-03/2026-08-06_update_settings_persistence_plan.md)
+- [Native project and handoff acceptance](archive_docs/2026-11-03/2026-10-16_native_project_handoff_plan.md)
+- [Project-worker request and session correlation](archive_docs/2026-11-03/2026-10-16_project_worker_correlation_plan.md)
+- [Muniment Project Store Plan](archive_docs/2026-11-03/2026-07-09_muniment-project-store_plan.md)
+- [Project Controls Plan](archive_docs/2026-11-03/2026-07-09_project-controls_plan.md)
+- [Hocket host acceptance and manual audio demonstration](archive_docs/2026-11-03/2026-10-11_host_acceptance_plan.md)
 
 - [2026-10-11 Tabard adoption](archive_docs/2026-10-11/2026-10-11_tabard_adoption_plan.md) — Landed application appearance and qualification.
 - `archive_docs/` — retired plans and superseded notes (created on
@@ -257,7 +221,7 @@ section whenever a durable working insight emerges from a session.
   `meta.json` (provenance), over a Muniment `ZipBackend`. Offline rendered
   exports use WAV; project media preserve floating-point captures in WavPack.
   FLAC was evaluated and rejected for that storage requirement. See
-  [2026-07-14_open-project-format_plan.md](2026-07-14_open-project-format_plan.md).
+  [2026-07-14_open-project-format_plan.md](archive_docs/2026-11-03/2026-07-14_open-project-format_plan.md).
 
 ## Reference reading
 

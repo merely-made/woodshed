@@ -249,6 +249,16 @@ Organized by feature target and validation, not by time.
   scope on terminal replies. Explicit pending work governs quiescence, including
   handoff read/write; stale replies cannot replace the live project, reassign its
   saved path, stage incoming material or release newer work. See
-  [the correlation plan](2026-10-16_project_worker_correlation_plan.md).
+  [the correlation plan](archive_docs/2026-11-03/2026-10-16_project_worker_correlation_plan.md).
   Native file-dialog save/open/export/handoff qualification remains open; this
   CPU slice does not qualify that flow or introduce signed per-turn operations.
+
+## Current acceptance boundary (2026-11-03)
+
+The later 2026-10-16 native project packet supplies bounded local self-addressed
+save/open/export/handoff and fresh-process file acceptance. Its original is
+archived at this checkpoint with the worker-correlation record. This closes
+that earlier native-gap wording within the packet's exact scope. Two-peer or
+network transport, encrypted carrier, signed per-turn operations, branch merge
+and physical audio remain separately open. Current request/session correlation
+admits matching replies; it does not cancel or roll back already admitted I/O.

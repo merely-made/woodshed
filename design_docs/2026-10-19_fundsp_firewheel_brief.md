@@ -6,7 +6,7 @@ implementation is scheduled. Mark asked for this brief before deciding.
 ## Origin
 
 On 2026-10-19 Mark asked for "fundsp + firewheel thoughts?", then "let's check
-upstream!" The [April plan](2026-04-30_initial_plan.md) (line 638) had deferred
+upstream!" The [April plan](archive_docs/2026-11-03/2026-04-30_initial_plan.md) (line 638) had deferred
 fundsp: a sine-burst click "adds zero dependency surface", with fundsp to come
 "when we want richer drum sounds".
 

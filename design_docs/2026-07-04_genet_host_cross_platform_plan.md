@@ -3,7 +3,7 @@
 Woodshed's UI moves from masonry/xilem (the mark-ik/xilem `woodshed-theme`
 fork) to **xilem_serval**: genet renders the app, on desktop and in the
 browser, from one DOM-shaped view tree. This supersedes the web-vs-native
-split in [2026-06-14_web_profile_plan.md](2026-06-14_web_profile_plan.md);
+split in [2026-06-14_web_profile_plan.md](archive_docs/2026-11-03/2026-06-14_web_profile_plan.md);
 that plan's Tier 0 seams carry forward here.
 
 Status: **active desktop-alpha hardening.** The Woodshed-side Genet migration
@@ -98,7 +98,7 @@ workspace and the smoke already models it.
   *Done when:* every screen exists in woodshed-genet and the redesign
   plan's P4-P6 done-conditions hold there.
 - **S5 — parity cut.** Delete `woodshed-xilem`, the xilem fork dep, and
-  `xilem_fork_patches.md` (archive). Cross-platform desktop validation on
+  `archive_docs/2026-11-03/xilem_fork_patches.md` (archive). Cross-platform desktop validation on
   the iMac / Fedora / Mint machines. *Done when:* main builds with no
   mark-ik/xilem reference and the app runs on all four desktop targets.
 - **W1 — web shell.** rAF/resize/input loop over the smoke's chain; host
@@ -735,3 +735,24 @@ Evidence and the isolated native runner are under
 `Code/testing/cambium/mesquite-migration/receipt.md`. Redshank transcript WIP
 remains with its owner. Cross-platform, manual assistive-technology and audio
 quality acceptance remain separate gates.
+
+## Closure carry-forward (2026-11-03)
+
+The shared Cambium desktop-host migration is a completed historical record;
+its archival does not close this plan's desktop matrix, accessibility, narrow
+layout, web or mobile work. The old settings split is superseded by strict
+persona-store/device-local ownership under preservation D1. Keep the current
+host and D1 gates; do not restore the historical singleton file paths or
+plaintext migration merely because their completed implementation is archived.
+
+## Prototype directions retained for reconciliation (2026-11-03)
+
+Browser/mobile reach and accessible custom widgets remain product interests.
+Keep explicit seams for audio input/output, OPFS/storage, time/scheduling,
+Web MIDI where available and browser accessibility. Touch-screen reordering and
+screen-reader behavior require their own qualification. The October 11 web
+ruling calls for explicit local build/publication and a later hosting choice;
+archiving the web-profile prototype creates no automated GitHub deployment
+mandate. Old Iced/Xilem fork choices and output-only tuner restrictions are
+historical. Reconcile earlier store/installer distribution goals with the
+current release owner rather than renewing an obsolete store mandate.

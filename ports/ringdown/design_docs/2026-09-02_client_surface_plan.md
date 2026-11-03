@@ -984,7 +984,7 @@ The relevant existing decisions are:
   now supplied by Mere. Ringdown views use Cambium and the existing native
   host; a browser host can consume portable views subject to its capabilities.
   Do not introduce another toolkit or copy the native event loop. Sources:
-  Woodshed [host migration](../../../design_docs/2026-08-09_cambium_desktop_host_migration.md);
+  Woodshed [host migration](../../../design_docs/archive_docs/2026-11-03/2026-08-09_cambium_desktop_host_migration.md);
   `mere/design_docs/cambium_docs/technical_architecture/2026-09-03_cambium_architecture.md`.
 - **Preserve product authority.** Woodshed already has a long-lived instrument
   `Session`, explicit release and Detached/Follow/Drive metronome policy.

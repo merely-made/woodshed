@@ -4181,7 +4181,7 @@ payload. It also exposed a density issue: on the wide canvas, new take nodes
 at their default slots overlap labels placed by the retained version-1
 arrangement. That is a presentation follow-up, not an identity defect.
 
-**October 16 native closure:** [the take acceptance plan](2026-10-16_mere_take_acceptance_plan.md)
+**October 16 native closure:** [the take acceptance plan](archive_docs/2026-11-03/2026-10-16_mere_take_acceptance_plan.md)
 and `validation/mere-take-acceptance_20261016/receipt.json` close the four open
 checks above. New take defaults avoid retained v1 labels without rewriting ten
 retained positions. Three final native processes (wide seed, wide fresh reopen,
@@ -4867,3 +4867,41 @@ fallback and saved Card tempos in that range, matching the score model;
 fractional, non-finite and out-of-range values still fail. Practice speed keeps
 its separate control. The Graphshell command follows the same range. Follow-up
 evidence is in `mere/ports/graphshell/docs/receipts/notation_tempo_20261020/`.
+
+## Closure carry-forward (2026-11-03)
+
+The completed Mere-take, arrangement-observation, passage-selection and
+relationship-source-return records are archived whole at this checkpoint.
+Their bounded source/model, persistence and named native evidence does not
+qualify physical microphone capture, audibility, audio quality or latency.
+Those remain with this plan's existing release/physical-audio gates. The
+arrangement and relationship consolidations add no fresh native GUI acceptance;
+product-wide acceptance remains separately owned here. New-take fallback
+placement is bounded label clearance, not arbitrary authored-overlap solving.
+This routing preserves the original limits without reopening completed slices.
+
+## Prototype directions retained for reconciliation (2026-11-03)
+
+The archived prototypes retain the dated source rulings. Mark's chosen Form B
+composable surface meant simultaneously mountable, resizable and persisted
+fretboard, tuner and metronome tools; tuning pauses competing sound and resumes
+appropriately; exercises/progressions share the clock; progression Cards can
+form a chord grid. The recorded 1.0 vision includes broader/user-authored
+exercises, progressions and tunings. These are product directions to reconcile
+with later Stage scope, not proof the complete experience is implemented or a
+requirement to restore the old Xilem split layout.
+
+Keep Record separate from Play and editable selection separate from playback.
+Recheck per-bar subdivision, tempo transitions and range copy against current
+code before calling them defects or complete. The old sampler A choice covers
+waveform, gain/reverse/normalize and replace/overdub; trim and a full sampler
+were deferred. Preserve the dated one-bar audible count-in choice, subject to
+later documented timing rulings. Sample slots/import were alternatives, not
+newly approved features. Old dry/one-buffer/no-song-MIDI restrictions were scoped
+to their historical slices and do not become blanket present bans.
+
+Recipe-derived Cards retain provenance and permit individual edits without
+implicit resynchronization. A spatial setting is independent of sequence time.
+The historical generic-resolver convergence was expressly declined; rich lens
+rendering and touch stay with their current product/material owners. Reconcile
+any conflict with later design explicitly rather than cancelling dated intent.

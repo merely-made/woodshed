@@ -19,7 +19,7 @@
   open. Playback, edits, and audio capture remain
   separately owned.
 
-Rust policy (2026-10-13): working toolchain 1.99.0 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".
+Rust policy (2026-10-13; working version reconciled 2026-11-03): working toolchain 1.99.1 and shared MSRV 1.97.1, qualified separately. Canonical policy: `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section "Shared Rust toolchain and minimum version".
 
 Murm source adoption (2026-10-13) is tracked in
 `murm/design_docs/archive_docs/2026-11-02/2026-10-13_murm_family_move_plan.md`. Active consumer roots
@@ -109,12 +109,6 @@ before any other doc in this directory.
 
 - [Shared span-edit intents with metre](2026-07-11_stage_set_tools_plan.md#shared-span-intents-with-authored-metre-2026-10-17) — Adopted on shared Mere `4c4ea11d8`; nine locked arrangement-editor route/model cases pass with forged-intent and stale gesture controls. Domain validation and explicit Save remain in Woodshed. [Receipt](../validation/shared-span-intents_20261017/receipt.json).
 
-- [Relationship source return](2026-10-19_relationship_source_return_plan.md) — Implemented and qualified in an isolated checkout: direct/member source return reuses one reading and current source while preserving selection installation and refusal order; 312 frozen observations match, 313 core and 306 view tests pass. Widths 2/3/64 prove one v3 selection resolution. Evidence stays in testing.
-
-- [Relationship passage selection construction](2026-10-19_passage_selection_plan.md) — Implemented and qualified locally: one selected-material resolution and one occurrence dataset per passage; 38 frozen differential cases, 306 core and 254 receiving view tests pass. Widths 2/3/64 prove construction counts; public APIs, legacy policies and feature-disabled core remain. Publication is separate; evidence stays in testing.
-
-- [Arrangement authoring observations](2026-10-19_arrangement_observation_plan.md) — Implemented and qualified: typed draft baselines and one captured owner/Set/draft observation for gesture/preview checks. 254 view, three mounted-host and five persistence/export tests pass, including ten new guard regressions and fresh CLI processes. Explicit Save, full-Set guards and host persistence remain. This commit records the qualified consolidation; a native GUI rerun remains separate. Evidence stays in testing.
-
 - [Native arrangement editor and panel](2026-07-11_stage_set_tools_plan.md#native-arrangement-editor-and-panel-2026-10-16) — Qualified on macOS: per-Set drafts, role/Card/rest editing and linked saved voicings over the shared scene surface; 393 parent-suite cases plus five child invocations, desktop build, two sealed native processes and 12 reviewed wide/narrow captures with exact Set/document reopening. [Receipt](../validation/native-arrangement_20261016/receipt.json). The shared-height spacing follow-up passes 214 view and two host cases, with three reviewed native captures. [Spacing receipt](../validation/native-arrangement-spacing_20261016/receipt.json). Direct span manipulation is also qualified: captured move/resize, keyboard controls and cancellation; 14 focused cases, two native processes, five reviewed captures and exact sealed Set/document reopening. [Span editing receipt](../validation/native-arrangement-spans_20261016/README.md).
 
 - [Saved progression arrangements](2026-07-11_stage_set_tools_plan.md#saved-progression-arrangements-and-portable-export-2026-10-16) — Qualified: Set-owned musical alignment, identity-safe snapshot copies and explicit session exchange export to Graphshell; 656 suite cases, feature-disabled retention, fresh CLI processes and browser receiving.
@@ -123,11 +117,7 @@ before any other doc in this directory.
 
 - [Stage P4f continuation](2026-07-11_stage_set_tools_plan.md#p4f-join-graph-understanding-to-sound-and-practice) — Bounded practice-flow gate qualified: honest save/close outcomes, visible frontier → voicing → exact directed audition → numbered Rehearsal → sealed fresh reopen; 789 cases plus five child invocations, desktop build and 14 reviewed captures. [Receipt](../validation/stage-p4f_20261016/receipt.json).
 
-- [2026-10-16_mere_take_acceptance_plan.md](2026-10-16_mere_take_acceptance_plan.md) — Loop-take native acceptance complete: fallback placement preserves retained v1 positions; 442 cases, desktop build, three sealed native runs and ten reviewed captures, including wide/narrow fresh-process v2 reopening.
-
-- [Hocket native project/handoff acceptance](../ports/hocket/design_docs/2026-10-16_native_project_handoff_plan.md) — Two native processes/seven reviewed captures qualify Save/Open/WAV export, self-addressed signed handoff review/accept/adopt and exact project/media reopening; physical audio and two-peer transport remain separate.
-
-- [2026-10-16_shared_capture_accumulator_plan.md](2026-10-16_shared_capture_accumulator_plan.md) — Shared capture writes, input feed, completion envelope and Hocket bar countdown implemented; 256 CPU/offline cases and both host all-target checks pass. Adapter scheduling and integrity remain product-owned.
+- [Hocket native project/handoff acceptance](../ports/hocket/design_docs/archive_docs/2026-11-03/2026-10-16_native_project_handoff_plan.md) — Two native processes/seven reviewed captures qualify Save/Open/WAV export, self-addressed signed handoff review/accept/adopt and exact project/media reopening; physical audio and two-peer transport remain separate.
 
 - [2026-10-15_woodshed_codex_handoff.md](2026-10-15_woodshed_codex_handoff.md) — **Handoff for Codex.** Where Woodshed, Hocket, Redshank and Firewheel stand after the Graphshell lift (door, P2 canvas receipt `4005c5a`), the binding rulings, and ordered tasks: join the repin round (remote mere route spec §7.6; Murm `main` `fb6360c12b`), move bar length to Hocket's rule, the shared pure-state DSP crate, and the loop-take node checks. Lists what waits on design or other lanes, and the native-run traps.
 
@@ -399,41 +389,39 @@ before any other doc in this directory.
   The combined Mere `bd5912fb` / Genet `69a2383` graph repeats those gates with
   all 45 Redshank source blobs unchanged and a source-identity-only lock update.
   Compositor/physical visibility and human AT remain open.
-- [2026-07-08_personae_sealed_session.md](2026-07-08_personae_sealed_session.md)
-  — Persona-derived sealing and device carry, completed 2026-08-08.
-- [2026-08-06_settings_persistence_split_plan.md](2026-08-06_settings_persistence_split_plan.md)
-  — Separate application-settings persistence and one-time legacy migration.
-- [2026-08-09_cambium_desktop_host_migration.md](2026-08-09_cambium_desktop_host_migration.md)
-  — Woodshed migrated onto Genet's shared Cambium desktop host.
-
 ## Historical and Superseded Documents
 
 These files remain at their established paths for receipt and link stability.
 They are not current product authority.
 
-- [2026-04-30_initial_plan.md](2026-04-30_initial_plan.md) — Initial Iced-era
-  scaffold and roadmap.
-- [2026-05-15_polyphonic_pitch_spike.md](2026-05-15_polyphonic_pitch_spike.md)
-  — Superseded by the model-neutral audio-material analysis plan.
-- [2026-05-16_song_mode_integration.md](2026-05-16_song_mode_integration.md) and
-  [2026-05-19_song_timeline_layers_plan.md](2026-05-19_song_timeline_layers_plan.md)
-  — Historical Song/DAW framing, superseded by Set-derived Looper work.
-- [2026-05-16_xilem_migration_plan.md](2026-05-16_xilem_migration_plan.md) and
-  [xilem_fork_patches.md](xilem_fork_patches.md) — Retired Xilem migration and
-  fork ledger; the live host is Genet/Cambium.
 - [2026-05-18_xilem_popup_view_proposal.md](2026-05-18_xilem_popup_view_proposal.md)
   — Retained upstream proposal; not active Woodshed work.
-- [2026-05-21_fretboard_canvas_lenses_plan.md](2026-05-21_fretboard_canvas_lenses_plan.md)
-  — Historical lens-based product frame; shipped portions feed Stage.
-- [2026-05-21_composable_instrument_surface_plan.md](2026-05-21_composable_instrument_surface_plan.md)
-  — Superseded product composition; reusable tools carry forward without one
-  configurable stack.
-- [2026-05-22_rehearsal_redesign_plan.md](2026-05-22_rehearsal_redesign_plan.md)
-  — Historical prototype-to-Card transition, superseded by Stage/Set/Tools.
-- [2026-06-14_web_profile_plan.md](2026-06-14_web_profile_plan.md) — Superseded
-  by the Genet host plan; retained for the original Tier-0 seam analysis.
-
 ## Archive
+
+### Archived checkpoint: 2026-11-03
+
+Completed bounded work and superseded prototypes are preserved whole.
+Open product and qualification work retains its current owner; archival
+adds no native, device or cross-platform acceptance.
+
+- [Mere take acceptance](archive_docs/2026-11-03/2026-10-16_mere_take_acceptance_plan.md)
+- [Shared capture accumulator](archive_docs/2026-11-03/2026-10-16_shared_capture_accumulator_plan.md)
+- [Arrangement authoring observations](archive_docs/2026-11-03/2026-10-19_arrangement_observation_plan.md)
+- [Relationship passage selection construction](archive_docs/2026-11-03/2026-10-19_passage_selection_plan.md)
+- [Relationship source return](archive_docs/2026-11-03/2026-10-19_relationship_source_return_plan.md)
+- [Personae-Sealed Practice Session](archive_docs/2026-11-03/2026-07-08_personae_sealed_session.md)
+- [Woodshed Settings Persistence Split](archive_docs/2026-11-03/2026-08-06_settings_persistence_split_plan.md)
+- [Woodshed onto the shared Cambium desktop host](archive_docs/2026-11-03/2026-08-09_cambium_desktop_host_migration.md)
+- [Initial Plan](archive_docs/2026-11-03/2026-04-30_initial_plan.md)
+- [Polyphonic Pitch Detection — Research Spike](archive_docs/2026-11-03/2026-05-15_polyphonic_pitch_spike.md)
+- [Song Mode — Integration Design](archive_docs/2026-11-03/2026-05-16_song_mode_integration.md)
+- [Song Timeline — Layered, Bar-Quantized View + Sampler](archive_docs/2026-11-03/2026-05-19_song_timeline_layers_plan.md)
+- [Xilem Migration Plan](archive_docs/2026-11-03/2026-05-16_xilem_migration_plan.md)
+- [Carried xilem fork patches](archive_docs/2026-11-03/xilem_fork_patches.md)
+- [Fretboard-as-canvas, tabs as lenses](archive_docs/2026-11-03/2026-05-21_fretboard_canvas_lenses_plan.md)
+- [Composable instrument surface (Phase 3 → 1.0)](archive_docs/2026-11-03/2026-05-21_composable_instrument_surface_plan.md)
+- [Rehearsal redesign — from prototype to designed UI](archive_docs/2026-11-03/2026-05-22_rehearsal_redesign_plan.md)
+- [Web profile — scope for a browser demo](archive_docs/2026-11-03/2026-06-14_web_profile_plan.md)
 
 - `archive_docs/` — retired plans and superseded notes.
 - `archive_docs/2026-05-18/2026-05-17_woodshed_daw_plan.md` —

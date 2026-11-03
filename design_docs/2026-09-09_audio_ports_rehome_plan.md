@@ -674,7 +674,7 @@ sample accumulation, InputFeed, host-stamped CompletedTake, and Hocket's
 poll-driven BarCountdown. Hocket and Woodshed retain their different capture
 schedules, input integrity admission and stream ownership. The shared dev-only
 harness and existing adapter suites pass 256 cases; both desktop hosts pass
-locked offline all-target checks. The [extraction plan](2026-10-16_shared_capture_accumulator_plan.md)
+locked offline all-target checks. The [extraction plan](archive_docs/2026-11-03/2026-10-16_shared_capture_accumulator_plan.md)
 and `validation/shared-capture-seams_20261016/receipt.json` hold scoped evidence.
 No persistent clocks or PCM changed; earlier native/export receipts retain their
 original sources. Physical input, audibility and latency remain independently
@@ -686,7 +686,7 @@ The standalone host now stamps all five project worker operations with Armillary
 request IDs and host session/replacement scope. Explicit admitted pending work
 owns busy state, including handoff read/write. Correlation protects saved-file
 association, live project replacement and staged incoming data from late replies.
-The [port plan](../ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md)
+The [port plan](../ports/hocket/design_docs/archive_docs/2026-11-03/2026-10-16_project_worker_correlation_plan.md)
 owns implementation and CPU evidence; native project/handoff qualification,
 physical audio and signed turn operations remain separately gated.
 
@@ -1160,3 +1160,12 @@ deliberately bound dynamics follow as later vocabulary work.
   bounded standards/private-profile audit and unsent outreach. Keep generic
   authoring/audio and original assets independently releasable; demonstrate
   actual artifact isolation before calling a future controller standards-only.
+
+## Closure carry-forward (2026-11-03)
+
+The shared-capture accumulator/seams extraction is complete within its recorded
+CPU/offline scope. Its archive does not refresh native, reopened-profile,
+physical-input, mixed-device or latency evidence. Existing F3/F4 and product
+acceptance gates retain those boundaries. Scheduling, clock identity, integrity
+admission, storage and completion stamps remain product-owned; extracting pure
+capture seams did not unify those policies.

@@ -219,7 +219,7 @@ October 16 task 3 implemented and CPU/offline qualified: both engines consume
 shared allocation-free writes, InputFeed and CompletedTake; Hocket capture and
 queued replay consume BarCountdown. The independent shared allocator harness and
 both adapter suites pass 256 distinct cases; both desktop hosts pass locked
-all-target checks. See [the extraction plan](2026-10-16_shared_capture_accumulator_plan.md)
+all-target checks. See [the extraction plan](archive_docs/2026-11-03/2026-10-16_shared_capture_accumulator_plan.md)
 and `validation/shared-capture-seams_20261016/receipt.json`. Native/device
 qualification remains separate; product timing, integrity admission and custody
 stay local.
@@ -250,7 +250,7 @@ playback reached from the Mere, narrow layout, and fresh-process v2 presentation
 reopening pass in three final native processes with ten reviewed captures.
 The selected take's actual output bar was observed in every run; its sealed
 192,000-frame PCM retains exact bits. 442 automated cases and the desktop build
-pass. See [the acceptance plan](2026-10-16_mere_take_acceptance_plan.md) and
+pass. See [the acceptance plan](archive_docs/2026-11-03/2026-10-16_mere_take_acceptance_plan.md) and
 `validation/mere-take-acceptance_20261016/receipt.json`. No physical input,
 audibility or latency claim follows from this receipt.
 
@@ -259,10 +259,10 @@ audibility or latency claim follows from this receipt.
 - **Hocket per-turn signed operations (ruling 5).** A design plan only. It is
   gated on Hocket local durability and separate design authorization.
   Bounded native self-addressed project/handoff qualification now passes; see
-  `ports/hocket/design_docs/2026-10-16_native_project_handoff_plan.md`.
+  `ports/hocket/design_docs/archive_docs/2026-11-03/2026-10-16_native_project_handoff_plan.md`.
   Two-peer/network transfer and signed per-turn operations are not qualified. The October 16 correlation follow-up closes the
   project-worker sequencing defect with request/session-scoped replies and CPU
-  checks; see `ports/hocket/design_docs/2026-10-16_project_worker_correlation_plan.md`.
+  checks; see `ports/hocket/design_docs/archive_docs/2026-11-03/2026-10-16_project_worker_correlation_plan.md`.
   Signed per-turn operations remain outside that host fix.
 - **Saved-song bar graph nodes.** These need stable ids and PCM persistence
   (stage plan P7) first.

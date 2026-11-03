@@ -97,7 +97,7 @@ the per-screen reworks. Mobile is a separate downstream track.
 - The same card model in a portrait frame: a bottom dock on Stage, a horizontally
   scrolling lane on Rehearse, a tap-to-fill recipe list on Practice.
 - This is the `xilem_web` / shared-view-core effort already scoped in
-  [2026-06-14_web_profile_plan.md](2026-06-14_web_profile_plan.md). Not part of
+  [2026-06-14_web_profile_plan.md](archive_docs/2026-11-03/2026-06-14_web_profile_plan.md). Not part of
   this pass; the left material rail (P3 alt) may serve the mobile nav.
 
 ## Relationship to existing plans
@@ -105,9 +105,9 @@ the per-screen reworks. Mobile is a separate downstream track.
 - **Theme system** ([2026-05-20_theme_system_design.md](2026-05-20_theme_system_design.md)):
   P1 is new seed sets through that engine; no new theming infrastructure.
 - **Composable instrument surface**
-  ([2026-05-21_composable_instrument_surface_plan.md](2026-05-21_composable_instrument_surface_plan.md)):
+  ([2026-05-21_composable_instrument_surface_plan.md](archive_docs/2026-11-03/2026-05-21_composable_instrument_surface_plan.md)):
   P4's horizontal neck is the orientation work that doc deferred.
-- **Rehearsal redesign** ([2026-05-22_rehearsal_redesign_plan.md](2026-05-22_rehearsal_redesign_plan.md)):
+- **Rehearsal redesign** ([2026-05-22_rehearsal_redesign_plan.md](archive_docs/2026-11-03/2026-05-22_rehearsal_redesign_plan.md)):
   P5 reskins the U6 lane it shipped; the model is unchanged, only the surface.
 - **CSD chrome** (shipped 2026-06-15, on `main`): the header is now the title
   bar, which is the foundation P3 reduces chrome on top of.
