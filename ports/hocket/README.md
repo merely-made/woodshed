@@ -10,7 +10,7 @@ Hocket is hosted under Woodshed's `ports/hocket` directory but remains a
 separately versioned, tested, and released nested workspace. Its reusable
 model, project, recorder-controller and Cambium-view libraries live under root
 `crates/`; the standalone host supplies devices, identity, workers and window
-services. The [recorder extraction plan](design_docs/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
+services. The [recorder extraction plan](design_docs/archive_docs/2026-11-03/2026-07-08_genet_host_refactor_plan.md#embeddable-recorder-follow-through-2026-10-13)
 records the current embedding boundary and its scoped acceptance.
 
 ## Status (2026-08-12)

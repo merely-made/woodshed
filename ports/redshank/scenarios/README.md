@@ -96,7 +96,7 @@ For a narrow editor run, use a separate fresh profile with `REDSHANK_WIDTH=420`
 and `REDSHANK_HEIGHT=900`. A successful launcher alone is insufficient: require
 `RESULT ok`, presentations, zero blank captures, reviewed PNGs and unchanged
 listener state. The completed macOS qualification and exact image/receipt hashes
-are recorded in [the acceptance ledger](validation/tabard_appearance_acceptance.json).
+are recorded in [the acceptance ledger](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/redshank/scenarios/validation/tabard_appearance_acceptance.json).
 Earlier rejected receipts remain preserved; the final 420-pixel pair uses the
 shared header repair. Mode controls use `data-appearance-mode` identities so
 a Light mode cannot select the separate built-in Light theme.

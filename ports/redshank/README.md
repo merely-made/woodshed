@@ -109,7 +109,7 @@ embedding remain open.
 A local digest is computed before decode from the opened file; it does not make
 a concurrently modified file immutable. Remote receipts retain validators but
 do not claim a complete digest until every byte is durably cached.
-See the [canonical plan](../../design_docs/2026-09-01_listening_annotation_port_plan.md)
+See the [canonical plan](../../design_docs/2026-11-03_listening_annotation_port_plan.md)
 for current validation receipts and the remaining done-conditions.
 
 For a deterministic headed receipt of any surface state, the desktop drives

@@ -15,3 +15,14 @@ __pycache__/
 
 # sem (Ataraxy-Labs) semantic-diff index cache — local, never committed.
 .sem/
+
+# Receipt output is retained outside the repository. Keep the standalone
+# compatibility instrument versioned while excluding new validation packets.
+/validation/*_20*/
+/validation/results/
+/design_docs/receipts/
+/docs/receipts/
+/ports/hocket/design_docs/receipts/
+/ports/ringdown/validation/
+/ports/redshank/receipts/
+/ports/redshank/scenarios/validation/

@@ -19,7 +19,7 @@ before any other doc in this directory.
   a retained local draft in project saves, MIDI export and worker-rendered drum
   layers use existing app/recorder paths. Handoff carries rendered media;
   Mere's quantized span operation serves hit moves.
-  [AP3 receipt](../../../validation/audio-packs-ap3_20261020/README.md) records
+  [AP3 receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/audio-packs-ap3_20261020/README.md) records
   actual controls, click-muted graph playback and installation-absent fresh
   reopen with identical MIDI/WAV. Cross-desktop and latency qualification
   remain open; richer composition and FunDSP stay planned.
@@ -103,17 +103,17 @@ before any other doc in this directory.
 
 ## Appearance acceptance
 
-- [Host acceptance receipt](receipts/host_acceptance_20261011/README.md) —
+- [Host acceptance receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/hocket/design_docs/receipts/host_acceptance_20261011/README.md) —
   Committed-source Tabard regression, fresh appearance reopening and recorder
   controls after close/readback hardening; 19 reviewed native captures.
 
-- [Coherent-family appearance reopen](../../../validation/port-reopen_20261011/README.md) — Later committed-source reopening restores HocketAcceptance/Dark and unchanged recorder state; two reviewed captures.
-- [Tabard native receipt](receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
+- [Coherent-family appearance reopen](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/port-reopen_20261011/README.md) — Later committed-source reopening restores HocketAcceptance/Dark and unchanged recorder state; two reviewed captures.
+- [Tabard native receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/hocket/design_docs/receipts/tabard_20261011/README.md) — Shared application appearance, authoring, Save/Apply, four modes and fresh reopen; 102 CPU assertions and 17 native captures accepted.
 
 
 ## Audio consumer acceptance
 
-- [Standalone Firewheel consumer receipt](receipts/firewheel_20261011/README.md)
+- [Standalone Firewheel consumer receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/hocket/design_docs/receipts/firewheel_20261011/README.md)
   — Exact provider/consumer hashes, locked workspace and offline graph tests,
   gain correction reproduction, five native recorder/appearance processes and
   two fresh appearance reopens; physical audio qualification remains open.

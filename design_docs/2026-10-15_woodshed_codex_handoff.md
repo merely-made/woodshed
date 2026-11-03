@@ -76,7 +76,7 @@ What landed (Woodshed `main`, oldest first):
     `wheel_zoom`, through `graph_canvas_with_wheel`.
   - `FaceAlignment` runs through a `FaceGeometry` adapter.
   - Camera-only changes now repaint, and 11 paint-currency assertions hold.
-  - The receipt is `validation/canvas-p2_20261015/receipt.json`: RESULT ok,
+  - The receipt is `Code/testing/woodshed/validation/canvas-p2_20261015/receipt.json`: RESULT ok,
     241 frames, 8 captures, scripted plain and Ctrl wheel notches.
 - `2f82f5e`: the `weave` merge driver removed from `.gitattributes`.
 
@@ -187,7 +187,7 @@ per root.
 **Done 2026-10-16, implementation `9d27b06`.** Mark chose preservation of
 existing take clocks. New captures use the canonical rule; legacy takes keep
 original PCM and playback timing, with explicit Clear before new recording.
-[Clock receipt](../validation/canonical-clock_20261016/receipt.json): 745
+[Clock receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/canonical-clock_20261016/receipt.json): 745
 suite cases plus one gold probe pass, sealed mixed-clock retention, exact
 fractional/x/8 clocks, zero-allocation/live-WAV parity, successful desktop
 build. Both accepted-gold exports remain byte-identical. See the rehome plan
@@ -220,7 +220,7 @@ shared allocation-free writes, InputFeed and CompletedTake; Hocket capture and
 queued replay consume BarCountdown. The independent shared allocator harness and
 both adapter suites pass 256 distinct cases; both desktop hosts pass locked
 all-target checks. See [the extraction plan](archive_docs/2026-11-03/2026-10-16_shared_capture_accumulator_plan.md)
-and `validation/shared-capture-seams_20261016/receipt.json`. Native/device
+and `Code/testing/woodshed/validation/shared-capture-seams_20261016/receipt.json`. Native/device
 qualification remains separate; product timing, integrity admission and custody
 stay local.
 
@@ -251,7 +251,7 @@ reopening pass in three final native processes with ten reviewed captures.
 The selected take's actual output bar was observed in every run; its sealed
 192,000-frame PCM retains exact bits. 442 automated cases and the desktop build
 pass. See [the acceptance plan](archive_docs/2026-11-03/2026-10-16_mere_take_acceptance_plan.md) and
-`validation/mere-take-acceptance_20261016/receipt.json`. No physical input,
+`Code/testing/woodshed/validation/mere-take-acceptance_20261016/receipt.json`. No physical input,
 audibility or latency claim follows from this receipt.
 
 ### Not for Codex yet (design, or waiting on another lane)

@@ -55,6 +55,6 @@ authoring and runnable CLI/WAV examples. Shared Cambium kit controls live in
 `audio-pack-views`; products retain selection/clock/history authority. Hocket
 saves its local draft but hands off ordinary rendered layers. Editable instrument
 handoff remains later work. The
-[shared plan](../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+[shared plan](../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
 keeps Mere rhythm/phrase, routing and expressive scene directions explicit
 without making this loader depend on Mere.

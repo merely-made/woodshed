@@ -148,7 +148,7 @@ class ProcessEvidenceTests(unittest.TestCase):
         output = self.root / 'receipt.json'
         output.write_text('historical\n')
         script = (Path(__file__).resolve().parents[1] /
-                  'design_docs/receipts/audio_foundation_20261011/ci/write-receipt.py')
+                  'testing/campaigns/audio-foundation/write-receipt.py')
         result = subprocess.run([sys.executable, str(script), '--repo', str(repo),
                                  '--artifact', str(artifact), '--output', str(output),
                                  '--process-evidence', str(evidence)],
@@ -209,7 +209,7 @@ class ProcessEvidenceTests(unittest.TestCase):
         manifest.write_text(json.dumps(evidence))
         output = self.root / 'new-receipt.json'
         script = (Path(__file__).resolve().parents[1] /
-                  'design_docs/receipts/audio_foundation_20261011/ci/write-receipt.py')
+                  'testing/campaigns/audio-foundation/write-receipt.py')
         result = subprocess.run([sys.executable, str(script), '--repo', str(repo),
                                  '--artifact', str(artifact), '--output', str(output),
                                  '--process-evidence', str(manifest)],

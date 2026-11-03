@@ -22,7 +22,7 @@ written tempo. Omitting it uses the written tempo. Tempo follows the existing
 editable fretted MusicXML profile, not a general MusicXML importer.
 
 The fixtures are copies of the progression and rhythm exports qualified in
-`validation/native-musicxml_20261018/`. Tests exercise real file input, simultaneous
+`Code/testing/woodshed/validation/native-musicxml_20261018/`. Tests exercise real file input, simultaneous
 chord tones, triplet boundaries, rests, failure without partial output, and
 timing a MusicXML round-trip with 257 bars. That last score is valid musical
 data, while Woodshed's current playback adapter admits at most 256 bars.

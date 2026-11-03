@@ -11,9 +11,9 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import os
-import os
+import queue
+import threading
 from pathlib import Path
-import selectors
 import subprocess
 import sys
 import time
@@ -67,36 +67,42 @@ def main():
     receipt_reservation.close()
     with log_output as output:
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        selector = selectors.DefaultSelector()
-        selector.register(process.stdout, selectors.EVENT_READ)
+        chunks = queue.Queue(maxsize=4)
+
+        def read_output():
+            try:
+                while True:
+                    chunk = os.read(process.stdout.fileno(), 65536)
+                    chunks.put(chunk)
+                    if not chunk:
+                        break
+            except (OSError, ValueError):
+                pass
+
+        reader = threading.Thread(target=read_output, daemon=True)
+        reader.start()
         try:
-            while selector.get_map():
+            while True:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     reason = 'command timeout'
                     process.kill()
                     break
-                ready = selector.select(min(remaining, 0.25))
-                if not ready and process.poll() is not None:
+                try:
+                    chunk = chunks.get(timeout=min(remaining, 0.25))
+                except queue.Empty:
+                    continue
+                if not chunk:
                     break
-                for key, _ in ready:
-                    chunk = os.read(key.fd, min(65536, MAX_LOG_BYTES - size + 1))
-                    if not chunk:
-                        selector.unregister(key.fileobj)
-                        continue
-                    if size + len(chunk) > MAX_LOG_BYTES:
-                        output.write(chunk[:MAX_LOG_BYTES - size])
-                        size = MAX_LOG_BYTES
-                        reason = 'log limit exceeded'
-                        process.kill()
-                        break
-                    output.write(chunk)
-                    size += len(chunk)
-                if reason:
+                if size + len(chunk) > MAX_LOG_BYTES:
+                    output.write(chunk[:MAX_LOG_BYTES - size])
+                    size = MAX_LOG_BYTES
+                    reason = 'log limit exceeded'
+                    process.kill()
                     break
+                output.write(chunk)
+                size += len(chunk)
         finally:
-            selector.close()
-            process.stdout.close()
             remaining = max(0, deadline - time.monotonic())
             try:
                 status = process.wait(timeout=remaining)
@@ -104,6 +110,7 @@ def main():
                 reason = 'command timeout'
                 process.kill()
                 status = process.wait()
+            process.stdout.close()
     ended = now()
     if reason:
         status = 124 if reason == 'command timeout' else 125

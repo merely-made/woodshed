@@ -7,10 +7,18 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $PSScriptRoot ('..\receipts\' + $Mode) }
+if (-not $OutputDirectory) { throw 'Supply a fresh OutputDirectory outside the repository.' }
 $receiptRoot = [IO.Path]::GetFullPath($OutputDirectory)
+$repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
+if ($receiptRoot.Equals($repoRoot, [StringComparison]::OrdinalIgnoreCase) -or $receiptRoot.StartsWith($repoRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Receipt output must be outside the repository.' }
+if (Test-Path -LiteralPath $receiptRoot) {
+    $allowed = @('changing-tones-12s.wav', 'preroll-30s-plus-tones.wav', 'fixture-owner.txt')
+    $items = @(Get-ChildItem -LiteralPath $receiptRoot -Force)
+    if ($Mode -ne 'alignment-guard' -or -not $InputFixture -or -not $AlignmentFixture -or $items.Count -ne 3 -or @($items | Where-Object { $_.PSIsContainer -or $_.Name -notin $allowed }).Count -ne 0) {
+        throw 'Existing receipt directory is preserved; choose a fresh OutputDirectory.'
+    }
+} else { New-Item -ItemType Directory -Path $receiptRoot | Out-Null }
 $receiptBinary = (Resolve-Path -LiteralPath $Executable).Path
-New-Item -ItemType Directory -Force -Path $receiptRoot | Out-Null
 $fixturePath = if ($InputFixture) { (Resolve-Path -LiteralPath $InputFixture).Path } else { Join-Path $receiptRoot 'silence-10s.wav' }
 if ($Mode -eq 'alignment-guard' -and (-not $InputFixture -or -not $AlignmentFixture)) {
     throw 'Use alignment-guard-receipt.ps1 to prepare the two synthetic audio inputs.'

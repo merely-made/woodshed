@@ -1,2 +1,5 @@
 # Preserve the imported OFL notice bytes, including their original trailing spaces.
 assets/fonts/*/OFL.txt whitespace=-blank-at-eol
+
+# Retained audit input is an exact historical Git blob across checkout platforms.
+validation/tests/fixtures/source-audit/current-finding-ledger.json -text

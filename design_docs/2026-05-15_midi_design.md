@@ -76,10 +76,10 @@ serves learning/display only. Learning establishes its cursor at the click, and
 explicit input None retires requested intent even after confirmed disconnection. Ordinary keyboard autorepeat and held controller values are
 suppressed; learning sends nothing, input history is consumed once, and lifetime
 changes disarm. See the [canonical input contract](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#keyboard-and-incoming-controller-mappings-2026-10-20)
-and [focused input evidence](../ports/ringdown/validation/pedal-inputs_20261020/README.md).
+and [focused input evidence](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-inputs_20261020/README.md).
 The shared Mere host rejects synthesized focus presses before dispatch; the
 coordinated pool intake retires Woodshed's temporary source snapshot. This implementation
-has focused retained-control/gate/build evidence; the [input acceptance packet](../ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
+has focused retained-control/gate/build evidence; the [input acceptance packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
 adds 48 focused cases and a three-process/35-message native controller/fault
 cohort. The separate physical cohort confirms real held N/P and fresh CC/Note
 actions after reconnect, with 12 OS-accepted messages and five single guitar

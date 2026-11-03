@@ -1,7 +1,0 @@
-settle 2
-wait 300
-assert snap item-count == 0
-assert snap mode == light
-act tab:settings
-settle 1
-capture recovered-settings

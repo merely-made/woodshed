@@ -34,5 +34,5 @@ MIDI parsing/writing uses pinned midly 0.5.3, `default-features = false` with
 `std` and `strict`; Rayon is excluded. midly is Unlicense; its registry checksum
 is retained in the root lockfile. This crate's source is MPL-2.0.
 
-The [shared plan](../../design_docs/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
+The [shared plan](../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19)
 tracks implementation and the Mere composition direction.

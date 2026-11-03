@@ -39,7 +39,7 @@ restate them; it says what the client's surface becomes because of them.
 | Transport and distribution | Mac one-action guitar trial and Windows/Linux compiler checks are bounded to their stated scope. | Native Windows/Linux pairing and delivery, encrypted interop, disconnect/congestion, MIDI Clock jitter/phase, broader pedal actions, GUI hardware, signed distribution and applicable conformance. |
 | Provenance and publication | Assessment and build split exist; private RPC/PacketLogger are opt-in. | Resolve or record decisions for A1–A7, including original APK/terms, codec and diagnostic derivation, standards/IP, Windows/Linux and source packaging, fixture privacy and any appropriate rights grant. Outreach is unsent. |
 
-Historical evidence: client plan sections `BLE-MIDI peripheral transport`, `Desktop diagnostic controls`, `Provenance, terms and standards audit`, P0–P4 and A–D; `ports/ringdown/validation/midi-diagnostics-cross-platform_20261021/README.md`; root `validation/audio-packs-ap3_20261020/README.md`. The existing plan retains exact counts, firmware, refusals and hashes. This ledger does not promote compiler or GUI evidence into physical delivery, and it makes no new legal conclusion.
+Historical evidence: client plan sections `BLE-MIDI peripheral transport`, `Desktop diagnostic controls`, `Provenance, terms and standards audit`, P0–P4 and A–D; `Code/testing/woodshed/ports/ringdown/validation/midi-diagnostics-cross-platform_20261021/README.md`; root `Code/testing/woodshed/validation/audio-packs-ap3_20261020/README.md`. The existing plan retains exact counts, firmware, refusals and hashes. This ledger does not promote compiler or GUI evidence into physical delivery, and it makes no new legal conclusion.
 
 ## P0 connection and preservation gates
 
@@ -146,7 +146,7 @@ Linux and macOS remain a separate transport qualification target.
 [`check-instrument-boundary.py`](../../../scripts/check-instrument-boundary.py)
 walks the selected normal/build dependency graph, excluding dev dependencies,
 and rejects `ringdown`, `ringdown-client`, `ringdown-ble` and `btleplug`.
-The [composition receipt](../validation/standards-boundary_20261020/receipt.json)
+The [composition receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/standards-boundary_20261020/receipt.json)
 records source hashes, checks, selected target graphs and compiler inputs.
 Full Cargo metadata and lockfiles can contain unselected private workspace
 members; their presence is not evidence of binary inclusion.
@@ -171,7 +171,7 @@ the audit's app-provenance, standards, trademark or source-derivation questions.
 **Result: bounded host acceptance passed; no production behavior fix needed.**
 Mark requested runtime verification of MIDI, Beats-file export, default artifact
 exclusion and RPC opt-in, with a deliberate guitar checkpoint. The
-[acceptance receipt](../validation/standards-split-tests_20261020/receipt.json)
+[acceptance receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/standards-split-tests_20261020/receipt.json)
 retains commands, test logs, fresh artifact hashes and graph/compiler inputs.
 The [integration cases](../apps/probe/tests/standards_cli.rs) launch the actual
 CLI; the same cases also run against preserved release executables through
@@ -298,7 +298,7 @@ in the completion receipt.
 
 ### Bounded qualification and remaining cues
 
-[Receipt and reproduction commands](../validation/ble-midi_20261020/README.md)
+[Receipt and reproduction commands](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/ble-midi_20261020/README.md)
 retain source/binary hashes, supplier provenance, compile logs, dependency
 closures and the owner-observed action. The locked/offline native Mac CLI
 build and Woodshed desktop host check pass. Windows GNU and Linux GNU Rust
@@ -329,7 +329,7 @@ composition direction keep their existing owners and plans.
 ### Desktop path and reconnect qualification (2026-10-20)
 
 **Status: bounded macOS desktop and guitar reconnect acceptance complete.**
-[Receipt, native scenarios and captures](../validation/desktop-midi_20261020/README.md)
+[Receipt, native scenarios and captures](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/desktop-midi_20261020/README.md)
 retain the exact frozen native binaries, source hashes, independent receiver
 records and failed attempts. Native Windows/Linux operation remains open.
 
@@ -480,15 +480,15 @@ guitar files or settings were changed during the initial implementation slice.
 
 **Progress (2026-10-20):** shared binding/encoding model, retained preparation,
 existing-view controls, bounded worker actions and same-owner JSONL input are
-implemented. [Implementation receipt](../validation/software-pedal_20261020/README.md)
+implemented. [Implementation receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/software-pedal_20261020/README.md)
 records source/build evidence and keeps hardware acceptance separate. Mere
 composition, shared packs/sequencer and Beats export retain their current plans.
 
 ### Keyboard and incoming-controller mappings (2026-10-20)
 
 **Implemented with focused checks, including the shared focus-snapshot gate.**
-The [initial input receipt](../validation/pedal-inputs_20261020/README.md) records
-the predecessor implementation. The subsequent [input acceptance packet](../validation/pedal-input-acceptance_20261020/README.md)
+The [initial input receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-inputs_20261020/README.md) records
+the predecessor implementation. The subsequent [input acceptance packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
 records the native probes and callback/reconnect repairs below; it does not
 relabel the earlier source or its evidence.
 
@@ -546,7 +546,7 @@ interceptor. During the coordinated pool intake, Mere `a07a375e` absorbs the
 exact guard and test from Woodshed's temporary snapshot. Woodshed then receives
 that shared revision and removes the root source patch and all 52 snapshot
 files, retaining one host package from its owner. The
-[receiving record](../../../validation/stack-family_20261011/pool-cohort-20261022.json)
+[receiving record](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/stack-family_20261011/pool-cohort-20261022.json)
 records the source hashes and focused CPU checks; the previous snapshot and its
 provenance remain in Git history at Woodshed `97bb21e5`. The existing input
 receipt records the earlier Mac acceptance and Windows/Linux gate compilation.
@@ -557,7 +557,7 @@ change.
 
 **Software/native acceptance passes; physical keyboard/controller/reconnect
 checks are complete with one unresolved guitar observation in the
-[acceptance packet](../validation/pedal-input-acceptance_20261020/README.md).**
+[acceptance packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-input-acceptance_20261020/README.md).**
 This run spans October 20–21 and keeps its start-date artifact directory.
 
 The initial native run found a render-coupling defect: correctly received
@@ -616,7 +616,7 @@ and a separate owner-gated guitar comparison with visible effect names. Sparse
 and held Note input are distinguished, one gesture is observed at a time, and
 an unconfirmed action is not retried automatically. The earlier negative result
 is retained even if a new bounded trial cannot reproduce it. Evidence lives in
-[Previous diagnostics](../validation/pedal-previous-diagnostics_20261021/README.md).
+[Previous diagnostics](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-previous-diagnostics_20261021/README.md).
 
 Current evidence: 38 focused cases, Mac app/fixture build and shared Windows/Linux
 instrument checks pass. A fresh native cohort alternates P and Note36 twice:
@@ -661,7 +661,7 @@ never opens MIDI or Bluetooth and does not own musical actions. The portable
 MIDI seam provides unsupported-host defaults; no native dependency enters the
 core or views, and no new dependency or platform driver was added.
 
-The separate [desktop acceptance packet](../validation/midi-diagnostics-acceptance_20261021/README.md)
+The separate [desktop acceptance packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/README.md)
 records 39 passing focused cases and a native macOS controls/save-dialog cohort.
 Starting/stopping through the retained controls captures ten events; an actual
 send while stopped reaches the independent receiver without changing history.
@@ -689,15 +689,15 @@ Mac desktop compilation passes. Portable-core and Windows/Linux shared-instrumen
 compilation remain recorded in the earlier implementation packet; Windows/Linux
 native controls/dialogs are not qualified here. No guitar was used or needed.
 Earlier device evidence stays tied to its original source. See the separate
-[implementation/build packet](../validation/midi-diagnostics-ui_20261021/README.md).
+[implementation/build packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-diagnostics-ui_20261021/README.md).
 
-The later [current-main integration](../../../validation/ringdown-sync_20261021/README.md)
+The later [current-main integration](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/ringdown-sync_20261021/README.md)
 retains these controls on the current notation/audio cohort, folds upstream
 completion/failure projection into the same pedal writer, and updates the
 existing host admission patch to that cohort. Merged desktop/Hocket compilation
 and 43 focused desktop MIDI/diagnostic cases pass. This does not extend the
 historical native/device acceptance. The subsequent
-[Windows/Linux diagnostic packet](../validation/midi-diagnostics-cross-platform_20261021/README.md)
+[Windows/Linux diagnostic packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-diagnostics-cross-platform_20261021/README.md)
 now has complete Windows and Linux Xwayland cohorts: default-off same-profile
 reopen, retained history across Stop/restart, whole Status/JSON parity, native
 Cancel/Save and both pending native close-event branches. Four fresh processes
@@ -713,7 +713,7 @@ metadata collection is pending in that packet.
 ### Pedal acceptance (2026-10-20)
 
 **Bounded acceptance passes; the final native readout cohort is recorded in the
-[acceptance receipt](../validation/pedal-acceptance_20261020/README.md).** This is
+[acceptance receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-acceptance_20261020/README.md).** This is
 separate from the preceding compiler-only implementation receipt.
 
 - **57 focused software cases pass:** 28 host/admission/worker/stdio/selection/key
@@ -782,10 +782,10 @@ plan updates and an outreach draft. The draft below is saved for review and
 has **not been sent**. No vendor contact, guitar access, new decompilation,
 firmware download, code migration, test suite, commit or publication occurred.
 
-[Audit receipt](../validation/provenance-terms_20261020/receipt.json),
-[file ledger](../validation/provenance-terms_20261020/file-ledger.json),
-[primary-source register](../validation/provenance-terms_20261020/sources.json)
-and [dependency declarations](../validation/provenance-terms_20261020/dependency-licenses.json)
+[Audit receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/provenance-terms_20261020/receipt.json),
+[file ledger](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/provenance-terms_20261020/file-ledger.json),
+[primary-source register](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/provenance-terms_20261020/sources.json)
+and [dependency declarations](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/provenance-terms_20261020/dependency-licenses.json)
 retain the exact scope. Sixteen Rust files (9,919 lines) were inventoried;
 provenance comments, selected implementations, wire constants, fixtures and
 manifests were inspected. This was not a line-by-line comparison of all code
@@ -806,7 +806,7 @@ our distribution. Prior research history also remains part of provenance.
 |---|---|---|
 | External audio | Ordinary host audio and the guitar's advertised external PC input/speaker feature. This pass does not certify an A2DP profile or codec. | Host-generated adaptive accompaniment can use ordinary audio without invoking the private RPC API. Audio input, routing, feedback and latency still require qualification. [Vendor feature overview](https://www.hyvibeguitar.com/) |
 | MIDI pedal messages | MIDI 1.0 channels, Note/Control Change messages and BLE-MIDI transport; the action mapping belongs to the owner/device. | Vendor instructions explicitly describe external controllers, bindings, CC and Note On. Our October 17 standard-service diagnostic triggered Effect Next with an owner-configured channel-1 CC-67 mapping. CC-67 is not a universal Next Effect command. Other action/value/transport cases remain unqualified. [MIDI instructions](https://www.hyvibeguitar.com/midi-instructions-fr/), [BLE-MIDI specification entry](https://midi.org/midi-over-bluetooth-low-energy-ble-midi) |
-| Beat file payload | Standard MIDI File format 0, PPQ, meter and note events. | Our original files play and survive reboot. The tested five-bar 4/4 file has an authored first-bar lead-in and bars 2–5 repeating after each start. `/Drums`, naming/discovery, accepted notes and that intro/body rule are HyVibe-specific compatibility facts, not SMF rules or complete General MIDI conformance. [SMF specification entry](https://midi.org/standard-midi-files-specification), [AP3 device evidence](../../../validation/audio-packs-ap3_20261020/README.md#distinguishable-bar-loopcount-in-trial) |
+| Beat file payload | Standard MIDI File format 0, PPQ, meter and note events. | Our original files play and survive reboot. The tested five-bar 4/4 file has an authored first-bar lead-in and bars 2–5 repeating after each start. `/Drums`, naming/discovery, accepted notes and that intro/body rule are HyVibe-specific compatibility facts, not SMF rules or complete General MIDI conformance. [SMF specification entry](https://midi.org/standard-midi-files-specification), [AP3 device evidence](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/audio-packs-ap3_20261020/README.md#distinguishable-bar-loopcount-in-trial) |
 | USB delivery | Observed USB mass storage/FAT32; the OS handles the mounted filesystem. | It is an offline file path on this instrument, not evidence of USB MIDI, USB audio or a live control API. Preserve original files and retain separate approval for persistent writes. |
 | Bluetooth app link | BLE/GATT is standard; the `eb65...4160/4161/4162` service/characteristics are a vendor application profile. | `ringdown-ble` connects OS/btleplug I/O to these identifiers. Standard GATT operations do not define the payload vocabulary. |
 | App RPC envelope | Public JSON-RPC 2.0 specifies request/response shapes. | HyVibe methods/parameters and LLT/LLT2/compression are vendor-specific. Current `rpc.rs` sends numeric `jsonrpc: 2.0`; the standard requires string `"2.0"`. Historical hardware notes report both accepted, but our current output is not strict JSON-RPC conformance. A conforming envelope would still leave private command semantics. [JSON-RPC specification](https://www.jsonrpc.org/specification) |
@@ -1037,8 +1037,8 @@ The relevant existing decisions are:
   `mere/design_docs/mere_docs/implementation_strategy/2026-08-22_djinn_family_resident_services_plan.md`, §1;
   `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, §7.
 
-The [Ringdown audit](../../../validation/full-source-audit_20261016/ringdown-report.md)
-and [current finding ledger](../../../validation/full-source-audit_20261016/current-finding-ledger.json)
+The [Ringdown audit](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/full-source-audit_20261016/ringdown-report.md)
+and [current finding ledger](../../../validation/tests/fixtures/source-audit/current-finding-ledger.json)
 remain the remediation authority. Current source inspection reconfirmed the
 mechanisms for absent status fields becoming defaults (R3), restoration losing
 negative per-write receipts (R1), weak ACK-envelope admission (R5), and malformed
@@ -1164,8 +1164,8 @@ supported actions and a visible limitation.
 **Feature target:** an evidence-backed action/path table for current firmware.
 
 **First software-pedal trigger succeeded (2026-10-17):**
-[Q-PC experiment record](../validation/midi-pedal_20261017/README.md) and
-[structured observation](../validation/midi-pedal_20261017/effect-next-observation.json).
+[Q-PC experiment record](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-pedal_20261017/README.md) and
+[structured observation](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-pedal_20261017/effect-next-observation.json).
 The direct `Ringdown` CoreBluetooth peripheral obtained a guitar subscription
 and sent channel-1 CC 67, value 127 then 0 after a scheduled 50 ms. The owner
 had assigned that binding to Effect Next, saw the MIDI indicator, and confirmed
@@ -1184,7 +1184,7 @@ press/release semantics, latency and automatic reconnect remain unqualified.
 P0 is partially complete.
 
 **MIDI menu inspection (2026-10-18, owner-reported):** the complete list is
-[recorded here](../validation/midi-pedal_20261017/midi-action-menu.json): loop
+[recorded here](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-pedal_20261017/midi-action-menu.json): loop
 record, loop record met, loop play stop, looper set volume, effect next, effect
 previous, effect switch, effect control, effect set volume, effect on/off,
 loop record met bars. There is no standalone Beats/metronome action in that
@@ -1195,7 +1195,7 @@ panel/app behavior and recovered RPC. Volume/parameter actions are candidates
 for continuous input, not yet proven message semantics.
 
 **USB inspection (2026-10-18, file-observed; no RPC positive control):**
-[USB receipt](../validation/usb_20261018/README.md). USB-C–to–USB-C exposed a
+[USB receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/usb_20261018/README.md). USB-C–to–USB-C exposed a
 FAT32 `HYVIBE` mass-storage volume; no new USB MIDI/serial endpoint appeared.
 The files include two readable configuration JSONs, nine user banks, 44 loop
 WAVs and ten named drum MIDI files. Their headers declare format 0, one track,
@@ -1348,7 +1348,7 @@ readback and unchanged hashes for all ten factory files were verified before
 ejection. The owner confirmed it appears and plays repeatedly, then confirmed
 it still appears and plays after a power cycle with USB OFF. This is bounded
 custom-file discovery, playback and reboot-persistence evidence, recorded in the
-[AP3 receipt](../../../validation/audio-packs-ap3_20261020/README.md).
+[AP3 receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/audio-packs-ap3_20261020/README.md).
 The five identical bars do not establish exact loop/count-in behavior, and
 this trial does not establish Beats RPC or MIDI-pedal start/stop.
 The subsequent five-bar diagnostic with distinct 1/2/3/4/5-hit signatures is
@@ -1814,7 +1814,7 @@ The first Mac software-pedal trial ended after one owner-confirmed Effect Next
 change and the full MIDI-menu readout. The helper exited normally and removed
 its service. The bindings/pairing entered by the owner remain on the guitar.
 No recording, erase, bulk profile operation or guessed Beats command was sent.
-The [receipt](../validation/midi-pedal_20261017/README.md) preserves source,
+The [receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-pedal_20261017/README.md) preserves source,
 logs and observation limits. This closes the bounded connectivity/first-trigger
 experiment, not all P0 capability qualification or any production phase.
 

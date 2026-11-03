@@ -1,12 +1,16 @@
 param(
     [string]$Executable = 'C:\t\cargo-targets\woodshed\debug\redshank-desktop.exe',
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\receipts\alignment-guard'),
+    [string]$OutputDirectory = '',
     [ValidateSet(8000, 48000)][int]$SampleRate = 48000
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $OutputDirectory) { throw 'Supply a fresh OutputDirectory outside the repository.' }
 $receiptRoot = [IO.Path]::GetFullPath($OutputDirectory)
-New-Item -ItemType Directory -Force -Path $receiptRoot | Out-Null
+$repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
+if ($receiptRoot.Equals($repoRoot, [StringComparison]::OrdinalIgnoreCase) -or $receiptRoot.StartsWith($repoRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Receipt output must be outside the repository.' }
+if (Test-Path -LiteralPath $receiptRoot) { throw 'Existing receipt directory is preserved; choose a fresh OutputDirectory.' }
+New-Item -ItemType Directory -Path $receiptRoot | Out-Null
 $originalPath = Join-Path $receiptRoot 'changing-tones-12s.wav'
 $shiftedPath = Join-Path $receiptRoot 'preroll-30s-plus-tones.wav'
 $markerPath = Join-Path $receiptRoot 'fixture-owner.txt'

@@ -151,7 +151,7 @@ migration is separately reportable from release publication or main merge.
   unavailability is explicit in the device-free recorder fixture. Source and
   binary hashes, workspace tests, the original gain reproduction, build/lint
   results and profile fixtures are retained in the
-  [consumer receipt](receipts/firewheel_20261011/README.md). This accepts F3a/F3b
+  [consumer receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/hocket/design_docs/receipts/firewheel_20261011/README.md). This accepts F3a/F3b
   and the bounded native portion of F3c. Physical input/output, permissions,
   audible replay, device restart, mixed-rate input capability and latency
   calibration remain open; no physical manual demo or native project-file

@@ -81,7 +81,7 @@ Current [keyboard/controller mappings](2026-09-02_client_surface_plan.md#keyboar
 reuse that panel, input and dispatcher. Sixteen focused cases/build checks are
 recorded separately from device acceptance. Ordinary repeats are suppressed;
 the shared Mere host rejects synthesized focus presses; the coordinated pool
-intake retires Woodshed's temporary source snapshot. The [input acceptance packet](../validation/pedal-input-acceptance_20261020/README.md)
+intake retires Woodshed's temporary source snapshot. The [input acceptance packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-input-acceptance_20261020/README.md)
 records callback/None-intent repairs, 48 focused cases and three fresh native
 processes with 35 independently received messages. Separate real-key/guitar
 checks finish with 12 OS-accepted messages, quiet reconnect/holds, five observed
@@ -96,12 +96,12 @@ zero disconnects). The earlier miss did not reproduce and remains unexplained.
 [Desktop diagnostics](2026-09-02_client_surface_plan.md#desktop-diagnostic-controls-2026-10-21)
 add session-only recording controls, recent event visibility and versioned JSON
 export through the same status/history owner. Mac/core/shared Windows/Linux
-compilation passes. The separate [diagnostic acceptance packet](../validation/midi-diagnostics-acceptance_20261021/README.md)
+compilation passes. The separate [diagnostic acceptance packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-diagnostics-acceptance_20261021/README.md)
 records 39 focused passing cases and native macOS controls/dialog/reopen results:
 retained history, default-off reopen, full Status/export equality and both pending
 host-command close branches. Native Quit's modal refusal is a separate observation;
 that historical packet does not qualify Windows/Linux dialog runtime. The later
-[Windows/Linux diagnostic packet](../validation/midi-diagnostics-cross-platform_20261021/README.md)
+[Windows/Linux diagnostic packet](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-diagnostics-cross-platform_20261021/README.md)
 adds complete native Windows and Linux Xwayland control/reopen/export and pending
 close-event cohorts, full Status/JSON parity and the same 43 desktop plus one
 isolated journal case passing on each host. Linux captures six independent ALSA
@@ -110,14 +110,14 @@ and Windows MIDI/BLE delivery remain unqualified. Final Windows preservation
 metadata collection is pending in the newer packet.
 
 
-Earlier device session: [Q-PC MIDI pedal experiment](../validation/midi-pedal_20261017/README.md)
+Earlier device session: [Q-PC MIDI pedal experiment](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-pedal_20261017/README.md)
 records the first successful software-pedal trigger: a direct CoreBluetooth
 subscription and one owner-confirmed Effect Next change using the configured
 channel-1 CC-67 binding. Firmware/RPC baseline, Beats, timing, and broader
 performance qualification remain open. The owner-reported MIDI menu has no
 standalone Beats action; the diagnostic trial has ended and its helper is closed.
 
-USB follow-up: [storage and Beats inspection](../validation/usb_20261018/README.md)
+USB follow-up: [storage and Beats inspection](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/usb_20261018/README.md)
 observed two configuration files, nine tone banks, ten drum MIDI files and
 stored Beats selection keys. Private configurations were captured outside Git;
 that October 18 snapshot did not qualify custom patterns or live RPC control.
@@ -126,7 +126,7 @@ Later AP3 custom-file and intro/loop results are linked below. The drive was eje
 `PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written;
 the founding plan carries the product intent until it is.
 
-AP3 follow-up: [native/project and guitar evidence](../../../validation/audio-packs-ap3_20261020/README.md)
+AP3 follow-up: [native/project and guitar evidence](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/audio-packs-ap3_20261020/README.md)
 records the explicitly approved `11-Ringdown_AP3.mid` trial and owner-confirmed
 repeated playback, including after restarting the guitar with USB OFF. It does not establish a complete note map or remote Beats
 control. Factory files were retained and the volume safely ejected. A

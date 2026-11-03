@@ -20,11 +20,11 @@ is for.
 > effect control, recording retrieval and playable preset creation. The
 > [desktop performance assessment and plan](design_docs/2026-09-02_client_surface_plan.md)
 > covers MIDI pedal emulation, Beats, a desktop surface and scripting. A
-> [Mac peripheral experiment](validation/midi-pedal_20261017/README.md) now has
+> [Mac peripheral experiment](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/midi-pedal_20261017/README.md) now has
 > one owner-confirmed Effect Next trigger. A [shared Rust BLE transport](design_docs/2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
 > now has another owner-confirmed trigger and Mac/Windows/Linux compiler evidence.
 > Native Windows/Linux execution, timing and live Beats control remain unqualified.
-> The [founding plan](design_docs/2026-08-27_ringdown_founding.md)
+> The [founding plan](design_docs/archive_docs/2026-11-03/2026-08-27_ringdown_founding.md)
 > preserves the protocol map and historical hardware findings.
 
 ## Independent MIDI and Beats build
@@ -80,7 +80,7 @@ Woodshed's existing Audio and MIDI panel now adds shared configurable Effect
 Next/Previous bindings and triggers; `woodshed-genet --midi-pedal-stdio` accepts
 JSONL shell commands through that same desktop owner and writer. Both bindings
 start disabled. See the [binding, dispatch and scripting contract](design_docs/2026-09-02_client_surface_plan.md#software-pedal-controls-and-scripting-2026-10-20).
-[Bounded acceptance](validation/pedal-acceptance_20261020/README.md) adds 57
+[Bounded acceptance](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/pedal-acceptance_20261020/README.md) adds 57
 focused software cases, actual macOS controls and fresh-process saved bindings,
 independent scripted byte capture and an incomplete press/release outcome.
 The owner confirms Next once and Previous once through the desktop writer;
@@ -155,10 +155,10 @@ The driver refuses `ReadConfig`: it hung the observed firmware's RPC handler
 until power-cycled. Working calls reach portions of that information. The
 performance path retains this guard unless a firmware fix is established.
 
-The [2026-10-18 USB inspection](validation/usb_20261018/README.md) read
+The [2026-10-18 USB inspection](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/ports/ringdown/validation/usb_20261018/README.md) read
 stored user/device configuration with nine tone banks, listed 44 recording
 files, and inspected ten drum MIDI-file headers. This supplies a file-based
-snapshot source and stored Beats selection keys. Later [AP3 trials](../../validation/audio-packs-ap3_20261020/README.md)
+snapshot source and stored Beats selection keys. Later [AP3 trials](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/audio-packs-ap3_20261020/README.md)
 confirmed original custom MIDI playback, reboot persistence and a scoped
 five-bar 4/4 intro/loop rule. Broader firmware and live Beats RPC control remain
 unqualified.

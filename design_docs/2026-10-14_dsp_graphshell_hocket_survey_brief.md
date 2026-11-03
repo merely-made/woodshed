@@ -8,7 +8,7 @@ read-only. Mark ruled on all six decisions the same day (see
 ## Origin
 
 After the shared Hocket recorder landed in Woodshed's Looper
-([adoption receipt](../validation/hocket-looper_20261013/receipt.json),
+([adoption receipt](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/hocket-looper_20261013/receipt.json),
 [rehome plan F5](archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md)), Mark asked on
 2026-10-14 to look at the next layer and added: *"also... consider graphshell
 in woodshed... integration with hocket..."*
@@ -87,7 +87,7 @@ voicing constants (`hocket-engine/src/click.rs:19-46`, "matches
   and a block-size-invariant WAV/live test (`song_export/tests.rs:85-151`).
   That test runs at 1000 Hz and covers playback and export, not capture.
 - The byte-identical WAV gold cited by
-  [`wav-parity-final.json`](../validation/hocket-looper_20261013/wav-parity-final.json)
+  [`wav-parity-final.json`](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/hocket-looper_20261013/wav-parity-final.json)
   lives outside the repo, under `Code/testing/`.
 - Hocket has no allocation guard and no exact-frame schedule test.
 - Neither product has physical-device capture qualification.

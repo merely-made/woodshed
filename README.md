@@ -49,7 +49,7 @@ part of broader release preparation.
   exclusive capture buffers replace the previous callback mixer locks. The
   shared tuner/onset/capture input remains lazy; capture currently requires
   equal nominal input/output rates. See the
-  [runtime implementation record](design_docs/2026-07-11_stage_set_tools_plan.md#october-11-follow-up-single-output-runtime)
+  [runtime implementation record](design_docs/archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md#october-11-follow-up-single-output-runtime)
   for the source-specific checks and remaining capture boundaries.
 
 Current plans and completed records are indexed in
@@ -76,7 +76,7 @@ named-theme settings remain readable. A missing theme shows a fallback notice,
 and an unreadable library disables editing without replacing the file.
 
 Woodshed uses the shared Cambium title bar and native caption controls. The
-[adoption plan](design_docs/2026-10-08_tabard_adoption_plan.md) records ownership
+[adoption plan](design_docs/2026-11-03_tabard_adoption_plan.md) records ownership
 and validation, including the remaining fresh-window native presentation gate.
 
 ## Use
@@ -118,7 +118,7 @@ and device requirements.
 `scripts/package-linux.sh` produce checksummed platform archives. The macOS
 archive contains an unsigned, architecture-specific app; Linux packaging is
 portable archive packaging, with host library requirements. See the
-[release baseline and candidate assessment](design_docs/2026-07-11_stage_set_tools_plan.md#release-baseline-and-10-product-proof)
+[release baseline and candidate assessment](design_docs/archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md#release-baseline-and-10-product-proof)
 for the remaining validation and catalog roadmap.
 
 Release tags are product-qualified: `woodshed-v*`, `hocket-v*`, `redshank-v*`,
@@ -228,7 +228,7 @@ instructions, rehearsal timing, and audio transport.
 copy (`PersistedSession`) and its settings (`AppSettings`). The desktop's
 persona store continues through its existing sealed storage path. An alignment
 file uses `ProgressionArrangement`; a complete example is committed under
-`validation/saved-arrangements_20261016/exchange/alignment.json`.
+`Code/testing/woodshed/validation/saved-arrangements_20261016/exchange/alignment.json`.
 
 ```sh
 cargo run -p woodshed-core --features portable-scenes --bin woodshed-saved-arrangement -- \

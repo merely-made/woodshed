@@ -18,4 +18,4 @@ product applies a revision-qualified `PackEdit` which refuses missing sources
 and occupied destinations. Screen positions and automatic scene movement do
 not author music. Larger rhythm/phrase scenes, typed routing and intentionally
 bound dynamics remain in the
-[canonical plan](../../design_docs/2026-09-09_audio_ports_rehome_plan.md#mere-and-composition-surfaces-2026-10-19-assessment).
+[canonical plan](../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#mere-and-composition-surfaces-2026-10-19-assessment).
