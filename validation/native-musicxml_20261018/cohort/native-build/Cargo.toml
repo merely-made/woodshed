@@ -117,3 +117,13 @@ workbench = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops
 
 [target.'cfg(target_os = "macos")'.dependencies]
 rfd = { version = "0.17.2", default-features = false }
+
+[workspace.lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"
+
+[lints]
+workspace = true

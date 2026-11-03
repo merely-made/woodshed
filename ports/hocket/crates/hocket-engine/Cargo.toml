@@ -20,3 +20,6 @@ firewheel = { workspace = true }
 [dev-dependencies]
 hocket-project.workspace = true
 audioadapter-buffers = "5.0"
+
+[lints]
+workspace = true

@@ -17,3 +17,6 @@ path = "src/main.rs"
 
 [dependencies]
 hocket-engine = { workspace = true }
+
+[lints]
+workspace = true

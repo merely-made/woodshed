@@ -28,3 +28,6 @@ wasm-bindgen = "=0.2.129"
 # An async `#[wasm_bindgen]` fn expands into this crate.
 wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = ["Document", "HtmlCanvasElement", "Location", "Window"] }
+
+[lints]
+workspace = true

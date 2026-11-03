@@ -74,3 +74,6 @@ required-features = ["portable-scenes"]
 name = "woodshed-saved-arrangement"
 path = "src/bin/woodshed-saved-arrangement.rs"
 required-features = ["portable-scenes"]
+
+[lints]
+workspace = true

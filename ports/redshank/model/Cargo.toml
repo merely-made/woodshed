@@ -14,3 +14,6 @@ url = "2"
 
 [dev-dependencies]
 jsonschema = { version = "0.58", default-features = false }
+
+[lints]
+workspace = true

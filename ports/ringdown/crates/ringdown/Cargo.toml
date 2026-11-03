@@ -23,3 +23,6 @@ serde = { version = "1", default-features = false, features = ["derive", "alloc"
 # order-sensitive (a `den` arriving before `num` is silently dropped), and
 # serde_json's default BTreeMap alphabetizes keys. A test in rpc.rs pins this.
 serde_json = { version = "1", default-features = false, features = ["alloc", "preserve_order"] }
+
+[lints]
+workspace = true

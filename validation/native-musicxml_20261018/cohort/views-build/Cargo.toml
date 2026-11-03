@@ -111,3 +111,13 @@ tabard-workshop = { path = "/Users/markik/Code/worktrees/mere-portable-scene-bac
 tinct = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/tinct" }
 uxtree = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/forme/uxtree" }
 workbench = { path = "/Users/markik/Code/worktrees/mere-portable-scene-backdrops/crates/cambium/workbench" }
+
+[workspace.lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"
+
+[lints]
+workspace = true

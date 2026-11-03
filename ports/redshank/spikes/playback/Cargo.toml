@@ -14,3 +14,10 @@ firewheel = { version = "0.10", default-features = false, features = ["std", "cp
 redshank-playback-spike-common = { path = "common" }
 symphonia = { version = "0.5.5", default-features = false, features = ["aac", "isomp4", "mp3"] }
 ureq = { version = "3.4", default-features = false }
+
+[workspace.lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"

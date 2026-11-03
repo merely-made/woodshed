@@ -17,3 +17,6 @@ audio-packs.workspace = true
 serde = { workspace = true }
 ciborium = { workspace = true }
 uuid = { workspace = true }
+
+[lints]
+workspace = true

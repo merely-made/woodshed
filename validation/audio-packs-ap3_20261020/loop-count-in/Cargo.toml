@@ -7,3 +7,6 @@ midly = { version = "=0.5.3", default-features = false, features = ["std", "stri
 audio-packs = { path = "/Users/markik/Code/repos/woodshed/crates/audio-packs" }
 audio-pattern = { path = "/Users/markik/Code/repos/woodshed/crates/audio-pattern" }
 hound = "=3.5.1"
+
+[lints]
+workspace = true

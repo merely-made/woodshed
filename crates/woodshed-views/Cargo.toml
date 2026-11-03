@@ -46,3 +46,6 @@ serde_json = { workspace = true }
 [dev-dependencies]
 cambium-desktop.workspace = true
 taproot.workspace = true
+
+[lints]
+workspace = true

@@ -26,3 +26,6 @@ midir = { workspace = true, optional = true }
 ble-peripheral-rust = { path = "../../vendor/ble-peripheral-rust", optional = true }
 tokio = { version = "1", features = ["rt", "sync", "time", "macros"], optional = true }
 uuid = { version = "1", optional = true }
+
+[lints]
+workspace = true

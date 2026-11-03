@@ -22,3 +22,6 @@ serde_json = { version = "1", features = ["preserve_order"] }
 thiserror = "2"
 tokio = { version = "1", features = ["macros", "rt", "time", "sync"] }
 uuid = "1"
+
+[lints]
+workspace = true

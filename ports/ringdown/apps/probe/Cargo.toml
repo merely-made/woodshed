@@ -36,3 +36,6 @@ midly = { version = "=0.5.3", default-features = false, features = ["std", "stri
 # A receiving virtual port is a test fixture, not another product MIDI driver.
 [target.'cfg(any(target_os = "macos", target_os = "linux"))'.dev-dependencies]
 midir = "0.11"
+
+[lints]
+workspace = true

@@ -10,3 +10,6 @@ audio-packs.workspace = true
 audio-pattern.workspace = true
 cambium.workspace = true
 scenomise.workspace = true
+
+[lints]
+workspace = true

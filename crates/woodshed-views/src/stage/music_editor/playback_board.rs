@@ -353,6 +353,7 @@ mod tests {
         assert_eq!(score.tuning, vec![69, 64, 60, 67]);
     }
     #[test]
+    #[allow(clippy::reversed_empty_ranges)] // Deliberate empty scope tests the defensive path.
     fn wide_necks_wrap_readably_and_scopes_stay_bounded() {
         let contacts = BTreeSet::from([(1, 12), (4, 36)]);
         let (first, last) = fret_range(&contacts);

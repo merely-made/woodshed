@@ -27,3 +27,6 @@ tempfile = { workspace = true, optional = true }
 [dev-dependencies]
 hound.workspace = true
 audioadapter-buffers = "5.0"
+
+[lints]
+workspace = true

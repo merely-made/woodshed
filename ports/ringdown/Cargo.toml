@@ -26,3 +26,10 @@ rust-version = "1.97.1"
 [workspace.dependencies]
 ringdown = { path = "crates/ringdown", version = "0.1.0" }
 ringdown-client = { path = "crates/ringdown-client" }
+
+[workspace.lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"

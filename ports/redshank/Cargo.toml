@@ -110,3 +110,10 @@ muniment = { git = "https://github.com/merely-made/eidetic.git", rev = "f599ffe9
 [patch."https://github.com/merely-made/armillary.git"]
 armillary = { git = "https://www.github.com/merely-made/armillary.git", rev = "864f107d44bf759111ad2ea3c9036b2cfbf03f4c" }
 apparatus-core = { git = "https://www.github.com/merely-made/armillary.git", rev = "06340b08327b29c3485ecb0089bb5cafed20fd80" }
+
+[workspace.lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"

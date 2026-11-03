@@ -22,3 +22,6 @@ roxmltree = "0.21.1"
 # Tests only: Set round-trips and the legacy-session migration are claims
 # about the wire format, so they are checked against real JSON.
 serde_json = { workspace = true }
+
+[lints]
+workspace = true

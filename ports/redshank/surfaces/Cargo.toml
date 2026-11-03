@@ -23,3 +23,6 @@ tempfile.workspace = true
 url.workspace = true
 cambium-desktop.workspace = true
 layout-dom-api.workspace = true
+
+[lints]
+workspace = true

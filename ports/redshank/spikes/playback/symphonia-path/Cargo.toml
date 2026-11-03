@@ -12,3 +12,6 @@ anyhow.workspace = true
 redshank-playback-spike-common.workspace = true
 symphonia.workspace = true
 ureq.workspace = true
+
+[lints]
+workspace = true

@@ -15,3 +15,6 @@ audio-packs.workspace = true
 hocket-model.workspace = true
 hocket-project.workspace = true
 audio-primitives.workspace = true
+
+[lints]
+workspace = true

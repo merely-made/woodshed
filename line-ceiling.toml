@@ -1,0 +1,422 @@
+# mere/design_docs/mere_docs/implementation_strategy/2026-10-30_house_style_plan.md (H2); all physical source lines count.
+ceiling = 600
+
+[[exclude]]
+path = "vendor/"
+reason = "Vendored upstream sources; their module layout is maintained with the imported dependency."
+
+[[exception]]
+path = "crates/audio-primitives/src/alignment.rs"
+reason = "Conservative, bounded audio-anchor matching. Existing source-size debt; a responsibility split must preserve FeatureFrame, Fingerprint, FingerprintConfig and existing module visibility."
+
+[[exception]]
+path = "crates/audio-primitives/src/onset.rs"
+reason = "Onset detection and tempo estimation (pure DSP). Existing source-size debt; a responsibility split must preserve OnsetDetector and existing module visibility."
+
+[[exception]]
+path = "crates/hocket-model/src/history.rs"
+reason = "Append-only history graph with patch-based undo/redo. Existing source-size debt; a responsibility split must preserve Edit, HistoryNode, HistoryError and existing module visibility."
+
+[[exception]]
+path = "crates/hocket-project/src/handoff.rs"
+reason = "Portable signed, transport-neutral Hocket session hand-off. Existing source-size debt; a responsibility split must preserve ReceivedHandoff, BranchAcceptance, HandoffEnvelope and existing module visibility."
+
+[[exception]]
+path = "crates/hocket-recorder/src/host_policy.rs"
+reason = "Stateless action policy for an ordered recorder owned by its embedding host. Existing source-size debt; a responsibility split must preserve HostAction, HostCapabilities, HostInput and existing module visibility."
+
+[[exception]]
+path = "crates/hocket-recorder/src/lib.rs"
+reason = "Hocket's device-free recorder product, shared by standalone and embedded hosts. Existing source-size debt; a responsibility split must preserve RecorderAction, LayerKey, CaptureToken and existing module visibility."
+
+[[exception]]
+path = "crates/hocket-views/src/leaves.rs"
+reason = "Real waveform and meter leaves for reusable recorder mounts. Existing source-size debt; a responsibility split must preserve RecorderMount, WaveformLeaf, RecorderLeaves and existing module visibility."
+
+[[exception]]
+path = "crates/hocket-views/src/surface.rs"
+reason = "One renderer for portable Recorder and host-owned display projections. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-audio/src/input.rs"
+reason = "Audio input capture and analysis fan-out. Existing source-size debt; a responsibility split must preserve Analyzer, DetectedNote, TunerSnapshot and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-audio/src/offline/song_export/tests.rs"
+reason = "Song export tests. Existing source-size debt; a responsibility split must preserve UntouchedWriter, FailedWriter and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-audio/src/output_runtime.rs"
+reason = "One output device, one Firewheel graph clock, and control-owned projections. Existing source-size debt; a responsibility split must preserve Wake, OutputError, OutputSnapshot and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-audio/src/output_runtime/processor.rs"
+reason = "Processor. Existing source-size debt; a responsibility split must preserve Shared, PreparedBar, ChordCache and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-audio/src/output_runtime/tests.rs"
+reason = "Output runtime tests. Existing source-size debt; a responsibility split must preserve CheckedAllocator and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-audio/src/song.rs"
+reason = "Song-mode arrangement: a multi-bar sequence with per-bar settings. Existing source-size debt; a responsibility split must preserve ChordRef, Bar, PendingChange and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/chord_approach.rs"
+reason = "Chromatic same-string approach pairs to explicit chord targets. Existing source-size debt; a responsibility split must preserve ChordApproachNote, ResolvedChordApproach, ChordApproachUnavailable and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/comparison_disclosure.rs"
+reason = "Owner-local facts for the bounded cross-domain comparison recipe. Existing source-size debt; a responsibility split must preserve SelectedMaterial, SelectedOccurrence, SharedPitchRelationship and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/history.rs"
+reason = "Portable practice-engagement history, over chartulary's lineage model. Existing source-size debt; a responsibility split must preserve EngagementKind, ObservationProvenance, Engagement and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/lib.rs"
+reason = "Woodshed's portable state/logic core. Existing source-size debt; a responsibility split must preserve Lens, RelatedTarget, RelatedSuggestion and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/loop_capture.rs"
+reason = "Portable Set capture references and exact, content-addressed mono PCM. Existing source-size debt; a responsibility split must preserve LoopCaptureCodec, EncodedCapture, LoopCaptureManifest and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/loop_plan.rs"
+reason = "A derived backing lane over an explicitly owned working Set. Existing source-size debt; a responsibility split must preserve LoopSegmentId, LooperSource, LooperConfig and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/practice_clock.rs"
+reason = "Disposable, pure lowering of a retained Set or live Stage sequence into occurrence-addressed practice events. Existing source-size debt; a responsibility split must preserve PracticeHold, PracticeEvent, NoteVisit and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/session_overview.rs"
+reason = "Read-only overview of this session's real artifacts, views and active work. Existing source-size debt; a responsibility split must preserve SessionArtifactId, OverviewProcess, OverviewNodeId and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/stage_context.rs"
+reason = "Derived keyed context for the Stage graph. Existing source-size debt; a responsibility split must preserve StageNodeId, StageNodeKind, StageContextNode and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/stage_scene.rs"
+reason = "The Stage projection: one Set, as a sceno scene. Existing source-size debt; a responsibility split must preserve StageSceneOptions, StageGraphSnapshot, StageSceneNode and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-core/src/storage.rs"
+reason = "The storage seam (genet-host plan W0.2) and the persisted session. Existing source-size debt; a responsibility split must preserve SessionStore, AppSection, PersistedSession and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/audio.rs"
+reason = "The desktop [AudioBackend]: one root-owned output runtime behind the core's seam (genet-host plan W0.1). Existing source-size debt; a responsibility split must preserve OutputHeartbeat, InputStream, InputSession and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/audio/input_admission/tests.rs"
+reason = "Input admission tests. Existing source-size debt; a responsibility split must preserve StreamOwner, Trial and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/audio/loop_projection.rs"
+reason = "Device-free projection and capture custody used by the desktop audio seam. Existing source-size debt; a responsibility split must preserve CaptureSnapshot, Capture, LoopCaptures and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/audio/practice_clock.rs"
+reason = "Product-owned binding between retained practice and the single output clock. Existing source-size debt; a responsibility split must preserve PracticeClockHost, BoundProgram and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/capture_persistence.rs"
+reason = "Control-side custody of completed Set takes and their sealed companions. Existing source-size debt; a responsibility split must preserve CapturePersistence, Preservation and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/drive.rs"
+reason = "The per-frame drive: everything that advances because time passed. Existing source-size debt; a responsibility split must preserve AudioObservation, CardPreviewAdmission and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/layout_tests.rs"
+reason = "Real-host layout regressions for the expanded Set graph. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/leaves.rs"
+reason = "The custom-paint leaves: Related and Set graph swatches, and the two fretboards. Existing source-size debt; a responsibility split must preserve OverviewAmbientLeaf, StageGuideSegment, StageGuidesLeaf and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/main.rs"
+reason = "Woodshed's desktop application. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/midi.rs"
+reason = "The desktop [MidiBackend]: woodshed-audio's midir layer behind the core's MIDI seam (audio-depth slice 13). Existing source-size debt; a responsibility split must preserve ClockCmd, OutputState, MidiHost and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/persona.rs"
+reason = "Whether to ask which persona is practising, and what to do with the answer. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/persona_preservation_tests.rs"
+reason = "Exercise the production transition hook with in-memory incoming custody. Existing source-size debt; a responsibility split must preserve AdmissionOnlyBackend and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/scenario.rs"
+reason = "The scenario lane: woodshed drives itself. Existing source-size debt; a responsibility split must preserve Product, ScenarioCursorWait, CatalogAuditionReceipt and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/scenario/mixed_looper.rs"
+reason = "Bounded mixed backing acceptance using real host admission and sealed storage. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/scenario/physical_audio.rs"
+reason = "Scenario-only, observed physical-audio dwell. Existing source-size debt; a responsibility split must preserve Mode, Observation, State and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/scenario/practice_clock.rs"
+reason = "Native scenario controls and receipts for the device-owned practice clock. Existing source-size debt; a responsibility split must preserve Wait, ClockPoint and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/session.rs"
+reason = "Reading the practice session back out of whichever store opened. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/storage.rs"
+reason = "Persona-owned desktop persistence. Existing source-size debt; a responsibility split must preserve OpenedStore, HostBackend, StoreBinding and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/sync.rs"
+reason = "The tail of every input dispatch: push the state through the seams it owns. Existing source-size debt; a responsibility split must preserve Logic, Ctx and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-genet/src/wav_export.rs"
+reason = "Explicit Looper snapshot, native save choice and atomic WAV publication. Existing source-size debt; a responsibility split must preserve Protection, Artifact, Collision and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-graph/src/lib.rs"
+reason = "woodshed-graph — woodshed's theory catalog as a chartulary graph. Existing source-size debt; a responsibility split must preserve CatalogKind, CatalogMaterial, RelationAuthority and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-instrument/src/midi.rs"
+reason = "MIDI input/output. Existing source-size debt; a responsibility split must preserve MidiError, MidiEvent, MidiClockSync and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-instrument/src/midi/ble.rs"
+reason = "Standard short-message BLE-MIDI transport. Existing source-size debt; a responsibility split must preserve Security, Config, Phase and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-notation/src/lib.rs"
+reason = "Bounded chart, tablature and staff notation for Sprigging hosts. Existing source-size debt; a responsibility split must preserve NotationView, NotationLabel, Bar and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/appearance.rs"
+reason = "Woodshed's appearance adapter over Tabard definitions and its shared editor. Existing source-size debt; a responsibility split must preserve AppearanceOption, AppearanceResolution, AppearanceState and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/fretboard_leaf.rs"
+reason = "The fretboard as a Sprigging paint leaf. Existing source-size debt; a responsibility split must preserve Dot, MarkerStyle, Orientation and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage.rs"
+reason = "The Stage screen over live state (S2). Existing source-size debt; a responsibility split must preserve SetGraphRelationMember, StagePage, ToolPage and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/arrangement_editor.rs"
+reason = "Musical alignment authoring and shared portable scene presentation. Existing source-size debt; a responsibility split must preserve ArrangementSurfaces, Draft, ArrangementSnapshot and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/canvas_camera.rs"
+reason = "Pictograph's lifted canvas controls over Woodshed's Cambium graph canvases. Existing source-size debt; a responsibility split must preserve CanvasSurface, LeafGeometry, SurfaceCamera and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/context.rs"
+reason = "View-only controls for the wider Stage context graph. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/contextual_navigation.rs"
+reason = "Woodshed routes layered over Cambium's bounded navigation model. Existing source-size debt; a responsibility split must preserve WoodshedScopePlace, WoodshedScopeAnchor, Navigation and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/looper.rs"
+reason = "Looper. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/looper/recorder.rs"
+reason = "Read-only recorder presentation over Woodshed's admitted backing. Existing source-size debt; a responsibility split must preserve RecorderBuffer, RecorderObservation, RecorderTarget and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/music_editor.rs"
+reason = "Set-owned MusicXML editing. Existing source-size debt; a responsibility split must preserve MusicDraft, MusicEditor and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/musical_context.rs"
+reason = "Explicit owner actions for musical material kept in the session Mere. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/overview.rs"
+reason = "Session Mere: inspect real assets, workspace views and host activity before acting. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/practice_clock.rs"
+reason = "View-side binding for the host-owned, device-clocked Set program. Existing source-size debt; a responsibility split must preserve PracticeClockStatus, PracticeCardEndReason, PracticeClockObservation and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/rehearsal.rs"
+reason = "Rehearsal. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/related.rs"
+reason = "Related. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/relationship.rs"
+reason = "A retained reading belongs to Woodshed; authored grammar and layout are shared. Existing source-size debt; a responsibility split must preserve ReadingSource, RelationshipReading and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/stage/settings.rs"
+reason = "Settings. Existing source-size debt; a responsibility split must preserve PedalField and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/theme.rs"
+reason = "Theme CSS for the genet host, derived through tinct. Existing source-size debt; a responsibility split must preserve ThemeMode and existing module visibility."
+
+[[exception]]
+path = "crates/woodshed-views/src/workspace.rs"
+reason = "Woodshed's small workspace model over Genet's reusable tab/split core. Existing source-size debt; a responsibility split must preserve WorkspacePanel, WorkspaceEvent, WorkspaceEffect and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/chord.rs"
+reason = "Chord formulas. Existing source-size debt; a responsibility split must preserve ChordCategory, ChordFormula and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/exercise.rs"
+reason = "Practice exercises: ordered fretboard positions for chromatic, spider, trill, ladder, and X-pattern exercises. Existing source-size debt; a responsibility split must preserve ExerciseCategory, ExerciseStep, ExerciseDirection and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/fretboard.rs"
+reason = "Fretboard mapping: scale and chord positions on any tuning. Existing source-size debt; a responsibility split must preserve Position, StringPlay, ChordVoicing and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/notation.rs"
+reason = "Editable fretted score profile. Existing source-size debt; a responsibility split must preserve MusicDocument, Score, Measure and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/progression.rs"
+reason = "Chord progressions: ordered sequences of chord roles in a key. Existing source-size debt; a responsibility split must preserve ProgressionCategory, DegreeAlteration, RoleQuality and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/rehearsal.rs"
+reason = "The rehearsal card/set vocabulary — Woodshed's portable practice core. Existing source-size debt; a responsibility split must preserve ArpeggioDirection, ScalePattern, ApproachDirection and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/scale.rs"
+reason = "Scale formulas. Existing source-size debt; a responsibility split must preserve ScaleCategory, ScaleFormula and existing module visibility."
+
+[[exception]]
+path = "crates/woodshedding/src/tuning.rs"
+reason = "String instrument tunings. Existing source-size debt; a responsibility split must preserve Instrument, TuningCategory, TuningSpec and existing module visibility."
+
+[[exception]]
+path = "ports/hocket/crates/hocket-engine/src/lib.rs"
+reason = "Hocket audio engine, built on standalone Firewheel 0.14. Existing source-size debt; a responsibility split must preserve AudioDevice, AudioDevices, AudioDeviceSelection and existing module visibility."
+
+[[exception]]
+path = "ports/hocket/crates/hocket-engine/src/offline_tests.rs"
+reason = "Execute the production graph without enumerating or opening audio devices. Existing source-size debt; a responsibility split must preserve Offline and existing module visibility."
+
+[[exception]]
+path = "ports/hocket/crates/hocket-genet/src/appearance.rs"
+reason = "Application appearance over Tabard's choice store and authoring workshop. Existing source-size debt; a responsibility split must preserve AppearanceState and existing module visibility."
+
+[[exception]]
+path = "ports/hocket/crates/hocket-genet/src/state.rs"
+reason = "Standalone application services around the reusable Hocket recorder. Existing source-size debt; a responsibility split must preserve ProjectStatus, PersonaSwitch, PendingProject and existing module visibility."
+
+[[exception]]
+path = "ports/hocket/crates/hocket-genet/src/update.rs"
+reason = "Auto-update: policy, honest status, and the transport seam. Existing source-size debt; a responsibility split must preserve UpdatePolicy, UpdateChannel, UpdateSettings and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/desktop/src/headed_receipt.rs"
+reason = "Automated native-window receipts, driven through desktop commands. Existing source-size debt; a responsibility split must preserve Mode, Stage, HeadedReceipt and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/desktop/src/main.rs"
+reason = "Src main. Existing source-size debt; a responsibility split must preserve AppRunner, Context, IoReply and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/desktop/src/scenario.rs"
+reason = "The scenario lane: Redshank drives itself. Existing source-size debt; a responsibility split must preserve Logic, Ctx, ScenarioLane and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/desktop/src/session.rs"
+reason = "Product session authority. Existing source-size debt; a responsibility split must preserve HostFacts, OpenListening, Session and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/model/src/lib.rs"
+reason = "Src lib. Existing source-size debt; a responsibility split must preserve ItemId, AnnotationId, SavedTranscript and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/playback/src/backend.rs"
+reason = "Backend. Existing source-size debt; a responsibility split must preserve RateStage, Sink, Decoder and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/playback/src/worker.rs"
+reason = "Worker. Existing source-size debt; a responsibility split must preserve Levels, Controls, PreviewSession and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/storage/src/lib.rs"
+reason = "Src lib. Existing source-size debt; a responsibility split must preserve StoreError, ModelStore, JsonDirectoryStore and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/dock.rs"
+reason = "Family A bottom dock: identity, seek track, transport, capture. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/lib.rs"
+reason = "Reusable Redshank listening surfaces. Existing source-size debt; a responsibility split must preserve CompactView, FullView, TransportState and existing module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/redshank.css"
+reason = "Redshank. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/shell.rs"
+reason = "Header, destinations, layout switch, work area, phone bar. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/tabs/library.rs"
+reason = "The library tab body: subscription roster, episode list, quiet field. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/tabs/listen.rs"
+reason = "The listen tab body: Up next beside Notes. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/tabs/notes.rs"
+reason = "The notes tab body: episode header, timeline strip, clusters and spans. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/surfaces/src/tabs/settings.rs"
+reason = "The settings tab body: four sections of label/control rows. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+
+[[exception]]
+path = "ports/redshank/web/src/lib.rs"
+reason = "Redshank in a browser. Existing source-size debt; a responsibility split must preserve Logic, Context and existing module visibility."
+
+[[exception]]
+path = "ports/ringdown/apps/probe/src/rpc.rs"
+reason = "The Phase 1 control run. Existing source-size debt; a responsibility split must preserve Args and existing module visibility."
+
+[[exception]]
+path = "ports/ringdown/crates/ringdown-client/src/lib.rs"
+reason = "The protocol driver: everything above the wire, and nothing that touches it. Existing source-size debt; a responsibility split must preserve TransportError, FileInfo, Sent and existing module visibility."
+
+[[exception]]
+path = "ports/ringdown/crates/ringdown/src/compress.rs"
+reason = "The vendor's JSON compression, as used by the LLT2 transport. Existing source-size debt; a responsibility split must preserve NibbleWriter, NibbleReader, EncodeError and existing module visibility."
+
+[[exception]]
+path = "ports/ringdown/crates/ringdown/src/effects.rs"
+reason = "The effect vocabulary and the typed bank model. Existing source-size debt; a responsibility split must preserve ParamError, Parameter, Control and existing module visibility."
+
+[[exception]]
+path = "ports/ringdown/crates/ringdown/src/loopfile.rs"
+reason = "Loop recordings: the WAV header the instrument writes, and the tempo in it. Existing source-size debt; a responsibility split must preserve LoopMeta, Format, LoopHeader and existing module visibility."
+
+[[exception]]
+path = "ports/ringdown/crates/ringdown/src/rpc.rs"
+reason = "The JSON-RPC layer: requests, responses, and the 32 methods. Existing source-size debt; a responsibility split must preserve Request, DeviceError, Response and existing module visibility."

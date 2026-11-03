@@ -12,3 +12,6 @@ anyhow.workspace = true
 redshank-playback-spike-common.workspace = true
 servo-media = { path = "../../../../../../genet/components/media/servo-media" }
 servo-media-gstreamer = { path = "../../../../../../genet/components/media/backends/gstreamer" }
+
+[lints]
+workspace = true

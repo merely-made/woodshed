@@ -17,3 +17,6 @@ categories = ["multimedia::audio"]
 # consuming crate (woodshed-audio's OnsetAnalyzer / CalibrationSession,
 # strophe-engine's Firewheel graph), built on top of these cores.
 [dependencies]
+
+[lints]
+workspace = true
