@@ -1,0 +1,515 @@
+use super::*;
+
+pub(super) fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String {
+    let color = |role: &str, value| {
+        let fallback = color_to_hex(value);
+        if authored_roles {
+            format!("var(--tabard-color-{role}, {fallback})")
+        } else {
+            fallback
+        }
+    };
+    let bg = color("bg", p.bg);
+    let surface = color("surface", p.surface);
+    let surface_2 = color("surface-2", p.surface_2);
+    let surface_hover = color("surface-hover", p.surface_hover);
+    let text_header = color("text-header", p.text_header);
+    let text = color("text", p.text);
+    let text_dim = color("text-dim", p.text_dim);
+    let text_disabled = color("text-disabled", p.text_disabled);
+    let on_primary = color("on-primary", p.on_primary);
+    let secondary = color("secondary", p.secondary);
+    let tertiary = color("tertiary", p.tertiary);
+    let danger = color("danger", p.danger);
+    let themed = format!(
+        r#"
+.root {{ width: 100%; height: 100%; box-sizing: border-box;
+        display: flex; flex-direction: column;
+        background-color: {bg}; color: {text};
+        font-family: sans-serif; font-size: 14px; padding: 8px 16px 16px 16px; }}
+/* A screen that wants a bounded, internally-scrolling layout (.stage-screen)
+   inherits its height through this flex chain rather than a percentage (which
+   would double-count the chrome); it carries its own min-height: 0. Other
+   screens keep intrinsic heights (a blanket min-height: 0 here let a wrapped
+   header row collapse under its second line). */
+.desktop-frame {{ width: 100%; height: 100%; box-sizing: border-box;
+                  display: flex; flex-direction: column; background-color: {bg};
+                  color: {text}; font-family: sans-serif; font-size: 14px;
+                  padding: 8px 16px 0 16px; }}
+.desktop-frame .root {{ width: 100%; height: auto; min-height: 0; flex-grow: 1;
+                        background-color: transparent; padding: 0 0 16px 0; }}
+/* The title bar is a window-drag surface: the host reads `--app-region` off
+   the cascade, so the whole bar drags and no element needs a drag handler.
+   Double-click to maximize and the right-click system menu come with it. */
+.chrome {{ --app-region: drag; display: flex; margin-bottom: 10px; }}
+.chrome-title {{ color: {text_header}; font-size: 15px; font-weight: 700; padding: 4px 8px 4px 0; }}
+/* Spacer: pushes the buttons right and gives the bar its grabbable middle. */
+.chrome-drag {{ flex-grow: 1; height: 26px; }}
+/* The buttons sit inside the bar, so they carve themselves back out of it. */
+.chrome-btn {{ --app-region: no-drag; color: {text_dim}; padding: 2px 12px; border-radius: 6px;
+              font-size: 15px; }}
+.chrome-btn:hover {{ background-color: {surface_2}; color: {text}; }}
+.chrome-close:hover {{ background-color: {danger}; color: {on_primary}; }}
+.header-row {{ display: flex; margin-bottom: 10px; }}
+.header-label {{ color: {text_dim}; padding: 4px 6px 4px 0; }}
+.header-gap {{ width: 18px; }}
+.pills {{ display: flex; margin-bottom: 10px; }}
+.pill {{ padding: 6px 14px; margin-right: 6px; border-radius: 14px; color: {text_dim}; }}
+.pill-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
+.workspace-strip {{ display: flex; align-items: center; gap: 4px; margin-bottom: 8px; min-width: 0; }}
+.workspace-strip .cambium-scope-location {{ flex: 1 1 auto; min-width: 0; }}
+.workspace-strip .cambium-scope-trail {{ min-width: 0; overflow: hidden; }}
+.scope-navigation-notice {{ font-size: 11px; color: {text_dim}; }}
+.workspace-panel {{ padding: 3px 9px; border-radius: 7px; color: {text_dim}; font-size: 12px; }}
+.workspace-panel-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
+.nav-spacer {{ flex-grow: 1; }}
+.search-wrap {{ width: 240px; margin-right: 8px; box-sizing: border-box; }}
+.search-wrap [role=textbox] {{ display: block; width: 240px; box-sizing: border-box;
+                     height: 32px; line-height: 30px;
+                     background-color: {surface_2}; color: {text}; padding: 0 12px;
+                     border-radius: 10px; border: 1px solid {surface_2}; font-size: 13px; }}
+.search-wrap [role=textbox]:focus {{ border: 1px solid {tertiary}; }}
+/* The field renders its text as element content and carries no browser input
+   value semantics, so there is no ::placeholder to style. The hint is a sibling
+   overlaid on the empty field, and pointer-events: none keeps a click on it
+   landing in the field. Padding matches the field's 6px/12px plus its 1px border
+   so the hint sits exactly where the typed text will appear. */
+.search-hint {{ position: absolute; top: 0; left: 0; padding: 0 13px; line-height: 32px;
+               color: {text_disabled}; font-size: 13px; pointer-events: none; }}
+.search-list {{ background-color: {surface_2}; border-radius: 8px; padding: 4px;
+               width: 240px; box-sizing: border-box;
+               box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }}
+.search-item {{ display: flex; padding: 5px 10px; border-radius: 6px; }}
+.search-item:hover {{ background-color: {surface_hover}; }}
+.search-label {{ color: {text}; flex-grow: 1; font-size: 13px; }}
+.search-kind {{ color: {text_dim}; font-size: 11px; padding: 2px 0 0 8px; }}
+.lens-strip {{ display: flex; margin-bottom: 12px; }}
+.lens {{ padding: 4px 12px; margin-right: 6px; border-radius: 12px; color: {text_dim};
+        font-size: 13px; }}
+.lens-active {{ background-color: {surface_2}; color: {tertiary}; font-weight: 600; }}
+.body {{ display: flex; }}
+/* Stage owns page overflow, including the Set tray. Its wide body keeps a
+   text-relative usable floor and each column scrolls independently. The tray
+   cannot shrink the board to zero when it grows beyond the viewport. */
+.stage-screen {{ display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; min-width: 0; overflow-y: auto; }}
+.stage-screen > * {{ flex-shrink: 0; }}
+.workspace-screen {{ flex: 1 1 0; min-height: 0; min-width: 0; overflow: auto; }}
+.stage-screen-flow {{ display: block; }}
+.stage-body {{ flex: 1 0 16em; min-height: 16em; }}
+.stage-body .side {{ flex: 0 0 220px; min-height: 0; overflow-y: auto; }}
+.stage-body .board {{ flex: 1 1 auto; min-width: 0; min-height: 0; overflow-y: auto; }}
+.stage-body .related-panel {{ min-height: 0; overflow-y: auto; }}
+.side {{ width: 220px; margin-right: 16px; }}
+.side-item {{ padding: 5px 10px; color: {text_dim}; border-radius: 6px; }}
+.side-active {{ background-color: {surface_2}; color: {text}; }}
+.board {{ background-color: {surface}; border-radius: 10px; padding: 14px; }}
+/* The board is a Sprigging paint leaf (crisp neck + markers); note labels ride
+   as a thin text layer over it, each positioned at the leaf's marker centre. */
+.fretboard-stack {{ position: relative; }}
+/* The board's scroll viewport: relative so it is the overlay's containing block
+   (its absolute label/card layers then clip and scroll with the leaf), and the
+   overflow axis + size come from an inline style so orientation picks which way
+   the neck scrolls. A neck that already fits shows no scrollbar. */
+.board-viewport {{ position: relative; min-width: 0; }}
+.rehearsal-board-viewport {{ max-width: 100%; }}
+/* Adjustable neck range: From/To steppers + a Full (auto-track) toggle. */
+.neck-control {{ display: flex; align-items: center; margin-top: 10px; }}
+.neck-label {{ color: {text_dim}; font-size: 13px; margin-right: 8px; }}
+.neck-label-gap {{ margin-left: 18px; }}
+.neck-step {{ padding: 3px 10px; border-radius: 6px; background-color: {surface_2};
+             color: {tertiary}; font-size: 14px; cursor: pointer; }}
+.neck-step:hover {{ background-color: {surface_hover}; color: {text_header}; }}
+.neck-value {{ min-width: 26px; text-align: center; color: {text}; font-size: 14px;
+              padding: 0 4px; }}
+.neck-full {{ margin-left: 16px; padding: 4px 12px; border-radius: 6px;
+             color: {text_dim}; font-size: 13px; cursor: pointer; }}
+.neck-full.side-active {{ background-color: {surface_2}; color: {text}; }}
+.neck-full:hover {{ background-color: {surface}; color: {text}; }}
+.label-layer {{ position: absolute; top: 0; left: 0; }}
+.fret-label {{ position: absolute; display: flex; align-items: center;
+              justify-content: center; color: {on_primary}; font-size: 11px;
+              cursor: pointer; }}
+.fret-label.pinned {{ border: 1.5px solid {tertiary}; border-radius: 4px;
+                     box-sizing: border-box; }}
+/* Marked note: label brightened to match its leaf selection ring. Excluded note
+   (what the current mode silences): faded to match its dim marker, still a click
+   target. */
+.fret-label.marked {{ color: {text_header}; }}
+.fret-label.excluded {{ opacity: 0.4; }}
+/* The Rehearsal hover peek still overlays its board. */
+.card-layer {{ position: absolute; top: 0; left: 0; }}
+/* Pinned marker detail cards: a wrapping strip under the neck, so cards flow
+   beside each other instead of stacking over the board (or each other). */
+.note-card-strip {{ display: flex; flex-wrap: wrap; margin-top: 10px; }}
+.note-card {{ background-color: {surface_2};
+             border: 1px solid {surface_hover}; border-radius: 8px;
+             padding: 7px 10px; box-sizing: border-box; width: 140px;
+             margin: 0 8px 8px 0; }}
+.note-card-head {{ display: flex; align-items: center; }}
+.note-card-close {{ margin-left: auto; padding: 0 4px; color: {text_dim};
+                   font-size: 13px; cursor: pointer; border-radius: 4px; }}
+.note-card-close:hover {{ background-color: {surface_hover}; color: {text}; }}
+.note-card-title {{ color: {text_header}; font-size: 14px; margin-bottom: 3px; }}
+.note-card-row {{ color: {text_dim}; font-size: 11px; line-height: 15px; }}
+.note-card-play {{ margin-top: 7px; padding: 4px 0; border-radius: 5px;
+                  background-color: {surface}; color: {tertiary}; font-size: 11px;
+                  text-align: center; cursor: pointer; }}
+.note-card-play:hover {{ background-color: {surface_hover}; }}
+.board-caption {{ display: flex; align-items: center; }}
+.clear-pins {{ margin-left: auto; padding: 3px 10px; border-radius: 6px;
+              color: {text_dim}; font-size: 12px; cursor: pointer; }}
+.clear-pins:hover {{ background-color: {surface_2}; color: {text}; }}
+.run-btn {{ padding: 4px 12px; border-radius: 6px; background-color: {surface_2};
+           color: {tertiary}; font-size: 12px; cursor: pointer; margin-right: 12px; }}
+.run-btn:hover {{ background-color: {surface_hover}; color: {text_header}; }}
+/* The Path toggle, lit when the touch's trail is shown. */
+.run-btn.path-on {{ background-color: {surface_hover}; color: {tertiary}; }}
+/* Draw mode, lit with a ring outline to read as "you're authoring the path". */
+.run-btn.draw-on {{ background-color: {surface_hover}; color: {tertiary};
+                   box-shadow: inset 0 0 0 1px {tertiary}; }}
+/* A drawn marker's step number, shown while drawing in place of its note name:
+   brighter than a name so the order pops out of the board. */
+.fret-label.step {{ color: {text_header}; font-weight: 600; }}
+/* Path-editing tools (undo / reverse / rotate / clear): quiet inline actions. */
+.draw-tools {{ display: flex; align-items: center; margin-right: 12px; }}
+.draw-tool {{ padding: 3px 8px; border-radius: 5px; color: {text_dim};
+             font-size: 12px; cursor: pointer; }}
+.draw-tool:hover {{ background-color: {surface_2}; color: {text}; }}
+/* Save is the loop-closer, so it reads as the affirmative action. */
+.draw-tool.save {{ color: {tertiary}; }}
+.draw-tool.save:hover {{ background-color: {surface_hover}; color: {text_header}; }}
+/* Rename field for the selected card. The inner input needs its own box (like
+   .search-wrap [role=textbox]): a text field renders its buffer as element content, so
+   without padding/display it has no hit area to click into and never focuses. */
+.card-rename {{ width: 260px; margin-right: 12px; box-sizing: border-box; }}
+.card-rename [role=textbox] {{ display: block; width: 260px; box-sizing: border-box;
+                     background-color: {surface_2}; color: {text}; padding: 6px 12px;
+                     border-radius: 8px; border: 1px solid {surface_2}; font-size: 13px; }}
+.card-rename [role=textbox]:focus {{ border: 1px solid {tertiary}; }}
+/* Segmented mode control [Off · Solo · Mute]: a structured toggle, not a loose
+   button row. The active segment is lit. */
+.mode-seg {{ display: flex; margin-right: 12px; border-radius: 6px; }}
+.seg {{ padding: 4px 12px; font-size: 12px; color: {text_dim}; cursor: pointer;
+       background-color: {surface_2}; }}
+.seg:hover {{ color: {text}; }}
+.seg.active {{ background-color: {surface_hover}; color: {text_header}; }}
+.side-strip {{ margin-top: 12px; }}
+.side-strip .side {{ width: 100%; display: flex; flex-wrap: wrap; margin-right: 0; }}
+.side-strip .side-item {{ margin-right: 6px; margin-bottom: 6px; }}
+/* The panel may give ground down to 300px before the board starts scrolling,
+   so a mid-width window keeps all three columns on screen. */
+.related-panel {{ width: 380px; flex: 0 1 380px; min-width: 300px; margin-left: 16px; background-color: {surface}; border-radius: 10px; padding: 14px; box-sizing: border-box; }}
+.related-workspace > .related-panel {{ width: 100%; min-width: 0; margin-left: 0; }}
+.related-heading {{ color: {text}; font-size: 15px; font-weight: 700; }}
+.related-subtitle, .related-empty, .related-why {{ color: {text_dim}; font-size: 12px; }}
+.related-subtitle {{ margin-top: 2px; margin-bottom: 10px; }}
+/* Graph swatch and suggestions pane sit side by side (wrap when the panel is
+   narrow). */
+.related-body {{ display: flex; align-items: flex-start; flex-wrap: wrap; }}
+.related-graph-col {{ flex: 0 0 auto; background-color: {surface_2}; border-radius: 8px; padding: 4px; margin-right: 10px; margin-bottom: 10px; }}
+.related-camera-controls {{ display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 2px 2px; }}
+.related-camera-controls .t-btn {{ background-color: {surface_hover}; min-height: 28px; padding: 6px 10px; }}
+.related-pane-col {{ flex: 1; min-width: 150px; }}
+.claims-link-inspection {{ min-width: 0; }}
+.claims-link-inspection .opened-link-swatch {{ min-width: 0; max-width: 100%; }}
+.claims-link-inspection .opened-link-controls {{ display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }}
+.claims-link-inspection .opened-link-controls button, .claims-link-inspection button[data-assertion-action] {{ min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }}
+.claims-link-inspection .detail-row {{ display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; overflow-wrap: anywhere; }}
+.claims-link-inspection .detail-row > * {{ min-width: 0; overflow-wrap: anywhere; }}
+.claims-reason-field {{ display: flex; flex-direction: column; gap: 4px; margin: 8px 0;
+                        color: {text_dim}; font-size: 12px; }}
+.claims-reason-field [role=textbox] {{ display: block; width: 100%; min-height: 34px;
+                        box-sizing: border-box; padding: 7px 9px; background-color: {surface_2};
+                        color: {text}; border: 1px solid {surface_2}; border-radius: 6px; }}
+.claims-reason-field [role=textbox]:focus {{ border-color: {tertiary}; }}
+/* Cambium graph-canvas-swatch: the painted leaf shows the nodes and emphasis;
+   the buttons are transparent hit targets. A small quiet Expand button. */
+.graph-canvas-swatch-node {{ background-color: transparent; border-width: 0; cursor: pointer; }}
+.graph-canvas-swatch-relation {{ background-color: transparent; border-width: 0; padding: 0; cursor: pointer; }}
+.graph-canvas-swatch-expand {{ background-color: {surface}; color: {text_dim}; border-width: 0; border-radius: 4px; font-size: 10px; padding: 2px 5px; cursor: pointer; }}
+.graph-canvas-swatch-expand:hover {{ color: {text}; }}
+.related-history {{ margin-bottom: 10px; padding-bottom: 8px; border-bottom-width: 1px; border-bottom-color: {surface_2}; }}
+.history-heading {{ color: {text_dim}; font-size: 11px; margin-bottom: 4px; }}
+.history-list {{ display: flex; flex-wrap: wrap; }}
+.history-item {{ background-color: {surface_2}; border-radius: 10px; margin-right: 5px; margin-bottom: 4px; padding: 3px 7px; font-size: 11px; }}
+.history-kind {{ color: {text_dim}; margin-right: 4px; }}
+.history-title {{ color: {text}; }}
+.tool-board {{ min-height: 220px; }}
+.tool-reading {{ color: {tertiary}; font-size: 28px; margin-top: 18px; }}
+.settings-shell {{ align-items: flex-start; }}
+.practice-close-panel, .practice-save-notice {{ padding: 12px; background-color: {surface_2}; color: {text}; border-radius: 8px; }}
+.settings-nav {{ flex: 0 0 220px; }}
+.settings-page {{ flex: 1; min-height: 300px; }}
+.settings-options {{ margin-top: 10px; }}
+.set-tray {{ flex: 0 0 auto; margin-top: 14px; background-color: {surface}; border-radius: 10px; padding: 12px; }}
+.set-graph {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; max-width: 100%; }}
+.set-graph-compact {{ width: 300px; }}
+.set-graph-toolbar {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; }}
+.set-graph-heading {{ color: {text_dim}; flex-shrink: 0; font-size: 10px; text-transform: uppercase; }}
+.set-graph-layout-label {{ color: {text_dim}; font-size: 10px; }}
+.set-graph-reading {{ flex-shrink: 0; font-size: 11px; }}
+.set-graph-inspection {{ width: 100%; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 14px; }}
+.stage-context-panel {{ width: 260px; max-width: 100%; display: flex; flex-direction: column; gap: 7px; padding: 12px; border-radius: 8px; background-color: {surface_2}; }}
+.stage-context-label {{ color: {text_dim}; font-size: 10px; }}
+.stage-context-title {{ color: {text}; font-size: 14px; font-weight: 600; }}
+.stage-context-comparison {{ font-size: 12px; }}
+.stage-context-actions {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }}
+.stage-context-actions .t-btn {{ min-width: 120px; flex-shrink: 0; white-space: nowrap; }}
+.card-details .stage-context-panel {{ width: 100%; max-width: 760px; box-sizing: border-box; }}
+.card-details {{ width: 100%; min-width: 0; }}
+.stage-context-candidates {{ margin-top: 8px; }}
+.stage-context-candidate-list {{ max-height: 180px; overflow-y: auto; margin: 6px 0; }}
+.stage-context-candidate {{ padding: 7px 5px; border-top: 1px solid {surface}; border-radius: 4px; }}
+.stage-context-candidate:hover {{ background-color: {surface}; }}
+.stage-context-candidate-label {{ color: {text}; font-size: 12px; }}
+.stage-context-candidate-meta {{ color: {text_dim}; font-size: 11px; margin-top: 3px; }}
+.stage-context-labels {{ position: absolute; inset: 0; pointer-events: none; }}
+.stage-context-node-label {{ position: absolute; display: block; font-size: 10px; line-height: 14px; white-space: nowrap; pointer-events: none; color: {text_dim}; }}
+.stage-context-node-label.active {{ color: {text}; font-weight: 600; }}
+.set-graph-toolbar .select {{ min-width: 112px; z-index: 2; }}
+.set-graph-canvas-row {{ display: flex; align-items: flex-end; min-width: 0; max-width: 100%; overflow-x: auto; }}
+.set-graph-canvas-stack {{ position: relative; flex: 0 0 auto; overflow: hidden; }}
+.set-graph-resize-grip {{ position: relative; flex: 0 0 18px; width: 18px; height: 18px; }}
+.resize-handle {{ background-color: {tertiary}; border-radius: 3px 0 6px 0; cursor: nwse-resize; opacity: 0.86; z-index: 6; }}
+.resize-handle:focus {{ outline-width: 1px; outline-color: {text}; }}
+.set-graph-card-root {{ position: absolute; left: 0; top: 0; pointer-events: none; z-index: 4; }}
+.set-graph-selected-card {{ position: relative; width: 300px; max-width: 100%; padding: 10px; border-radius: 9px; background-color: {surface_2}; }}
+.instance-binding {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 4px 12px; }}
+.exploration-instance-name, .working-instance-name {{ color: {text}; font-size: 12px; }}
+.staging-target-label {{ color: {text_dim}; font-size: 11px; }}
+.staging-target-choices, .overview-instance-actions {{ display: flex; flex-wrap: wrap; gap: 6px; }}
+.staging-target-active {{ background-color: {tertiary}; color: {on_primary}; }}
+.session-overview {{ display: flex; flex-direction: column; gap: 12px; min-width: 0; padding: 12px; }}
+.relationship-screen {{ display: flex; flex-direction: column; gap: 10px; padding: 16px; max-width: 1100px; }}
+.relationship-screen p {{ margin: 0; color: {text_dim}; font-size: 13px; line-height: 1.4; }}
+.relationship-screen h3, .relationship-screen h4 {{ margin: 0; }}
+.relationship-screen .t-btn {{ align-self: flex-start; min-height: 34px; padding: 8px 12px; white-space: normal; }}
+.relationship-choices {{ display: flex; flex-wrap: wrap; gap: 8px; }}
+.relationship-graph {{ flex: 0 0 220px; min-height: 220px; height: 220px; overflow: auto; max-width: 100%; }}
+.relationship-label {{ width: 100%; max-width: 640px; }}
+.relationship-label [role=textbox] {{ width: 100%; min-height: 34px; padding: 8px 10px; background: {surface_2}; color: {text}; border-radius: 4px; }}
+.relationship-explanation, .relationship-refusal {{ padding: 12px; background: {surface_2}; }}
+.session-overview .t-btn {{ min-height: 34px; padding: 8px 12px; white-space: normal; }}
+.session-overview .overview-atmosphere-selected {{ color: {tertiary}; border: 1px solid {tertiary}; }}
+.overview-title {{ font-size: 20px; color: {text}; }}
+.overview-subtitle, .overview-detail, .overview-notice {{ font-size: 12px; color: {text_dim}; }}
+.overview-context-shelf {{ display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid {surface_2}; border-radius: 8px; }}
+.overview-save-row {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }}
+.overview-body {{ display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }}
+.overview-roster {{ display: flex; flex-direction: column; gap: 6px; flex: 1 1 240px; min-width: 0; }}
+.overview-node {{ padding: 8px 12px; background: {surface}; border-radius: 5px; }}
+.overview-node-selected {{ background: {surface_2}; }}
+.overview-node-title, .overview-inspector-title {{ color: {text}; font-size: 13px; }}
+.overview-node-kind, .overview-relation {{ color: {text_dim}; font-size: 11px; }}
+.overview-inspector {{ display: flex; flex-direction: column; gap: 10px; flex: 1 1 280px; min-width: 0; padding: 12px; background: {surface}; }}
+.overview-relations {{ display: flex; flex-direction: column; gap: 4px; }}
+.overview-open, .overview-save {{ min-height: 30px; padding: 8px 12px; }}
+.set-graph-selected-card .set-editor {{ gap: 6px; border-top-width: 0; }}
+.set-graph-selected-card .set-editor-label {{ width: 100%; }}
+.set-graph-selected-card .card-rename {{ width: 100%; }}
+.set-graph-node-card-layer {{ position: absolute; pointer-events: none; z-index: 4; }}
+.set-graph-node-card {{ position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: auto; box-sizing: border-box; overflow: hidden; padding: 10px; background-color: {surface_2}; border-width: 1px; border-color: {tertiary}; border-radius: 9px; z-index: 4; }}
+.set-graph-node-card .set-editor {{ align-content: flex-start; border-top-width: 0; gap: 6px; padding-top: 0; }}
+.set-graph-node-card .set-editor-label {{ padding-right: 100px; width: 100%; }}
+.set-graph-node-card .card-rename {{ margin-bottom: 3px; width: 100%; }}
+.graph-card-collapse {{ position: absolute; right: 8px; top: 8px; z-index: 2; }}
+/* The swatch paints node labels past its own box, so a control beside it gets
+   overdrawn (seen in the P4a receipt). Give the controls their own row. */
+.set-graph-relation {{ width: 100%; color: {text_dim}; font-size: 11px; }}
+.set-graph-controls {{ width: 100%; display: flex; gap: 8px; }}
+.set-relation-inventory {{ width: 100%; border-top-width: 1px; border-top-color: {surface_2}; padding-top: 8px; }}
+.set-relation-toolbar {{ display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }}
+.set-relation-heading {{ color: {text}; font-size: 11px; font-weight: 700; margin-right: auto; }}
+.set-relation-list {{ max-height: 184px; overflow-y: auto; }}
+.set-relation-row {{ display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom-width: 1px; border-bottom-color: {surface_2}; }}
+.set-relation-toggle {{ flex: 0 0 52px; background-color: {surface_2}; color: {text_dim}; border-width: 0; border-radius: 4px; padding: 4px 5px; font-size: 10px; text-align: center; cursor: pointer; }}
+.set-relation-toggle-on {{ background-color: {tertiary}; color: {on_primary}; }}
+.set-relation-copy {{ flex: 1; min-width: 0; }}
+.set-relation-pair {{ color: {text}; font-size: 11px; }}
+.set-relation-kind {{ color: {text_dim}; font-size: 10px; margin-top: 2px; }}
+.set-relation-explanation {{ color: {text_dim}; font-size: 10px; margin-top: 2px; }}
+.set-toolbar {{ display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }}
+.set-heading {{ color: {text}; font-size: 15px; font-weight: 700; margin-right: auto; padding-right: 10px; }}
+.set-cards {{ display: flex; flex-wrap: wrap; }}
+.set-card {{ width: 190px; background-color: {surface_2}; border-radius: 8px; padding: 9px; margin-right: 7px; margin-bottom: 7px; cursor: pointer; }}
+.set-card-active {{ background-color: {surface_hover}; outline-width: 1px; outline-color: {tertiary}; }}
+.set-card-kind, .set-card-source, .set-empty {{ color: {text_dim}; font-size: 10px; }}
+.set-card-title {{ color: {text}; font-size: 13px; margin-top: 3px; }}
+.set-card-meta {{ color: {tertiary}; font-size: 10px; margin-top: 4px; }}
+.set-card-source {{ margin-top: 3px; }}
+.set-editor {{ display: flex; flex-direction: column; align-items: stretch; gap: 8px; min-width: 0; border-top-width: 1px; border-top-color: {surface_2}; padding-top: 8px; }}
+.set-editor-label {{ color: {text_dim}; font-size: 11px; margin-right: 8px; }}
+.card-shape-controls {{ display: flex; flex-direction: column; gap: 6px; min-width: 0; }}
+.card-control-row, .card-shape-control-row {{ display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }}
+.card-control-row .t-btn, .card-shape-control-row .t-btn {{ min-height: 28px; padding: 6px 10px; }}
+.card-explanation-section {{ display: flex; flex-direction: column; gap: 8px; min-width: 0; }}
+.card-explanation-section .t-btn {{ min-height: 28px; padding: 6px 10px; }}
+.card-shape-notice {{ color: {text_dim}; flex: 1 0 100%; }}
+.shape-movement {{ flex: 1 0 100%; min-width: 0; padding-top: 8px; color: {text_dim}; }}
+.shape-movement-summary {{ margin: 6px 0; }}
+.shape-movement-strings {{ display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 6px; }}
+.pitch-motion-controls {{ margin-bottom: 10px; }}
+.pitch-motion-anchor {{ font-weight: 600; margin-bottom: 6px; }}
+.viewport-narrow .set-card {{ width: 44%; }}
+.viewport-narrow .settings-shell {{ display: block; }}
+.viewport-narrow .settings-nav {{ width: 100%; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }}
+.viewport-narrow .settings-page-nav .side-item {{ flex: 1 1 150px; box-sizing: border-box; }}
+/* Suggestions pane: one structured row each. A row (or its graph node) lights
+   the other via `.hovered`. */
+.related-row {{ display: flex; align-items: center; border-top-width: 1px; border-top-color: {surface_2}; padding: 6px 4px; border-radius: 6px; }}
+.related-row.hovered {{ background-color: {surface_2}; }}
+.related-copy {{ display: flex; align-items: center; flex: 1; min-width: 0; cursor: pointer; }}
+.related-kind {{ flex: 0 0 auto; font-size: 9px; color: {text_dim}; background-color: {surface_hover}; border-radius: 4px; padding: 2px 5px; margin-right: 7px; }}
+.related-copy-text {{ min-width: 0; }}
+.related-name {{ color: {text}; font-size: 13px; }}
+.related-why {{ margin-top: 1px; }}
+/* The relations this pair carries beyond the one shown above. Quiet, because
+   it is a completeness cue rather than the headline. */
+.related-also {{ color: {tertiary}; font-size: 10px; margin-top: 1px; }}
+.related-actions {{ display: flex; align-items: center; margin-left: 6px; }}
+.related-stage {{ color: {tertiary}; font-size: 12px; padding: 4px 7px; border-radius: 5px; cursor: pointer; }}
+.related-hide {{ color: {text_dim}; font-size: 14px; padding: 2px 7px; cursor: pointer; }}
+.related-stage:hover, .related-hide:hover {{ background-color: {surface_hover}; color: {text}; }}
+.viewport-medium .related-panel, .viewport-narrow .related-panel {{ width: auto; flex: 1 1 auto; margin-left: 0; margin-top: 12px; }}
+.settings-gap {{ margin-top: 16px; }}
+.t-btn:focus {{ background-color: {surface_hover}; color: {tertiary}; }}
+.side-item:focus {{ background-color: {surface}; }}
+.lens:focus {{ color: {text}; }}
+.pill:focus {{ color: {text}; }}
+.prog-cards {{ display: flex; margin-bottom: 12px; }}
+.prog-card {{ background-color: {surface_2}; border-radius: 8px; padding: 6px 14px;
+             margin-right: 8px; }}
+.prog-card-active {{ background-color: {surface_hover}; }}
+.prog-numeral {{ color: {tertiary}; font-size: 15px; }}
+.prog-chord {{ color: {text_dim}; font-size: 12px; }}
+.scale-name {{ margin-top: 10px; color: {text_dim}; font-size: 12px; }}
+.placeholder {{ color: {text_dim}; padding: 24px; }}
+.caption {{ margin-top: 12px; color: {text_disabled}; font-size: 12px; }}
+.transport {{ display: flex; margin-bottom: 10px; }}
+.rehearsal-transport {{ flex-wrap: wrap; }}
+.rehearsal-transport .working-instance-name,
+.rehearsal-transport .background-rehearsal-status {{ flex-basis: 100%; margin-bottom: 6px; }}
+.rehearsal-transport .t-btn:focus-visible,
+.film-card:focus-visible {{ outline: 2px solid {tertiary}; outline-offset: 2px; }}
+.rehearsal-context {{ display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px;
+                     margin: 0 0 10px; padding: 8px 10px; background-color: {surface}; border-radius: 8px; }}
+.rehearsal-adjacent {{ color: {text_dim}; font-size: 12px; min-width: 140px; flex: 1 1 150px; }}
+.rehearsal-current {{ color: {text_header}; font-size: 13px; font-weight: 600; min-width: 180px; flex: 1 1 190px; }}
+.rehearsal-progress {{ display: flex; align-items: center; gap: 10px; flex: 1 1 220px; min-width: 180px; }}
+.rehearsal-progress-label {{ color: {text_dim}; font-size: 11px; white-space: nowrap; }}
+.rehearsal-progress-track {{ height: 6px; flex: 1 1 auto; min-width: 55px; overflow: hidden;
+                            background-color: {surface_2}; border-radius: 4px; }}
+.rehearsal-progress-fill {{ height: 100%; background-color: {tertiary}; border-radius: 4px; }}
+.t-btn {{ background-color: {surface_2}; color: {text}; padding: 4px 12px;
+         margin-right: 6px; border-radius: 6px; }}
+.t-narrow {{ padding: 4px 9px; }}
+.t-hear {{ color: {tertiary}; }}
+.rec-on {{ background-color: {danger}; color: {on_primary}; }}
+.t-readout {{ color: {text_dim}; padding: 4px 10px 4px 0; }}
+.select-box {{ background-color: {surface_2}; color: {text}; padding: 4px 12px;
+              border-radius: 6px; }}
+.select-list {{ background-color: {surface_2}; border-radius: 6px; padding: 4px;
+               width: 220px; }}
+.select-option {{ color: {text}; padding: 4px 10px; border-radius: 4px; }}
+.settings-heading {{ color: {text_header}; font-size: 15px; margin-bottom: 8px; }}
+.settings-line {{ color: {text_dim}; margin-bottom: 6px; }}
+.midi-events {{ font-size: 11px; color: {text_disabled}; }}
+.filmstrip {{ display: flex; overflow-x: auto; overflow-y: hidden; margin-bottom: 14px; padding: 6px 2px; }}
+.film-card {{ background-color: {surface}; border-radius: 10px; padding: 10px 14px;
+             margin-right: 10px; width: 190px; flex: 0 0 190px;
+             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+             border: 1px solid {surface_2}; }}
+.film-played {{ opacity: 0.45; }}
+.film-current {{ border: 1px solid {tertiary}; }}
+.film-tag {{ color: {secondary}; font-size: 11px; }}
+.film-label {{ color: {text}; font-size: 14px; margin-bottom: 4px; }}
+.film-meta {{ color: {text_dim}; font-size: 11px; }}
+.recipe-grid {{ display: grid; grid-template-columns: repeat(3, 260px); gap: 12px; }}
+.recipe-tile {{ background-color: {surface_2}; border-radius: 10px; padding: 12px 14px;
+               border: 1px solid {surface_2}; }}
+.recipe-name {{ color: {text_header}; font-size: 15px; margin-bottom: 4px; }}
+.recipe-desc {{ color: {text_dim}; font-size: 12px; margin-bottom: 6px; }}
+.recipe-meta {{ color: {secondary}; font-size: 11px; }}
+.recipe-tile:hover {{ border: 1px solid {tertiary}; }}
+.bar-lane {{ display: flex; flex-wrap: wrap; margin-bottom: 10px; }}
+.bar-chip {{ background-color: {surface_2}; border-radius: 8px; padding: 8px 12px;
+            margin: 0 8px 8px 0; width: 110px; border: 1px solid {surface_2}; }}
+.bar-current {{ border: 1px solid {secondary}; background-color: {surface_hover}; }}
+.bar-edit {{ border: 1px solid {tertiary}; }}
+.bar-chip:hover {{ border: 1px solid {text_dim}; }}
+.bar-label {{ color: {tertiary}; font-size: 11px; height: 13px; }}
+.bar-chord {{ color: {text}; font-size: 15px; }}
+.bar-meta {{ color: {text_dim}; font-size: 10px; }}
+.t-btn:hover {{ background-color: {surface_hover}; }}
+.pill:hover {{ color: {text}; }}
+.lens:hover {{ color: {text}; }}
+.side-item:hover {{ background-color: {surface}; color: {text}; }}
+.select-box:hover {{ background-color: {surface_hover}; }}
+.select-option:hover {{ background-color: {surface_hover}; }}
+.film-card:hover {{ border: 1px solid {secondary}; }}
+.prog-card:hover {{ background-color: {surface_hover}; }}
+/* CSS transitions (genet transition_events): subtle hover/active fades
+   on the interactive chrome. The host ticks the animation clock each
+   frame while any transition runs. */
+.t-btn, .chrome-btn, .side-item, .select-box, .select-option,
+.search-item, .prog-card {{ transition: background-color 0.12s ease, color 0.12s ease; }}
+.pill, .lens {{ transition: background-color 0.14s ease, color 0.14s ease; }}
+.film-card, .recipe-tile, .bar-chip {{ transition: border-color 0.14s ease, background-color 0.14s ease; }}
+.search-wrap [role=textbox] {{ transition: border-color 0.12s ease; }}
+/* The persona gate (P1): the whole product root, replaced by one question,
+   because nothing behind it has been read yet. Centred rather than anchored:
+   there is no trigger control to point back at. */
+.persona-gate {{ align-items: center; justify-content: center; }}
+.persona-card {{ width: 380px; background-color: {surface}; border-radius: 14px;
+                padding: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }}
+.persona-title {{ color: {text_header}; font-size: 17px; font-weight: 700;
+                 padding-bottom: 4px; }}
+.persona-vault {{ color: {text_dim}; font-size: 12px; padding-bottom: 12px; }}
+.persona-notice {{ color: {secondary}; font-size: 12px; padding-top: 10px; }}
+.persona-hint {{ color: {text_disabled}; font-size: 12px; padding-top: 12px; }}
+/* The nav-row notice for a session nobody is saving. Coloured as a flag rather
+   than an error: practising without a persona is a choice the user made, not a
+   fault, so it states itself and stays out of the way. */
+.unsaved {{ color: {secondary}; font-size: 12px; padding: 7px 10px 0 0; }}
+/* Cambium's command surface, styled here because woodshed emits its own sheet
+   rather than importing a component stylesheet. The picker is the only
+   configuration woodshed uses so far; a palette or context menu would want the
+   other two root classes. */
+.command-picker {{ display: flex; flex-direction: column; background-color: {surface_2};
+                  border-radius: 10px; padding: 4px; }}
+.command-items {{ display: flex; flex-direction: column; }}
+.command-item {{ display: flex; padding: 8px 10px; border-radius: 7px; }}
+.command-item:hover {{ background-color: {surface_hover}; }}
+.command-item.selected {{ background-color: {surface_hover}; }}
+.command-label {{ color: {text}; flex-grow: 1; font-size: 14px; }}
+.command-shortcut {{ color: {text_dim}; font-size: 12px; padding: 2px 0 0 8px; }}
+/* Responsive shell. The host selects a width band so the same product view
+   stays legible on a small desktop window and future browser canvas. */
+.viewport-medium .recipe-grid {{ grid-template-columns: repeat(2, 260px); }}
+.viewport-medium .transport {{ flex-wrap: wrap; }}
+.viewport-medium .t-btn {{ margin-bottom: 6px; }}
+.viewport-narrow .pills {{ flex-wrap: wrap; margin-bottom: 8px; }}
+.viewport-narrow .pill {{ padding: 8px 12px; margin-bottom: 6px; }}
+.viewport-narrow .nav-spacer {{ display: none; }}
+/* Narrow drops search to its own row; cap it so it reads as a field, not a
+   full-width empty strip (a 2x-DPI desktop is ~640 logical px, always narrow). */
+.viewport-narrow .search-wrap {{ width: 100%; max-width: 340px; margin: 0 0 8px 0; }}
+.viewport-narrow .search-wrap [role=textbox], .viewport-narrow .search-list {{ width: 100%; }}
+.viewport-narrow .header-row, .viewport-narrow .transport,
+.viewport-narrow .prog-cards {{ flex-wrap: wrap; }}
+.viewport-narrow .header-gap {{ width: 10px; }}
+.viewport-narrow .t-btn {{ padding: 8px 12px; margin-bottom: 6px; }}
+.viewport-narrow .board {{ overflow: scroll; padding: 12px; }}
+.viewport-narrow .side-strip .side {{ flex-wrap: wrap; }}
+.viewport-narrow .recipe-grid {{ display: flex; flex-direction: column; }}
+.viewport-narrow .recipe-tile {{ width: 100%; box-sizing: border-box; }}
+"#
+    );
+    format!(
+        "{}\n{}\n{}\n{}\n{themed}\n.woodshed-recorder-mount {{ width:100%; min-width:0; }}\n.woodshed-recorder-mount .hocket-recorder {{ --ground:{bg}; --surface:{surface}; --surface-2:{surface_2}; --raised:{surface_hover}; --line:{text_disabled}; --line-soft:{surface_2}; --text:{text}; --text-dim:{text_dim}; --text-faint:{text_disabled}; --voice-amber:{secondary}; --record:{danger}; }}",
+        cambium::SHELL_CSS,
+        cambium::GRAPH_CANVAS_SWATCH_CSS,
+        cambium::RESIZE_HANDLE_CSS,
+        hocket_views::theme::sheet(),
+    )
+}

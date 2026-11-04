@@ -166,10 +166,27 @@ fn hasher() -> std::collections::hash_map::DefaultHasher {
 /// Refresh every leaf from the current state. Called from the frame hook,
 /// before the host lays out and paints.
 pub fn sync_all(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
-    if let Some(draft)=ui.music_draft(){
-        let signature=format!("{:?}{:?}{:?}{}{:?}",draft.score,draft.view,draft.selected,ui.viewport_width,(ui.app_settings.appearance.clone(),ui.music_presentation_key(),ui.appearance.resolve(&ui.app_settings.appearance).palette));
-        if shared.music_leaf_sig.as_ref()!=Some(&signature){
-            if let Some(leaf)=woodshed_views::stage::music_editor::notation_leaf(ui){leaves.insert(woodshed_views::notation_leaf::NOTATION_LEAF_KEY,Box::new(leaf));shared.music_leaf_sig=Some(signature);}
+    if let Some(draft) = ui.music_draft() {
+        let signature = format!(
+            "{:?}{:?}{:?}{}{:?}",
+            draft.score,
+            draft.view,
+            draft.selected,
+            ui.viewport_width,
+            (
+                ui.app_settings.appearance.clone(),
+                ui.music_presentation_key(),
+                ui.appearance.resolve(&ui.app_settings.appearance).palette
+            )
+        );
+        if shared.music_leaf_sig.as_ref() != Some(&signature) {
+            if let Some(leaf) = woodshed_views::stage::music_editor::notation_leaf(ui) {
+                leaves.insert(
+                    woodshed_views::notation_leaf::NOTATION_LEAF_KEY,
+                    Box::new(leaf),
+                );
+                shared.music_leaf_sig = Some(signature);
+            }
         }
     }
 
@@ -325,90 +342,6 @@ fn sync_related_swatch(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegis
     let leaf = swatch.paint_leaf(|kind: &&str| related_kind_color(kind));
     shared.painted_cameras[1] = painted_camera(leaf.viewport());
     leaves.insert(NEIGHBORHOOD_LEAF_KEY, Box::new(leaf));
-}
-
-fn tonnetz_segments(ui: &UiState) -> Vec<StageGuideSegment> {
-    if ui.app_settings.stage.set_graph_reading
-        == woodshed_core::settings::StageGraphReading::PitchMotion
-    {
-        let Some(anchor) = ui.pitch_motion_anchor.as_ref() else {
-            return Vec::new();
-        };
-        let snapshot = woodshed_views::stage::set_graph_snapshot(ui);
-        let bounds = snapshot.snapshot.tables.bounds;
-        let normalize = |x: f32, y: f32| {
-            (
-                (x - bounds.origin.x) / bounds.size.w,
-                (y - bounds.origin.y) / bounds.size.h,
-            )
-        };
-        let center = woodshed_core::pitch_motion_reading::CENTER;
-        let mut segments = Vec::new();
-        for (_, radius) in woodshed_core::pitch_motion_reading::guides(anchor) {
-            for index in 0..96 {
-                let a = index as f32 / 96.0 * std::f32::consts::TAU;
-                let b = (index + 1) as f32 / 96.0 * std::f32::consts::TAU;
-                segments.push(StageGuideSegment {
-                    a: normalize(center.0 + radius * a.cos(), center.1 + radius * a.sin()),
-                    b: normalize(center.0 + radius * b.cos(), center.1 + radius * b.sin()),
-                    active: false,
-                });
-            }
-        }
-        segments.push(StageGuideSegment {
-            a: normalize(540.0, -750.0),
-            b: normalize(540.0, 750.0),
-            active: false,
-        });
-        return segments;
-    }
-    if ui.app_settings.stage.set_graph_reading
-        != woodshed_core::settings::StageGraphReading::Tonnetz
-    {
-        return Vec::new();
-    }
-    let snapshot = woodshed_views::stage::set_graph_snapshot(ui);
-    let bounds = snapshot.snapshot.tables.bounds;
-    let normalize = |(x, y): (f32, f32)| {
-        (
-            ((x - bounds.origin.x) / bounds.size.w.max(1.0)).clamp(0.0, 1.0),
-            ((y - bounds.origin.y) / bounds.size.h.max(1.0)).clamp(0.0, 1.0),
-        )
-    };
-    let selected = ui
-        .set
-        .cursor_id()
-        .and_then(|id| ui.set.cards.iter().find(|card| card.id == id))
-        .and_then(|card| woodshed_core::harmony::KeyedCatalogRef::from_material(&card.material));
-    let materials = snapshot
-        .nodes
-        .iter()
-        .filter_map(|node| node.keyed.clone())
-        .collect::<std::collections::BTreeSet<_>>();
-    let mut edges = BTreeMap::<((i32, i32), (i32, i32)), StageGuideSegment>::new();
-    for keyed in materials {
-        let Some(vertices) = woodshed_core::tonnetz::triangle(&keyed) else {
-            continue;
-        };
-        let points = vertices.map(|(x, y, _)| normalize((x, y)));
-        let active = ui.context_focus.as_ref() == Some(&keyed) || selected.as_ref() == Some(&keyed);
-        let lattice = vertices.map(|(x, y, _)| (x.round() as i32, y.round() as i32));
-        for (from, to) in [(0usize, 1usize), (1, 2), (2, 0)] {
-            let mut key = (lattice[from], lattice[to]);
-            if key.1 < key.0 {
-                key = (key.1, key.0);
-            }
-            edges
-                .entry(key)
-                .and_modify(|segment| segment.active |= active)
-                .or_insert(StageGuideSegment {
-                    a: points[from],
-                    b: points[to],
-                    active,
-                });
-        }
-    }
-    edges.into_values().collect()
 }
 
 /// Paint the Set graph projection into the same leaf registry as the Related
@@ -656,94 +589,10 @@ fn sync_rehearsal_active(ui: &UiState, leaves: &mut LeafRegistry<u64>) {
 }
 
 #[cfg(test)]
-mod atmosphere_tests {
-    use super::*;
+#[path = "leaves/atmosphere_tests.rs"]
+mod atmosphere_tests;
 
-    fn commands(leaf: &mut dyn Leaf, size: Size) -> Vec<sprigging::PaintCmd> {
-        let mut commands = Vec::new();
-        leaf.paint(&mut PaintCx::new(&mut commands, size));
-        commands
-    }
+#[path = "leaves/tonnetz.rs"]
+mod tonnetz;
 
-    #[test]
-    fn atmosphere_is_clipped_resized_and_beneath_graph_independently_of_camera() {
-        let source_size = Size {
-            width: 100.0,
-            height: 100.0,
-        };
-        let actual_size = Size {
-            width: 200.0,
-            height: 50.0,
-        };
-        let mut ambient = Vec::new();
-        PaintCx::new(&mut ambient, source_size).fill_rect(
-            10.0,
-            20.0,
-            4.0,
-            6.0,
-            sprigging::ColorF {
-                r: 0.1,
-                g: 0.2,
-                b: 0.3,
-                a: 0.5,
-            },
-        );
-        let graph = sprigging::GraphCanvas::new(
-            vec![sprigging::GraphGlyphNode {
-                x: 0.5,
-                y: 0.5,
-                color: sprigging::ColorF {
-                    r: 1.0,
-                    g: 1.0,
-                    b: 1.0,
-                    a: 1.0,
-                },
-            }],
-            Vec::new(),
-            source_size,
-        );
-        let mut leaf = OverviewAmbientLeaf {
-            graph,
-            ambient,
-            source_size,
-        };
-        let painted = commands(&mut leaf, actual_size);
-        assert!(matches!(
-            painted.first(),
-            Some(sprigging::PaintCmd::PushClip(_))
-        ));
-        match &painted[1] {
-            sprigging::PaintCmd::DrawRect(rect) => {
-                assert_eq!(
-                    (rect.placement.bounds.min.x, rect.placement.bounds.min.y),
-                    (20.0, 10.0)
-                );
-                assert_eq!(
-                    (rect.placement.bounds.max.x, rect.placement.bounds.max.y),
-                    (28.0, 13.0)
-                );
-            },
-            other => panic!("shared atmosphere rectangle expected, got {other:?}"),
-        }
-        assert!(matches!(painted[2], sprigging::PaintCmd::PopClip));
-        assert!(matches!(painted[3], sprigging::PaintCmd::PushClip(_)));
-        assert!(
-            painted[4..]
-                .iter()
-                .any(|cmd| matches!(cmd, sprigging::PaintCmd::DrawPath(_)))
-        );
-        leaf.graph.set_viewport(sprigging::GraphViewport {
-            pan: (0.1, 0.2),
-            zoom: 1.25,
-        });
-        let panned = commands(&mut leaf, actual_size);
-        assert_eq!(
-            format!("{:?}", &painted[..3]),
-            format!("{:?}", &panned[..3])
-        );
-        assert_ne!(
-            format!("{:?}", &painted[3..]),
-            format!("{:?}", &panned[3..])
-        );
-    }
-}
+use tonnetz::tonnetz_segments;

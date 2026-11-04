@@ -14,88 +14,16 @@ path = "crates/woodshed-genet/src/audio.rs"
 reason = "The desktop [AudioBackend]: one root-owned output runtime behind the core's seam (genet-host plan W0.1). Existing source-size debt; a responsibility split must preserve OutputHeartbeat, InputStream, InputSession and existing module visibility."
 
 [[exception]]
-path = "crates/woodshed-genet/src/audio/input_admission/tests.rs"
-reason = "Input admission tests. Existing source-size debt; a responsibility split must preserve StreamOwner, Trial and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/audio/loop_projection.rs"
-reason = "Device-free projection and capture custody used by the desktop audio seam. Existing source-size debt; a responsibility split must preserve CaptureSnapshot, Capture, LoopCaptures and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/audio/practice_clock.rs"
-reason = "Product-owned binding between retained practice and the single output clock. Existing source-size debt; a responsibility split must preserve PracticeClockHost, BoundProgram and existing module visibility."
-
-[[exception]]
 path = "crates/woodshed-genet/src/capture_persistence.rs"
 reason = "Control-side custody of completed Set takes and their sealed companions. Existing source-size debt; a responsibility split must preserve CapturePersistence, Preservation and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/drive.rs"
-reason = "The per-frame drive: everything that advances because time passed. Existing source-size debt; a responsibility split must preserve AudioObservation, CardPreviewAdmission and existing module visibility."
 
 [[exception]]
 path = "crates/woodshed-genet/src/layout_tests.rs"
 reason = "Real-host layout regressions for the expanded Set graph. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
 
 [[exception]]
-path = "crates/woodshed-genet/src/leaves.rs"
-reason = "The custom-paint leaves: Related and Set graph swatches, and the two fretboards. Existing source-size debt; a responsibility split must preserve OverviewAmbientLeaf, StageGuideSegment, StageGuidesLeaf and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/main.rs"
-reason = "Woodshed's desktop application. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/midi.rs"
-reason = "The desktop [MidiBackend]: woodshed-audio's midir layer behind the core's MIDI seam (audio-depth slice 13). Existing source-size debt; a responsibility split must preserve ClockCmd, OutputState, MidiHost and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/persona.rs"
-reason = "Whether to ask which persona is practising, and what to do with the answer. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/persona_preservation_tests.rs"
-reason = "Exercise the production transition hook with in-memory incoming custody. Existing source-size debt; a responsibility split must preserve AdmissionOnlyBackend and existing module visibility."
-
-[[exception]]
 path = "crates/woodshed-genet/src/scenario.rs"
 reason = "The scenario lane: woodshed drives itself. Existing source-size debt; a responsibility split must preserve Product, ScenarioCursorWait, CatalogAuditionReceipt and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/scenario/mixed_looper.rs"
-reason = "Bounded mixed backing acceptance using real host admission and sealed storage. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/scenario/physical_audio.rs"
-reason = "Scenario-only, observed physical-audio dwell. Existing source-size debt; a responsibility split must preserve Mode, Observation, State and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/scenario/practice_clock.rs"
-reason = "Native scenario controls and receipts for the device-owned practice clock. Existing source-size debt; a responsibility split must preserve Wait, ClockPoint and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/session.rs"
-reason = "Reading the practice session back out of whichever store opened. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/storage.rs"
-reason = "Persona-owned desktop persistence. Existing source-size debt; a responsibility split must preserve OpenedStore, HostBackend, StoreBinding and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/sync.rs"
-reason = "The tail of every input dispatch: push the state through the seams it owns. Existing source-size debt; a responsibility split must preserve Logic, Ctx and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-genet/src/wav_export.rs"
-reason = "Explicit Looper snapshot, native save choice and atomic WAV publication. Existing source-size debt; a responsibility split must preserve Protection, Artifact, Collision and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/appearance.rs"
-reason = "Woodshed's appearance adapter over Tabard definitions and its shared editor. Existing source-size debt; a responsibility split must preserve AppearanceOption, AppearanceResolution, AppearanceState and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/fretboard_leaf.rs"
-reason = "The fretboard as a Sprigging paint leaf. Existing source-size debt; a responsibility split must preserve Dot, MarkerStyle, Orientation and existing module visibility."
 
 [[exception]]
 path = "crates/woodshed-views/src/stage.rs"
@@ -106,64 +34,8 @@ path = "crates/woodshed-views/src/stage/arrangement_editor.rs"
 reason = "Musical alignment authoring and shared portable scene presentation. Existing source-size debt; a responsibility split must preserve ArrangementSurfaces, Draft, ArrangementSnapshot and existing module visibility."
 
 [[exception]]
-path = "crates/woodshed-views/src/stage/canvas_camera.rs"
-reason = "Pictograph's lifted canvas controls over Woodshed's Cambium graph canvases. Existing source-size debt; a responsibility split must preserve CanvasSurface, LeafGeometry, SurfaceCamera and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/context.rs"
-reason = "View-only controls for the wider Stage context graph. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/contextual_navigation.rs"
-reason = "Woodshed routes layered over Cambium's bounded navigation model. Existing source-size debt; a responsibility split must preserve WoodshedScopePlace, WoodshedScopeAnchor, Navigation and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/looper.rs"
-reason = "Looper. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/looper/recorder.rs"
-reason = "Read-only recorder presentation over Woodshed's admitted backing. Existing source-size debt; a responsibility split must preserve RecorderBuffer, RecorderObservation, RecorderTarget and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/music_editor.rs"
-reason = "Set-owned MusicXML editing. Existing source-size debt; a responsibility split must preserve MusicDraft, MusicEditor and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/musical_context.rs"
-reason = "Explicit owner actions for musical material kept in the session Mere. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
 path = "crates/woodshed-views/src/stage/overview.rs"
 reason = "Session Mere: inspect real assets, workspace views and host activity before acting. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/practice_clock.rs"
-reason = "View-side binding for the host-owned, device-clocked Set program. Existing source-size debt; a responsibility split must preserve PracticeClockStatus, PracticeCardEndReason, PracticeClockObservation and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/rehearsal.rs"
-reason = "Rehearsal. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/related.rs"
-reason = "Related. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/relationship.rs"
-reason = "A retained reading belongs to Woodshed; authored grammar and layout are shared. Existing source-size debt; a responsibility split must preserve ReadingSource, RelationshipReading and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/stage/settings.rs"
-reason = "Settings. Existing source-size debt; a responsibility split must preserve PedalField and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/theme.rs"
-reason = "Theme CSS for the genet host, derived through tinct. Existing source-size debt; a responsibility split must preserve ThemeMode and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-views/src/workspace.rs"
-reason = "Woodshed's small workspace model over Genet's reusable tab/split core. Existing source-size debt; a responsibility split must preserve WorkspacePanel, WorkspaceEvent, WorkspaceEffect and existing module visibility."
 
 [[exception]]
 path = "crates/woodshedding/src/tuning.rs"

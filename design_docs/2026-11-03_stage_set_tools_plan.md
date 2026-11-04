@@ -20,7 +20,9 @@ Sampler full scope remains deferred. From approved prototype carry: distinguish 
 
 ## Findings and progress
 
-No fresh build, test, headed, audio or hardware gate was run for this successor. Recheck open work against current source before implementation.
+The successor initially added no fresh gates. H8 adds the bounded software
+finding below; headed, audio and hardware acceptance remains separate.
+Recheck open work against current source before implementation.
 
 ## Closure carry-forward check (2026-11-03)
 
@@ -45,3 +47,16 @@ Which portions of P1–P4 and full P7 are already satisfied on current source, a
 P7 verifies immutable content-addressed PCM companions before atomically replacing session references. A failure before reference publication preserves the previous saved state and the live take; a readback failure after publication is reported as unconfirmed, without rollback. Unavailable references remain visible with explicit Clear. Set and Card identities survive reorder; captured-clock changes are refused until Clear, and replacement while capture is busy is refused. Existing clocks and PCM remain unchanged. P7b has bounded Seconds qualification; full saved-song PCM/migration, unsupported Manual/Reps/eventless cases and hardware acceptance are separate. Original lines 2111–2185, 2240–2253.
 
 Relationship queries disclose bounded search and truncation, unsupported constraints, competing readings and all applicable reasons. Hard constraints remain distinct from preferences; an exercise's teaching purpose is not inferred from its title. Practice observations retain event-time realization and context, rather than interpreting old events through current settings. Original lines 731–813. These are accepted contracts and done conditions; their inclusion does not by itself establish current implementation.
+
+### Overview process-count assertion, 2026-11-04
+
+H8 source-split qualification reproduces the existing root-workspace failure
+`stage::overview::tests::navigation_and_graph_inspection_do_not_start_or_pause_live_processes`
+in `crates/woodshed-views/src/stage/overview.rs`: actual process count 2,
+expected 3. That source is unselected and its assertion remains unchanged.
+Resolve the intended process-count contract and reconcile the projection or
+fixture in this owning feature lane; done when the existing case passes
+without weakening the navigation/process-ownership contract. The source-split
+[receipt](archive_docs/receipts/2026-11-03_source_splits_plan_receipts.md) records
+the untouched baseline and post comparison. This is not a new device or
+headed acceptance claim.

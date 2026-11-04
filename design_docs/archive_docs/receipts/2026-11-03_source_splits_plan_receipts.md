@@ -121,3 +121,80 @@ wire shapes and numerical/literal values stay intact.
   manifests and lockfile are unchanged. No physical audio, BLE-device,
   headed or other-platform qualification is renewed. No isolated target,
   Cargo home or worktree was created.
+
+## 2026-11-04: H8 untouched full-workspace baseline
+
+Baseline `cf2b09196adce374b65d401dfa7a2d0461e94b9c`. `cargo test --workspace --locked --no-fail-fast -- --test-threads=1`: 1705 passed, one failed, eight ignored. The existing overview case `stage::overview::tests::navigation_and_graph_inspection_do_not_start_or_pause_live_processes` fails at overview.rs:1690 with actual 2 versus expected 3. It is outside the selected originals. No selected Rust source changed during this run; the failure is compared after refactoring without relaxing its assertion. This broader root-workspace inventory includes the native/view packages that H6 did not qualify.
+
+## 2026-11-04: H8 thirty-two originals qualified
+
+| Original | Before | After |
+|---|---:|---:|
+| `crates/woodshed-genet/src/audio/input_admission/tests.rs` | 710 | 530 |
+| `crates/woodshed-genet/src/audio/loop_projection.rs` | 921 | 323 |
+| `crates/woodshed-genet/src/audio/practice_clock.rs` | 980 | 286 |
+| `crates/woodshed-genet/src/drive.rs` | 744 | 371 |
+| `crates/woodshed-genet/src/leaves.rs` | 749 | 598 |
+| `crates/woodshed-genet/src/main.rs` | 1145 | 521 |
+| `crates/woodshed-genet/src/midi.rs` | 634 | 560 |
+| `crates/woodshed-genet/src/persona.rs` | 1093 | 449 |
+| `crates/woodshed-genet/src/persona_preservation_tests.rs` | 904 | 571 |
+| `crates/woodshed-genet/src/scenario/mixed_looper.rs` | 630 | 522 |
+| `crates/woodshed-genet/src/scenario/physical_audio.rs` | 619 | 385 |
+| `crates/woodshed-genet/src/scenario/practice_clock.rs` | 732 | 484 |
+| `crates/woodshed-genet/src/session.rs` | 1667 | 212 |
+| `crates/woodshed-genet/src/storage.rs` | 1497 | 514 |
+| `crates/woodshed-genet/src/sync.rs` | 1562 | 411 |
+| `crates/woodshed-genet/src/wav_export.rs` | 1233 | 499 |
+| `crates/woodshed-views/src/appearance.rs` | 645 | 447 |
+| `crates/woodshed-views/src/fretboard_leaf.rs` | 653 | 403 |
+| `crates/woodshed-views/src/stage/canvas_camera.rs` | 652 | 412 |
+| `crates/woodshed-views/src/stage/context.rs` | 908 | 467 |
+| `crates/woodshed-views/src/stage/contextual_navigation.rs` | 998 | 567 |
+| `crates/woodshed-views/src/stage/looper.rs` | 693 | 524 |
+| `crates/woodshed-views/src/stage/looper/recorder.rs` | 1120 | 471 |
+| `crates/woodshed-views/src/stage/music_editor.rs` | 1710 | 414 |
+| `crates/woodshed-views/src/stage/musical_context.rs` | 753 | 302 |
+| `crates/woodshed-views/src/stage/practice_clock.rs` | 770 | 516 |
+| `crates/woodshed-views/src/stage/rehearsal.rs` | 639 | 474 |
+| `crates/woodshed-views/src/stage/related.rs` | 1532 | 507 |
+| `crates/woodshed-views/src/stage/relationship.rs` | 1372 | 467 |
+| `crates/woodshed-views/src/stage/settings.rs` | 1199 | 474 |
+| `crates/woodshed-views/src/theme.rs` | 755 | 246 |
+| `crates/woodshed-views/src/workspace.rs` | 810 | 425 |
+
+All 65 extracted Rust files fit, with a maximum across original/new files of
+598 lines (`crates/woodshed-genet/src/leaves.rs`). Exactly 32 exceptions
+retire; 37 remain outside this pass. Root workspace only; Hocket, Redshank
+and Ringdown remain independent and unselected.
+
+`cargo test --workspace --locked --no-fail-fast -- --test-threads=1`:
+post 1705 passed, one failed, eight ignored, matching the untouched
+baseline and complete emitted test-name/outcome inventory after fixture
+regrouping. The sole failure is the unchanged overview navigation/process
+case, still actual 2 versus expected 3. It is carried forward in the
+[Stage plan](../../2026-11-03_stage_set_tools_plan.md#overview-process-count-assertion-2026-11-04).
+No assertion, ignore or production behavior is relaxed to turn this broader
+suite green. All moved-surface cases keep their prior outcomes.
+
+`cargo doc -p woodshed-views -p woodshed-genet --locked --no-deps` and
+`prek run --all-files` pass. After the full test run, unused private root
+aliases were removed or gated by test; the final all-target Clippy gate
+recompiles those production and test imports. Existing unrelated warnings
+remain, including unresolved rustdoc names. The actual commit repeats
+configured ceiling/Clippy hooks against the final snapshot.
+
+The staged audit matches 506 old/new function/constant bodies, all
+signatures and type fields; six differences are Rustfmt-only brace/semicolon
+changes. Literal/fixture bytes and generic bounds remain matched. Session
+subprocess workers stay in their original lexical test module through three
+cohesive include files, retaining every original `--exact` entry name.
+Public facade paths, cfg variants, DTO layouts, PCM/frame values, callback
+resources, source ownership and persistence/publication boundaries remain.
+
+No Cargo manifest/lock, CI, tool release, hook configuration, CLAUDE or
+doctrine edit. Stable approved target, two jobs; no isolated build area,
+Cargo home or worktree. No new native-headed, physical audio/MIDI, macOS,
+Linux or other-platform qualification. Compact owner/aggregate receipts
+remain within H8's shared 100 MB cap. The aggregate records the immutable
+published source commit.

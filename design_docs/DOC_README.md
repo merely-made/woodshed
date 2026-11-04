@@ -537,4 +537,4 @@ section whenever a durable working insight emerges from a session.
 
 Foundation source adoption (2026-10-19): canonical promoted-family revisions and consumer source validation are recorded in `mere/design_docs/mere_docs/implementation_strategy/2026-10-19_family_promotion_plan.md`. Existing application and domain authority remain with their owning components.
 
-- [Source splits, H6](2026-11-03_source_splits_plan.md) — Thirty-five root-workspace responsibility and fixture splits, landed; independent ports keep their own qualification.
+- [Source splits, H6 and H8](2026-11-03_source_splits_plan.md) — Thirty-five H6 and thirty-two additional H8 root-workspace splits landed; 37 exceptions remain. Mere owns the aggregates; independent ports and existing product acceptance keep their own qualification.

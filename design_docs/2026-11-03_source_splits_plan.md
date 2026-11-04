@@ -1,6 +1,6 @@
-# Source splits: H6 Woodshed batch
+# Source splits: H6 and H8 Woodshed batches
 
-**Status (2026-11-03):** landed; 35/35 paths qualified.
+**Status (2026-11-04):** landed; H6 remains landed; H8 adds 32 qualified originals. Zero new exceptions; 37 existing exceptions remain.
 
 This is the second fifty-file pass under Mere's house-style plan, H6.
 The eight earlier splits and all fifty H5 paths are excluded. Mark's
@@ -105,3 +105,93 @@ Nested port source, locks, products and validation remain under their owners.
 - 2026-11-03: S1 landed: twelve originals/children fit, twelve exceptions retire, all 967 baseline/post software cases pass (post serial), public docs and full local/commit gates pass. The initial parallel timing miss and literal restoration are recorded in the receipt.
 
 - 2026-11-03: S2 and S3 land together: twenty-three originals/children fit and their exact exceptions retire. The shared Cargo cache was busy during the first S2 attempts, so one complete final validation covers both phases. All 967 post cases, three no-default feature checks, public docs and full local/commit gates pass. Source tokens, signatures, type layouts and facade exports are reviewed.
+
+## H8: fourth fifty-file pass, 2026-11-04
+
+Mark requested another batch after H7. Mere's house-style plan owns the
+aggregate fifty. Earlier H6/H7 originals are excluded. This continuation
+keeps the existing API, authority, fields, generic bounds, numerical values,
+fixture bytes and production feature boundaries. Changes follow Mere's
+DOC_README source-move principles, including explicit child paths and
+optional fixture guards. H6's qualification and evidence stay unchanged.
+
+### H8 phases and done-conditions
+
+- **W1:** native lifecycle, captured input, transport and export adapters.
+- **W2:** Stage projections, scoped settings, notation and contextual navigation.
+- **W3:** existing fixture groups, preserving persona and session ownership.
+
+An original counts only after it and all new modules fit 600 physical lines,
+its exact exception retires, relevant baseline/post inventories agree,
+existing failures remain distinguished, feature/docs checks and full local
+and actual commit hooks pass, and the source is pushed. No new CI or lint
+allows are introduced. This renews no headed, physical audio/device, personal
+custody, nested-port, model or other-platform qualification.
+
+The retained cap is 100 MB across H8 and Mere's aggregate. Compact summaries
+append to the existing source-split receipt. Historical evidence stays intact.
+Stable approved repository targets and two jobs apply; no isolated home or
+worktree is planned. Standalone tooling and excluded ports remain separate.
+
+### H8 selected originals
+
+- `crates/woodshed-genet/src/audio/input_admission/tests.rs`
+- `crates/woodshed-genet/src/audio/loop_projection.rs`
+- `crates/woodshed-genet/src/audio/practice_clock.rs`
+- `crates/woodshed-genet/src/drive.rs`
+- `crates/woodshed-genet/src/leaves.rs`
+- `crates/woodshed-genet/src/main.rs`
+- `crates/woodshed-genet/src/midi.rs`
+- `crates/woodshed-genet/src/persona.rs`
+- `crates/woodshed-genet/src/persona_preservation_tests.rs`
+- `crates/woodshed-genet/src/scenario/mixed_looper.rs`
+- `crates/woodshed-genet/src/scenario/physical_audio.rs`
+- `crates/woodshed-genet/src/scenario/practice_clock.rs`
+- `crates/woodshed-genet/src/session.rs`
+- `crates/woodshed-genet/src/storage.rs`
+- `crates/woodshed-genet/src/sync.rs`
+- `crates/woodshed-genet/src/wav_export.rs`
+- `crates/woodshed-views/src/appearance.rs`
+- `crates/woodshed-views/src/fretboard_leaf.rs`
+- `crates/woodshed-views/src/stage/canvas_camera.rs`
+- `crates/woodshed-views/src/stage/context.rs`
+- `crates/woodshed-views/src/stage/contextual_navigation.rs`
+- `crates/woodshed-views/src/stage/looper.rs`
+- `crates/woodshed-views/src/stage/looper/recorder.rs`
+- `crates/woodshed-views/src/stage/music_editor.rs`
+- `crates/woodshed-views/src/stage/musical_context.rs`
+- `crates/woodshed-views/src/stage/practice_clock.rs`
+- `crates/woodshed-views/src/stage/rehearsal.rs`
+- `crates/woodshed-views/src/stage/related.rs`
+- `crates/woodshed-views/src/stage/relationship.rs`
+- `crates/woodshed-views/src/stage/settings.rs`
+- `crates/woodshed-views/src/theme.rs`
+- `crates/woodshed-views/src/workspace.rs`
+
+### H8 findings
+
+- 2026-11-04: selected from clean main, with coherent existing methods and
+  fixture groups. Test baselines precede every selected Rust edit.
+
+- 2026-11-04: moved bodies, signatures and type fields remain matched; six
+  bodies have rustfmt-only brace/semicolon changes. Session receipt workers
+  use narrow same-module includes so their original `--exact` subprocess
+  identities remain reachable. Shared fixture state stays in the owner.
+- The overview assertion is carried forward in the owning
+  [Stage plan](2026-11-03_stage_set_tools_plan.md#overview-process-count-assertion-2026-11-04);
+  source maintenance does not change that product contract.
+
+### H8 progress
+
+- 2026-11-04: selected 32 additional originals; qualification starts.
+
+- 2026-11-04: the untouched full root-workspace baseline finds the existing
+  overview navigation/process-state assertion mismatch (actual 2, expected 3).
+  Its source is unselected; H8 preserves the assertion and compares the same
+  failure after source moves. Receipt records the complete software scope.
+
+- 2026-11-04: W1–W3 land: thirty-two additional originals and every
+  child fit; thirty-two exact exceptions retire. Full root-workspace
+  baseline/post inventories agree, including the one carried-forward
+  overview failure; public docs and full local gates pass. Actual commit
+  hooks repeat the final source snapshot before publication.
