@@ -453,7 +453,7 @@ adds no native, device or cross-platform acceptance.
 
 ## Working Principles for AI Assistants
 
-- **Preserve fixture literal bytes**: extracting an inline module may change code indentation while raw/multiline JSON stays byte-identical. Compare literal tokens against the original source; the rehearsal migration fixture demonstrates why successful decoding alone is insufficient.
+- **Preserve fixture literal bytes**: extracting an inline module may change code indentation while raw/multiline JSON stays byte-identical. Compare literal tokens against the original source; the rehearsal migration fixture demonstrates why successful decoding alone is insufficient. Pair body comparisons with signature, type-layout and facade-export review when moving public items.
 
 - **Bind execution to the checkout**: baseline/control checkouts need separate build artifacts, or explicit local-package freshness verification before reusing a build directory. Stable source hashes alone do not prove that Cargo executed the intended binary; check compilation paths and the expected test inventory. Keep stale-artifact probes out of qualification.
 
@@ -537,4 +537,4 @@ section whenever a durable working insight emerges from a session.
 
 Foundation source adoption (2026-10-19): canonical promoted-family revisions and consumer source validation are recorded in `mere/design_docs/mere_docs/implementation_strategy/2026-10-19_family_promotion_plan.md`. Existing application and domain authority remain with their owning components.
 
-- [Source splits, H6](2026-11-03_source_splits_plan.md) — Thirty-five root-workspace responsibility and fixture splits, in progress; independent ports keep their own qualification.
+- [Source splits, H6](2026-11-03_source_splits_plan.md) — Thirty-five root-workspace responsibility and fixture splits, landed; independent ports keep their own qualification.

@@ -6,84 +6,8 @@ path = "vendor/"
 reason = "Vendored upstream sources; their module layout is maintained with the imported dependency."
 
 [[exception]]
-path = "crates/hocket-recorder/src/lib.rs"
-reason = "Hocket's device-free recorder product, shared by standalone and embedded hosts. Existing source-size debt; a responsibility split must preserve RecorderAction, LayerKey, CaptureToken and existing module visibility."
-
-[[exception]]
-path = "crates/hocket-views/src/leaves.rs"
-reason = "Real waveform and meter leaves for reusable recorder mounts. Existing source-size debt; a responsibility split must preserve RecorderMount, WaveformLeaf, RecorderLeaves and existing module visibility."
-
-[[exception]]
-path = "crates/hocket-views/src/surface.rs"
-reason = "One renderer for portable Recorder and host-owned display projections. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
-
-[[exception]]
-path = "crates/woodshed-audio/src/input.rs"
-reason = "Audio input capture and analysis fan-out. Existing source-size debt; a responsibility split must preserve Analyzer, DetectedNote, TunerSnapshot and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-audio/src/offline/song_export/tests.rs"
-reason = "Song export tests. Existing source-size debt; a responsibility split must preserve UntouchedWriter, FailedWriter and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-audio/src/output_runtime.rs"
-reason = "One output device, one Firewheel graph clock, and control-owned projections. Existing source-size debt; a responsibility split must preserve Wake, OutputError, OutputSnapshot and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-audio/src/output_runtime/processor.rs"
-reason = "Processor. Existing source-size debt; a responsibility split must preserve Shared, PreparedBar, ChordCache and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-audio/src/output_runtime/tests.rs"
-reason = "Output runtime tests. Existing source-size debt; a responsibility split must preserve CheckedAllocator and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-audio/src/song.rs"
-reason = "Song-mode arrangement: a multi-bar sequence with per-bar settings. Existing source-size debt; a responsibility split must preserve ChordRef, Bar, PendingChange and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/chord_approach.rs"
-reason = "Chromatic same-string approach pairs to explicit chord targets. Existing source-size debt; a responsibility split must preserve ChordApproachNote, ResolvedChordApproach, ChordApproachUnavailable and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/comparison_disclosure.rs"
-reason = "Owner-local facts for the bounded cross-domain comparison recipe. Existing source-size debt; a responsibility split must preserve SelectedMaterial, SelectedOccurrence, SharedPitchRelationship and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/history.rs"
-reason = "Portable practice-engagement history, over chartulary's lineage model. Existing source-size debt; a responsibility split must preserve EngagementKind, ObservationProvenance, Engagement and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/lib.rs"
-reason = "Woodshed's portable state/logic core. Existing source-size debt; a responsibility split must preserve Lens, RelatedTarget, RelatedSuggestion and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/loop_capture.rs"
-reason = "Portable Set capture references and exact, content-addressed mono PCM. Existing source-size debt; a responsibility split must preserve LoopCaptureCodec, EncodedCapture, LoopCaptureManifest and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/loop_plan.rs"
-reason = "A derived backing lane over an explicitly owned working Set. Existing source-size debt; a responsibility split must preserve LoopSegmentId, LooperSource, LooperConfig and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/practice_clock.rs"
-reason = "Disposable, pure lowering of a retained Set or live Stage sequence into occurrence-addressed practice events. Existing source-size debt; a responsibility split must preserve PracticeHold, PracticeEvent, NoteVisit and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/session_overview.rs"
-reason = "Read-only overview of this session's real artifacts, views and active work. Existing source-size debt; a responsibility split must preserve SessionArtifactId, OverviewProcess, OverviewNodeId and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/stage_context.rs"
-reason = "Derived keyed context for the Stage graph. Existing source-size debt; a responsibility split must preserve StageNodeId, StageNodeKind, StageContextNode and existing module visibility."
-
-[[exception]]
 path = "crates/woodshed-core/src/stage_scene.rs"
 reason = "The Stage projection: one Set, as a sceno scene. Existing source-size debt; a responsibility split must preserve StageSceneOptions, StageGraphSnapshot, StageSceneNode and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-core/src/storage.rs"
-reason = "The storage seam (genet-host plan W0.2) and the persisted session. Existing source-size debt; a responsibility split must preserve SessionStore, AppSection, PersistedSession and existing module visibility."
 
 [[exception]]
 path = "crates/woodshed-genet/src/audio.rs"
@@ -164,22 +88,6 @@ reason = "The tail of every input dispatch: push the state through the seams it 
 [[exception]]
 path = "crates/woodshed-genet/src/wav_export.rs"
 reason = "Explicit Looper snapshot, native save choice and atomic WAV publication. Existing source-size debt; a responsibility split must preserve Protection, Artifact, Collision and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-graph/src/lib.rs"
-reason = "woodshed-graph — woodshed's theory catalog as a chartulary graph. Existing source-size debt; a responsibility split must preserve CatalogKind, CatalogMaterial, RelationAuthority and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-instrument/src/midi.rs"
-reason = "MIDI input/output. Existing source-size debt; a responsibility split must preserve MidiError, MidiEvent, MidiClockSync and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-instrument/src/midi/ble.rs"
-reason = "Standard short-message BLE-MIDI transport. Existing source-size debt; a responsibility split must preserve Security, Config, Phase and existing module visibility."
-
-[[exception]]
-path = "crates/woodshed-notation/src/lib.rs"
-reason = "Bounded chart, tablature and staff notation for Sprigging hosts. Existing source-size debt; a responsibility split must preserve NotationView, NotationLabel, Bar and existing module visibility."
 
 [[exception]]
 path = "crates/woodshed-views/src/appearance.rs"

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 //! A dedicated test process isolates the process-local recording opt-in from
 //! unrelated transport tests running concurrently in the library test binary.
+#![cfg(feature = "midi")]
+
 use woodshed_instrument::midi::diagnostics::*;
 
 #[test]

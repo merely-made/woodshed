@@ -1,6 +1,6 @@
 # Source splits: H6 Woodshed batch
 
-**Status (2026-11-03):** in progress; 12/35 paths qualified.
+**Status (2026-11-03):** landed; 35/35 paths qualified.
 
 This is the second fifty-file pass under Mere's house-style plan, H6.
 The eight earlier splits and all fifty H5 paths are excluded. Mark's
@@ -42,6 +42,8 @@ Root workspace checks do not qualify the independently released nested ports.
 Nested port source, locks, products and validation remain under their owners.
 
 ## Findings
+
+- 2026-11-03: the pre-existing diagnostics integration target imported the MIDI-only module even with MIDI disabled. Its crate now has the same `cfg(feature = "midi")` guard; the normal feature graph still runs all 967 cases.
 
 - 2026-11-03: inline module extraction must preserve multiline/raw literal bytes independently of code indentation. The rehearsal migration JSON is a concrete witness; literal-token review catches value changes that parser-level behavior tests can miss.
 
@@ -101,3 +103,5 @@ Nested port source, locks, products and validation remain under their owners.
   tests start before source edits; receipt cap is shared across H6.
 
 - 2026-11-03: S1 landed: twelve originals/children fit, twelve exceptions retire, all 967 baseline/post software cases pass (post serial), public docs and full local/commit gates pass. The initial parallel timing miss and literal restoration are recorded in the receipt.
+
+- 2026-11-03: S2 and S3 land together: twenty-three originals/children fit and their exact exceptions retire. The shared Cargo cache was busy during the first S2 attempts, so one complete final validation covers both phases. All 967 post cases, three no-default feature checks, public docs and full local/commit gates pass. Source tokens, signatures, type layouts and facade exports are reviewed.
