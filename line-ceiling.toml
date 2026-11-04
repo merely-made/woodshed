@@ -6,26 +6,6 @@ path = "vendor/"
 reason = "Vendored upstream sources; their module layout is maintained with the imported dependency."
 
 [[exception]]
-path = "crates/audio-primitives/src/alignment.rs"
-reason = "Conservative, bounded audio-anchor matching. Existing source-size debt; a responsibility split must preserve FeatureFrame, Fingerprint, FingerprintConfig and existing module visibility."
-
-[[exception]]
-path = "crates/audio-primitives/src/onset.rs"
-reason = "Onset detection and tempo estimation (pure DSP). Existing source-size debt; a responsibility split must preserve OnsetDetector and existing module visibility."
-
-[[exception]]
-path = "crates/hocket-model/src/history.rs"
-reason = "Append-only history graph with patch-based undo/redo. Existing source-size debt; a responsibility split must preserve Edit, HistoryNode, HistoryError and existing module visibility."
-
-[[exception]]
-path = "crates/hocket-project/src/handoff.rs"
-reason = "Portable signed, transport-neutral Hocket session hand-off. Existing source-size debt; a responsibility split must preserve ReceivedHandoff, BranchAcceptance, HandoffEnvelope and existing module visibility."
-
-[[exception]]
-path = "crates/hocket-recorder/src/host_policy.rs"
-reason = "Stateless action policy for an ordered recorder owned by its embedding host. Existing source-size debt; a responsibility split must preserve HostAction, HostCapabilities, HostInput and existing module visibility."
-
-[[exception]]
 path = "crates/hocket-recorder/src/lib.rs"
 reason = "Hocket's device-free recorder product, shared by standalone and embedded hosts. Existing source-size debt; a responsibility split must preserve RecorderAction, LayerKey, CaptureToken and existing module visibility."
 
@@ -276,34 +256,6 @@ reason = "Theme CSS for the genet host, derived through tinct. Existing source-s
 [[exception]]
 path = "crates/woodshed-views/src/workspace.rs"
 reason = "Woodshed's small workspace model over Genet's reusable tab/split core. Existing source-size debt; a responsibility split must preserve WorkspacePanel, WorkspaceEvent, WorkspaceEffect and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/chord.rs"
-reason = "Chord formulas. Existing source-size debt; a responsibility split must preserve ChordCategory, ChordFormula and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/exercise.rs"
-reason = "Practice exercises: ordered fretboard positions for chromatic, spider, trill, ladder, and X-pattern exercises. Existing source-size debt; a responsibility split must preserve ExerciseCategory, ExerciseStep, ExerciseDirection and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/fretboard.rs"
-reason = "Fretboard mapping: scale and chord positions on any tuning. Existing source-size debt; a responsibility split must preserve Position, StringPlay, ChordVoicing and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/notation.rs"
-reason = "Editable fretted score profile. Existing source-size debt; a responsibility split must preserve MusicDocument, Score, Measure and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/progression.rs"
-reason = "Chord progressions: ordered sequences of chord roles in a key. Existing source-size debt; a responsibility split must preserve ProgressionCategory, DegreeAlteration, RoleQuality and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/rehearsal.rs"
-reason = "The rehearsal card/set vocabulary — Woodshed's portable practice core. Existing source-size debt; a responsibility split must preserve ArpeggioDirection, ScalePattern, ApproachDirection and existing module visibility."
-
-[[exception]]
-path = "crates/woodshedding/src/scale.rs"
-reason = "Scale formulas. Existing source-size debt; a responsibility split must preserve ScaleCategory, ScaleFormula and existing module visibility."
 
 [[exception]]
 path = "crates/woodshedding/src/tuning.rs"
