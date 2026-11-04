@@ -719,6 +719,60 @@ mod tests {
         assert!(markup[body..tail].contains("so worried I can't speak"));
     }
 
+    #[test]
+    fn long_note_wraps_inside_narrow_listen_panel() {
+        use genet_livery::{
+            Device, InteractionStates, StyleSet, TextSystem, layout_with_text_system,
+            resolve_styles,
+        };
+        use layout_dom_api::{LayoutDom, LocalName, Namespace};
+
+        let mut state = with_notes();
+        state.listen_pane = ListenPane::Notes;
+        state.notes.truncate(1);
+        state.notes[0].body = NoteSummaryBody::Text(
+            "The redshank returns to the shoreline at low tide, where the stones hold a long account of changing weather and water. ".repeat(4),
+        );
+        let runner = runner(state, panel);
+        let handle = runner.dom();
+        let dom = handle.borrow();
+        let mut nodes = vec![dom.document()];
+        let mut text = None;
+        while let Some(node) = nodes.pop() {
+            if dom.attribute(node, &Namespace::default(), &LocalName::from("class"))
+                == Some("rs-note-text")
+            {
+                text = Some(node);
+            }
+            nodes.extend(dom.dom_children(node));
+        }
+        let text = text.expect("note text");
+        let sheet = crate::theme::sheet();
+        let styles = resolve_styles(
+            &*dom,
+            &StyleSet::cambium(&[&sheet]),
+            &Device::screen(511.0, 502.0),
+            &InteractionStates::default(),
+        );
+        let mut text_system = TextSystem::new();
+        let (_, fragments) = layout_with_text_system(
+            &*dom,
+            &styles,
+            511.0,
+            502.0,
+            Device::screen(511.0, 502.0).viewport_sizes,
+            &mut text_system,
+            &std::collections::HashMap::new(),
+        )
+        .expect("note layout");
+        let fragment = fragments.get(text).expect("note text fragment");
+        assert!(fragment.width < 511.0, "note must fit panel: {fragment:?}");
+        let lines = fragments
+            .inline_scroll_bounds(text)
+            .expect("note line bounds");
+        assert!(lines.height > 30.0, "long note must wrap: {lines:?}");
+    }
+
     /// A private note's menu offers to make it shareable, and the reverse.
     #[test]
     fn the_note_menu_flips_privacy_per_note() {

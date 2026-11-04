@@ -16,7 +16,7 @@ Speech at 1.5x needs human listening confirmation; external audio/playback fixtu
 
 ## Findings and progress
 
-No fresh build, test, headed, audio or hardware gate was run for this successor. Recheck open work against current source before implementation.
+The narrow Listen note row now keeps its already-stacked heading and actions in one flex column. A full-stylesheet layout test checks a long note at 511px; the pinned Genet 01d3f528 layout is covered, while native Turnstone receipt and other gates remain open. Recheck the remaining work against current source.
 
 ## Adopted surface design constraints
 

@@ -5744,6 +5744,7 @@ version = "0.0.0"
 dependencies = [
  "cambium",
  "cambium-desktop",
+ "genet-livery",
  "genet-scripted-dom",
  "layout-dom-api",
  "mere-surface-api",

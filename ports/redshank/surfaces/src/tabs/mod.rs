@@ -49,6 +49,8 @@ pub const TABS_CSS: &str = r#"
 /* --- notes rows (Listen and Notes share them) ------------------------ */
 .rs-note-row { display: flex; flex-direction: column; align-items: stretch;
   gap: var(--space-6); min-width: 0; }
+/* The phone rule wraps horizontal rows; notes already stack their actions. */
+.rs-row.rs-note-row { flex-wrap: nowrap; }
 .rs-note-heading { display: flex; align-items: flex-start; gap: var(--space-10); min-width: 0; }
 .rs-note-row .rs-row-tail { flex-wrap: wrap; width: 100%; min-width: 0; }
 .rs-note-row .rs-note-identity, .rs-note-row .rs-note-alignment { min-width: 0; }
