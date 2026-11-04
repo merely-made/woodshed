@@ -10,10 +10,10 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 
 use async_trait::async_trait;
+use castellan_client::custody::CustodyRefusal;
+use castellan_client::custody_client::CustodyClientError;
+use castellan_client::custody_identity::CustodyIdentity;
 use directories::ProjectDirs;
-use djinn::door::custody::CustodyRefusal;
-use djinn::door::custody_client::CustodyClientError;
-use djinn::door::custody_identity::CustodyIdentity;
 use muniment::backend::WriteOp;
 use muniment::{Backend, MemoryBackend, StoreError};
 use personae::{IdentityProvider, ProfileId};
@@ -25,6 +25,10 @@ use woodshed_views::persona::PracticeSeal;
 
 /// The name Woodshed is admitted to djinn's custody route under.
 pub const CUSTODY_APP: &str = "woodshed";
+
+#[path = "storage/declaration.rs"]
+mod declaration;
+pub use declaration::app_declaration;
 
 /// A successful custody/store open retains the explicit candidate provider.
 /// Its family choice is committed by the caller only after content admission.
@@ -226,7 +230,8 @@ fn pending_store(reason: String) -> OpenedStore {
 }
 
 fn connect(profile: Option<&ProfileId>) -> Result<CustodyIdentity, String> {
-    CustodyIdentity::connect_as(CUSTODY_APP, profile.cloned()).map_err(pending)
+    CustodyIdentity::connect_declared_as(CUSTODY_APP, app_declaration(), profile.cloned())
+        .map_err(pending)
 }
 
 fn validate_profile(

@@ -14,9 +14,9 @@
 //! its roster can still present: several personas, none of them chosen. djinn
 //! absent or Locked is not a question either: the store opens pending (D12).
 
-use djinn::door::app_admission::AppId;
-use djinn::door::custody_client::BlockingCustodyClient;
+use castellan_client::custody_client::BlockingCustodyClient;
 use dramatis::roster::Roster;
+use ostiary::app_admission::AppId;
 use persona_picker::PickerEvent;
 use woodshed_views::persona::{PendingSwitch, PersonaPick, PickPurpose, SwitchDecision};
 
@@ -44,7 +44,10 @@ pub fn startup_question(roster: Option<Roster>) -> Option<Roster> {
 /// must not start inside one.
 pub fn roster_now() -> Result<Roster, String> {
     std::thread::spawn(|| {
-        BlockingCustodyClient::open(AppId::new(CUSTODY_APP))
+        BlockingCustodyClient::open_declared(
+            AppId::new(CUSTODY_APP),
+            crate::storage::app_declaration(),
+        )
             .and_then(|mut client| client.roster())
             .map_err(|error| error.to_string())
     })

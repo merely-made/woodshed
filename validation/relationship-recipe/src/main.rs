@@ -23,6 +23,10 @@ mod export;
 #[path = "../../../crates/woodshed-genet/src/storage.rs"]
 mod host_storage;
 
+#[allow(dead_code)]
+#[path = "../../../crates/woodshed-genet/src/paths.rs"]
+mod paths;
+
 // Scenomise compiles through a consumer-sized compiler; Woodshed's card footprint.
 fn compile_relationship_snapshot(
     snapshot: &RelationshipSnapshot,
@@ -90,10 +94,7 @@ fn check(reading: &RelationshipSnapshot, data: &RelationshipDataset) {
 }
 
 fn seed(path: &Path) {
-    assert!(
-        !path.exists(),
-        "the proof never overwrites an existing session"
-    );
+    std::fs::create_dir(path).expect("the proof requires a new isolated store directory");
     let data = dataset();
     let reading = snapshot(&data);
     check(&reading, &data);
@@ -103,10 +104,10 @@ fn seed(path: &Path) {
     ui.relationship_reading_json =
         Some(serde_json::json!({"snapshot": reading, "dataset": data}).to_string());
     assert_eq!(before, serde_json::to_value(&ui.set).unwrap());
-    let store = SessionStore::new(host_storage::FsBackend::default());
+    let store = SessionStore::new(host_storage::FsBackend::at(path));
     let persisted = serde_json::to_string(&ui.to_persisted()).unwrap();
-    store.save(&persisted);
-    assert_eq!(store.load().as_deref(), Some(persisted.as_str()));
+    store.try_save(&persisted).unwrap();
+    assert_eq!(store.try_load().unwrap().as_deref(), Some(persisted.as_str()));
     println!(
         "seed: compiled three occurrences and one explained relationship; retained shared edits and selection"
     );
@@ -114,11 +115,11 @@ fn seed(path: &Path) {
 
 fn reopen(path: &Path) {
     assert!(
-        path.is_file(),
+        path.is_dir() && path.join("session").is_file(),
         "reopening requires an existing isolated session"
     );
-    let store = SessionStore::new(host_storage::FsBackend::default());
-    let session: PersistedSession = serde_json::from_str(&store.load().unwrap()).unwrap();
+    let store = SessionStore::new(host_storage::FsBackend::at(path));
+    let session: PersistedSession = serde_json::from_str(&store.try_load().unwrap().unwrap()).unwrap();
     let mut ui = UiState::new();
     assert!(
         ui.apply_persisted(&session, AppSettings::default())
@@ -156,10 +157,8 @@ fn main() {
     assert_eq!(
         args.len(),
         3,
-        "usage: woodshed-relationship-recipe-proof seed|reopen /isolated/session.json"
+        "usage: woodshed-relationship-recipe-proof seed|reopen /new/isolated-store"
     );
-    std::env::set_var("WOODSHED_STATE", &args[2]);
-    std::env::set_var("WOODSHED_SETTINGS", format!("{}.settings", args[2]));
     match args[1].as_str() {
         "seed" => seed(Path::new(&args[2])),
         "reopen" => reopen(Path::new(&args[2])),
@@ -170,6 +169,17 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn isolated_store_roundtrip_and_existing_destination_refusal() {
+        let root = tempfile::tempdir().unwrap();
+        let path = root.path().join("store");
+        seed(&path);
+        reopen(&path);
+        let before = std::fs::read(path.join("session")).unwrap();
+        assert!(std::panic::catch_unwind(|| seed(&path)).is_err());
+        assert_eq!(std::fs::read(path.join("session")).unwrap(), before);
+    }
 
     #[test]
     fn real_domain_disclosure_compiles_and_has_routed_occurrence_endpoints() {

@@ -264,3 +264,6 @@ Hand-picked technical references that inform Hocket's architecture:
   `hocket/handoff/v2/`, and the host identity lives under a `Hocket` data
   root. A one-time migration re-seals a pre-rename local identity so an
   existing fingerprint survives; no other legacy path is kept.
+
+Custody client receiving (2026-11-04) is tracked in Woodshed's
+[preservation plan](../../../design_docs/2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04). Hocket keeps its independent lock and persona-consent behavior.

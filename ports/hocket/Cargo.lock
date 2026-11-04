@@ -1173,6 +1173,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "castellan-client"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
+dependencies = [
+ "base64",
+ "chatelaine",
+ "dramatis",
+ "eidetic",
+ "insigne",
+ "ostiary",
+ "personae",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+ "uuid",
+ "zeroize",
+]
+
+[[package]]
 name = "cc"
 version = "1.2.67"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1239,7 +1260,7 @@ dependencies = [
 [[package]]
 name = "chatelaine"
 version = "0.0.3"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "serde",
  "uuid",
@@ -1756,27 +1777,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c9c272297e804878a2a4b707cfcfc6d2328b5bb936944613b4fdf2b9269afdfd"
 
 [[package]]
-name = "djinn"
-version = "0.0.3"
-source = "git+https://github.com/merely-made/armillary.git?rev=721e17d41a8f258073f440adbbb39ad145250868#721e17d41a8f258073f440adbbb39ad145250868"
-dependencies = [
- "base64",
- "chatelaine",
- "dramatis",
- "eidetic",
- "insigne",
- "personae",
- "rand_core 0.6.4",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "tokio",
- "tracing",
- "uuid",
- "zeroize",
-]
-
-[[package]]
 name = "dlib"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1837,7 +1837,7 @@ checksum = "d8b14ccef22fc6f5a8f4d7d768562a182c04ce9a3b3157b91390b52ddfdf1a76"
 [[package]]
 name = "dramatis"
 version = "0.0.3"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "gaz",
  "personae",
@@ -2457,7 +2457,7 @@ dependencies = [
 [[package]]
 name = "gaz"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "insigne",
  "serde",
@@ -2983,7 +2983,7 @@ dependencies = [
  "audio-primitives",
  "cambium",
  "cambium-desktop",
- "djinn",
+ "castellan-client",
  "dramatis",
  "genet-clipboard",
  "hocket-engine",
@@ -2996,6 +2996,7 @@ dependencies = [
  "mere-surface-api",
  "mesquite",
  "muniment 0.2.0 (git+https://github.com/merely-made/eidetic.git?rev=aa94fe22eea29e9b54e01ed21e6991536ed4f208)",
+ "ostiary",
  "paint_list_api",
  "personae",
  "pollster 0.4.0",
@@ -3424,7 +3425,7 @@ dependencies = [
 [[package]]
 name = "insigne"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "blake3",
  "ed25519-dalek",
@@ -4728,6 +4729,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "ostiary"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/armillary.git?rev=08ebbc44f5d391bd263fcc26b6053edf72741954#08ebbc44f5d391bd263fcc26b6053edf72741954"
+dependencies = [
+ "base64",
+ "rand_core 0.6.4",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "zeroize",
+]
+
+[[package]]
 name = "owned_ttf_parser"
 version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4838,7 +4853,7 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 [[package]]
 name = "personae"
 version = "0.3.0"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "blake3",
  "chacha20poly1305",
@@ -8484,7 +8499,7 @@ source = "git+https://github.com/merely-made/eidetic.git?rev=aa94fe22eea29e9b54e
 [[patch.unused]]
 name = "notochord"
 version = "0.1.1"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#dc593a343258cdabd9743a5a57ba49e8b103a876"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 
 [[patch.unused]]
 name = "chartulary"

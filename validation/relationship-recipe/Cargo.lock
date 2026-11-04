@@ -482,6 +482,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "castellan-client"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
+dependencies = [
+ "base64",
+ "chatelaine",
+ "dramatis",
+ "eidetic",
+ "insigne",
+ "ostiary",
+ "personae",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "tracing",
+ "uuid",
+ "zeroize",
+]
+
+[[package]]
 name = "cc"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -572,7 +593,7 @@ dependencies = [
 [[package]]
 name = "chatelaine"
 version = "0.0.3"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "serde",
  "uuid",
@@ -898,27 +919,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "djinn"
-version = "0.0.3"
-source = "git+https://github.com/merely-made/armillary.git?rev=721e17d41a8f258073f440adbbb39ad145250868#721e17d41a8f258073f440adbbb39ad145250868"
-dependencies = [
- "base64",
- "chatelaine",
- "dramatis",
- "eidetic",
- "insigne",
- "personae",
- "rand_core 0.6.4",
- "serde",
- "serde_json",
- "thiserror 1.0.69",
- "tokio",
- "tracing",
- "uuid",
- "zeroize",
-]
-
-[[package]]
 name = "dlib"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -952,15 +952,6 @@ dependencies = [
 [[package]]
 name = "document-session-api"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "96ff991df913cc24c4f81b28dde038247d7d00d7291f853e7b2696fd04b9c5ab"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "document-session-api"
-version = "0.1.1"
 source = "git+https://github.com/merely-made/genet.git?branch=main#565458ea3ab816940484079330eb165a878a22e0"
 dependencies = [
  "serde",
@@ -975,7 +966,7 @@ checksum = "117240f60069e65410b3ae1bb213295bd828f707b5bec6596a1afc8793ce0cbc"
 [[package]]
 name = "dramatis"
 version = "0.0.3"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "gaz",
  "personae",
@@ -1330,7 +1321,7 @@ dependencies = [
 [[package]]
 name = "gaz"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "insigne",
  "serde",
@@ -2026,7 +2017,7 @@ version = "0.1.1"
 source = "git+https://github.com/merely-made/mere.git?branch=main#c6290142866eefead385e728c5c5da24ac6f624a"
 dependencies = [
  "accesskit",
- "document-session-api 0.1.1 (git+https://github.com/merely-made/genet.git?branch=main)",
+ "document-session-api",
  "getrandom 0.4.3",
  "petgraph",
  "serde",
@@ -2048,7 +2039,7 @@ dependencies = [
 [[package]]
 name = "insigne"
 version = "0.0.2"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "blake3",
  "ed25519-dalek",
@@ -2406,7 +2397,7 @@ version = "0.1.0"
 source = "git+https://github.com/merely-made/mere.git?branch=main#c6290142866eefead385e728c5c5da24ac6f624a"
 dependencies = [
  "document-canvas",
- "document-session-api 0.1.1 (git+https://github.com/merely-made/genet.git?branch=main)",
+ "document-session-api",
  "genet-host-api",
  "genet-static-dom",
  "image",
@@ -2522,17 +2513,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
-]
-
-[[package]]
-name = "muniment"
-version = "0.1.2"
-source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
-dependencies = [
- "async-trait",
- "blake3",
- "serde",
- "serde_json",
 ]
 
 [[package]]
@@ -2703,7 +2683,7 @@ checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
 [[package]]
 name = "notochord"
 version = "0.1.1"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "blake3",
  "insigne",
@@ -2935,6 +2915,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "ostiary"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/armillary.git?rev=08ebbc44f5d391bd263fcc26b6053edf72741954#08ebbc44f5d391bd263fcc26b6053edf72741954"
+dependencies = [
+ "base64",
+ "rand_core 0.6.4",
+ "serde",
+ "serde_json",
+ "thiserror 1.0.69",
+ "tokio",
+ "zeroize",
+]
+
+[[package]]
 name = "paint_list_api"
 version = "0.1.2"
 source = "git+https://github.com/merely-made/netrender.git?branch=main#ec15eb269855c798467c93a6d10031100fdfdf65"
@@ -3091,7 +3085,7 @@ dependencies = [
 [[package]]
 name = "personae"
 version = "0.3.0"
-source = "git+https://github.com/merely-made/dramatis.git?branch=main#051e95a68011072f172b9ec4c0f04d4e5259df5b"
+source = "git+https://github.com/merely-made/dramatis.git?branch=main#9d6e77eefe37b8371be2bcebc21be47da705ec83"
 dependencies = [
  "blake3",
  "chacha20poly1305",
@@ -4728,7 +4722,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60517bf01dc4c6ede5e4b9b64c7eba5d398ed6bad6480c82d46dbef99e92261c"
 dependencies = [
  "accesskit",
- "document-session-api 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "document-session-api",
  "grafting-frame",
 ]
 
@@ -5237,14 +5231,18 @@ name = "woodshed-relationship-recipe-proof"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "blake3",
+ "castellan-client",
  "directories",
- "djinn",
  "dramatis",
- "muniment 0.1.2",
+ "muniment 0.2.0 (git+https://github.com/merely-made/eidetic.git?rev=aa94fe22eea29e9b54e01ed21e6991536ed4f208)",
+ "ostiary",
  "personae",
+ "pollster 0.4.0",
  "sceno",
  "scenograph",
  "scenomise",
+ "serde",
  "serde_json",
  "tempfile",
  "woodshed-core",
@@ -5516,6 +5514,11 @@ version = "0.0.2"
 source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
 
 [[patch.unused]]
+name = "muniment"
+version = "0.1.2"
+source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+
+[[patch.unused]]
 name = "genet-taffy"
 version = "0.14.0"
 source = "git+https://github.com/merely-made/genet.git?branch=main#7d1d89dbe729a853cf59c7b3f43ee3d8e494fde8"
@@ -5531,6 +5534,11 @@ version = "0.0.2"
 source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
 
 [[patch.unused]]
+name = "muniment"
+version = "0.1.2"
+source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+
+[[patch.unused]]
 name = "chartulary"
 version = "0.2.2"
 source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
@@ -5538,4 +5546,9 @@ source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a5
 [[patch.unused]]
 name = "eidetic"
 version = "0.0.2"
+source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"
+
+[[patch.unused]]
+name = "muniment"
+version = "0.1.2"
 source = "git+https://github.com/merely-made/eidetic.git?rev=34105d63ec17826e0a58a5b461b65150357dd000#34105d63ec17826e0a58a5b461b65150357dd000"

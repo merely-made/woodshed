@@ -7,7 +7,7 @@
 //! Hocket's identity, held by djinn.
 //!
 //! Hocket opens no vault, sealed record or DPAPI root (dramatis repo plan,
-//! D5). It calls djinn over Graphshell's custody route as the `hocket` app.
+//! D5). It calls djinn through Ostiary and Castellan-client as the `hocket` app.
 //! Its own pre-DR-C identity, the key behind every contact token already
 //! shared, is adopted by djinn with its fingerprint unchanged (D13): djinn
 //! places it in the vault, as its own persona when the family persona is a
@@ -20,12 +20,16 @@
 
 use std::path::{Path, PathBuf};
 
-use djinn::door::custody_identity::CustodyIdentity;
+use castellan_client::custody_identity::CustodyIdentity;
 use insigne::DerivedKeyAttestation;
 use personae::{Ed25519Keypair, Ed25519PublicKey, IdentityError, IdentityProvider, ProfileId};
 
 /// The name Hocket is admitted to djinn's custody route under.
 const CUSTODY_APP: &str = "hocket";
+
+#[path = "identity/declaration.rs"]
+mod declaration;
+use declaration::app_declaration;
 
 /// djinn's forwarding note in Hocket's data root: the persona holding
 /// Hocket's adopted key, and that key. Public; written by djinn.
@@ -185,7 +189,8 @@ impl LocalIdentity {
     fn open_at(data_root: PathBuf) -> Result<Self, IdentityError> {
         // The status this asks for is also djinn's cue to adopt Hocket's own
         // record and write the note read below (D13).
-        let family = CustodyIdentity::connect(CUSTODY_APP).map_err(pending)?;
+        let family = CustodyIdentity::connect_declared_as(CUSTODY_APP, app_declaration(), None)
+            .map_err(pending)?;
         let family_profile = family
             .profile()
             .map(|profile| profile.0.clone())
@@ -221,8 +226,12 @@ impl LocalIdentity {
                 data_root,
             });
         }
-        let own = CustodyIdentity::connect_as(CUSTODY_APP, Some(ProfileId(note.profile.clone())))
-            .map_err(pending)?;
+        let own = CustodyIdentity::connect_declared_as(
+            CUSTODY_APP,
+            app_declaration(),
+            Some(ProfileId(note.profile.clone())),
+        )
+        .map_err(pending)?;
         if encode_contact_token(&own.master_public_key()) != note.public_key {
             return Err(pending(
                 "djinn's note does not match the persona it names; nothing is signed",
@@ -252,8 +261,9 @@ impl LocalIdentity {
                 "this identity is already the family persona".into(),
             ));
         };
-        let family = CustodyIdentity::connect_as(
+        let family = CustodyIdentity::connect_declared_as(
             CUSTODY_APP,
+            app_declaration(),
             Some(ProfileId(family_profile.clone())),
         )
         .map_err(pending)?;
@@ -287,8 +297,9 @@ impl LocalIdentity {
             ));
         }
         let actual_losing_token = encode_contact_token(&self.speaker.master_public_key());
-        let family = CustodyIdentity::connect_as(
+        let family = CustodyIdentity::connect_declared_as(
             CUSTODY_APP,
+            app_declaration(),
             Some(ProfileId(profile.to_owned())),
         )
         .map_err(pending)?;
@@ -539,39 +550,8 @@ mod tests {
 }
 
 #[cfg(test)]
-mod dr_c_receipts {
-    use super::*;
-    #[test]
-    #[ignore = "run mere/scripts/dr_c_receipts.py against the isolated receipt keeper"]
-    fn dr_c_hocket_identity_stays_pending() {
-        let mode = std::env::var("DR_C_RECEIPT_MODE").expect("receipt mode");
-        assert!(mode == "absent" || mode == "locked");
-        if mode == "locked" {
-            let mut client = djinn::door::custody_client::BlockingCustodyClient::open(
-                djinn::door::app_admission::AppId::new(CUSTODY_APP)).unwrap();
-            assert_eq!(client.status().unwrap().lock, dramatis::view::VaultLockView::Locked);
-            assert!(!client.roster().unwrap().entries.is_empty(), "public persona roster remains readable");
-        }
-        let temp = tempfile::tempdir().unwrap();
-        let public = temp.path().join("public-session");
-        std::fs::write(&public, b"public session retained").unwrap();
-        let result = LocalIdentity::open_at(temp.path().to_path_buf());
-        assert!(matches!(result, Err(ref error) if error.to_string().contains("pending")), "Hocket must expose no contact token or signing identity");
-        assert_eq!(std::fs::read(&public).unwrap(), b"public session retained");
-        assert_eq!(std::fs::read_dir(temp.path()).unwrap().count(), 1, "no identity, adoption or consent is written by Hocket while pending");
-        // Also exercise the previously-owned identity branch. These synthetic
-        // bytes are never decoded by Hocket: only djinn may adopt them.
-        let legacy = temp.path().join(LEGACY_ROOT);
-        std::fs::create_dir_all(legacy.parent().unwrap()).unwrap();
-        std::fs::write(&legacy, b"opaque legacy root").unwrap();
-        assert!(matches!(LocalIdentity::open_at(temp.path().to_path_buf()),
-            Err(ref error) if error.to_string().contains("pending")),
-            "a legacy identity must not be decoded or used as a fallback while pending");
-        assert_eq!(std::fs::read(legacy).unwrap(), b"opaque legacy root");
-        assert!(!temp.path().join(MARKER).exists());
-        assert!(!consent_path(temp.path()).exists());
-    }
-}
+#[path = "identity/receipts.rs"]
+mod dr_c_receipts;
 
 /// Theme exports cannot overwrite identity/custody metadata, including absent files.
 pub(crate) fn protected_data_directories() -> Vec<PathBuf> {

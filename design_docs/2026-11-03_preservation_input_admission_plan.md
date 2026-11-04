@@ -16,7 +16,92 @@ P5a retains its existing owner. Broader audit remediation belongs to source-auth
 
 ## Findings and progress
 
-No fresh build, test, headed, audio or hardware gate was run for this successor. Recheck open work against current source before implementation.
+At successor creation, no fresh build, test, headed, audio or hardware gate had been run. The receiving checks below qualify only their stated current-source scope.
+
+### Custody client receiving, 2026-11-04
+
+Status: implemented and qualified for the receiving scope below. Mark requested the Ostiary/Castellan-client migration,
+including the other application consumers, checks and direct publication.
+
+- Replace Woodshed and Hocket's `djinn::door` client imports with Ostiary's
+  admission types and Dramatis's Castellan clients. Keep each port's own lock.
+- Declare the existing custody operations and exact key namespaces on every
+  connection, including persona selection, background identity connections and
+  receipt tests. The maintained relationship-recipe root includes the native
+  storage module and receives the same dependencies. Declarations request authority; owner grants still decide it.
+- Keep pending/locked behavior, profile validation, outgoing-store preservation,
+  handoff signatures and persisted bytes unchanged. Add focused scope/refusal
+  regressions and run both real native consumers, including tests and binaries.
+- Audit dependency edges as well as package identities. Preserve unrelated
+  lock selections, refresh upstream before publishing, and stage only this cut.
+
+The fresh source census found remaining client imports only in Woodshed and
+Hocket. Cleromancy, Knot, Turnstone, Isocosm and Signalman's Station Custody
+already use the separate owners. Redshank and Ringdown have no direct custody
+client. Server-side Djinn admission in Cleromancy's tests and Graphshell
+projection adapters are valid remaining dependencies, not client migration debt.
+
+The receiving revisions are Dramatis `9d6e77e` (the reviewed client extraction)
+and Ostiary at Armillary `08ebbc4`. They preserve this app cohort's existing
+Dramatis 0.0.3 contracts. Current Dramatis 0.0.5 would also force a Mere
+contract intake; that unrelated upgrade is not needed to remove Djinn. All
+normal and test client imports migrate now; this is not a compatibility shim.
+
+The maintained relationship-recipe fixture also required a narrow repair of
+pre-existing drift: forward document-session-api to the Git owner already used
+by the native roots, align its direct Muniment with woodshed-core, declare the
+included storage source's dependencies, and pass an explicit new directory to
+FsBackend. Seed refuses an existing destination; reopen reads that directory.
+It does not contact custody or change user storage environment variables. This
+fixture checks filesystem/relationship persistence, not sealed owner admission.
+
+Done when both native consumers compile and their focused custody/preservation
+tests pass, all active client imports use the authoritative owners, independent
+root locks resolve coherently, and the receiving source is pushed. Headed,
+physical audio and live-user custody acceptance remain separate. Raw commands,
+logs and source/lock comparisons are retained under
+`Code/testing/woodshed/custody-owners-20261104`.
+
+
+#### Receiving qualification
+
+The unchanged native Woodshed baseline check passed before editing. Final
+locked/offline all-target checks pass for Woodshed, Hocket and the repaired
+recipe fixture. The repository's full all-target Clippy gate and Hocket's
+native all-target Clippy gate pass with existing warnings; the full-tree
+line-ceiling and diff whitespace checks pass.
+
+- App declaration tests: six pass against the real Ostiary authority checks;
+  with empty declarations, the earlier negative run failed all six as expected.
+- Native Woodshed: 19 storage tests pass and 49 tests selected by `persona`
+  pass. These selections overlap. Each leaves one explicit custody receipt
+  test ignored. Two earlier 600-second compile/link attempts expired before
+  tests; a third bounded run passed with the warmed cache.
+- Hocket's actual identity module, included in an isolated consumer: ten tests
+  pass. Two parent tests explicitly execute its otherwise ignored receipt test
+  in child processes, for absent and synthetic locked residents. They check
+  nonzero child execution, public roster access, declarations on all three
+  connections, pending identity and unchanged bytes. This is not live-custodian
+  qualification.
+- Recipe fixture: eight tests pass, covering current owner-generated disclosure,
+  relationship validation, isolated filesystem round-trip, existing-destination
+  refusal and path resolution. Separate CLI seed and reopen processes also pass,
+  retaining edits, selection, musical evidence and the source Set. Native
+  storage tests run in the real application;
+  the fixture deliberately skips its included `host_storage` test copies.
+- Both production declarations compile for `wasm32-unknown-unknown` with only
+  portable Ostiary enabled. This does not qualify a browser custody client.
+- Native normal/build dependency traversal rooted at Ostiary/Castellan-client
+  has 124 package names in Woodshed and 126 in Hocket (124 in the recipe).
+  These cones exclude Djinn, Graphshell, Chirograph/scenes, Hest, Pandect/kernel
+  and Castellan. The GUI applications retain their own rendering dependencies.
+
+All heavy gates use one Cargo job and test thread, a machine-wide lock,
+3 GiB memory, zero swap, 150% CPU, 256 tasks and a 600-second timeout. Failed
+and superseded logs remain with the final receipts. The lock-edge audit also
+restored an incidental tempfile/getrandom rewrite in Hocket and the recipe;
+no unrelated dependency selection is accepted. Headed, physical audio,
+Windows and live-user custody behavior remain unqualified by this cut.
 
 ## D1 accepted ownership
 

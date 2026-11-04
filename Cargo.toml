@@ -165,18 +165,19 @@ wavicle = { git = "https://github.com/merely-made/wavicle.git", rev = "2c5a49fd4
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# Identity. Woodshed opens no vault: it calls djinn through Graphshell's
-# application door (Djinn's `custody-client` feature) over the custody
+# Identity. Woodshed calls Djinn through Ostiary's application door and
+# Castellan-client's native custody client over the custody
 # route (dramatis DR-C, D5) for the roster, a persona switch and the one
 # sealing key it needs. `personae` lends key types and sealing, `dramatis` the
 # roster's plain types, and `mere-persona-picker` the shared view over the
 # roster: the same question every Merely application asks, drawn the same way
 # everywhere. Declared here because woodshed-views draws the roster and
 # woodshed-genet acts on it. personae and dramatis live in merely-made/dramatis
-# since DR-D, pinned at the revision mere's workspace names, so one personae
-# reaches every graph.
+# since DR-D. Cargo.lock receives the client extraction with the existing
+# Dramatis 0.0.3 contract cohort, so one personae reaches every graph.
 dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-djinn = { git = "https://github.com/merely-made/armillary.git", rev = "721e17d41a8f258073f440adbbb39ad145250868", version = "0.0.3", default-features = false, features = ["custody-client"] }
+ostiary = { git = "https://github.com/merely-made/armillary.git", rev = "08ebbc44f5d391bd263fcc26b6053edf72741954", version = "0.0.1", default-features = false }
+castellan-client = { git = "https://github.com/merely-made/dramatis.git", branch = "main", version = "0.0.1", default-features = false, features = ["client"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 persona-picker = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 

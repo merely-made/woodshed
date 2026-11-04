@@ -61,7 +61,8 @@ tempfile = "3"
 # woodshed-views; this crate only reads what the user answered.
 persona-picker = { workspace = true }
 dramatis = { workspace = true }
-djinn = { workspace = true }
+ostiary = { workspace = true }
+castellan-client = { workspace = true }
 
 # One existing native chooser for diagnostics and pack preparation on all
 # desktop hosts. macOS keeps the in-process AppKit panel; Windows uses its

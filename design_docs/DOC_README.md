@@ -38,6 +38,8 @@ before any other doc in this directory.
 
 ## Active Plans
 
+- [Custody client receiving](2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04) — Woodshed, Hocket and the maintained recipe fixture migrate to Ostiary and Castellan-client; owner-granted application declarations and independent receiving checks.
+
 - [Receipt relocation and maintained validation paths](archive_docs/2026-11-03/2026-11-03_receipt_relocation_plan.md) — In progress; preserves frozen evidence externally and repairs maintained tools, fixture paths and live references.
 
 
