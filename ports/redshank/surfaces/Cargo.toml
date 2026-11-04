@@ -19,6 +19,7 @@ tinct.workspace = true
 time = { version = "=0.3.55", features = ["parsing", "macros"] }
 
 [dev-dependencies]
+genet-livery = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 tempfile.workspace = true
 url.workspace = true
 cambium-desktop.workspace = true
