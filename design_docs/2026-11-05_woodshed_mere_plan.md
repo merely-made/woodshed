@@ -1,8 +1,9 @@
 # Woodshed's practice data in a Woodshed mere
 
 **Status (2026-11-05):** draft for Mark's review. Nothing is scheduled. The
-direction is ruled (ruling 6, re-ruled 2026-11-05); the phases, the domain id
-and the migration are proposed. Mere's shared work comes first:
+direction is ruled (ruling 6, re-ruled 2026-11-05), and so is the domain:
+`music`, shared with Hocket (Mere adoption plan D5). The phases and the
+migration are proposed. Mere's shared work comes first:
 `mere/design_docs/mere_docs/implementation_strategy/2026-11-05_domain_adoption_plan.md`
 (M1 to M5).
 
@@ -14,7 +15,7 @@ like for even my working state to be replicated to my phone ... the chords and
 whatnot that I'm working with, the progression I'm working with."
 
 **Not here:** Hocket's and Redshank's own moves (their rows are in Mere's
-adoption plan); Ringdown, which stores nothing of its own (its pedal bindings
+adoption plan; Hocket shares the `music` domain); Ringdown, which stores nothing of its own (its pedal bindings
 are Woodshed settings); the mobile shell, which follows the web host.
 
 ## Today
@@ -40,11 +41,14 @@ outside the persona store.
 
 ## Phases
 
-### W0. Domain id
+### W0. Domain id: `music` (ruled 2026-11-05)
 
-Proposed: `practice`. Hocket's phrase data may share a domain with the looper
-(Mere's O3).
-- Done when: Mark names the domain and settles O3.
+Mark: "music, i guess". Woodshed and Hocket share one `music` domain, since
+both record phrases through `hocket-model` (Mere adoption plan D5). A music
+library, if one is ever built (Mark floated Redshank), joins it. The validator
+therefore covers Hocket's records too: W1's crate composes with
+`hocket-model`'s `ProjectBundle::validate`.
+- Done: ruled.
 
 ### W1. A pure domain crate
 
@@ -110,7 +114,6 @@ validator, with the slots kept read-only until Mark retires them.
 
 ## Open questions
 
-- The domain id and the shared-recorder question (W0, Mere O3).
 - Whether retained Sets and working Sets stay distinct once everything
   follows the person.
 - Whether authored themes (`themes.json`, application-wide today) should
