@@ -1,7 +1,7 @@
 # Retained context is session material; owner mutations remain explicit.
 settle 3
 act mere-example
-click .workspace-panel Mere
+click .workspace-panel Overview
 click .overview-context-keep-card
 settle 3
 assert snap overview-context-items == 1
@@ -33,7 +33,7 @@ settle 3
 assert snap overview-active == false
 assert snap set-cards == 2
 capture 03_open_in_stage
-click .workspace-panel Mere
+click .workspace-panel Overview
 click .overview-context-add
 settle 3
 assert snap set-cards == 3

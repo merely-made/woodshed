@@ -40,7 +40,7 @@ assert snap rehearsal-running == false
 click .t-btn Remove
 settle 5
 assert snap set-cards == 2
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 click .overview-relationship Relationship recipe
 settle 5
@@ -50,14 +50,14 @@ assert text Source instructions changed
 click .relationship-notice Source instructions changed
 settle 5
 capture 04_stale_source_refusal
-click .relationship-back Back to Mere
+click .relationship-back Back to Overview
 settle 5
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 click .overview-duplicate-set Duplicate Set
 settle 5
 assert snap working-set-id == 2
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 click .overview-relationship Relationship recipe
 settle 5
@@ -70,7 +70,7 @@ settle 5
 assert snap recipe-occurrence == set:2:card:4
 click .relationship-explanation woodshed.keyed_pitch_set_intersection.v1
 capture 05_rebound_recipe
-click .relationship-back Back to Mere
+click .relationship-back Back to Overview
 settle 5
 click .overview-node-title Selected material relationships
 settle 5

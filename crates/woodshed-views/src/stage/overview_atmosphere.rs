@@ -1,4 +1,4 @@
-//! View-owned atmosphere beneath the Mere graph. These simulations never own
+//! View-owned atmosphere beneath the Overview graph. These simulations never own
 //! graph nodes, relationships, hit targets, or musical state.
 use pictograph::canvas::{AmbientSim, GameOfLife, NBody};
 use serde::{Deserialize, Serialize};

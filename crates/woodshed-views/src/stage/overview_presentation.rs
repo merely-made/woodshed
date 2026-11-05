@@ -1,4 +1,4 @@
-//! Retained Mere presentation, separate from owner facts and musical instructions.
+//! Retained Overview presentation, separate from owner facts and musical instructions.
 use super::{UiState, overview_atmosphere::OverviewAtmosphere};
 use cambium::GraphViewport;
 use serde::{Deserialize, Serialize};

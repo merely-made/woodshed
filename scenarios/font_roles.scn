@@ -57,7 +57,7 @@ capture 07_font_fretboard_labels
 click .workspace-panel Set
 settle 3
 capture 08_rehearsal_baseline
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 capture 09_font_graph_labels
 click .workspace-panel Practice

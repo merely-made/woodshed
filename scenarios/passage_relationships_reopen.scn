@@ -3,7 +3,7 @@ assert snap recipe-valid == true
 assert snap recipe-spacing == 24
 assert snap recipe-occurrence == set:1:card:3
 assert snap rehearsal-running == false
-click .workspace-panel Mere
+click .workspace-panel Overview
 click .overview-relationship Relationship recipe
 settle 5
 assert text C Major scale contains every pitch class of Am7.

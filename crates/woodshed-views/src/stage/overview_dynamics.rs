@@ -1,4 +1,4 @@
-//! Viewer-owned dynamics over Woodshed's disclosed Mere occurrences.
+//! Viewer-owned dynamics over Woodshed's disclosed Overview occurrences.
 //!
 //! Scenomise remains the arrangement authority. Pictograph's graph-free board
 //! supplies motion and its advertised curation actions; neither edits a Set.

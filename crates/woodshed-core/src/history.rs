@@ -290,7 +290,7 @@ impl PracticeHistory {
         out
     }
 
-    /// Aggregate adjacent practice observations for the Mere's PracticedAfter
+    /// Aggregate adjacent practice observations for the Overview's PracticedAfter
     /// layer. Both endpoints must be practice observations. Staging and previews
     /// remain in the raw lineage and engagement queries, but cannot produce a
     /// "practiced next" claim. Lifecycle observations of the same assigned

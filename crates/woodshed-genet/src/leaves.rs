@@ -230,7 +230,7 @@ fn painted_camera(viewport: sprigging::GraphViewport) -> (f32, f32, f32) {
     (viewport.pan.0, viewport.pan.1, viewport.zoom)
 }
 
-/// The session Mere uses the same graph geometry for paint and native hit targets.
+/// The session Overview uses the same graph geometry for paint and native hit targets.
 fn sync_overview(shared: &mut Shared, ui: &UiState, leaves: &mut LeafRegistry<u64>) {
     let swatch = woodshed_views::stage::overview_swatch(ui);
     let mut h = hasher();

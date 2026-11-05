@@ -2,7 +2,7 @@
 settle 5
 ui-zoom 0.8
 click .pill Stage
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 4
 assert snap overview-active == true
 assert snap overview-takes == 3
@@ -31,5 +31,5 @@ click role:button @aria-label=Stop all loops
 settle 3
 assert snap song-playing == false
 click .pill Stage
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 4

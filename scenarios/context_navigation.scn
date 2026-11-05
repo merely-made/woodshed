@@ -14,7 +14,7 @@ act p6-await-card-loop
 wait 4000
 assert snap rehearsal-running == true
 assert snap runner-set-id == 1
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap overview-active == true
 click .overview-node-title Working Set 1

@@ -2,7 +2,7 @@
 settle 3
 act mere-scale-pattern-example
 click .pill Stage
-click .workspace-panel Mere
+click .workspace-panel Overview
 click .overview-context-keep-pattern
 settle 3
 assert snap overview-context-items == 1
@@ -35,7 +35,7 @@ settle 3
 assert snap preview-busy == false
 assert snap preview-voices == 0
 click .pill Stage
-click .workspace-panel Mere
+click .workspace-panel Overview
 click .overview-context-add
 settle 3
 assert snap set-cards == 3
@@ -45,7 +45,7 @@ click .overview-open Explore scale formula
 settle 3
 assert snap overview-active == false
 assert snap set-cards == 3
-click .workspace-panel Mere
+click .workspace-panel Overview
 click .overview-atmosphere-orbits Orbits
 click .overview-fit Fit scene
 click .overview-graph

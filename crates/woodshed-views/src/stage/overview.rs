@@ -1,4 +1,4 @@
-//! Session Mere: inspect real assets, workspace views and host activity before acting.
+//! Session Overview: inspect real assets, workspace views and host activity before acting.
 use super::canvas_camera::{
     CanvasSurface, apply_canvas_command, apply_wheel, pan_by_fraction, zoom_by,
 };
@@ -150,7 +150,7 @@ fn canvas_label(label: &str, narrow: bool) -> String {
     }
 }
 
-/// Narrow Mere uses a two-column roster graph instead of compressing the
+/// Narrow Overview uses a two-column roster graph instead of compressing the
 /// desktop's artifact/view/activity bands into crowded horizontal lanes.
 fn narrow_positions(
     snapshot: &OverviewSnapshot,
@@ -329,7 +329,7 @@ fn overview_arrangement_swatch(ui: &UiState) -> GraphCanvasSwatch<OverviewNodeId
     )
     .with_relations(relations)
     .with_size(width, height)
-    .with_label("Woodshed Mere graph")
+    .with_label("Woodshed Overview graph")
     .with_expand(false)
     .with_node_labels(true);
     swatch.cull_labels = narrow;
@@ -487,7 +487,7 @@ impl UiState {
         self.set = copy;
         self.working_sets.active_name = name;
         self.overview_notice = Some(
-            "Opened an independent working copy. Your previous Set remains available in Mere."
+            "Opened an independent working copy. Your previous Set remains available in Overview."
                 .into(),
         );
         true
@@ -981,7 +981,7 @@ pub(super) fn screen(ui: &UiState) -> UiChild {
         el(
             "div",
             (
-                el("div", text("Woodshed Mere")).attr("class", "overview-title"),
+                el("div", text("Woodshed Overview")).attr("class", "overview-title"),
                 clickable(
                     el("div", text("Relationship recipe"))
                         .attr("class", "t-btn overview-relationship"),

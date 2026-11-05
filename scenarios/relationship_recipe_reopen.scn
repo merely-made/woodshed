@@ -5,7 +5,7 @@ assert snap recipe-owner == 2
 assert snap recipe-spacing == 24
 assert snap recipe-occurrence == set:2:card:4
 assert snap rehearsal-running == false
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 click .overview-relationship Relationship recipe
 settle 5

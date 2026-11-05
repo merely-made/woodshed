@@ -1,7 +1,7 @@
 # Shared ambient paint is opt-in, bounded, and independent of graph ownership.
 settle 3
 act mere-example
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap overview-active == true
 assert snap overview-atmosphere == none

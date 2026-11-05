@@ -5,7 +5,9 @@ Historical source: [Stage, Set, Tools, Rehearsal, and Looper Plan](archive_docs/
 Status (2026-11-03): **in progress; successor approved.**
 
 ## Boundaries and standing decisions
-One Set owns authored Card occurrences; the Mere and tools project it. Exploration never silently edits the Set. Preserve catalog entry, configured material, playable realization and occurrence identities separately. Source: original Product model and connected exploration, lines 483–855. The 2026-10-11 release ruling says: “no GitHub workflows and no default pull-request review step.” Source: original lines 1089–1092. Explicit release instruction remains necessary.
+One Set owns authored Card occurrences; the session Overview and tools project it. Exploration never silently edits the Set. Preserve catalog entry, configured material, playable realization and occurrence identities separately. Source: original Product model and connected exploration, lines 483–855. The 2026-10-11 release ruling says: “no GitHub workflows and no default pull-request review step.” Source: original lines 1089–1092. Explicit release instruction remains necessary.
+
+**Overview naming (Mark, 2026-11-04).** The workspace view over `woodshed-core` `session_overview` (`WorkspacePanel::Overview`) is labelled **Overview**, formerly "Mere". Lowercase mere is the data domain, not a panel. **Reservoir** is the name this view earns once it can browse other domains' meres (the [DSP/Graphshell/Hocket survey](2026-10-14_dsp_graphshell_hocket_survey_brief.md#three-readings-of-graphshell-in-woodshed)'s reading (c)); today it shows one domain.
 
 ## Open work and done conditions
 - P1–P3: separate shell and section coordination, complete one-owner settings and explicit staging/tray interactions. Done when sections can change independently, host contains no product composition, settings and routes resolve to owned state and saved session reopening works (1393–1450).
@@ -60,3 +62,20 @@ without weakening the navigation/process-ownership contract. The source-split
 [receipt](archive_docs/receipts/2026-11-03_source_splits_plan_receipts.md) records
 the untouched baseline and post comparison. This is not a new device or
 headed acceptance claim.
+
+### Overview label, 2026-11-04
+
+Progress: `WorkspacePanel::Overview` is labelled "Overview", formerly "Mere"
+(`crates/woodshed-views/src/workspace.rs:51`); the `woodshed-genet` layout
+selectors follow, as do the Overview title, its accessible graph name,
+notices, the relationship editor's Back action, the Related graph arrangement
+setting and the `scenarios/*.scn` panel clicks (scenario file names keep
+their historical `mere_` prefixes). Saved workspace snapshots carry tile titles, and restore
+requires the registered title, so a layout saved as "Mere" would have failed
+closed and the desktop host would have refused writes for that session
+(`crates/woodshed-genet/src/session.rs:66-69`). Restore now admits exactly
+that former Overview title and rewrites it to the current label; any other
+altered title still fails closed. The
+[receipt](archive_docs/receipts/2026-11-03_stage_set_tools_plan_receipts.md)
+records the checks. Native GUI and headed acceptance of the label are not
+claimed.

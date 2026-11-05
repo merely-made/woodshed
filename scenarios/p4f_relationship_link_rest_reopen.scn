@@ -3,7 +3,7 @@
 # through the ordinary host controls and inspect one source-owned link again.
 settle 90
 assert snap set-cards == 3
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 click .overview-relationship Relationship recipe
 settle 5

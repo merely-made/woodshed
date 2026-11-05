@@ -8,7 +8,7 @@ assert snap working-sets == 2
 assert snap working-set-id == 2
 assert snap practice-saved == true
 
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 4
 click .overview-node-title Working Set 1
 settle 2

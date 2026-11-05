@@ -1,4 +1,4 @@
-# Production receiving proof for Mere scroll-boundary adoption.
+# Production receiving proof for Overview scroll-boundary adoption.
 # Snapshot::document_scroll observes the retained plane through AppCtx.
 # Missing observations are unavailable and must fail, never default to zero.
 # Parent owns locked-source generation, native execution and pixel review.
@@ -215,4 +215,4 @@ act wav-export-fixture
 settle 8
 assert text Exported
 act p7a-checkpoint final
-log Production Mere receiving scroll proof complete
+log Production Overview receiving scroll proof complete

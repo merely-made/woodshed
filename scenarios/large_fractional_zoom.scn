@@ -8,7 +8,7 @@ click .workspace-panel Practice
 settle 5
 assert snap set-cards == 2
 capture 01_practice
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 assert snap overview-active == true
 capture 02_mere

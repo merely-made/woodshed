@@ -1,6 +1,6 @@
 # Existing instance bank at a narrow native window.
 settle 3
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap working-sets == 2
 assert snap explorations == 2

@@ -3,7 +3,7 @@ use super::*;
 pub(in super::super) fn screen(ui: &UiState) -> UiChild {
     let mut children: Vec<UiChild> = vec![
         Box::new(el("h3", text("Relationship recipe"))),
-        action("Back to Mere", "t-btn relationship-back", |ui| {
+        action("Back to Overview", "t-btn relationship-back", |ui| {
             ui.relationship_open = false
         }),
         Box::new(el(

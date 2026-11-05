@@ -2,7 +2,7 @@
 settle 5
 ui-zoom 0.8
 act mere-example
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 5
 assert snap practice-saved == true
 assert snap set-cards == 2

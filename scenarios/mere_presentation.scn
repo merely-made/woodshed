@@ -1,7 +1,7 @@
 # Shared board arrangement and host-owned scene presentation.
 settle 3
 act mere-example
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap overview-active == true
 assert snap overview-reduced-motion == true
@@ -38,4 +38,4 @@ click .overview-reduced-motion-toggle Reduce scene motion
 settle 3
 assert snap overview-motion == false
 assert snap overview-reduced-motion == true
-log Mere presentation retained
+log Overview presentation retained

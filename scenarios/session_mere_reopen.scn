@@ -17,4 +17,4 @@ assert snap approach-sequential == true
 assert snap rehearsal-strings == 4
 assert text concert D
 capture 02_working_copy_reopened
-log Session Mere reopen complete
+log Session Overview reopen complete

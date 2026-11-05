@@ -18,7 +18,7 @@ settle 3
 assert snap working-set-id == 1
 assert snap set-cards == 2
 assert snap scale-cards == 0
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 click .overview-node-title Catalog exploration 1
 settle 3

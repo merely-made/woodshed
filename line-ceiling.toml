@@ -35,7 +35,7 @@ reason = "Musical alignment authoring and shared portable scene presentation. Ex
 
 [[exception]]
 path = "crates/woodshed-views/src/stage/overview.rs"
-reason = "Session Mere: inspect real assets, workspace views and host activity before acting. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
+reason = "Session Overview: inspect real assets, workspace views and host activity before acting. Existing source-size debt; a responsibility split must preserve existing entry points, fixture identity and module visibility."
 
 [[exception]]
 path = "crates/woodshedding/src/tuning.rs"

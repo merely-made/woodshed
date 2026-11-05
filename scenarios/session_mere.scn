@@ -1,4 +1,4 @@
-# Session Mere, explicit retention and focused Card working projection.
+# Session Overview, explicit retention and focused Card working projection.
 settle 3
 ui-zoom 0.65
 act mere-example
@@ -17,7 +17,7 @@ settle 3
 assert snap rehearsal-strings == 4
 assert snap approach-sequential == true
 capture 01_card_sections
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap overview-active == true
 assert snap overview-views >= 4
@@ -39,7 +39,7 @@ assert snap approach-sequential == true
 click .t-btn Run
 settle 5
 assert snap rehearsal-running == true
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap overview-active == true
 assert snap rehearsal-running == true
@@ -53,8 +53,8 @@ assert snap rehearsal-running == true
 click .t-btn Pause
 settle 3
 assert snap rehearsal-running == false
-click .workspace-panel Mere
+click .workspace-panel Overview
 settle 3
 assert snap overview-processes == 0
 capture 04_mere_paused
-log Session Mere seed complete
+log Session Overview seed complete

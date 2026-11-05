@@ -64,7 +64,7 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
         });
         let originals = serde_json::to_value(&h.state().set).unwrap();
         let history_len = h.state().practice_history.len();
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         let snapshot = woodshed_views::stage::overview_snapshot(h.state());
         assert!(
             snapshot
@@ -102,7 +102,7 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
             ("Looper playing", woodshed_core::storage::AppSection::Looper),
             ("Tuner listening", woodshed_core::storage::AppSection::Tools),
         ] {
-            assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+            assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
             assert!(h.click_on(&Selector::class("overview-node-title").containing(label)));
             assert!(h.click_on(&Selector::class("overview-open")));
             assert_eq!(h.state().section, section);
@@ -110,7 +110,7 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
                 h.state().rehearsal_running && h.state().song_playing && h.state().tuner.enabled
             );
         }
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         assert!(
             h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running"))
         );
@@ -120,7 +120,7 @@ fn session_overview_inspects_retains_and_opens_real_work_without_navigation_side
             Some(WorkspacePanel::Set)
         );
         assert!(h.state().rehearsal_running);
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         assert!(h.click_on(&Selector::class("overview-save")));
         let saved_id = h.state().retained_sets.entries[0].id;
         let snapshot =
@@ -217,7 +217,7 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
         assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
         h.update(crate::tests::acknowledge_card_preview_fixture);
         assert_eq!(h.state().rehearsal_owner, Some(owner_a));
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         assert!(h.click_on(&Selector::class("overview-duplicate-set")));
         let owner_b = h.state().working_sets.active_id;
         assert_ne!(owner_a, owner_b);
@@ -235,12 +235,12 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
             h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
             sound_a
         );
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         assert!(h.click_on(&Selector::class("overview-new-set")));
         let owner_c = h.state().working_sets.active_id;
         assert!(h.state().set.cards.is_empty());
         assert_eq!(h.state().rehearsal_owner, Some(owner_a));
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         let exploration_a = h.state().catalog_explorations.active_id;
         let config_a = serde_json::to_value(h.state().capture_exploration()).unwrap();
         assert!(h.click_on(&Selector::class("overview-new-exploration")));
@@ -294,7 +294,7 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
                 .unwrap(),
             b
         );
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         let overview = woodshed_views::stage::overview_snapshot(h.state());
         assert!(overview.relations.iter().any(|relation| relation.from
             == OverviewNodeId::Process(OverviewProcess::Rehearsal)
@@ -352,7 +352,7 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
             config_a
         );
         assert!(h.state().rehearsal_running);
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         assert!(
             h.click_on(&Selector::class("overview-node-title").containing("Catalog exploration 2"))
         );
@@ -361,7 +361,7 @@ fn independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to
             serde_json::to_value(h.state().capture_exploration()).unwrap(),
             config_b
         );
-        assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+        assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
         assert!(
             h.click_on(&Selector::class("overview-node-title").containing("Working Set 1 copy"))
         );
@@ -412,7 +412,7 @@ fn background_runner_inherits_the_starting_exploration_setup() {
     let inherited = h.state().preview_voicing().unwrap();
     assert!(h.click_on(&Selector::class("t-btn").containing("Run")));
     h.update(crate::tests::acknowledge_card_preview_fixture);
-    assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+    assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
     assert!(h.click_on(&Selector::class("overview-new-exploration")));
     h.update(|ui| {
         ui.stage.set_tuning(1);
@@ -430,7 +430,7 @@ fn background_runner_inherits_the_starting_exploration_setup() {
         h.state().rehearsal_sounding_pitches().unwrap().unwrap(),
         inherited
     );
-    assert!(h.click_on(&Selector::class("workspace-panel").containing("Mere")));
+    assert!(h.click_on(&Selector::class("workspace-panel").containing("Overview")));
     assert!(h.click_on(&Selector::class("overview-node-title").containing("Rehearsal running")));
     assert!(h.click_on(&Selector::class("overview-pause-rehearsal")));
     assert!(!h.state().rehearsal_running);

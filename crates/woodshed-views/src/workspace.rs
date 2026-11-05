@@ -48,7 +48,7 @@ impl WorkspacePanel {
 
     pub const fn label(self) -> &'static str {
         match self {
-            Self::Overview => "Mere",
+            Self::Overview => "Overview",
             Self::Practice => "Practice",
             Self::Set => "Set",
             Self::Related => "Related",
@@ -87,12 +87,39 @@ impl WorkspacePanel {
             .find(|panel| panel.tile_id() == tile.id)
     }
 
+    /// A label this panel carried in earlier saved layouts. Overview was labelled "Mere"
+    /// until 2026-11-04; restore admits that title and rewrites it to the current label.
+    const fn former_label(self) -> Option<&'static str> {
+        match self {
+            Self::Overview => Some("Mere"),
+            _ => None,
+        }
+    }
+
     fn validates_tile(self, tile: &Tile) -> bool {
         let expected = self.tile();
         tile.id == expected.id
-            && tile.title == expected.title
+            && (tile.title == expected.title || self.former_label() == Some(tile.title.as_str()))
             && tile.content == expected.content
             && tile.accent.is_none()
+    }
+}
+
+/// Give every admitted panel its current label, so a former title is never saved again.
+fn relabel_panels(tree: &mut TileTree) {
+    match tree {
+        TileTree::Stack(stack) => {
+            for tile in &mut stack.tabs {
+                if let Some(panel) = WorkspacePanel::from_tile(tile) {
+                    tile.title = panel.label().to_string();
+                }
+            }
+        },
+        TileTree::Split { children, .. } => {
+            for child in children {
+                relabel_panels(&mut child.tree);
+            }
+        },
     }
 }
 
@@ -210,7 +237,7 @@ impl Default for WoodshedWorkspace {
 }
 
 impl WoodshedWorkspace {
-    /// Start with the existing surfaces and a session Mere, keeping Practice selected.
+    /// Start with the existing surfaces and a session Overview, keeping Practice selected.
     pub fn new() -> Self {
         Self {
             workbench: Workbench::new(TileTree::stack(
@@ -264,7 +291,8 @@ impl WoodshedWorkspace {
         let dto = serde_json::from_str::<WorkspaceSnapshotDto>(json)
             .map_err(WorkspaceSnapshotError::Decode)?;
         let mut panels = BTreeSet::new();
-        let tree = dto.tree.into_tree(&mut panels, true)?;
+        let mut tree = dto.tree.into_tree(&mut panels, true)?;
+        relabel_panels(&mut tree);
         if let Some(panel) = dto.active_panel {
             if !panels.contains(&panel.tile_id().0) {
                 return Err(WorkspaceSnapshotError::Invalid(format!(

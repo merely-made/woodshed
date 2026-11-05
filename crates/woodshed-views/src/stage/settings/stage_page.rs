@@ -20,7 +20,7 @@ pub(super) fn stage_page(ui: &UiState) -> UiChild {
         ui.app_settings.stage.related.relation_depth
     );
     let swatch_arrangement = format!(
-        "Mere arrangement: {}",
+        "Related graph arrangement: {}",
         ui.app_settings.stage.related.arrangement.label()
     );
     let set_arrangement = format!(

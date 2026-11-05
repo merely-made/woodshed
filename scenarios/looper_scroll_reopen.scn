@@ -213,4 +213,4 @@ act wav-export-fixture
 settle 8
 assert text Exported
 act p7a-checkpoint reopened-export
-log Production Mere scroll sealed reopen complete
+log Production Overview scroll sealed reopen complete

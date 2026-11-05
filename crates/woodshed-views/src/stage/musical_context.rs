@@ -1,4 +1,4 @@
-//! Explicit owner actions for musical material kept in the session Mere.
+//! Explicit owner actions for musical material kept in the session Overview.
 use super::{UiState, WorkspacePanel};
 use woodshed_core::captured_arpeggio::CapturedRecipe;
 use woodshed_core::harmony::KeyedCatalogRef;
@@ -88,7 +88,7 @@ impl UiState {
         let item = self
             .musical_context
             .get(id)
-            .ok_or("This kept material is no longer in the Mere.")?;
+            .ok_or("This kept material is no longer in the Overview.")?;
         let recipe = item
             .captured_recipe
             .as_ref()
@@ -159,11 +159,12 @@ impl UiState {
         match subject {
             Some(subject) if is_supported_subject(&subject) => Some(subject),
             Some(_) => {
-                self.overview_notice = Some("This kept material is unavailable in the current catalog. You can remove it from the Mere.".into());
+                self.overview_notice = Some("This kept material is unavailable in the current catalog. You can remove it from the Overview.".into());
                 None
             },
             None => {
-                self.overview_notice = Some("This kept material is no longer in the Mere.".into());
+                self.overview_notice =
+                    Some("This kept material is no longer in the Overview.".into());
                 None
             },
         }
@@ -296,7 +297,7 @@ impl UiState {
         self.overview_positions.remove(&node);
         self.overview_roles.remove(&node);
         self.overview_background.remove(&node);
-        self.overview_notice = Some("Removed kept material from the Mere.".into());
+        self.overview_notice = Some("Removed kept material from the Overview.".into());
         true
     }
 }

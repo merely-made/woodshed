@@ -155,7 +155,29 @@ fn host_snapshot_json_rejects_an_unknown_or_altered_panel() {
     ));
 }
 #[test]
-fn legacy_four_panel_snapshot_restores_exactly_then_adds_mere_on_request() {
+fn layout_saved_with_the_former_mere_label_restores_as_overview() {
+    let mut workspace = WoodshedWorkspace::new();
+    split_workspace(&mut workspace);
+    workspace.apply(WorkspaceEvent::activate(WorkspacePanel::Overview));
+    let current = workspace.to_snapshot_json().unwrap();
+    let former = current.replacen("\"title\":\"Overview\"", "\"title\":\"Mere\"", 1);
+    assert_ne!(former, current);
+
+    let restored = WoodshedWorkspace::from_snapshot_json(&former).unwrap();
+    assert_eq!(restored.snapshot(), workspace.snapshot());
+    assert_eq!(restored.to_snapshot_json().unwrap(), current);
+
+    // Only Overview had a former label; any other altered title still fails closed.
+    let altered = current.replacen("\"title\":\"Practice\"", "\"title\":\"Mere\"", 1);
+    assert_ne!(altered, current);
+    assert!(matches!(
+        WoodshedWorkspace::from_snapshot_json(&altered),
+        Err(WorkspaceSnapshotError::Invalid(_))
+    ));
+}
+
+#[test]
+fn legacy_four_panel_snapshot_restores_exactly_then_adds_overview_on_request() {
     let legacy = WorkspaceSnapshot {
         tree: TileTree::stack(
             vec![
