@@ -63,6 +63,15 @@ without weakening the navigation/process-ownership contract. The source-split
 the untouched baseline and post comparison. This is not a new device or
 headed acceptance claim.
 
+**Resolved 2026-11-05.** The projection was right and the fixture stale.
+Since `ce91af79` (2026-10-25) the Overview's tuner process projects
+host-observed listening (`tuner_is_listening`: `tuner_active` with admitted
+input), never the enabled control, per `AudioAvailability`'s contract. The
+test enabled only the control, so the tuner node was absent. The fixture now
+reports admitted input and an active tuner; the assertion and the
+navigation/process-ownership checks are unchanged. Checks are in the
+[receipt](archive_docs/receipts/2026-11-03_stage_set_tools_plan_receipts.md).
+
 ### Overview label, 2026-11-04
 
 Progress: `WorkspacePanel::Overview` is labelled "Overview", formerly "Mere"

@@ -29,3 +29,10 @@ Baseline: `0ae6a96c`, uncommitted working tree. macOS, CPU tests only.
   process-count case, left 2, right 3), `tests/midi_state.rs` 5 passed.
   Scenario files were edited but not executed; native GUI acceptance of the
   label is not claimed.
+
+## 2026-11-05: Overview process-count fixture
+
+- `navigation_and_graph_inspection_do_not_start_or_pause_live_processes`
+  fixture now reports host-observed tuner listening (admitted input,
+  `tuner_active`). `cargo test --locked -q -p woodshed-views`: lib 309 passed,
+  0 failed; `tests/midi_state.rs` 5 passed.

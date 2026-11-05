@@ -1685,6 +1685,12 @@ mod tests {
         ui.rehearsal_running = true;
         ui.song_playing = true;
         ui.tuner.enabled = true;
+        // Process nodes project host-observed activity, never the enabled control.
+        ui.audio_availability = woodshed_core::audio::AudioAvailability {
+            input: woodshed_core::audio::AudioStreamStatus::Admitted,
+            tuner_active: true,
+            ..Default::default()
+        };
         ui.activate_workspace_panel(WorkspacePanel::Overview);
         let snapshot = overview_snapshot(&ui);
         assert_eq!(
