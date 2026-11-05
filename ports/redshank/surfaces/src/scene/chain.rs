@@ -96,7 +96,7 @@ fn line(left: f32, width: f32, top: f32, dashed: bool) -> FullView {
 }
 
 /// A chain label. A pinned episode carries the small filled square first, so
-/// the Mere overview marks what the listener kept without re-ordering the
+/// the Overview marks what the listener kept without re-ordering the
 /// chronology the chain exists to show.
 fn label_at(x: f32, y: f32, pinned: bool, words: String) -> FullView {
     Box::new(

@@ -14,7 +14,7 @@
 //! - [`dock`]: the family A bottom dock (identity, seek track, transport, capture);
 //! - [`rail`]: the family B left transport rail, same facts and commands;
 //! - [`tabs`]: Listen, Library, Notes, Settings bodies;
-//! - [`scene`]: the feed-node projections (chain, orrery, trail) for the Mere tab;
+//! - [`scene`]: the feed-node projections (chain, orrery, trail) for the Overview tab;
 //! - [`surface_api`]: the descriptor and erased session a second host admits.
 
 pub mod dock;
@@ -187,7 +187,7 @@ pub enum SurfaceTab {
     Listen,
     Library,
     Notes,
-    Mere,
+    Overview,
     Settings,
 }
 
@@ -196,7 +196,7 @@ impl SurfaceTab {
         Self::Listen,
         Self::Library,
         Self::Notes,
-        Self::Mere,
+        Self::Overview,
         Self::Settings,
     ];
 
@@ -205,7 +205,7 @@ impl SurfaceTab {
             Self::Listen => "Listen",
             Self::Library => "Library",
             Self::Notes => "Notes",
-            Self::Mere => "Mere",
+            Self::Overview => "Overview",
             Self::Settings => "Settings",
         }
     }
@@ -215,7 +215,7 @@ impl SurfaceTab {
             Self::Listen => "redshank-listen-panel",
             Self::Library => "redshank-library-panel",
             Self::Notes => "redshank-notes-panel",
-            Self::Mere => "redshank-mere-panel",
+            Self::Overview => "redshank-overview-panel",
             Self::Settings => "redshank-settings-panel",
         }
     }
@@ -357,7 +357,7 @@ pub enum CompactCommand {
     RemoveCachedItem(ItemId),
     /// Retry loading an unavailable or failed item.
     RetryItem(ItemId),
-    /// Pin an item into the Mere projection.
+    /// Pin an item into the Overview projection.
     PinItem(ItemId),
     Subscribe(String),
     RefreshSubscription(String),

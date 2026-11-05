@@ -562,7 +562,7 @@ pub struct RedshankModel {
     pub derived_positions: BTreeMap<AnnotationId, DerivedPosition>,
     #[serde(default)]
     pub listening_sessions: Vec<ListeningSession>,
-    /// Items the listener kept to hand; the Mere projections mark them.
+    /// Items the listener kept to hand; the Overview projections mark them.
     #[serde(default)]
     pub pinned: BTreeSet<ItemId>,
     pub settings: ListenerSettings,

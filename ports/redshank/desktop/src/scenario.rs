@@ -254,7 +254,7 @@ pub fn parse_named(label: &str) -> Option<Named> {
             "listen" => SurfaceTab::Listen,
             "library" => SurfaceTab::Library,
             "notes" => SurfaceTab::Notes,
-            "mere" => SurfaceTab::Mere,
+            "overview" => SurfaceTab::Overview,
             "settings" => SurfaceTab::Settings,
             _ => return None,
         };

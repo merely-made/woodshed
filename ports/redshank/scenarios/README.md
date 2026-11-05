@@ -46,7 +46,7 @@ transcript reads retain their separate 4 MiB bound.
 
 `play`, `pause`, `replay`, `skip-back`, `skip-forward`, `text-note`,
 `text-note-begin`, `text-note-cancel`, `voice-begin`, `voice-finish`,
-`voice-cancel`, `export-notes`, `tab:listen|library|notes|mere|settings`,
+`voice-cancel`, `export-notes`, `tab:listen|library|notes|overview|settings`,
 `scene:chain|orrery|trail`, `layout:dock|rail`, `notes:this|all`,
 `seed:wetland|brand`, `mode:dark|light|hc-dark|hc-light`, `seek:<ms>`,
 `select:<item-id>`, `feed:<url>` (bare `feed:` clears the selection).

@@ -1,4 +1,4 @@
-//! Feed-node projections for the Mere tab and the phone feed page. Lane S3 owns this directory.
+//! Feed-node projections for the Overview tab and the phone feed page. Lane S3 owns this directory.
 //!
 //! One structure, three projections: the chain (1g wide, 2c phone), the orrery
 //! (2f), and the trail (2g). The scene header selects among them; the header,
@@ -15,7 +15,7 @@ pub mod trail;
 use crate::{CompactCommand, FullView, RedshankSurfaceState, Scene, format_bytes, format_span};
 use cambium::{PointerClick, button, el, text};
 
-/// Whether the scene shows every feed at once (the Mere overview) or one feed.
+/// Whether the scene shows every feed at once (the Overview) or one feed.
 ///
 /// `current_feed()` falls back to the first feed, so it is `None` only for an
 /// empty library; the overview is keyed off an unset `selected_feed` instead.

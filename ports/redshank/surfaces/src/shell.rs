@@ -68,7 +68,7 @@ fn panel(state: &RedshankSurfaceState) -> FullView {
         SurfaceTab::Listen => tabs::listen::panel(state),
         SurfaceTab::Library => tabs::library::panel(state),
         SurfaceTab::Notes => tabs::notes::panel(state),
-        SurfaceTab::Mere => scene::panel(state),
+        SurfaceTab::Overview => scene::panel(state),
         SurfaceTab::Settings => tabs::settings::panel(state),
     }
 }

@@ -18,9 +18,9 @@ wait 300
 settle 15
 capture buffered
 
-act tab:mere
+act tab:overview
 settle 15
-capture mere-feed-chain
+capture overview-feed-chain
 act tab:library
 act feed:
 settle 10

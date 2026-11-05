@@ -36,17 +36,17 @@ capture notes-all
 act notes:this
 settle 5
 
-act tab:mere
+act tab:overview
 settle 10
-assert snap tab == Mere
-capture mere-chain
+assert snap tab == Overview
+capture overview-chain
 act scene:orrery
 settle 10
 assert snap scene == orrery
-capture mere-orrery
+capture overview-orrery
 act scene:trail
 settle 10
-capture mere-trail
+capture overview-trail
 act scene:chain
 settle 5
 

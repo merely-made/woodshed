@@ -8,9 +8,9 @@ capture empty-library
 act tab:notes
 settle 10
 capture empty-notes
-act tab:mere
+act tab:overview
 settle 10
-capture empty-mere
+capture empty-overview
 act tab:settings
 settle 10
 capture empty-settings

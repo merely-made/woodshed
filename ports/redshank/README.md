@@ -17,8 +17,8 @@ Current packages:
 - `redshank-storage`: a local JSON store using immutable numbered generations;
 - `redshank-surfaces`: the Cambium surfaces from the endorsed 2026-09-13 design
   canvas: one fixed-height Player/Capture dock (family A) or left transport
-  rail (family B), a header with Listen, Library, Notes, Mere, and Settings,
-  the feed-node projections (chain, orrery, trail) for the Mere tab, and a
+  rail (family B), a header with Listen, Library, Notes, Overview, and Settings,
+  the feed-node projections (chain, orrery, trail) for the Overview tab, and a
   tinct-derived stylesheet with wetland and brand-shell seeds in dark, light,
   and high-contrast modes. Wide, narrow, and phone widths are plain media
   queries in the sheet. The compact composition depends only on its

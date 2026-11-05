@@ -29,12 +29,12 @@ capture notes-cluster-collapsed
 act cluster:460
 settle 10
 
-act tab:mere
+act tab:overview
 settle 15
-capture mere-unpinned
+capture overview-unpinned
 act pin:local-stereo
 settle 10
-capture mere-pinned
+capture overview-pinned
 act pin:local-stereo
 
 act tab:settings
