@@ -8,6 +8,9 @@ the up/down motion, rendered through the shared fretboard surface.
 
 Status: **design — building incrementally (visual-first).**
 
+Status (2026-11-04): partial catalog/stepping record. The lens framing is
+superseded by [Stage, Set, Tools](2026-11-03_stage_set_tools_plan.md).
+
 ## Decisions (Mark, 2026-05-21)
 
 - **Position/shape cards** (CAGED-style): the lens generates the arpeggio as a

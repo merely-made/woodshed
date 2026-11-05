@@ -23,7 +23,7 @@ Current packages:
   and high-contrast modes. Wide, narrow, and phone widths are plain media
   queries in the sheet. The compact composition depends only on its
   presentation snapshot and command queue, so a host can mount it without the
-  Library. See `../../design_docs/2026-09-13_redshank_gui_implementation_plan.md`;
+  Library. See `../../design_docs/2026-11-03_redshank_gui_implementation_plan.md`;
 - `redshank-web`: the same surfaces mounted on a browser canvas over
   `cambium-genet-web-host`, with an in-memory fixture and no audio; see
   `web/README.md`;

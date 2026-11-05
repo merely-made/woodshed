@@ -6,7 +6,13 @@ shows the note's essentials and plays it. This turns the board from a static
 diagram into something you interrogate, without leaving the Stage.
 
 Builds on the paint-leaf board and its per-marker label overlay (see
-[2026-07-14_instruments_and_fretboard_rendering_plan.md](archive_docs/2026-11-03/2026-07-14_instruments_and_fretboard_rendering_plan.md)).
+[2026-07-14_instruments_and_fretboard_rendering_plan.md](archive_docs/2026-11-03/2026-07-14_instruments_and_fretboard_rendering_plan.md);
+open work now in [its successor](2026-11-03_instruments_and_fretboard_rendering_plan.md)).
+
+Status (2026-11-04): Phases 1 and 3 landed 2026-07-15 (`pinned_markers` /
+`toggle_pin` in `crates/woodshed-views/src/stage.rs`). Phase 2 has a
+`hover_peek` path in `crates/woodshed-views/src/stage/rehearsal/board.rs` but no
+recorded verification here. Phase 4, the reusable popover, is open.
 
 ## Decisions (locked 2026-07-15)
 
@@ -74,7 +80,9 @@ consumes it and voices that single pitch through the audio backend, reusing the
 
 An edge-aware popover near the marker: above by default, flipping below or to the
 side at the board's edges. Builds on the existing
-[popup proposal](2026-05-18_xilem_popup_view_proposal.md).
+[popup proposal](2026-05-18_xilem_popup_view_proposal.md). (2026-11-04: that
+Xilem proposal is historical, not active Woodshed work; placement needs a
+current Cambium basis.)
 
 ### Design language
 

@@ -1,10 +1,13 @@
 # Woodshed, Hocket and Firewheel handoff for Codex, 2026-10-15
 
-**Status:** handoff, written for a Codex agent to execute in order. Claude
-lanes designed and landed today's work. Mark moved implementation to Codex
-and kept Claude for design. Every ruling below is Mark's and is settled; do
-not re-decide one. If a task needs a decision that isn't written here, stop
-and ask Mark with concrete options.
+**Status (2026-11-04): complete.** All four tasks are done: task 1 on
+2026-10-15, tasks 2–4 on 2026-10-16. Ruling 6 was reopened 2026-11-04.
+
+Written as a handoff for a Codex agent to execute in order. Claude lanes
+designed and landed that day's work. Mark moved implementation to Codex and
+kept Claude for design. Every ruling below is Mark's and was settled when
+written; do not re-decide one. If a task needs a decision that isn't written
+here, stop and ask Mark with concrete options.
 
 **2026-10-16 P4 continuation:** the root now pins Mere `91467c0bb` for
 canonical resting links. The bounded receiving gate passes 619 suite cases,
@@ -14,7 +17,7 @@ concurrent take-navigation main, `fe54425` repeats 361 affected cases, five chil
 invocations, the build and native seed/reopen with four new reviewed captures. The
 relationship editor, Related and Set preserve independent reasons inside the
 opened reader; exact member filters reduce only their own resting contribution.
-The [Stage plan](archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt
+The [Stage plan](2026-07-11_stage_set_tools_plan.md) and its linked P4 receipt
 own the evidence. Other dependency families and nested port locks remain at
 their qualified inputs. Full Stage P4f, physical audio and later Mere P6/P7
 remain separately gated.
@@ -23,7 +26,7 @@ remain separately gated.
 from root `aba2c7343`. Mere P2 is qualified, the former O1–O8 questions are
 settled as L5–L12 (with independent reasons ruled as L13), and Mere's P3
 Chartulary/shared Graphshell slice is published at `ee324e517`. The
-[Stage plan](archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md) owns Woodshed's consumer work:
+[Stage plan](2026-07-11_stage_set_tools_plan.md) owns Woodshed's consumer work:
 personal-only withdrawal, generated claims read-only, exact source identity,
 and ordered before/after audition. The root lock alone advances to that supplier;
 other dependency families and nested port locks retain their recorded versions.
@@ -63,7 +66,7 @@ What landed (Woodshed `main`, oldest first):
 - `6ca0ab6` (hocket-engine): `set_tempo` re-arms a pending capture. Both
   start paths pin exact capture-start frames, and the feed has an allocation
   guard.
-- `1f1c0e7`: Looper takes appear as navigation-only Session Mere nodes and
+- `1f1c0e7`: Looper takes appear as navigation-only session Overview nodes and
   open into the Looper.
 - `c11571b`, `7739e95`, `64b08e4`, `25acaa0`: `graphshell` dropped for
   `graphshell_endpoint::door`, and every root repinned.
@@ -104,8 +107,10 @@ From the survey, 2026-10-14:
 4. **Pin:** repin forward to Mere `main`.
 5. **Hocket carrier:** per-turn signed operations on a Stickleback domain.
    Local durability and the open host-acceptance defects come first.
-6. **Custody:** move Woodshed custody to a djinn-held reservoir mere with a
-   Woodshed validator. This is Mere/djinn work.
+6. **Custody:** move Woodshed custody to a djinn-held Woodshed mere in the
+   reservoir, with a Woodshed validator. This is Mere/djinn work.
+   **Reopened 2026-11-04:** the Ostiary/Castellan client migration took Djinn
+   out of the client path; the holder is undecided and nothing is scheduled.
 
 From the stack, 2026-10-15:
 
@@ -219,7 +224,7 @@ October 16 task 3 implemented and CPU/offline qualified: both engines consume
 shared allocation-free writes, InputFeed and CompletedTake; Hocket capture and
 queued replay consume BarCountdown. The independent shared allocator harness and
 both adapter suites pass 256 distinct cases; both desktop hosts pass locked
-all-target checks. See [the extraction plan](archive_docs/2026-11-03/2026-10-16_shared_capture_accumulator_plan.md)
+all-target checks. See [the extraction plan](2026-10-16_shared_capture_accumulator_plan.md)
 and `Code/testing/woodshed/validation/shared-capture-seams_20261016/receipt.json`. Native/device
 qualification remains separate; product timing, integrity admission and custody
 stay local.
@@ -246,11 +251,11 @@ voices, count-in semantics and tick cadence.
 
 October 16: complete for the isolated native fixture. New unplaced take defaults
 avoid retained v1 labels without moving retained positions. Sealed hydration and
-playback reached from the Mere, narrow layout, and fresh-process v2 presentation
+playback reached from the Overview, narrow layout, and fresh-process v2 presentation
 reopening pass in three final native processes with ten reviewed captures.
 The selected take's actual output bar was observed in every run; its sealed
 192,000-frame PCM retains exact bits. 442 automated cases and the desktop build
-pass. See [the acceptance plan](archive_docs/2026-11-03/2026-10-16_mere_take_acceptance_plan.md) and
+pass. See [the acceptance plan](2026-10-16_mere_take_acceptance_plan.md) and
 `Code/testing/woodshed/validation/mere-take-acceptance_20261016/receipt.json`. No physical input,
 audibility or latency claim follows from this receipt.
 
@@ -266,8 +271,11 @@ audibility or latency claim follows from this receipt.
   Signed per-turn operations remain outside that host fix.
 - **Saved-song bar graph nodes.** These need stable ids and PCM persistence
   (stage plan P7) first.
-- **Woodshed custody to a reservoir mere (ruling 6).** Mere/djinn work, not
-  yet scheduled; Mark schedules it.
+- **Woodshed custody to a Woodshed mere in the reservoir (ruling 6).**
+  Reopened 2026-11-04: the Ostiary/Castellan client migration took Djinn out
+  of the client path
+  ([preservation plan](../../2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04)).
+  Holder undecided; nothing scheduled.
 - **Mere's link model:** the former O1–O8 questions are settled; the authorized
   P3 consumer continuation and qualified P4 resting strokes are recorded in
   the Stage plan above. Later assertion-family migration/history budgets and
@@ -305,9 +313,9 @@ audibility or latency claim follows from this receipt.
 - **Paint checks:** `FaceAlignment` measures a freshly painted leaf. Leaf
   repaint keys in `woodshed-genet/src/leaves.rs` must include the viewport,
   so assert `*-paint-current`.
-- **Pre-existing failure:** `validation/relationship-recipe`'s test target
-  fails on a missing `tempfile` dev-dependency (since `8ec1578`). The binary
-  checks fine. Fix it if it's in your way; it's a one-line dev-dependency.
+- **Recipe `tempfile` failure: resolved 2026-10-15 by `74850935`.**
+  `validation/relationship-recipe`'s test target failed on a missing
+  `tempfile` dev-dependency (since `8ec1578`); `74850935` declares it.
 - **Formatting:** the repo isn't rustfmt-clean. Running rustfmt on
   `scenario.rs` or `leaves.rs` reformats hundreds of unrelated lines, so
   format only what you change.

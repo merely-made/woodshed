@@ -1,5 +1,7 @@
 # Independent custody client receiver
 
+Superseded 2026-11-04 by [Custody client receiving](../../2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04): the `graphshell-endpoint/custody-client` imports gave way to Djinn on 2026-10-30 and to Ostiary/Castellan clients on 2026-11-04, and the recipe fixture now passes. Historical record below.
+
 Status: Published; Woodshed and Hocket locked native checks passed. The relationship-recipe behavioral test remains unqualified.
 
 Woodshed, Hocket and the active relationship-recipe fixture explicitly select

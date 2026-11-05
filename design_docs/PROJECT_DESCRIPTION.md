@@ -59,9 +59,15 @@ product.
 
 ## Delivery status
 
-The current app is a Windows desktop alpha hosted by Genet. It has a shared,
-adaptive product view layer, but Mac and Linux receipts have not been completed.
-A tagged build can produce a checksummed portable Windows ZIP; code signing,
+The current app is a desktop alpha hosted by Genet on a shared, adaptive
+product view layer (2026-11-04). Source builds are the supported way to try it.
+Native evidence is bounded and recorded per feature in the DOC_README receipts,
+on macOS, Windows or Linux as each receipt states; cross-desktop qualification
+remains open. Local packaging scripts
+(`scripts/package-macos.sh`, `package-linux.sh`, `package-windows.ps1`)
+produce a checksummed unsigned macOS app ZIP, a portable Linux x86_64 tar.gz
+and a portable Windows ZIP. A downloadable candidate still needs packaging and
+extracted-app validation at its exact revision. Code signing, notarization,
 installer UX, an app icon, and third-party notice aggregation remain before a
 broad public release.
 
@@ -71,7 +77,9 @@ Mobile follows the web host and is not a current delivery target.
 
 ## Distribution path
 
-1. GitHub-tagged portable Windows alpha builds.
+1. Locally packaged, checksummed alpha archives for macOS, Linux and Windows
+   under the `woodshed-v*` tag convention; packaging is a local command, with
+   no CI workflows.
 2. Signed Windows package, then itch.io / Gumroad distribution.
 3. Verified Mac and Linux builds and packages.
 4. Browser/PWA deployment, then mobile shells if it earns the work.
@@ -91,5 +99,7 @@ Mobile follows the web host and is not a current delivery target.
 
 - Real-time effects processing.
 - Multi-track recording or a full DAW workflow.
-- Notation/staff rendering.
+- Publication-grade engraving, general MusicXML import, or complex polyphony.
+  Notation is the bounded Chart/Tab/Score profile: one fretted instrument and
+  tuning, one sequential voice, complete authored bars.
 - Collaborative or networked practice features.

@@ -289,7 +289,7 @@ source uses Mere `0b9b7a9` and Genet `7a8c5b8`, recorded in the receipt.
 
 **Mere application-door repin (2026-10-15).** Mark ruled on 2026-10-14 to
 repin forward
-([survey brief, Rulings §4](2026-10-14_dsp_graphshell_hocket_survey_brief.md)).
+([survey brief, Rulings §4](../../2026-10-14_dsp_graphshell_hocket_survey_brief.md)).
 
 - **Revisions.** The root, `ports/hocket` and `validation/relationship-recipe`
   now pin:
@@ -674,7 +674,7 @@ sample accumulation, InputFeed, host-stamped CompletedTake, and Hocket's
 poll-driven BarCountdown. Hocket and Woodshed retain their different capture
 schedules, input integrity admission and stream ownership. The shared dev-only
 harness and existing adapter suites pass 256 cases; both desktop hosts pass
-locked offline all-target checks. The [extraction plan](archive_docs/2026-11-03/2026-10-16_shared_capture_accumulator_plan.md)
+locked offline all-target checks. The [extraction plan](2026-10-16_shared_capture_accumulator_plan.md)
 and `validation/shared-capture-seams_20261016/receipt.json` hold scoped evidence.
 No persistent clocks or PCM changed; earlier native/export receipts retain their
 original sources. Physical input, audibility and latency remain independently
@@ -686,7 +686,7 @@ The standalone host now stamps all five project worker operations with Armillary
 request IDs and host session/replacement scope. Explicit admitted pending work
 owns busy state, including handoff read/write. Correlation protects saved-file
 association, live project replacement and staged incoming data from late replies.
-The [port plan](../ports/hocket/design_docs/archive_docs/2026-11-03/2026-10-16_project_worker_correlation_plan.md)
+The [port plan](../../../ports/hocket/design_docs/archive_docs/2026-11-03/2026-10-16_project_worker_correlation_plan.md)
 owns implementation and CPU evidence; native project/handoff qualification,
 physical audio and signed turn operations remain separately gated.
 
@@ -965,7 +965,7 @@ do not prove custom playback. AP0–AP2 can progress with the guitar off.
 
 ### Publication and standards boundary (2026-10-20)
 
-The [Ringdown provenance/terms and standards assessment](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
+The [Ringdown provenance/terms and standards assessment](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
 owns the adapter audit, evidence frontier and unsent vendor outreach. Generic
 pattern/audio/SMF work retains its own rights and assets. Documented MIDI
 messages plus owner bindings can support a standards-based controller path;
@@ -974,17 +974,17 @@ Detailed app RPC uses custom methods, GATT identifiers, framing and compression.
 
 A public-standard envelope or an offline execution branch does not establish
 permission or artifact isolation. The subsequent
-[build isolation](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#standards-based-midi-and-beats-build-isolation-2026-10-20)
+[build isolation](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#standards-based-midi-and-beats-build-isolation-2026-10-20)
 uses the existing CLI with private features disabled by default. MIDI moved to
 `woodshed-instrument`; `woodshed-audio` re-exports its one implementation.
 The private session/example moved to `ringdown-ble::instrument`, removing even
 optional private dependencies from the shared MIDI crate. Target graph and
 host compiler evidence are scoped in the linked receipt. Subsequent
-[split acceptance](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#split-acceptance-2026-10-20)
+[split acceptance](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#split-acceptance-2026-10-20)
 adds native OS MIDI capture, actual CLI/release exports and kit removal/reopen,
 negative dependency controls and read-only live RPC status. Source archive and
 other-platform release qualification remain separate.
-The subsequent [BLE-MIDI peripheral integration](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
+The subsequent [BLE-MIDI peripheral integration](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
 adds a connection variant on that same writer and reuses the desktop picker,
 clock worker/status and CLI. One supplier covers all three native APIs; Mac
 has one observed guitar trigger, with Windows/Linux target compilation and

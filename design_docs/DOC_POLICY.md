@@ -179,7 +179,12 @@ yet keeps rules 1 to 4 until its first statement is written.
 
 ## Local addendum — Woodshed
 
-Woodshed is a single subsystem (the app) plus a shared theory crate. Docs are
-flat in `design_docs/` today. When a domain accumulates enough material to
-justify promotion under core §4, the likely first area roots are
-`theory_docs/` and `audio_docs/`.
+Woodshed (2026-11-04) is a root Cargo workspace of 18 crates under `crates/`
+(the app, its theory/notation/audio cores, and shared audio-pack and Hocket
+recorder libraries) plus three nested, independently released port
+workspaces under `ports/`: Hocket, Redshank and Ringdown. Root docs are flat in
+`design_docs/` and cover the root workspace and Redshank. Hocket and Ringdown
+keep their own `ports/<port>/design_docs/` with their own `DOC_README.md` and
+`DOC_POLICY.md`; the root index links to them rather than copying them. When a
+root domain accumulates enough material to justify promotion under core §4, the
+likely first area roots are `theory_docs/` and `audio_docs/`.

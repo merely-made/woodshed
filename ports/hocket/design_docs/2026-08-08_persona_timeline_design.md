@@ -27,7 +27,8 @@ The view needs per-turn attribution, and the model does not carry it yet:
 - `HistoryNode { id, parent, edit, timestamp_ms }` — no author. The history
   DAG records what and when, never who.
 - Authorship exists in exactly one place: the **hand-off envelope**
-  (`hocket-engine/src/handoff.rs`), signed by a session-scoped key that the
+  (then `hocket-engine/src/handoff.rs`; now root
+  `crates/hocket-project/src/handoff.rs`), signed by a session-scoped key that the
   sender's durable identity attests. `accept_branch` verifies it, then
   integrates the nodes — and drops the who on the floor. `BranchAcceptance`
   reports counts, not provenance.
@@ -39,6 +40,16 @@ down what was proved. The missing piece is small and shaped like: a turn mark
 in the history (who held the session, from which node to which), recorded at
 accept time from the verified envelope rather than trusted from content. Turn
 breaks in Mark's description are exactly these marks.
+
+> **Superseded 2026-11-04 (by ruling 5, Mark 2026-10-14).** The turn mark is
+> no longer recorded at accept time from the envelope. Turn marks and per-node
+> authorship enter `hocket-model` directly, as per-turn signed operations on a
+> coop over Stickleback with Gemot write delegation. See ruling 5 in the root
+> [survey brief](../../../design_docs/2026-10-14_dsp_graphshell_hocket_survey_brief.md).
+> This also changes the per-author row of the table below: Hocket's history
+> moves onto the Stickleback substrate rather than keeping a local equivalent.
+> As of 2026-11-04 `HistoryNode` and `Layer` still carry no author. The
+> concept and doctrine line below stand.
 
 ## Where the pieces live
 

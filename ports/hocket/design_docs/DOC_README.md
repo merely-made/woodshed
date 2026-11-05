@@ -69,8 +69,9 @@ before any other doc in this directory.
   linearly with breaks where the turn passed, plus a combined loopline of
   everyone's turns in order. Grounds the concept in what the model records
   (authorship exists only in the signed hand-off envelope; `HistoryNode` and
-  `Layer` carry no author, so the missing piece is a turn mark written at
-  accept time from the verified envelope), names the owning layers (sceno
+  `Layer` carry no author). Its accept-time turn mark is superseded by ruling 5
+  (2026-10-14): turn marks and per-node authorship enter `hocket-model` as
+  per-turn signed operations. Names the owning layers (sceno
   timeline scene, platen/forme arrangement, sprigging regions; hocket supplies
   the musical reading), and draws the doctrine line: provenance reading yes,
   editing from the timeline is the arrange-view canary.
@@ -163,8 +164,11 @@ section whenever a durable working insight emerges from a session.
   independent. See
   [2026-07-08_genet_host_refactor_plan.md](archive_docs/2026-11-03/2026-07-08_genet_host_refactor_plan.md) **(historical record)**.
 - **Async-first collaboration**, never real-time multiplayer jamming.
-  The product's identity is sequential turn-taking over Moothold; that
-  shape must not erode into "everyone plays together over the net" as
+  The product's identity is sequential turn-taking: one signed operation per
+  turn on a coop over Stickleback, with Gemot write delegation (ruling 5, Mark
+  2026-10-14, in the root
+  [survey brief](../../../design_docs/2026-10-14_dsp_graphshell_hocket_survey_brief.md)).
+  That shape must not erode into "everyone plays together over the net" as
   a primary mode.
 - **Hand-on-instrument flow.** Borrowed from Deeler's design north
   star. UI decisions are evaluated against whether they let the

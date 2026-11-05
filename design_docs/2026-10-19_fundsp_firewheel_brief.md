@@ -1,7 +1,13 @@
 # fundsp Inside Firewheel: Upstream Check and Adapter Shape
 
-**Status (2026-10-19): research brief.** Nothing is implemented, and no
-implementation is scheduled. Mark asked for this brief before deciding.
+**Status (2026-11-04): research brief; adoption direction recorded, still
+unimplemented.** Mark asked for this brief before deciding. The AP0
+assessment the same day
+([rehome plan](archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#ap0-assessment-results-2026-10-19))
+rates FunDSP 0.23.0 "Adapt; preferred programmable DSP supplier", and Mark
+favors it, accepting an owned fork if needed. No adapter, dependency or
+schedule exists; root `Cargo.toml` lists fundsp under Future as the supplier
+for later data-defined synth/effect packs. The first consumer is open.
 
 ## Origin
 
@@ -115,7 +121,9 @@ Woodshed's version must not inherit its defects:
   node in the graph.
 - The block-size invariance test (127/509/211-frame blocks) passes.
 - An offline render equals the live render.
-- The first consumer is chord audition, where nothing is byte-pinned.
+- The first consumer is one where nothing is byte-pinned: chord audition,
+  as proposed here, or the data-defined synth/effect packs named in
+  `Cargo.toml` (open).
 
 ## Costs
 
@@ -126,7 +134,8 @@ Woodshed's version must not inherit its defects:
 
 ## Open for Mark
 
-- Whether to adopt fundsp at all, and whether chord audition is the right
-  first consumer.
+- Adoption direction is recorded by AP0 (2026-10-19): preferred
+  programmable DSP supplier, owned fork acceptable. Still open: the first
+  consumer, chord audition or data-defined synth/effect packs.
 - Whether the adapter crate should live in Woodshed's root `crates/`, or be
   offered upstream to Firewheel or bevy_seedling once it has passed the gates.

@@ -6,14 +6,19 @@ this first, then `DOC_POLICY.md`, before starting work.
 ## What ringdown is
 
 An independent cross-platform desktop controller for the HyVibe smart guitar,
-targeting live performance and scripting through reusable instrument actions. Existing code
-speaks the instrument's JSON-RPC-over-Bluetooth app protocol; software MIDI
-pedal emulation and the new Beats rhythms are assessed together in the client
-surface plan. The protocol was
+targeting live performance and scripting through reusable instrument actions.
+The default build (2026-10-20) is the standards-based `ringdown-probe` CLI:
+Beats MIDI-file export through root `audio-packs` and standard MIDI and
+BLE-MIDI output through root `woodshed-instrument`. The instrument's private
+JSON-RPC-over-Bluetooth app protocol and PacketLogger tooling are explicit
+research opt-ins (`hyvibe-rpc`, `packetlogger`). The client surface plan owns
+the software-pedal and Beats frontier. The private protocol was
 reverse-engineered for interoperability from the vendor's Android app; ringdown
-reimplements it independently from the recovered facts and interfaces. Woodshed
-is the first consumer. Structural template is retinue (sans-io core, thin I/O
-shell, receipt-driven validation).
+reimplements it independently from the recovered facts and interfaces.
+Dependencies run one way: Ringdown consumes Woodshed's shared root crates, and
+no Woodshed crate depends on Ringdown; private RPC stays under `ports/ringdown`.
+Structural template is retinue (sans-io core, thin I/O shell, receipt-driven
+validation).
 
 ## AI-assistant working principles
 
@@ -65,9 +70,8 @@ shell, receipt-driven validation).
 | Doc | What's there |
 |---|---|
 | [`DOC_POLICY.md`](DOC_POLICY.md) | Documentation governance (canonical core + ringdown addendum). |
-| [`archive_docs/2026-11-03/2026-08-27_ringdown_founding.md`](archive_docs/2026-11-03/2026-08-27_ringdown_founding.md) | Product direction and protocol/hardware history; current Phase 3 targets desktop performance control and scripting. |
 | [`2026-09-01_effects_handoff.md`](2026-09-01_effects_handoff.md) | Historical H27–H38 session and experiment discipline; bank-creation limits were superseded by H47. |
-| [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | Current cross-platform performance plan: stack/ownership review, joint software stomp-box/Beats assessment, MIDI versus RPC paths, P0–P4 device/CLI/desktop/cue/scripting targets; independent default MIDI/Beats build with opt-in private RPC/PacketLogger, bounded runtime/release/MIDI-loopback and read-only guitar status acceptance; shared BLE-MIDI transport with Mac guitar trigger and three-platform compiler evidence; bounded actual desktop/endpoint-hotplug/guitar reconnect acceptance with 36 focused cases and 14 native captures; shared configurable Effect Next/Previous controls and same-owner desktop JSONL scripting with 57 focused cases, actual macOS save/reopen/independent partial-send capture and owner-confirmed guitar actions/reconnect; native Windows/Linux and timing remain open; bounded provenance/terms and standards assessment, A1–A7 evidence frontier and an unsent outreach draft; retains A–D typed/profile foundation. |
+| [`2026-09-02_client_surface_plan.md`](2026-09-02_client_surface_plan.md) | **Live frontier** with the implementation: current phase ledger and remaining gates. Cross-platform performance plan: stack/ownership review, joint software stomp-box/Beats assessment, MIDI versus RPC paths, P0–P4 device/CLI/desktop/cue/scripting targets; independent default MIDI/Beats build with opt-in private RPC/PacketLogger, bounded runtime/release/MIDI-loopback and read-only guitar status acceptance; shared BLE-MIDI transport with Mac guitar trigger and three-platform compiler evidence; bounded actual desktop/endpoint-hotplug/guitar reconnect acceptance with 36 focused cases and 14 native captures; shared configurable Effect Next/Previous controls and same-owner desktop JSONL scripting with 57 focused cases, actual macOS save/reopen/independent partial-send capture and owner-confirmed guitar actions/reconnect; native Windows/Linux and timing remain open; bounded provenance/terms and standards assessment, A1–A7 evidence frontier and an unsent outreach draft; retains A–D typed/profile foundation. |
 | [Shared data-defined audio packs](../../../design_docs/archive_docs/2026-11-03/2026-09-09_audio_ports_rehome_plan.md#shared-data-defined-audio-packs-2026-10-19) | AP2 offline pack export plus AP3 approved custom-file trial: exact copy and unchanged factory hashes; owner confirms Beats discovery and repeated playback, including after a power cycle. The five-bar 4/4 intro/loop and stop/start rule is confirmed; broader lengths/meters and remote Beats control stay in P3. Shared controls/project acceptance and Mere/FunDSP direction are owned by the root plan. |
 
 Current production-transport slice: [shared BLE-MIDI implementation](2026-09-02_client_surface_plan.md#ble-midi-peripheral-transport-2026-10-20)
@@ -123,8 +127,9 @@ stored Beats selection keys. Private configurations were captured outside Git;
 that October 18 snapshot did not qualify custom patterns or live RPC control.
 Later AP3 custom-file and intro/loop results are linked below. The drive was ejected.
 
-`PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written;
-the founding plan carries the product intent until it is.
+`PROJECT_DESCRIPTION.md` (maintainer-owned, DOC_POLICY §7) is not yet written.
+Until it is, the client surface plan's Objective and the implementation carry
+the current product direction; the founding record is historical (2026-11-04).
 
 AP3 follow-up: [native/project and guitar evidence](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/audio-packs-ap3_20261020/README.md)
 records the explicitly approved `11-Ringdown_AP3.mid` trial and owner-confirmed
@@ -143,4 +148,6 @@ claims and lists A1–A7 evidence gaps. The outreach draft is saved in that plan
 and has not been sent. This assessment is not a legal-clearance verdict.
 
 
-The [founding record](archive_docs/2026-11-03/2026-08-27_ringdown_founding.md) is preserved whole as historical protocol and provenance reference. The [client surface plan](2026-09-02_client_surface_plan.md) owns the current phase ledger and remaining gates.
+## Historical record
+
+The [founding record](archive_docs/2026-11-03/2026-08-27_ringdown_founding.md) is preserved whole as historical protocol and provenance reference: original phases, F/H/L findings and D1–D4. Its Phase 3 is owned by the client plan's P0–P4 lanes, and D3's performance direction is superseded by that plan's October 17 assessment. The [client surface plan](2026-09-02_client_surface_plan.md) owns the current phase ledger and remaining gates.

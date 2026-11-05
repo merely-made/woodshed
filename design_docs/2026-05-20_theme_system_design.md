@@ -9,8 +9,10 @@ rename / remove semantics).
 Status: **historical design; initial implementation shipped in May 2026.**
 The current Woodshed adoption uses Tinct and Tabard rather than the historical
 `audio_widgets` module and settings model described below. See the
-[2026-10-08 shared workshop adoption](archive_docs/2026-11-03/2026-10-08_tabard_adoption_plan.md) for
-current ownership, persistence and validation.
+[Tabard adoption plan](2026-11-03_tabard_adoption_plan.md) for current
+ownership and open work, and its
+[2026-10-08 source](archive_docs/2026-11-03/2026-10-08_tabard_adoption_plan.md) for
+persistence and validation history.
 
 ## Prior art
 

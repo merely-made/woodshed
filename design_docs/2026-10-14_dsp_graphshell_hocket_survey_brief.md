@@ -1,9 +1,10 @@
 # Shared DSP, Graphshell and Hocket Integration Survey
 
-**Status (2026-10-14): research brief with rulings.** The survey itself was
-read-only. Mark ruled on all six decisions the same day (see
-[Rulings](#rulings-mark-2026-10-14)), and three bounded follow-ups started
-(see [Follow-ups](#follow-ups)).
+**Status (2026-11-04): research brief with rulings; follow-ups landed.** The
+survey itself was read-only. Mark ruled on all six decisions on 2026-10-14
+(see [Rulings](#rulings-mark-2026-10-14)); ruling 6 was reopened 2026-11-04.
+All three bounded follow-ups landed 2026-10-14 (see
+[Follow-ups](#follow-ups)).
 
 ## Origin
 
@@ -76,7 +77,8 @@ voicing constants (`hocket-engine/src/click.rs:19-46`, "matches
 
 - `Engine::set_tempo` (`lib.rs:928-952`) restarts the click playhead and
   changes `samples_per_bar`. A Waiting capture or pending layer keeps the
-  phase and target it was armed with (`lib.rs:516-548`).
+  phase and target it was armed with (`lib.rs:516-548`). **Fixed 2026-10-14
+  by `6ca0ab60`:** a Waiting capture re-arms on the restarted grid.
 - Hocket's capture starts differ by path. The drained-input path feeds the
   whole overshooting batch (`lib.rs:726-741`). The wait-only path starts with
   an empty capture (`lib.rs:762-800`).
@@ -89,7 +91,11 @@ voicing constants (`hocket-engine/src/click.rs:19-46`, "matches
 - The byte-identical WAV gold cited by
   [`wav-parity-final.json`](https://github.com/merely-made/woodshed/blob/445b7deca620f598b9ff3141d65c5549ba544d22/validation/hocket-looper_20261013/wav-parity-final.json)
   lives outside the repo, under `Code/testing/`.
-- Hocket has no allocation guard and no exact-frame schedule test.
+- Hocket had no allocation guard and no exact-frame schedule test. **Fixed
+  2026-10-14 by `6ca0ab60`:** `hocket-engine/src/alloc_tests.rs` guards the
+  control-path feed with a counting allocator, and `offline_tests.rs` pins
+  exact capture-start frames for both start paths. Poll-based schedule
+  semantics are unchanged.
 - Neither product has physical-device capture qualification.
 
 ### Candidate shape
@@ -138,7 +144,7 @@ cross-repo path consumers.
   `graph_canvas`):
   - the chartulary catalog graph;
   - `stage_scene`;
-  - the Session Mere (`session_overview`);
+  - the session Overview (`session_overview`);
   - the relationship-recipe editor (`woodshed-views/src/stage/relationship.rs`).
 
   Graphshell's `projection_compile.rs` is only a re-export of `scenomise`,
@@ -160,8 +166,8 @@ cross-repo path consumers.
 
 - **Reservoir default.** The reservoir plan's default says apps can reach an
   identity's meres (`ambient/mere/{domain}`). That favours (c), Woodshed as a
-  viewer of other domains. (b), Woodshed as a publisher, needs a reservoir
-  domain.
+  viewer of other domains. (b), Woodshed as a publisher, needs a Woodshed
+  mere in the reservoir.
 - **Authority enforcement is mostly convention.**
   `PinnedProjectionAuthorityV1::SourceOwned` is a single-variant type, and a
   script blocks crate-to-port dependencies. The endpoint read and write
@@ -213,7 +219,7 @@ cross-repo path consumers.
 ### Smallest slices
 
 1. **Woodshed-native.**
-   - Add take nodes to the Session Mere from the persisted manifest,
+   - Add take nodes to the session Overview from the persisted manifest,
      qualified by `LoopSegmentId`.
    - Activation goes through `open_overview_node`
      (`stage/overview.rs:445-476`) and `open_loop_card`
@@ -267,11 +273,15 @@ cross-repo path consumers.
    was updated with Mark's authorization to name a coop over Stickleback with
    Gemot write delegation instead of Moothold/Murm. Mere's data-formats brief
    still carries the old Moothold wording.
-6. **Woodshed custody: move to a reservoir mere.** Practice data becomes a
-   djinn-held reservoir domain with a Woodshed validator. That needs
-   Mere/djinn work and a migration from persona-sealed muniment slots. Mere
-   gets a Git dependency on a pure Woodshed domain crate, as djinn already
-   has for Cleromancy.
+6. **Woodshed custody: move to a Woodshed mere in the reservoir.** Practice
+   data becomes a djinn-held Woodshed mere in the reservoir, with a Woodshed
+   validator. That needs Mere/djinn work and a migration from persona-sealed
+   muniment slots. Mere gets a Git dependency on a pure Woodshed domain
+   crate, as djinn already has for Cleromancy.
+   **Reopened 2026-11-04 (Mark).** The Ostiary/Castellan client migration
+   took Djinn out of Woodshed's client path
+   ([preservation plan](2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04)).
+   The holder is undecided; nothing is scheduled.
 
 ## Decisions for the maintainer (as posed)
 
@@ -290,16 +300,19 @@ cross-repo path consumers.
    `PROJECT_DESCRIPTION.md`.
 6. **Woodshed take custody.** Whether practice data stays in persona-sealed
    muniment slots behind a derived projection, or becomes a djinn-held
-   reservoir mere.
+   Woodshed mere in the reservoir. *Reopened 2026-11-04: holder undecided,
+   nothing scheduled (see ruling 6).*
 
 ## Follow-ups
 
-These were started 2026-10-14 as separate sessions; each records its result in
+All three landed 2026-10-14 as separate sessions; each records its result in
 the owning plan:
 
 - **Hocket capture-schedule guards.** Exact-frame tests for both start paths,
   the `set_tempo` hazard, and an allocation guard. This is the prerequisite
-  for any DSP extraction.
+  for any DSP extraction. Landed `6ca0ab60`.
 - **Narrow `graphshell` to custody-only features** in Woodshed, Hocket and the
-  validation instrument, and report the pin text disagreement.
-- **Loop-take nodes in the Session Mere** (slice 1 above).
+  validation instrument, and report the pin text disagreement. Landed
+  `c11571b5`.
+- **Loop-take nodes in the session Overview** (slice 1 above). Landed
+  `1f1c0e75`.

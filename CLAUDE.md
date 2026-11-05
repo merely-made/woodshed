@@ -13,9 +13,9 @@ Rehearsal and Looper consuming that Set, plus a fretboard, tuner, metronome,
 and MIDI clock. The theory model generalizes across string counts and
 tunings. Built in Rust on the Genet engine; since 2026-08-09 the desktop
 assembly (event loop, surface, layout, paint, input, a11y) lives in the
-shared `cambium-genet-winit-host` crate in the genet repo. Woodshed was
-that host's donor and is its first consumer. The earlier Xilem + Masonry
-and Iced stacks are retired.
+shared Cambium desktop host, the `cambium-desktop` package from mere.git
+(imported as `cambium_genet_winit_host`). Woodshed was that host's donor and
+is its first consumer. The earlier Xilem + Masonry and Iced stacks are retired.
 
 The name comes from "woodshedding", musicians' slang for focused,
 solitary practice.
@@ -42,6 +42,9 @@ All authoritative design material lives in `design_docs/`. Read
 crates/
   woodshedding/      Pure-Rust theory and playable-practice model. No I/O,
                      no UI, no audio.
+  woodshed-notation/ Chart, tablature and staff notation leaves over
+                     woodshedding musical documents.
+  timed-text/        Bounded WebVTT transcript cues; no network or rendering.
   audio-primitives/  Pure-std DSP helpers (click synth, onset/tempo,
                      latency, waveform projection, meter ballistics).
                      Shared cross-repo with hocket.
@@ -64,8 +67,9 @@ crates/
                      host-facing seams. No windowing, no browser APIs.
   woodshed-views/    Cambium product views and CSS themes. No window
                      chrome, no audio drivers.
-  woodshed-genet/    The desktop application binary, composed on
-                     cambium-genet-winit-host.
+  woodshed-genet/    The desktop application binary, composed on the
+                     shared cambium-desktop host.
+  woodshed-web/      The same views mounted on a browser canvas; unshipped.
   woodshed-graph/    Theory catalog projected into the chartulary graph.
 ports/
   hocket/            Independently released loop recorder workspace.
@@ -137,5 +141,8 @@ files before committing.
   project; we own the theory model.
 - Do not add features beyond the active plan's current feature target
   without surfacing the scope change first.
-- Do not pin Rust toolchain versions without reason — this project has
-  no upstream constraint forcing a specific version.
+- Rust versions are pinned by the family: `rust-toolchain.toml` sets the
+  working toolchain (1.99.1) and `Cargo.toml` sets `rust-version` (MSRV
+  1.97.1). Change them only as part of the family repin, per
+  `mere/design_docs/2026-08-12_family_composition_thesis_brief.md`, section
+  "Shared Rust toolchain and minimum version".

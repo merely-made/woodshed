@@ -22,15 +22,15 @@ state.
   `Vec<Pitch>` plus name, instrument, and category; string count is implicit in
   the list length. `Fretboard { tuning, fret_count }` iterates
   `tuning.strings` with no fixed count
-  ([fretboard.rs](../crates/woodshedding/src/fretboard.rs)). No six-string
+  ([fretboard.rs](../../../crates/woodshedding/src/fretboard.rs)). No six-string
   assumptions exist in production code; the only `6`s are in test fixtures.
 - The board render already adapts to string count:
   `string_count() = tuning().string_count()`
-  ([lib.rs:755](../crates/woodshed-core/src/lib.rs)), rows are
+  ([lib.rs:755](../../../crates/woodshed-core/src/lib.rs)), rows are
   `0..string_count()`, frets are `0..=fret_count`. A 4-string bass draws 4
   strings, a 7-string guitar draws 7.
 - `Instrument` is `Guitar | Bass | Ukulele | Banjo | Mandolin | Other`
-  ([tuning.rs](../crates/woodshedding/src/tuning.rs)). There is no Violin,
+  ([tuning.rs](../../../crates/woodshedding/src/tuning.rs)). There is no Violin,
   Viola, or Cello.
 - The bowed-string pitches already exist as the mandolin family, because both
   are tuned in fifths: mandolin equals violin (G3 D4 A4 E5), "Mandola (CGDA)"
@@ -40,13 +40,13 @@ state.
   and `Instrument::ALL`, so adding variants does not break downstream compiles.
   This is what makes catalog growth safe to do while the host build is blocked.
 - `fret_count` is a single global default of 12
-  ([lib.rs:478](../crates/woodshed-core/src/lib.rs)), not per instrument. There
+  ([lib.rs:478](../../../crates/woodshed-core/src/lib.rs)), not per instrument. There
   is no scale-length or neck data on `Instrument` or `TuningSpec`.
 - A fret window already exists: `fret_window`, `starting_fret`, and `window()`
   drive staged cards and exercise mode. The adjustable span is partly built.
 - There is no instrument picker yet. The Tuning dropdown is one flat catalog
   across all instruments; a real picker is deferred in a code comment
-  ([lib.rs:262](../crates/woodshed-core/src/lib.rs)).
+  ([lib.rs:262](../../../crates/woodshed-core/src/lib.rs)).
 - Custom-painted fretboard geometry as a Sprigging leaf is the already-intended
   architecture (per the Stage/Set/Tools plan).
 
@@ -290,7 +290,7 @@ overrides code defaults (`serde(default)` only fills missing fields), and the
 pre-existing settings hit-test offset means the picker is not reliably clickable
 in-app yet, so a marker style can only be chosen by editing the state file until
 the hit-test bug is fixed. Interactivity spun out to
-[2026-07-15_fretboard_marker_detail_plan.md](2026-07-15_fretboard_marker_detail_plan.md).
+[2026-07-15_fretboard_marker_detail_plan.md](../../2026-07-15_fretboard_marker_detail_plan.md).
 
 Remaining refinements, in priority order:
 
@@ -342,7 +342,7 @@ Remaining refinements, in priority order:
   `testing/woodshed/woodshed-fretboard-rects.png`. The dot-versus-rect choice
   becomes a persisted setting in Phase E. Separately requested and not yet
   started: revive theme creation from seed colours (its own doc,
-  [2026-05-20_theme_system_design.md](2026-05-20_theme_system_design.md), built
+  [2026-05-20_theme_system_design.md](../../2026-05-20_theme_system_design.md), built
   on the `tinct` OKLCH derivation), and a look at whether the
   Stage-to-Set-to-Rehearsal flow reads as intuitively as intended.
 - **2026-07-16**: **Phase B (per-instrument neck) + windowed Extent landed and

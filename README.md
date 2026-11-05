@@ -12,7 +12,7 @@ environment. The theory model supports arbitrary string counts and tunings.
   <sub>Stage: inspect a playable chord across the neck, then stage related practice material.</sub>
 </p>
 
-## Status (2026-10-11)
+## Status (2026-11-04)
 
 Desktop alpha. Source builds are the supported way to try it. Local packaging
 scripts produce checksummed macOS app, Linux portable, and Windows ZIP archives.
@@ -21,25 +21,36 @@ exact revision. Signing,
 notarization where applicable, third-party notices, and installer work remain
 part of broader release preparation.
 
-- Migrated onto the shared Cambium desktop host
-  (`cambium-genet-winit-host` in Mere) on 2026-08-09. Woodshed was
-  the donor of that host and is its first consumer; the app binary shrank
-  from 1728 to 211 lines of host code, and both semantic scenario receipts
-  pass unchanged.
-- Practice sessions are sealed at rest under a persona-derived key with
-  carry across devices (2026-08-08). Startup choice and live persona switching
-  are landed; creating a persona inside Woodshed remains open. Application
-  settings have their own file and one-time migration (2026-08-07).
+- Migrated onto the shared Cambium desktop host (`cambium-desktop` in Mere)
+  on 2026-08-09. Woodshed was the donor of that host and is its first
+  consumer; at migration the app binary shrank from 1728 to 211 lines of host
+  code, and both semantic scenario receipts passed unchanged.
+- Practice sessions are sealed at rest under a persona-derived key
+  (2026-08-08). Since the 2026-10-22 persona-store cutover, Cards, settings
+  and captured PCM live in owner-specific persona stores, with no migration
+  from the earlier singleton files; window geometry is a device-local
+  `desktop.json`. Startup choice and live persona switching are landed;
+  creating a persona inside Woodshed remains open.
+- Custody clients use Ostiary admission and Dramatis's Castellan clients
+  (2026-11-04); see the
+  [preservation plan](design_docs/2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04).
 - Window frame moved onto the host seam 2026-08-10; window-chrome controls
   are named for screen readers.
-- Ten root workspace crates: `woodshedding` (pure theory), `audio-primitives`
-  (shared pure-std DSP), `timed-text` (portable transcript parsing),
-  `woodshed-audio` (audio, pitch, MIDI, looping),
+- Eighteen root workspace crates. Woodshed: `woodshedding` (pure theory and
+  practice model), `woodshed-notation` (chart, tab and staff leaves),
   `woodshed-core` (portable state and host seams), `woodshed-graph` (theory
-  catalog as a content graph), `woodshed-views` (Cambium product views),
-  `woodshed-genet` (desktop application), `woodshed-web` (unshipped browser
-  host), and `woodshed-instrument` (hardware-verified smart-instrument control).
-  The instrument crate is not yet connected to the product views.
+  catalog as a content graph), `woodshed-audio` (Firewheel output, tuner and
+  capture input), `woodshed-views` (Cambium product views), `woodshed-genet`
+  (desktop application), `woodshed-web` (unshipped browser host) and
+  `woodshed-instrument` (standard MIDI I/O and clock). Shared audio:
+  `audio-primitives` (pure-std DSP), `audio-pattern` (step patterns, sounds
+  and MIDI-file export), `audio-packs` (kit admission and immutable
+  snapshots) and `audio-pack-views` (Cambium kit controls). Shared recorder:
+  `hocket-model` (session and history model), `hocket-project` (media,
+  project storage, export and signed handoff), `hocket-recorder` (device-free
+  recorder controller) and `hocket-views` (embeddable recorder surface).
+  Also `timed-text` (bounded WebVTT transcript cues). Smart-instrument control
+  is not yet connected to the product views.
 - `ports/` holds the independently released Hocket, Redshank, and Ringdown
   products. Each is an embeddable nested Cargo workspace with its own lockfile,
   package versions, release tags, and validation commands. Shared audio code
@@ -48,9 +59,10 @@ part of broader release preparation.
   preview, saved backing and Set loops. Prepared commands, bounded voices and
   exclusive capture buffers replace the previous callback mixer locks. The
   shared tuner/onset/capture input remains lazy; capture currently requires
-  equal nominal input/output rates. See the
+  equal nominal input/output rates. The
   [runtime implementation record](design_docs/archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md#october-11-follow-up-single-output-runtime)
-  for the source-specific checks and remaining capture boundaries.
+  keeps the source-specific checks; remaining capture work is P7 in the
+  [Stage plan](design_docs/2026-11-03_stage_set_tools_plan.md#open-work-and-done-conditions).
 
 Current plans and completed records are indexed in
 [design_docs/](design_docs/DOC_README.md). The release baseline is a clean
@@ -117,9 +129,9 @@ and device requirements.
 `scripts/package-windows.ps1`, `scripts/package-macos.sh`, and
 `scripts/package-linux.sh` produce checksummed platform archives. The macOS
 archive contains an unsigned, architecture-specific app; Linux packaging is
-portable archive packaging, with host library requirements. See the
-[release baseline and candidate assessment](design_docs/archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md#release-baseline-and-10-product-proof)
-for the remaining validation and catalog roadmap.
+portable archive packaging, with host library requirements. The
+[Stage plan](design_docs/2026-11-03_stage_set_tools_plan.md#open-work-and-done-conditions)
+owns the remaining release validation and catalog expansion.
 
 Release tags are product-qualified: `woodshed-v*`, `hocket-v*`, `redshank-v*`,
 and `ringdown-v*`. Packaging is an explicit local command with a version
@@ -227,8 +239,8 @@ instructions, rehearsal timing, and audio transport.
 `woodshed-saved-arrangement` operates on an explicit JSON session exchange
 copy (`PersistedSession`) and its settings (`AppSettings`). The desktop's
 persona store continues through its existing sealed storage path. An alignment
-file uses `ProgressionArrangement`; a complete example is committed under
-`Code/testing/woodshed/validation/saved-arrangements_20261016/exchange/alignment.json`.
+file is the JSON form of `ProgressionArrangement`
+(`crates/woodshedding/src/rehearsal/arrangement.rs`).
 
 ```sh
 cargo run -p woodshed-core --features portable-scenes --bin woodshed-saved-arrangement -- \

@@ -3,7 +3,7 @@
 Woodshed's UI moves from masonry/xilem (the mark-ik/xilem `woodshed-theme`
 fork) to **xilem_serval**: genet renders the app, on desktop and in the
 browser, from one DOM-shaped view tree. This supersedes the web-vs-native
-split in [2026-06-14_web_profile_plan.md](archive_docs/2026-11-03/2026-06-14_web_profile_plan.md);
+split in [2026-06-14_web_profile_plan.md](2026-06-14_web_profile_plan.md);
 that plan's Tier 0 seams carry forward here.
 
 Status: **active desktop-alpha hardening.** The Woodshed-side Genet migration

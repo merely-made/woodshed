@@ -25,7 +25,7 @@ No fresh build, test, headed, audio or hardware gate was run for this successor.
 
 S3's original done conditions (390–409) require distinct recorded-practice heat, least-practiced and longest-ago visibility filters including never-practiced, catalog-matched transition evidence with traversal count, and persisted filters. Avoid presenting catalog aggregate as occurrence proof. S4 (411–500) preserves explicit `None` all-tone state, shape fingerprint/profile guarding durable identity, typed unavailable outcomes, capo physical/relative fret distinction, re-entrant lowest-sounding-pitch bass, Solo/Mute semantics and exact setup equality. Fingering, barres, stretch and user preferences must precede an ergonomic score; event-to-Card realization precedes bounded multi-bar search, whose caps and modeled costs must be disclosed.
 
-Current-source pointer: `crates/woodshed-core/src/lib.rs:46` exposes shape movement and `crates/woodshed-core/src/stage_scene.rs:55` identifies recency heat. This establishes source seams, not completion of S3 or human acceptance.
+Current-source pointer: `crates/woodshed-core/src/lib.rs:54` exposes shape movement and `crates/woodshed-core/src/stage_scene.rs:55` identifies recency heat. This establishes source seams, not completion of S3 or human acceptance.
 
 ## Coverage question for review
 

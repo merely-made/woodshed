@@ -73,8 +73,10 @@ automation workflows.
 
 The typed writes and serializable shadow profile from A–D supply the
 configuration foundation. The next target is a software equivalent of the
-Bluetooth stomp box, assessed together with Beats. Woodshed consumes this
-capability; running Ringdown must not require launching the practice toolkit.
+Bluetooth stomp box, assessed together with Beats. Woodshed reaches the same
+standard MIDI capability through the shared root `woodshed-instrument` crate
+that Ringdown consumes; no Woodshed crate depends on Ringdown (2026-11-04).
+Running Ringdown must not require launching the practice toolkit.
 
 ## Standards-based MIDI and Beats build isolation (2026-10-20)
 

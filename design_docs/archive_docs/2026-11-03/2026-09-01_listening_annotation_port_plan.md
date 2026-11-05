@@ -1610,7 +1610,7 @@ rejected for the reasons recorded in the 2026-09-01 planning pass.
 
 ## 2026-09-26 timed transcript slice
 
-The bounded WebVTT parser, explicit offline transcript saving, and cue/seek projection are tracked in [the timed transcripts plan](2026-09-26_timed_transcripts_plan.md). Full text-track rendering and headed real-episode acceptance remain open.
+The bounded WebVTT parser, explicit offline transcript saving, and cue/seek projection are tracked in [the timed transcripts plan](../../2026-09-26_timed_transcripts_plan.md). Full text-track rendering and headed real-episode acceptance remain open.
 
 ### Bounded local generation retention (2026-10-11)
 

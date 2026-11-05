@@ -11,7 +11,7 @@ historical protocol findings live in
 `ports/ringdown/design_docs/2026-08-27_ringdown_founding.md`.
 
 **Current priority (2026-10-17).** Ringdown's
-[client surface plan](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17)
+[client surface plan](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#desktop-performance-assessment-2026-10-17)
 now assesses desktop performance control, a software BLE MIDI stomp box and
 Beats together, followed by a shared action/session surface, CLI, desktop
 controls and scripting. Ringdown owns the standalone controller; Woodshed
@@ -83,7 +83,7 @@ historical names and acceptance records, rather than claiming fresh hardware
 qualification after this source move.
 
 Woodshed's future product-facing integration remains under this plan. The
-[Ringdown build boundary](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#standards-based-midi-and-beats-build-isolation-2026-10-20)
+[Ringdown build boundary](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#standards-based-midi-and-beats-build-isolation-2026-10-20)
 owns independent standard MIDI/SMF versus private RPC artifact selection.
 No connection/session or MIDI implementation was duplicated.
 
@@ -173,7 +173,7 @@ actual native controls and sealed fresh-process reopening without an installed
 kit, exact MIDI parity, and an approved guitar custom MIDI trial confirmed by
 the owner. Cross-desktop, performance timing and remote Beats qualification
 remain open; instrument integration W3 stays open.
-The [adapter provenance/terms audit](../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
+The [adapter provenance/terms audit](../../../ports/ringdown/design_docs/2026-09-02_client_surface_plan.md#provenance-terms-and-standards-audit-2026-10-20)
 now separates documented MIDI/SMF/audio compatibility from private app RPC.
 Its packaging and rights evidence frontier applies before offering a supported
 adapter release; the vendor outreach is a local unsent draft. Generic local

@@ -43,7 +43,8 @@ a mic around in a circle and building loops turn by turn!
 - **Peer-to-peer by default.** Session state and media sync as a Mere
   coop over Stickleback — no centralized server, no account required.
 - **Native and web from day one** *(web is a gated proof, not a free
-  capability — see Tech Stack)*. Xilem + xilem_web for UI;
+  capability — see Tech Stack)*. Cambium on Genet for the native UI
+  (the web UI host is not yet chosen; the Xilem/xilem_web plan is retired);
   [Firewheel](https://github.com/BillyDM/Firewheel) for the audio
   graph, with cpal on native and Web Audio / AudioWorklet on the web
   via Firewheel's web backend.
@@ -127,7 +128,7 @@ who want exactly that workflow (like myself).
 
 1. itch.io / Gumroad (desktop: Windows, macOS, Linux)
 2. Self-hosted web build (free, PWA-installable)
-3. Google Play (Android — Xilem ships Android examples)
+3. Google Play (Android)
 4. Apple App Store (iOS — via PWA initially, native later)
 
 ## Tech Stack
@@ -137,7 +138,8 @@ who want exactly that workflow (like myself).
   for waveform and meter geometry
 - **Audio engine**: [Firewheel](https://github.com/BillyDM/Firewheel)
   (BillyDM's modular audio graph engine, "wgpu but for audio"). Native
-  + WASM backends. On crates.io as `firewheel-graph` 0.10.x.
+  + WASM backends. Hocket and the root workspace pin the owned 0.14 fork
+  (`github.com/mark-ik/firewheel`) at one exact Git revision (2026-11-04).
 - **Audio I/O**: cpal on native and Web Audio / AudioWorklet on web,
   both via Firewheel's bundled backends. Web is a *gated proof, not a
   free capability*: requires wasm threading/atomics, nightly +
@@ -145,8 +147,9 @@ who want exactly that workflow (like myself).
 - **Sample loading / disk streaming**: symphonium + creek
   (BillyDM-maintained crates that pair with Firewheel)
 - **Realtime-safe primitives**: rtrb + basedrop
-- **Persistence**: content-addressed sessions; postcard today, ciborium
-  (CBOR) at FT8 to align with the Mere family's signed peer domains
+- **Persistence**: content-addressed sessions in CBOR (ciborium), which
+  replaced postcard so saved and handed-off bytes share one format aligned
+  with the Mere family's signed peer domains
 - **P2P sync**: a coop over Stickleback (Merely family): one signed
   operation per turn, with Gemot delegation deciding who may write;
   content-addressed audio blobs travel separately from session
@@ -166,12 +169,18 @@ Woodshed and Mere consume independently. Planned shape:
 - `audio-devices` — curated Firewheel node wrappers (gain/EQ/reverb/
   delay/compressor) + parameter schemas
 
-Hocket itself keeps the product-specific bits — layered loop model,
-turn-taking, hand-off protocol, branch/merge UX — which never leave
-the Hocket crate.
+The recorder libraries are already shared (2026-11-04). They live in
+Woodshed's root `crates/` and Woodshed's application crates consume them:
+`hocket-model` (session, history, layered loop model), `hocket-project`
+(portable media, projects, export and signed hand-off), `hocket-recorder`
+(device-free recorder transitions) and `hocket-views` (mount-scoped Cambium
+recorder surface). The Hocket workspace under `ports/hocket` keeps the
+Firewheel engine, the Genet application host and the headless demonstration,
+with its own lockfile and releases.
 
-Dependency direction is one-way: Hocket → shared audio crates;
-Woodshed and Mere → shared audio crates. Hocket is not "Mere's audio
+Dependency direction is one-way: Hocket → shared root crates (audio and
+`hocket-*`); Woodshed → the same shared root crates; Mere → shared audio
+crates. Hocket is not "Mere's audio
 subsystem," and Woodshed is not "Hocket-lite." Different products,
 overlapping audio primitives.
 

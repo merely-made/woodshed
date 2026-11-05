@@ -9,6 +9,9 @@ less-generic shell. Most of it is reskin + recompose, not new infrastructure.
 
 Status: **active — decisions locked 2026-06-15 (below); building cheap layer first.**
 
+Status (2026-11-04): visual reference only. Its product and navigation framing
+is superseded by [Stage, Set, Tools](2026-11-03_stage_set_tools_plan.md).
+
 ## Decisions (Mark, 2026-06-15)
 
 1. **Palette: ship both Slate and Ember as built-ins.** Slate = the faithful

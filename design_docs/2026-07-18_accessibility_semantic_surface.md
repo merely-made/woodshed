@@ -3,6 +3,12 @@
 A plan and a first build (2026-07-18), from a conversation about whether
 Woodshed will serve disabled musicians.
 
+Status (2026-11-04): Tier 0 no longer lives in `woodshed-genet`. The shared
+Cambium desktop host (`cambium-desktop`, from Mere) now owns the AccessKit sync
+(`crates/woodshed-genet/Cargo.toml`, the `cambium-desktop` dependency note).
+Per this record, Tier 1 beyond the fretboard and Tier 3 remain open; the body
+below is the 2026-07-18 record.
+
 ## The framing
 
 Every cambium app emits one artifact: a semantic, ARIA-attributed DOM, laid out

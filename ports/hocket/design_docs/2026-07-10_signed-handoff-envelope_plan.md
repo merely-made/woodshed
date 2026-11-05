@@ -75,7 +75,11 @@ Save/Open/WAV export and signed handoff write/receive, review/discard/accept/ado
 with fresh-process project/history/media reopening. Earlier native-gap wording
 below is historical to its dated step. That packet does not qualify two-peer or
 network transfer, encrypted transport, physical audio or signed per-turn
-operations. Branch conflict reconciliation/merge, FT9 Moothold wire-schema
-coordination and recipient/transport work remain with this plan and the live
-handoff UI/product frontier. A future branch chooser must use an explicit
+operations. Branch conflict reconciliation/merge and recipient/transport work
+remain with this plan and the live handoff UI/product frontier. The network
+carrier is no longer open: ruling 5 (Mark, 2026-10-14; root
+`design_docs/2026-10-14_dsp_graphshell_hocket_survey_brief.md`) makes each
+`HistoryNode` one signed operation on a coop over Stickleback with Gemot write
+delegation, replacing the FT9 Moothold wire-schema wording and the Murm/Iroh
+carrier examples under Design. A future branch chooser must use an explicit
 checkout target; retained sibling branches are not a merge policy.

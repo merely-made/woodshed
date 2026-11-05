@@ -2672,7 +2672,7 @@ qualify the real output, sealed synthetic take and WAV worker.
   window. It now consumes `genet-probe`: the generic half (scenario parsing, the
   verb loop, selector resolution, assertions) is the shared crate, and what
   landed here is only woodshed's half —
-  [`crates/woodshed-genet/src/scenario.rs`](../crates/woodshed-genet/src/scenario.rs)
+  [`crates/woodshed-genet/src/scenario.rs`](../../../crates/woodshed-genet/src/scenario.rs)
   implementing `Automatable`/`Driveable` (surfaces, a typed snapshot, semantic
   events diffed from real state transitions, named commands, pointer routing
   through the app's own hit-test path) plus an in-process capture: the frame's
@@ -4181,7 +4181,7 @@ payload. It also exposed a density issue: on the wide canvas, new take nodes
 at their default slots overlap labels placed by the retained version-1
 arrangement. That is a presentation follow-up, not an identity defect.
 
-**October 16 native closure:** [the take acceptance plan](archive_docs/2026-11-03/2026-10-16_mere_take_acceptance_plan.md)
+**October 16 native closure:** [the take acceptance plan](2026-10-16_mere_take_acceptance_plan.md)
 and `validation/mere-take-acceptance_20261016/receipt.json` close the four open
 checks above. New take defaults avoid retained v1 labels without rewriting ten
 retained positions. Three final native processes (wide seed, wide fresh reopen,

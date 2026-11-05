@@ -5,10 +5,10 @@ Status: P1–P3 qualified on the portable Windows dependency graph, 2026-10-24.
 ## Scope
 
 Prototype explicit contextual navigation on the existing Woodshed Stage and
-Session Mere surfaces using Cambium's shared scope controls and navigation
+session Overview surfaces using Cambium's shared scope controls and navigation
 model. A Card address includes its owning `WorkingSetId` and `CardId`; the same
 musical material in another Set is a different occurrence. This slice covers
-Session Mere, working Sets, and Card occurrences. Catalog exploration routing
+the session Overview, working Sets, and Card occurrences. Catalog exploration routing
 is still open. It does not assign Stage, Rehearsal, the Looper, or the
 arrangement editor to a made-up scope hierarchy.
 
@@ -18,7 +18,7 @@ capture state. Editing a Set while another route is open must remain in that
 Set when returning. A route is admitted only after its Set/exploration and any
 Card/catalog anchor still exist; refusal leaves both the visible route and
 Back/Forward cursor unchanged. Back/Forward move through temporal visits;
-Up/Down move through the Session Mere → owner → occurrence hierarchy.
+Up/Down move through the session Overview → owner → occurrence hierarchy.
 
 ## Phases and done-conditions
 
@@ -60,7 +60,7 @@ Up/Down move through the Session Mere → owner → occurrence hierarchy.
 ## Findings (2026-10-23)
 
 - `crates/woodshed-views/src/stage/overview.rs::open_overview_node` checks
-  membership in the current Session Mere snapshot before routing, but does not
+  membership in the current session Overview snapshot before routing, but does not
   retain the route that led to the overview.
 - `crates/woodshed-views/src/stage/instances.rs::activate_working_set` swaps
   owner state and restores that Set's graph/context presentation. It also
