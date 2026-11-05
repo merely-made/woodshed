@@ -246,9 +246,10 @@ Entries below that link to `archive_docs/` refer to intact historical source sec
   repin forward to Mere main, per-turn signed Hocket operations, Woodshed
   practice data to a Woodshed mere in the reservoir, Graphshell lift
   coordinated with the Knot lane) and three follow-ups started 2026-10-14.
-  The practice-data ruling was reopened by Mark on 2026-11-04 and waits on
-  Mere's F1 (who owns the resident's store lifetimes now that D11 makes Djinn
-  execution only). Nothing is scheduled.
+  The practice-data ruling was reopened on 2026-11-04 and re-ruled by Mark on
+  2026-11-05: the whole domain moves into a Woodshed mere whose lifetimes the
+  reservoir store owns (Mere D19), replicated to the persona's devices by
+  default. Nothing is scheduled; the move needs its own plan.
 - [2026-07-15_material_and_touch_model.md](2026-07-15_material_and_touch_model.md)
   — Material and Touch reframe for the Stage/Set model; design direction, not a
   standalone implementation plan.
@@ -314,7 +315,7 @@ adds no native, device or cross-platform acceptance.
 - [Web profile — scope for a browser demo](archive_docs/2026-11-03/2026-06-14_web_profile_plan.md)
 - [Receipt relocation and maintained validation paths](archive_docs/2026-11-03/2026-11-03_receipt_relocation_plan.md) — landed locally 2026-11-03; frozen evidence moved to `Code/testing/woodshed/`, maintained tools and fixtures repaired.
 - [Independent custody client receiver](archive_docs/2026-11-03/2026-10-29_custody_projection_receiver.md) — `graphshell-endpoint/custody-client` receiving, 2026-10-29; superseded 2026-11-04 by custody client receiving in the preservation plan.
-- [Codex handoff](archive_docs/2026-11-03/2026-10-15_woodshed_codex_handoff.md) — Woodshed, Hocket, Redshank and Firewheel after the Graphshell lift, with the binding rulings and four ordered tasks; all four done, archived 2026-11-04. Ruling 6 (custody to a Woodshed mere in the reservoir) was reopened 2026-11-04 and waits on Mere's F1.
+- [Codex handoff](archive_docs/2026-11-03/2026-10-15_woodshed_codex_handoff.md) — Woodshed, Hocket, Redshank and Firewheel after the Graphshell lift, with the binding rulings and four ordered tasks; all four done, archived 2026-11-04. Ruling 6 (custody to a Woodshed mere in the reservoir) was re-ruled 2026-11-05: the whole domain moves into a Woodshed mere.
 
 - `archive_docs/` — retired plans and superseded notes.
 - `archive_docs/2026-05-18/2026-05-17_woodshed_daw_plan.md` —

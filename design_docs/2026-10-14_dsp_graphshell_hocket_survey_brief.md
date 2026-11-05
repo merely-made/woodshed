@@ -2,7 +2,7 @@
 
 **Status (2026-11-04): research brief with rulings; follow-ups landed.** The
 survey itself was read-only. Mark ruled on all six decisions on 2026-10-14
-(see [Rulings](#rulings-mark-2026-10-14)); ruling 6 was reopened 2026-11-04.
+(see [Rulings](#rulings-mark-2026-10-14)); ruling 6 was reopened 2026-11-04 and re-ruled 2026-11-05.
 All three bounded follow-ups landed 2026-10-14 (see
 [Follow-ups](#follow-ups)).
 
@@ -278,7 +278,7 @@ cross-repo path consumers.
    validator. That needs Mere/djinn work and a migration from persona-sealed
    muniment slots. Mere gets a Git dependency on a pure Woodshed domain
    crate, as djinn already has for Cleromancy.
-   **Reopened 2026-11-04 (Mark); waits on Mere's F1 (2026-11-05).**
+   **Reopened 2026-11-04 (Mark).**
    "Djinn-held" no longer fits. Mere's distillery ruling D11 (Mark,
    2026-10-31) makes Djinn execution only, holding no meres, and leaves fork
    F1 open: which owner takes the resident's store lifetimes
@@ -289,7 +289,19 @@ cross-repo path consumers.
    Options weighed 2026-11-05: stay app-private; the whole domain in a
    resident-held Woodshed mere (the Cleromancy pattern); or working state
    private with saved material promoted into a Woodshed mere. Mark chose to
-   rule F1 first. Nothing is scheduled.
+   rule F1 first.
+   **Re-ruled 2026-11-05 (Mark): the whole domain.** Mere's D19 closed F1:
+   the reservoir store owns its lifetimes wherever it is hosted (`mere/design_docs/mere_docs/implementation_strategy/2026-10-31_distillery_extraction_plan.md`).
+   Woodshed's whole domain (working and retained Sets, progressions, practice
+   history, relationships and takes) moves into a Woodshed mere in the
+   reservoir, so it follows every device of the persona by default. Mark: "I
+   would, by default, like for even my working state to be replicated to my
+   phone". Only device facts (window geometry, audio devices) stay local; large
+   take audio may be fetched on demand. Needs a pure Woodshed domain crate the
+   resident depends on, a Woodshed entry among the resident's validator-required
+   domains, stable ids and real revisions, and a newly ruled migration from the
+   persona-sealed slots (D1 forbids inventing one). Nothing is scheduled; the
+   move needs its own plan.
 
 ## Decisions for the maintainer (as posed)
 
@@ -308,8 +320,8 @@ cross-repo path consumers.
    `PROJECT_DESCRIPTION.md`.
 6. **Woodshed take custody.** Whether practice data stays in persona-sealed
    muniment slots behind a derived projection, or becomes a djinn-held
-   Woodshed mere in the reservoir. *Reopened 2026-11-04; waits on Mere's F1
-   (see ruling 6).*
+   Woodshed mere in the reservoir. *Re-ruled 2026-11-05: the whole domain, in
+   a store-owned Woodshed mere (see ruling 6).*
 
 ## Follow-ups
 
