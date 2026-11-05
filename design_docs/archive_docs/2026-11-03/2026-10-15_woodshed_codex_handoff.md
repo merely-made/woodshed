@@ -109,8 +109,9 @@ From the survey, 2026-10-14:
    Local durability and the open host-acceptance defects come first.
 6. **Custody:** move Woodshed custody to a djinn-held Woodshed mere in the
    reservoir, with a Woodshed validator. This is Mere/djinn work.
-   **Reopened 2026-11-04:** the Ostiary/Castellan client migration took Djinn
-   out of the client path; the holder is undecided and nothing is scheduled.
+   **Reopened 2026-11-04; waits on Mere's F1:** Mere's D11 (2026-10-31)
+   makes Djinn execution only, so no mere is djinn-held. See the survey's
+   ruling 6.
 
 From the stack, 2026-10-15:
 
@@ -272,10 +273,9 @@ audibility or latency claim follows from this receipt.
 - **Saved-song bar graph nodes.** These need stable ids and PCM persistence
   (stage plan P7) first.
 - **Woodshed custody to a Woodshed mere in the reservoir (ruling 6).**
-  Reopened 2026-11-04: the Ostiary/Castellan client migration took Djinn out
-  of the client path
-  ([preservation plan](../../2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04)).
-  Holder undecided; nothing scheduled.
+  Reopened 2026-11-04; waits on Mere's F1 (which owner takes the resident's
+  store lifetimes once D11 makes Djinn execution only). See the
+  [survey's ruling 6](../../2026-10-14_dsp_graphshell_hocket_survey_brief.md#rulings-mark-2026-10-14).
 - **Mere's link model:** the former O1–O8 questions are settled; the authorized
   P3 consumer continuation and qualified P4 resting strokes are recorded in
   the Stage plan above. Later assertion-family migration/history budgets and

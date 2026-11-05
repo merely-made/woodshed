@@ -278,10 +278,18 @@ cross-repo path consumers.
    validator. That needs Mere/djinn work and a migration from persona-sealed
    muniment slots. Mere gets a Git dependency on a pure Woodshed domain
    crate, as djinn already has for Cleromancy.
-   **Reopened 2026-11-04 (Mark).** The Ostiary/Castellan client migration
-   took Djinn out of Woodshed's client path
+   **Reopened 2026-11-04 (Mark); waits on Mere's F1 (2026-11-05).**
+   "Djinn-held" no longer fits. Mere's distillery ruling D11 (Mark,
+   2026-10-31) makes Djinn execution only, holding no meres, and leaves fork
+   F1 open: which owner takes the resident's store lifetimes
+   (`mere/design_docs/mere_docs/implementation_strategy/2026-10-31_distillery_extraction_plan.md`). The 2026-11-04 Ostiary/Castellan migration removed Djinn from
+   Woodshed's build, not its runtime: Djinn still serves the door that
+   releases Woodshed's sealing key
    ([preservation plan](2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04)).
-   The holder is undecided; nothing is scheduled.
+   Options weighed 2026-11-05: stay app-private; the whole domain in a
+   resident-held Woodshed mere (the Cleromancy pattern); or working state
+   private with saved material promoted into a Woodshed mere. Mark chose to
+   rule F1 first. Nothing is scheduled.
 
 ## Decisions for the maintainer (as posed)
 
@@ -300,8 +308,8 @@ cross-repo path consumers.
    `PROJECT_DESCRIPTION.md`.
 6. **Woodshed take custody.** Whether practice data stays in persona-sealed
    muniment slots behind a derived projection, or becomes a djinn-held
-   Woodshed mere in the reservoir. *Reopened 2026-11-04: holder undecided,
-   nothing scheduled (see ruling 6).*
+   Woodshed mere in the reservoir. *Reopened 2026-11-04; waits on Mere's F1
+   (see ruling 6).*
 
 ## Follow-ups
 
