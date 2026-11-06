@@ -45,7 +45,7 @@ personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main
 # vault, record or DPAPI root of its own (dramatis D5, D13).
 dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 ostiary = { git = "https://github.com/merely-made/armillary.git", branch = "main", version = "0.0.1", default-features = false }
-castellan-client = { git = "https://github.com/merely-made/dramatis.git", branch = "main", version = "0.0.1", default-features = false, features = ["client"] }
+castellan-client = { git = "https://github.com/merely-made/dramatis.git", branch = "main", version = "0.0.2", default-features = false, features = ["client"] }
 # The derived-key attestation a hand-off envelope carries; personae no longer
 # re-exports it (insigne proofs plan).
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main", features = ["verify"] }
@@ -154,14 +154,13 @@ tokio = { version = "1.50", features = ["rt", "rt-multi-thread", "time", "sync"]
 # needs (patches are per-workspace-root, not inherited through git deps —
 # woodshed carries the same mirror). Keep in sync with genet's fork pins.
 [patch.crates-io]
+ostiary = { version = "0.0.1", git = "https://github.com/merely-made/armillary.git", branch = "main" }
 # Mirror the document-session supplier; workspace patches are not inherited
 # from Mere or Genet Git dependencies.
 document-session-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # Promoted sources shared with immutable older Mere suppliers.
 # Canonical promoted families; keep registry and Git consumers type-identical.
 armillary = { git = "https://github.com/merely-made/armillary.git", branch = "main" }
-chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 luggage = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
@@ -184,20 +183,14 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch 
 
 # Classic 0.11 and its encoding/shader types share the maintained wgpu-30
 # provider. Cargo patches are per workspace root and are not inherited.
-netrender-vello = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
-vello_encoding = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
-vello_shaders = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
 
 # Root patches are not inherited from the imported Murm suppliers.
 [patch."https://github.com/merely-made/mere.git"]
 # Promoted sources shared with immutable older Mere suppliers.
 armillary = { git = "https://github.com/merely-made/armillary.git", branch = "main" }
-chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 luggage = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 
 [workspace.lints.clippy]

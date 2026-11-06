@@ -18,7 +18,7 @@ async-trait = "0.1"
 # woodshed-genet's storage.rs (included below by path) uses the same Ostiary and Castellan clients as the native app.
 dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 ostiary = { git = "https://github.com/merely-made/armillary.git", branch = "main", version = "0.0.1", default-features = false }
-castellan-client = { git = "https://github.com/merely-made/dramatis.git", branch = "main", version = "0.0.1", default-features = false, features = ["client"] }
+castellan-client = { git = "https://github.com/merely-made/dramatis.git", branch = "main", version = "0.0.2", default-features = false, features = ["client"] }
 sceno = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 directories = "5"
 scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
@@ -32,21 +32,17 @@ pollster = "0.4"
 tempfile = "3"
 
 [patch.crates-io]
+ostiary = { version = "0.0.1", git = "https://github.com/merely-made/armillary.git", branch = "main" }
 # Match the document-session owner already selected by the native app.
 document-session-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # Promoted sources shared with immutable older Mere suppliers.
 # Canonical promoted families; keep registry and Git consumers type-identical.
 chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 
 # Shared view and graph tests use the same provider as the production host.
-netrender-vello = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
-vello_encoding = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
-vello_shaders = { git = "https://github.com/mark-ik/vello", rev = "276b46648c08f3d2062e70559afa999842e1873c" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.2" }
-taffy = { package = "genet-taffy", git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.14.0" }
 
 [workspace.package]
 rust-version = "1.97.1"
@@ -55,7 +51,6 @@ rust-version = "1.97.1"
 [patch."https://github.com/merely-made/mere.git"]
 # Promoted sources shared with immutable older Mere suppliers.
 chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
