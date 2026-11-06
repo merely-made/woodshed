@@ -35,7 +35,7 @@ redshank-surfaces.workspace = true
 rfd.workspace = true
 tempfile.workspace = true
 fetch.workspace = true
-eidetic = { git = "https://www.github.com/merely-made/eidetic.git", rev = "86e78dd37914fd61f8ca336bf0ab2da716356fca", default-features = false }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main", default-features = false }
 fleece = { package = "mere-fleece", git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["portable-clip"] }
 pollster = "0.4"
 
