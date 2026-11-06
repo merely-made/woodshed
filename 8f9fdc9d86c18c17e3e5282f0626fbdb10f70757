@@ -1,0 +1,1 @@
+Correction: the djinn -> castellan-client/ostiary switch landed upstream first in 0ae6a96. This commit only moves castellan-client to 0.0.2 with the client feature, renames mesquite to mandrake, aligns family refs to Mere's (incl. woodshed-genet's muniment), and bumps Mere to a9737d6e.
