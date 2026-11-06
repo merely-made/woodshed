@@ -2,10 +2,10 @@
 
 **Status (2026-11-05):** draft for Mark's review. Nothing is scheduled. The
 direction is ruled (ruling 6, re-ruled 2026-11-05), and so is the domain:
-`music`, shared with Hocket (Mere adoption plan D5). The phases and the
-migration are proposed. Mere's shared work comes first:
+`music`, shared with Hocket (Mere adoption plan D5), and so is the move: a
+fresh start, no import (W5). The other phases are proposed. Mere's shared work comes first:
 `mere/design_docs/mere_docs/implementation_strategy/2026-11-05_domain_adoption_plan.md`
-(M1 to M5).
+(M0 to M5; M0 writes the domain contract the mere follows).
 
 **For:** Mark's re-ruling of ruling 6 in the
 [survey brief](2026-10-14_dsp_graphshell_hocket_survey_brief.md#rulings-mark-2026-10-14):
@@ -37,7 +37,7 @@ outside the persona store.
 | Practice history | Workspace layout, scope navigation, Overview presentation |
 | Personal relations | Catalog cursor indices (`root_idx`, `scale_idx` and the rest) |
 | Loop takes, as blobs fetched on demand | Cached take bodies past the device budget |
-| Settings that follow the person: theme choice, accessibility, tuning, pedal bindings | Settings tied to the machine |
+| Settings that follow the person: theme choice, accessibility, tuning, pedal bindings (Mere adoption plan D7, ruled) | Settings tied to the machine |
 
 ## Phases
 
@@ -65,8 +65,8 @@ depends on `cleromancy-core`.
 ### W2. Ids and revisions that survive two devices
 
 - `CardId`, `SavedSetId` and `WorkingSetId` are per-device counters. Two
-  devices minting at once collide. Move to globally unique ids, keeping the
-  current values readable.
+  devices minting at once collide. Move to globally unique ids. Nothing is
+  imported (W5), so the old values need no mapping.
 - Song bars are positional (`RecorderTarget::SavedBar(usize)`), and so are the
   catalog cursors. Bars need stable ids. The cursors stay local.
 - The Overview stamps `Revision(0)` and positional `InstanceId`s
@@ -97,13 +97,14 @@ no mere route is declared, so they change with it.
   if both try to own it.
 - Needs: Mere M1, M2 and M3 (sealing, so nothing is downgraded).
 
-### W5. Migration (needs Mark's ruling)
+### W5. Migration: a fresh start (ruled 2026-11-05)
 
-The preservation plan's D1 forbids inventing a migration. Proposed: a one-time
-import from the sealed slots into the mere on first open, verified by the
-validator, with the slots kept read-only until Mark retires them.
-- Done when: Mark rules the migration, and a real persona's store imports with
-  nothing lost, compared record by record.
+Mark chose a fresh start over a one-time import. The mere begins empty. The
+sealed `session` and `settings` slots and the loop-take blobs stay on disk
+untouched; Woodshed stops opening them once W4 lands, and nothing carries
+them over. Retiring them from disk is Mark's call, later.
+- Done when: a persona with an existing store opens an empty mere, and the
+  old slots are byte-identical before and after.
 
 ### W6. On a second device
 
