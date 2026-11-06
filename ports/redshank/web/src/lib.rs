@@ -671,6 +671,7 @@ pub async fn start(canvas_id: Option<String>) -> Result<(), JsValue> {
             images: Vec::new(),
         },
         HostHooks {
+            prepare_presentation: Box::new(|_, _| None),
             frame: Box::new(|ctx: &mut Context<'_>| {
                 let (width, height) = ctx.logical_size;
                 let layout = layout_for(width, height);

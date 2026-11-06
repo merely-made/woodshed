@@ -134,6 +134,7 @@ fn hooks(runtime: &Rc<RefCell<Runtime>>) -> HostHooks<AppState, Logic, Child> {
     let dispatch_runtime = runtime.clone();
     let close_runtime = runtime.clone();
     HostHooks {
+        prepare_presentation: Box::new(|_, _| None),
         // Firewheel's meter/capture promotion and Hocket's custom leaves are
         // live frame work, so retain the original 60 fps tick policy.
         frame: Box::new(move |ctx| {

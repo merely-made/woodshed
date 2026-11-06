@@ -218,7 +218,7 @@ impl Diagnostics {
             .map_err(|_| "diagnostic observation read failed".into())
     }
 
-    pub fn attachment(&self, cursor: &mut Cursor) -> Result<mesquite::DiagnosticBatch, String> {
+    pub fn attachment(&self, cursor: &mut Cursor) -> Result<mandrake::DiagnosticBatch, String> {
         let limit = self
             .collector
             .lock()
@@ -268,9 +268,9 @@ impl CaptureContext {
         Some(Self { run, desktop })
     }
 
-    pub(crate) fn observer(&self) -> mesquite::CaptureObserver<crate::scenario::Product> {
+    pub(crate) fn observer(&self) -> mandrake::CaptureObserver<crate::scenario::Product> {
         let capture = self.clone();
-        mesquite::CaptureObserver {
+        mandrake::CaptureObserver {
             // Failure is propagated by the observer rather than silently
             // selecting legacy uncorrelated capture behavior.
             run: self
@@ -284,7 +284,7 @@ impl CaptureContext {
     pub(crate) fn seal(
         &self,
         state: &redshank_surfaces::RedshankSurfaceState,
-    ) -> Result<mesquite::CaptureProjection, String> {
+    ) -> Result<mandrake::CaptureProjection, String> {
         self.run.as_ref().map_err(|error| (*error).to_owned())?;
         let desktop = self
             .desktop
@@ -300,7 +300,7 @@ impl CaptureContext {
 fn capture_projection(
     state: &redshank_surfaces::RedshankSurfaceState,
     persistence: &crate::Persistence,
-) -> Result<mesquite::CaptureProjection, String> {
+) -> Result<mandrake::CaptureProjection, String> {
     use crate::scenario::{layout_name, mode_name, notes_filter_name, seed_name};
     let ui = serde_json::json!({
         "tab": state.active_tab.label(),
@@ -335,7 +335,7 @@ fn capture_projection(
             )
         })
         .collect();
-    Ok(mesquite::CaptureProjection {
+    Ok(mandrake::CaptureProjection {
         fields,
         viewport: None,
         product: serde_json::json!({

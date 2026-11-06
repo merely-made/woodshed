@@ -42,7 +42,7 @@ type Logic = crate::appearance::Logic;
 type Ctx<'a> = AppCtx<'a, crate::appearance::DesktopState, Logic, crate::appearance::Child>;
 
 /// Mesquite owns frame scheduling, captures, deferred clicks and completion.
-pub type ScenarioLane = mesquite::Lane<Product>;
+pub type ScenarioLane = mandrake::Lane<Product>;
 
 /// Redshank owns only its observation, commands and asynchronous work policy.
 pub struct Product {
@@ -59,9 +59,9 @@ pub(crate) fn from_env(
     diagnostics: crate::diagnostics::Diagnostics,
     desktop: std::rc::Rc<std::cell::RefCell<crate::Desktop>>,
 ) -> Option<ScenarioLane> {
-    let config = mesquite::LaneConfig::from_env("REDSHANK")?;
+    let config = mandrake::LaneConfig::from_env("REDSHANK")?;
     Some(
-        mesquite::Lane::from_config(
+        mandrake::Lane::from_config(
             config,
             Product {
                 sheet: redshank_surfaces::sheet(),
@@ -435,16 +435,16 @@ pub fn apply(state: &mut RedshankSurfaceState, named: Named) {
 // The Mesquite product adapter
 // ---------------------------------------------------------------------------
 
-impl mesquite::Product for Product {
-    fn capture_observer(&self) -> Option<mesquite::CaptureObserver<Self>> {
+impl mandrake::Product for Product {
+    fn capture_observer(&self) -> Option<mandrake::CaptureObserver<Self>> {
         self.capture
             .as_ref()
             .map(crate::diagnostics::CaptureContext::observer)
     }
     fn diagnostic_attachment(
         &mut self,
-        _ctx: &mut mesquite::Ctx<'_, Self>,
-    ) -> Result<Option<mesquite::DiagnosticBatch>, String> {
+        _ctx: &mut mandrake::Ctx<'_, Self>,
+    ) -> Result<Option<mandrake::DiagnosticBatch>, String> {
         if !self.diagnostics.enabled() {
             return Ok(None);
         }
@@ -595,8 +595,8 @@ impl mesquite::Product for Product {
     fn app_step_with_clicks(
         &mut self,
         ctx: &mut Ctx<'_>,
-        _: mesquite::Checkpoints<'_>,
-        _: &mut mesquite::Clicks,
+        _: mandrake::Checkpoints<'_>,
+        _: &mut mandrake::Clicks,
         line: &str,
     ) -> Result<(), String> {
         let mut parts = line.split_whitespace();

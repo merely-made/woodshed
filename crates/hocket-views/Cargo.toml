@@ -22,7 +22,7 @@ sprigging.workspace = true
 cambium-desktop.workspace = true
 mandrake.workspace = true
 taproot.workspace = true
-paint_list_api = { git = "https://www.github.com/merely-made/netrender.git", rev = "f8811186cd82b0d4b6758b15c6bcecd415273d52" }
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
 
 [lints]
 workspace = true

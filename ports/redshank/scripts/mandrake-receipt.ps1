@@ -1,7 +1,7 @@
 param(
     [ValidateSet('lifecycle', 'transcript')][string]$Case = 'lifecycle',
     [string]$Executable = 'C:\t\cargo-targets\woodshed\debug\redshank-desktop.exe',
-    [string]$ReceiptRoot = 'C:\Users\mark_\Code\testing\woodshed\redshank-mesquite',
+    [string]$ReceiptRoot = 'C:\Users\mark_\Code\testing\woodshed\redshank-mandrake',
     [ValidateRange(10, 300)][int]$TimeoutSeconds = 120
 )
 
@@ -21,7 +21,7 @@ if (Test-Path -LiteralPath $outputRoot) {
     }
 }
 $receiptBinary = (Resolve-Path -LiteralPath $Executable).Path
-$scenarioName = if ($Case -eq 'lifecycle') { 'mesquite_lifecycle' } else { 'mesquite_transcript_wait' }
+$scenarioName = if ($Case -eq 'lifecycle') { 'mandrake_lifecycle' } else { 'mandrake_transcript_wait' }
 $fixtureName = 'empty'
 $scenarioPath = Join-Path $portRoot ('scenarios/' + $scenarioName + '.scn')
 $fixturePath = Join-Path $portRoot ('scenarios/fixtures/' + $fixtureName)
@@ -81,8 +81,8 @@ try {
         $generation = Join-Path $dataRoot 'state-00000000000000000001.json'
         $model = Get-Content -LiteralPath $generation -Raw | ConvertFrom-Json -AsHashtable
         $model.library = @{
-            'mesquite-transcript' = @{
-                kind = 'feed_episode'; id = 'mesquite-transcript'; guid = 'mesquite-transcript'
+            'mandrake-transcript' = @{
+                kind = 'feed_episode'; id = 'mandrake-transcript'; guid = 'mandrake-transcript'
                 title = 'Mesquite transcript fixture'; feed_url = 'http://127.0.0.1:8766/fixture-feed'
                 source = @{ kind = 'local'; path = $audioPath }
                 facts = @{
@@ -92,8 +92,8 @@ try {
                 }
             }
         }
-        $model.queue = @('mesquite-transcript')
-        $model.selected_item = 'mesquite-transcript'
+        $model.queue = @('mandrake-transcript')
+        $model.selected_item = 'mandrake-transcript'
         $model | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $generation
         $python = (Get-Command python -ErrorAction Stop).Source
         $vttScript = Join-Path $PSScriptRoot 'transcript-receipt-server.py'
@@ -131,7 +131,7 @@ try {
             throw 'Transcript fetch did not publish a new model generation before process exit.'
         }
         $persistedModel = Get-Content -LiteralPath $latest.FullName -Raw | ConvertFrom-Json -AsHashtable
-        $savedTranscript = $persistedModel.transcripts['mesquite-transcript']
+        $savedTranscript = $persistedModel.transcripts['mandrake-transcript']
         if ($null -eq $savedTranscript -or $savedTranscript.source -cne $vtt -or
             $savedTranscript.resource.url -ne 'http://127.0.0.1:8766/fixture.vtt' -or
             $savedTranscript.final_url -ne 'http://127.0.0.1:8766/fixture.vtt' -or
@@ -149,7 +149,7 @@ try {
         $offlineRoot = Join-Path $outputRoot 'offline'
         New-Item -ItemType Directory -Path $offlineRoot | Out-Null
         $env:REDSHANK_CAPTURE_DIR = $offlineRoot
-        $env:REDSHANK_SCENARIO = Join-Path $portRoot 'scenarios/mesquite_transcript_offline.scn'
+        $env:REDSHANK_SCENARIO = Join-Path $portRoot 'scenarios/mandrake_transcript_offline.scn'
         $appProcess = Start-Process -FilePath $receiptBinary -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $offlineRoot 'stdout.log') -RedirectStandardError (Join-Path $offlineRoot 'stderr.log')
         if (-not $appProcess.WaitForExit($TimeoutSeconds * 1000)) { throw 'Owned offline restart exceeded its receipt deadline.' }
         $appProcess.Refresh()

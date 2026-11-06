@@ -10,7 +10,7 @@ The migration acceptance runner uses explicit isolated listener data, retains
 receipts, and owns only its launched processes:
 
 ```powershell
-../scripts/mesquite-receipt.ps1
+../scripts/mandrake-receipt.ps1
 ```
 
 The older external artboard runner remains available for existing workflows;

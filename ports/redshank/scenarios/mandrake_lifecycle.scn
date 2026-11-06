@@ -15,4 +15,4 @@ act tab:settings
 settle 1
 assert snap tab == Settings
 capture lifecycle-final
-log mesquite lifecycle complete
+log mandrake lifecycle complete

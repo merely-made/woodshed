@@ -2363,6 +2363,7 @@ fn hooks(
     let scenario_desktop = Rc::clone(&desktop);
     let mut previews = appearance_host::PreviewBindings::default();
     HostHooks {
+        prepare_presentation: Box::new(|_, _| None),
         frame: Box::new(move |ctx: &mut Context<'_>| {
             previews.frame(ctx);
             let scenario_running = scenario_busy

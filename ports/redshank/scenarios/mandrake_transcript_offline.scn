@@ -12,4 +12,4 @@ click role:button Seek transcript to 0:05: Mesquite fixture second sentence.
 wait 300
 assert snap position-ms == 5000
 capture transcript-offline-reopened
-log mesquite transcript offline reopen complete
+log mandrake transcript offline reopen complete

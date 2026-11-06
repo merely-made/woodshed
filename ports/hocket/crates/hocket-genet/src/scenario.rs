@@ -16,7 +16,7 @@
 use crate::{AppState, Child, Logic};
 use cambium_genet_winit_host::AppCtx;
 type Ctx<'a> = AppCtx<'a, AppState, Logic, Child>;
-pub type Run = mesquite::Lane<Product>;
+pub type Run = mandrake::Lane<Product>;
 pub struct Product {
     sheet: String,
     drum_output_observed: bool,
@@ -25,9 +25,9 @@ pub struct Product {
 }
 
 pub fn load() -> Option<Run> {
-    let config = mesquite::LaneConfig::from_env("HOCKET")?;
+    let config = mandrake::LaneConfig::from_env("HOCKET")?;
     Some(
-        mesquite::Lane::from_config(
+        mandrake::Lane::from_config(
             config,
             Product {
                 sheet: crate::theme::sheet(),
@@ -62,7 +62,7 @@ pub fn drive(lane: &mut Run, ctx: &mut Ctx<'_>) {
     lane.after_frame(ctx);
 }
 
-impl mesquite::Product for Product {
+impl mandrake::Product for Product {
     type State = AppState;
     type Logic = Logic;
     type View = Child;
@@ -220,7 +220,7 @@ impl mesquite::Product for Product {
         }
         result.is_ok()
     }
-    fn viewport(&self, ctx: &Ctx<'_>) -> Option<mesquite::Viewport> {
+    fn viewport(&self, ctx: &Ctx<'_>) -> Option<mandrake::Viewport> {
         // Mesquite compares the recorder, excluding the appearance controls.
         // Geometry is the same retained host rect used for native input.
         if ctx.runner.state().appearance.editor_open {
@@ -232,7 +232,7 @@ impl mesquite::Product for Product {
                 .next()?;
         let (x, y, width, height) = ctx.painted_rect(node)?;
         let scale = ctx.window?.scale_factor() as f32 * ctx.ui_zoom;
-        Some(mesquite::Viewport::new([x, y, width, height], scale, 1.0))
+        Some(mandrake::Viewport::new([x, y, width, height], scale, 1.0))
     }
     fn busy(&self, ctx: &Ctx<'_>, capture_pending: bool) -> Option<bool> {
         Some(
@@ -257,14 +257,14 @@ mod tests {
     fn mounted(
         dir: &tempfile::TempDir,
         body: &str,
-        backend: impl mesquite::CaptureBackend + 'static,
+        backend: impl mandrake::CaptureBackend + 'static,
     ) -> (
         cambium_genet_winit_host::Harness<AppState, Logic, Child>,
         Rc<RefCell<crate::Runtime>>,
         Rc<Cell<i32>>,
     ) {
         let exit = Rc::new(Cell::new(0));
-        let lane = mesquite::Lane::new(
+        let lane = mandrake::Lane::new(
             Product {
                 sheet: crate::theme::sheet(),
                 drum_output_observed: false,
@@ -283,8 +283,8 @@ mod tests {
     }
 
     struct ReadbackFailure;
-    impl mesquite::CaptureBackend for ReadbackFailure {
-        fn arm(&mut self, _: &mut Option<CaptureFn>) -> mesquite::Readback {
+    impl mandrake::CaptureBackend for ReadbackFailure {
+        fn arm(&mut self, _: &mut Option<CaptureFn>) -> mandrake::Readback {
             Box::new(|| Some(Err("fixture GPU map refused".into())))
         }
         fn writes_files(&self) -> bool {
@@ -293,8 +293,8 @@ mod tests {
     }
 
     struct DelayedPixels;
-    impl mesquite::CaptureBackend for DelayedPixels {
-        fn arm(&mut self, _: &mut Option<CaptureFn>) -> mesquite::Readback {
+    impl mandrake::CaptureBackend for DelayedPixels {
+        fn arm(&mut self, _: &mut Option<CaptureFn>) -> mandrake::Readback {
             let mut polls = 0;
             Box::new(move || {
                 polls += 1;
