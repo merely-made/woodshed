@@ -275,11 +275,11 @@ struct ScenarioCursorWait {
     started: std::time::Instant,
 }
 
-pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> {
-    let config = mesquite::LaneConfig::from_env("WOODSHED")?;
+pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mandrake::Lane<Product>> {
+    let config = mandrake::LaneConfig::from_env("WOODSHED")?;
     let sheet = shared.borrow().accessible_sheet();
     Some(
-        mesquite::Lane::from_config(
+        mandrake::Lane::from_config(
             config,
             Product {
                 shared,
@@ -308,7 +308,7 @@ pub fn from_env(shared: Rc<RefCell<Shared>>) -> Option<mesquite::Lane<Product>> 
     )
 }
 
-impl mesquite::Product for Product {
+impl mandrake::Product for Product {
     type State = UiState;
     type Logic = crate::sync::Logic;
     type View = woodshed_views::stage::UiChild;
@@ -873,15 +873,15 @@ impl mesquite::Product for Product {
         Probe {
             ctx,
             shared: &mut self.shared.borrow_mut(),
-            clicks: &mut mesquite::Clicks::default(),
+            clicks: &mut mandrake::Clicks::default(),
         }
         .act(label)
     }
     fn app_step_with_clicks(
         &mut self,
         ctx: &mut Ctx<'_>,
-        _: mesquite::Checkpoints<'_>,
-        clicks: &mut mesquite::Clicks,
+        _: mandrake::Checkpoints<'_>,
+        clicks: &mut mandrake::Clicks,
         line: &str,
     ) -> Result<(), String> {
         self.scenario_cursor_wait.replace(None);
@@ -1267,7 +1267,7 @@ fn write_new_json(path: &std::path::Path, value: &serde_json::Value) -> std::io:
     file.write_all(serde_json::to_string_pretty(value).unwrap().as_bytes())
 }
 
-pub fn drive(lane: &mut mesquite::Lane<Product>, ctx: &mut Ctx<'_>) {
+pub fn drive(lane: &mut mandrake::Lane<Product>, ctx: &mut Ctx<'_>) {
     {
         let product = lane.product_mut();
         let mut shared = product.shared.borrow_mut();
@@ -1357,7 +1357,7 @@ pub fn note_events(shared: &mut Shared, ui: &UiState) {
 struct Probe<'a, 'c> {
     ctx: &'a mut Ctx<'c>,
     shared: &'a mut Shared,
-    clicks: &'a mut mesquite::Clicks,
+    clicks: &'a mut mandrake::Clicks,
 }
 
 struct Snapshot<'a, 'c> {

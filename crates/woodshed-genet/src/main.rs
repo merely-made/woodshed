@@ -415,6 +415,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             }
             guard_requested_close(&mut after_frame_shared.borrow_mut(), ctx);
         }),
+        prepare_presentation: Box::new(|_, _| None),
         after_wake: Box::new(move |ctx: &mut Ctx<'_>| {
             let mut shared = wake_shared.borrow_mut();
             wav_export::poll(&mut shared, ctx);

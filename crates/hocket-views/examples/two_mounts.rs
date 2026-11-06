@@ -261,13 +261,13 @@ impl RecorderAudio for SyntheticAudio {
 struct Runtime {
     full: RecorderLeaves,
     compact: RecorderLeaves,
-    lane: Option<mesquite::Lane<Product>>,
+    lane: Option<mandrake::Lane<Product>>,
 }
 
 impl Runtime {
     fn new() -> Self {
-        let lane = mesquite::LaneConfig::from_env("HOCKET_VIEWS").map(|config| {
-            mesquite::Lane::from_config(
+        let lane = mandrake::LaneConfig::from_env("HOCKET_VIEWS").map(|config| {
+            mandrake::Lane::from_config(
                 config,
                 Product { sheet: sheet() },
                 cambium_genet_winit_host::read_file,
@@ -315,7 +315,7 @@ fn hooks(runtime: Rc<RefCell<Runtime>>) -> HostHooks<MountHost, Logic, Child<Mou
 struct Product {
     sheet: String,
 }
-impl mesquite::Product for Product {
+impl mandrake::Product for Product {
     type State = MountHost;
     type Logic = Logic;
     type View = Child<MountHost>;
