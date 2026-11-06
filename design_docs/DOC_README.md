@@ -28,8 +28,8 @@ Foundation source adoption (2026-10-19): canonical promoted-family revisions and
   — **Draft, 2026-11-05; nothing scheduled.** Ruling 6 re-ruled: the whole
   domain moves into a Woodshed mere and follows the persona's devices. W0–W6:
   the `music` domain (shared with Hocket), a pure domain crate and validator, global ids and revisions, the
-  authored/device split, registration, a migration Mark rules, and a second
-  device. Waits on Mere's domain adoption plan (M1–M5).
+  authored/device split, registration, a fresh start with no import (ruled),
+  and a second device. Waits on Mere's domain adoption plan (M0–M5).
 
 - [Custody client receiving](2026-11-03_preservation_input_admission_plan.md#custody-client-receiving-2026-11-04) — Woodshed, Hocket and the maintained recipe fixture migrate to Ostiary and Castellan-client; owner-granted application declarations and independent receiving checks.
 
