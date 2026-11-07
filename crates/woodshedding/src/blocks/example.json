@@ -1,0 +1,256 @@
+{
+  "set": {
+    "cards": [
+      {
+        "from": {
+          "Progression": {
+            "key": 0,
+            "name": "ii-V-I (Jazz)"
+          }
+        },
+        "id": 1,
+        "label": "Dm7 (iim7)",
+        "material": {
+          "Chord": {
+            "name": "Minor 7",
+            "root": 2
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": "x-x-0-2-1-1",
+          "voicing_idx": 0,
+          "voicing_profile": "root-bass/position4/v1"
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      },
+      {
+        "from": {
+          "Progression": {
+            "key": 0,
+            "name": "ii-V-I (Jazz)"
+          }
+        },
+        "id": 2,
+        "label": "G7 (V7)",
+        "material": {
+          "Chord": {
+            "name": "Dominant 7",
+            "root": 7
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": "3-2-3-x-3-x",
+          "voicing_idx": 0,
+          "voicing_profile": "root-bass/position4/v1"
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      },
+      {
+        "from": {
+          "Progression": {
+            "key": 0,
+            "name": "ii-V-I (Jazz)"
+          }
+        },
+        "id": 3,
+        "label": "Cmaj7 (IM7)",
+        "material": {
+          "Chord": {
+            "name": "Major 7",
+            "root": 0
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": "x-3-2-0-0-x",
+          "voicing_idx": 0,
+          "voicing_profile": "root-bass/position4/v1"
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      },
+      {
+        "from": {
+          "Progression": {
+            "key": 0,
+            "name": "ii-V-I (Jazz)"
+          }
+        },
+        "id": 4,
+        "label": "Cmaj7 (IM7)",
+        "material": {
+          "Chord": {
+            "name": "Major 7",
+            "root": 0
+          }
+        },
+        "setting": {
+          "capo": null,
+          "fret_window": null,
+          "instrument": "Guitar",
+          "mark_mode": "Off",
+          "marked": [],
+          "tuning": "Standard",
+          "voicing_fingerprint": "x-3-x-0-0-0",
+          "voicing_idx": 1,
+          "voicing_profile": "root-bass/position4/v1"
+        },
+        "timing": {
+          "bpm": null,
+          "hold": "Manual"
+        },
+        "touch": "Block"
+      }
+    ],
+    "cursor": 0,
+    "last_card_id": 4,
+    "loop_mode": "Off",
+    "progression_arrangement": {
+      "alignment": {
+        "cards": [
+          {
+            "card": 1,
+            "placement": {
+              "lane": 0,
+              "span": {
+                "length": 16,
+                "start": 0
+              }
+            },
+            "role": 0
+          },
+          {
+            "card": 2,
+            "placement": {
+              "lane": 0,
+              "span": {
+                "length": 8,
+                "start": 16
+              }
+            },
+            "role": 1
+          },
+          {
+            "card": 3,
+            "placement": {
+              "lane": 0,
+              "span": {
+                "length": 16,
+                "start": 32
+              }
+            },
+            "role": 2
+          },
+          {
+            "card": 4,
+            "placement": {
+              "lane": 0,
+              "span": {
+                "length": 16,
+                "start": 48
+              }
+            },
+            "role": 2
+          }
+        ],
+        "extent": 64,
+        "name": "Saved practice passage",
+        "rests": [
+          {
+            "key": "breath",
+            "placement": {
+              "lane": 0,
+              "span": {
+                "length": 8,
+                "start": 24
+              }
+            },
+            "role": null
+          }
+        ],
+        "role_spans": [
+          {
+            "length": 16,
+            "start": 0
+          },
+          {
+            "length": 16,
+            "start": 16
+          },
+          {
+            "length": 32,
+            "start": 32
+          }
+        ],
+        "time_signatures": [
+          {
+            "denominator": 4,
+            "numerator": 4,
+            "start": 0
+          }
+        ]
+      },
+      "fret_end": 22,
+      "fret_start": 0,
+      "instrument": "Guitar",
+      "open_midi": [
+        40,
+        45,
+        50,
+        55,
+        59,
+        64
+      ],
+      "progression": "ii-V-I (Jazz)",
+      "roles": [
+        {
+          "alteration": "Natural",
+          "degree": 2,
+          "quality": "Minor7"
+        },
+        {
+          "alteration": "Natural",
+          "degree": 5,
+          "quality": "Dominant7"
+        },
+        {
+          "alteration": "Natural",
+          "degree": 1,
+          "quality": "Major7"
+        }
+      ],
+      "root_pc": 0,
+      "tuning": "Standard",
+      "version": 1
+    }
+  },
+  "version": 1
+}

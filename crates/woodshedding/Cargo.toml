@@ -12,11 +12,17 @@ readme = "README.md"
 keywords = ["music", "theory", "guitar", "scale", "chord"]
 categories = ["multimedia::audio", "data-structures"]
 
+[features]
+# Block-adapter logic for a host's Djot block pane (`blocks`): plain Rust over this
+# crate's types, reading the `woodshed` source attribute as JSON. Off by default.
+blocks = ["dep:serde_json"]
+
 [dependencies]
 # Card/set vocabulary (the `rehearsal` module) derives serde so app and
 # future CLI/web shells share one persistable core. Pure data, no I/O.
 serde = { workspace = true }
 roxmltree = "0.21.1"
+serde_json = { workspace = true, optional = true }
 
 [dev-dependencies]
 # Tests only: Set round-trips and the legacy-session migration are claims

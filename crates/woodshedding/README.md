@@ -5,6 +5,12 @@ exercises, fretboards, voicings, practice sets, editable fretted MusicXML and ex
 score timing. No I/O, UI, persistence or audio engine. Normal dependencies are
 `serde` and `roxmltree`.
 
+Feature `blocks` (off by default, adds `serde_json`): `blocks`, the adapter logic a host's
+Djot block pane uses to edit a `progression` block, over plain attribute maps. It reads the
+`woodshed` source attribute and returns proposals (`choices`), complete new attribute maps
+(`attributes`, `write_music`, `meter_attributes`) or a bar-line `plaintext` export. Used by
+`woodshed-notation`'s `block-guest` feature.
+
 For musical documents, start with:
 
 - `notation::MusicDocument`: MusicXML text, read with `score()` and written with
