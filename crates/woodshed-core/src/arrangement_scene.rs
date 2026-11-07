@@ -3,14 +3,14 @@
 //! Explicit progression alignment over the Set's persistent Card identities.
 use crate::{StageState, format_role, fretboard_scene::selected_card_fretboard_scene};
 use sceno::SourceRef;
-use scenomise::{
-    backdrops::{BACKDROP_SCENE_VERSION, SceneFacts, SceneInput},
-    document::{LinkedScene, SceneDocument},
+use sceno_backdrops::{
+    BACKDROP_SCENE_VERSION, SceneFacts, SceneInput,
     template::{
         Placement, SequenceTemplate, Span, TemplateGroup, TemplateOccurrence, TemplateRelation,
         TemplateSlot, TemplatedSequence,
     },
 };
+use scenomise::document::{LinkedScene, SceneDocument};
 use std::collections::HashSet;
 use woodshedding::rehearsal::{Material, Set};
 

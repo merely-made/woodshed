@@ -4,8 +4,8 @@
 //! readings. Ordinal alignment is explicit here; it is not harmonic analysis.
 use crate::{StageState, format_role, song::SongDoc};
 use sceno::SourceRef;
-use scenomise::{
-    backdrops::{BACKDROP_SCENE_VERSION, SceneFacts, SceneInput},
+use sceno_backdrops::{
+    BACKDROP_SCENE_VERSION, SceneFacts, SceneInput,
     template::{
         Placement, SequenceTemplate, Span, TemplateGroup, TemplateOccurrence, TemplateRelation,
         TemplateSlot, TemplatedSequence,

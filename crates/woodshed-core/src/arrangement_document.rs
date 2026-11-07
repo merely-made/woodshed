@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MPL-2.0
 //! A progression's portable scene document in an inert attributed Djot block.
 //! The shared codec retains its existing format, including linked voicings.
-use scenomise::{backdrops::SceneFacts, document::SceneDocument};
+use sceno_backdrops::SceneFacts;
+use scenomise::document::SceneDocument;
 
 pub fn to_djot(document: &SceneDocument) -> Result<String, String> {
     if !matches!(document.primary.facts, SceneFacts::TemplatedSequence(_)) {

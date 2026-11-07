@@ -34,7 +34,7 @@ pub struct ArrangementSurfaces {
     pub theme: SurfaceTheme,
     pub error: Option<String>,
 }
-fn surface(input: &scenomise::backdrops::SceneInput) -> Result<BackdropSurface, String> {
+fn surface(input: &sceno_backdrops::SceneInput) -> Result<BackdropSurface, String> {
     let mut s = BackdropSurface::new(input).map_err(|e| e.to_string())?;
     s.register_font(
         include_bytes!("../../../../assets/fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf").to_vec(),
@@ -1064,7 +1064,7 @@ impl UiState {
                     g.original
                 } else {
                     let Ok(span) = g.action.apply(
-                        scenomise::template::Span {
+                        sceno_backdrops::template::Span {
                             start: g.original.start,
                             length: g.original.length,
                         },
@@ -1079,7 +1079,7 @@ impl UiState {
                         length: span.length,
                     }
                 };
-                g.intent.after = scenomise::template::Span {
+                g.intent.after = sceno_backdrops::template::Span {
                     start: g.proposed.start,
                     length: g.proposed.length,
                 };
@@ -1905,7 +1905,7 @@ mod tests {
         assert!(draft.grouping_preview.as_ref().unwrap().conflict);
         assert!(!draft.grouping_preview.as_ref().unwrap().use_update);
         let scene = ui.arrangement_editor.surfaces.borrow();
-        let scenomise::backdrops::SceneFacts::TemplatedSequence(sequence) =
+        let sceno_backdrops::SceneFacts::TemplatedSequence(sequence) =
             &scene.document.as_ref().unwrap().primary.facts
         else {
             panic!("arrangement scene should be a templated sequence")
@@ -1957,7 +1957,7 @@ mod tests {
         assert!(!ui.arrangement_editor.can_undo(owner));
         let after = ui.arrangement_editor.surfaces.borrow().document.clone().unwrap();
         assert_ne!(before, after);
-        let scenomise::backdrops::SceneFacts::TemplatedSequence(sequence) = &after.primary.facts
+        let sceno_backdrops::SceneFacts::TemplatedSequence(sequence) = &after.primary.facts
         else {
             panic!("arrangement scene should be a templated sequence")
         };

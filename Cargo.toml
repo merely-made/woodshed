@@ -45,6 +45,7 @@ rust-version = "1.97.1"
 curation = { package = "mere-curation", git = "https://github.com/merely-made/mere.git", branch = "main" }
 pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas"] }
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+sceno-backdrops = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 scenomise = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 # The guest-block contract (`block-guest` world) and the sheet a guest's view returns.

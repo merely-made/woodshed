@@ -18,6 +18,7 @@ hocket-recorder.workspace = true
 pictograph.workspace = true
 sceno.workspace = true
 scenograph.workspace = true
+sceno-backdrops.workspace = true
 scenomise.workspace = true
 blake3.workspace = true
 woodshed-core = { workspace = true, features = ["portable-scenes"] }

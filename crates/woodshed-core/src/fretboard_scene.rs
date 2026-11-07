@@ -3,7 +3,7 @@
 //! Export the current resolved scale/chord lens as a host-independent recipe.
 use crate::{Lens, StageState};
 use sceno::SourceRef;
-use scenomise::backdrops::{
+use sceno_backdrops::{
     BACKDROP_SCENE_VERSION, Fretboard, FrettedPosition, SceneFacts, SceneInput, ToneRole,
     TunedString,
 };
