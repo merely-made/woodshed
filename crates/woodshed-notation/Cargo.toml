@@ -28,7 +28,7 @@ block-guest = [
     "dep:wit-bindgen",
     "dep:vector-sheet",
     "dep:sceno",
-    "dep:scenomise",
+    "dep:sceno-backdrops",
     "dep:paint_list_api",
     "dep:ciborium",
     "dep:serde_json",
@@ -43,7 +43,7 @@ wit-bindgen = { version = "0.57", optional = true }
 graphshell-endpoint = { workspace = true, optional = true }
 vector-sheet = { workspace = true, optional = true }
 sceno = { workspace = true, optional = true }
-scenomise = { workspace = true, optional = true }
+sceno-backdrops = { workspace = true, optional = true }
 paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main", optional = true }
 ciborium = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }

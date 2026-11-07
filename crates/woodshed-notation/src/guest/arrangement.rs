@@ -4,10 +4,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // SPDX-License-Identifier: MPL-2.0
 //! The arrangement backdrop scene: the Set's bars, groups, Cards and rests as a
-//! `scenomise` `SceneInput`, ready for a host's backdrop surface.
+//! `sceno-backdrops` `SceneInput`, ready for a host's backdrop surface.
 use sceno::SourceRef;
-use scenomise::{
-    backdrops::{BACKDROP_SCENE_VERSION, SceneFacts, SceneInput},
+use sceno_backdrops::{
+    BACKDROP_SCENE_VERSION, SceneFacts, SceneInput,
     template::{
         Placement, SequenceTemplate, Span, TemplateGroup, TemplateOccurrence, TemplatedSequence,
     },

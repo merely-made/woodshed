@@ -193,6 +193,7 @@ dependencies = [
  "audio-packs",
  "audio-pattern",
  "cambium",
+ "sceno-backdrops",
  "scenomise",
 ]
 
@@ -3841,6 +3842,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sceno-backdrops"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/graphshell.git?branch=main#40e8c8df15915d86377117842c08cf10fd13c987"
+dependencies = [
+ "sceno",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "scenograph"
 version = "0.0.6"
 source = "git+https://github.com/merely-made/mere.git?branch=main#18c0f24a55a842f6204a5a4012c9fd203481947a"
@@ -5141,6 +5152,7 @@ dependencies = [
  "personae",
  "pollster 0.4.0",
  "sceno",
+ "sceno-backdrops",
  "scenomise",
  "scenotime",
  "serde",
@@ -5219,6 +5231,7 @@ dependencies = [
  "personae",
  "pictograph",
  "sceno",
+ "sceno-backdrops",
  "scenograph",
  "scenomise",
  "serde",

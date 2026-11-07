@@ -8874,7 +8874,7 @@ dependencies = [
  "graphshell-endpoint",
  "paint_list_api",
  "sceno",
- "scenomise",
+ "sceno-backdrops",
  "serde_json",
  "sprigging",
  "ttf-parser",

@@ -9,7 +9,7 @@ use super::exports::mere::script::block_adapter::{
 };
 use super::{Component, list};
 use sceno::{Footprint, Scene};
-use scenomise::backdrops::{SceneFacts, SceneInput};
+use sceno_backdrops::{SceneFacts, SceneInput};
 use std::collections::BTreeMap;
 use vector_sheet::{FillRule, Op, Role, Seg, VectorSheet};
 use woodshedding::blocks::{self, EXAMPLE_SOURCE, SOURCE};
