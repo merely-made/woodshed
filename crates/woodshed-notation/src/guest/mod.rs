@@ -23,7 +23,7 @@ mod tests;
 wit_bindgen::generate!({ path: "wit", world: "block-guest" });
 
 use exports::mere::script::block_adapter::{
-    Attr, Block, Change, Claim, Guest, RunResult, ViewAsk, ViewResult,
+    Attr, Block, Change, Claim, Guest, Row, RunResult, ViewAsk, ViewResult,
 };
 use std::collections::BTreeMap;
 use woodshedding::blocks::{self, BlockChange};
@@ -68,6 +68,17 @@ fn require_group_bars(command: &str) -> Result<(), String> {
 impl Guest for Component {
     fn describe() -> Claim {
         claim::claim()
+    }
+
+    fn rows(b: Block) -> Result<Vec<Row>, String> {
+        Ok(blocks::rows(&map(&b.attrs))?
+            .into_iter()
+            .enumerate()
+            .map(|(i, label)| Row {
+                index: i as u32,
+                label,
+            })
+            .collect())
     }
 
     fn choices(b: Block, command: String) -> Result<Vec<Change>, String> {

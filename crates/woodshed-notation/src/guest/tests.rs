@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //! The guest's behaviour through its WIT-shaped entry points, on the native rlib.
 use super::exports::mere::script::block_adapter::{
-    Attr, Block, CommandKind, Guest, RunResult, ViewAsk,
+    Attr, Block, CommandKind, Field, Guest, RunResult, ViewAsk,
 };
 use super::{Component, list};
 use sceno::{Footprint, Scene};
@@ -100,6 +100,21 @@ fn describe_claims_progression_blocks() {
     assert_eq!(
         views,
         [("chart", "Chart"), ("tab", "Tab"), ("score", "Score")]
+    );
+    let field = |f: &Option<Field>| f.as_ref().map(|f| (f.label.clone(), f.default.clone()));
+    assert_eq!(
+        field(&claim.pattern),
+        Some(("Bar grouping".into(), "2 + 2".into()))
+    );
+    let args: Vec<_> = claim.commands.iter().map(|c| field(&c.arg)).collect();
+    assert_eq!(
+        args,
+        [
+            None,
+            Some(("Notation tempo (BPM)".into(), "96".into())),
+            None,
+            None
+        ]
     );
     let example = claim.example.unwrap();
     assert_eq!(example.body, "Woodshed ii–V–I · structured arrangement\n");
@@ -302,4 +317,25 @@ fn a_block_with_no_woodshed_source_is_refused_everywhere() {
         );
     }
     refused(Component::view(plain, ask("score", None)).unwrap_err());
+}
+
+#[test]
+fn rows_list_the_bars_with_the_hosts_labels() {
+    let rows = Component::rows(block(example_attrs())).unwrap();
+    let got: Vec<_> = rows.iter().map(|r| (r.index, r.label.as_str())).collect();
+    assert_eq!(
+        got,
+        [
+            (0, "Bar 1 · 4 quarter-note beats"),
+            (1, "Bar 2 · 4 quarter-note beats"),
+            (2, "Bar 3 · 4 quarter-note beats"),
+            (3, "Bar 4 · 4 quarter-note beats"),
+        ]
+    );
+    let plain = block(BTreeMap::from([("class".into(), "progression".into())]));
+    assert!(
+        Component::rows(plain)
+            .unwrap_err()
+            .contains("no structured Woodshed source")
+    );
 }

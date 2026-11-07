@@ -5,7 +5,7 @@
 // SPDX-License-Identifier: MPL-2.0
 //! What the guest claims at mount.
 use super::exports::mere::script::block_adapter::{
-    Attr, Claim, Command, CommandKind, Example, ViewMode,
+    Attr, Claim, Command, CommandKind, Example, Field, ViewMode,
 };
 use woodshedding::blocks;
 
@@ -17,11 +17,18 @@ pub(super) const ARRANGEMENT_SCENE: &str = "arrangement-scene";
 pub(super) const CLASS: &str = "progression";
 const EXAMPLE_BODY: &str = "Woodshed ii–V–I · structured arrangement\n";
 
-fn command(id: &str, label: &str, kind: CommandKind) -> Command {
+fn command(id: &str, label: &str, kind: CommandKind, arg: Option<Field>) -> Command {
     Command {
         id: id.into(),
         label: label.into(),
         kind,
+        arg,
+    }
+}
+fn field(label: &str, default: &str) -> Field {
+    Field {
+        label: label.into(),
+        default: default.into(),
     }
 }
 
@@ -35,14 +42,25 @@ pub(super) fn claim() -> Claim {
         source_key: blocks::SOURCE.into(),
         source_versions: vec![1],
         commands: vec![
-            command(GROUP_BARS, "Apply bar grouping…", CommandKind::Choice),
-            command(WRITE_NOTATION, "Write notation", CommandKind::Write),
+            command(GROUP_BARS, "Apply bar grouping…", CommandKind::Choice, None),
+            command(
+                WRITE_NOTATION,
+                "Write notation",
+                CommandKind::Write,
+                Some(field("Notation tempo (BPM)", "96")),
+            ),
             command(
                 EXPORT_PLAINTEXT,
                 "Export bar-line plaintext",
                 CommandKind::Text,
+                None,
             ),
-            command(ARRANGEMENT_SCENE, "Arrangement scene", CommandKind::Text),
+            command(
+                ARRANGEMENT_SCENE,
+                "Arrangement scene",
+                CommandKind::Text,
+                None,
+            ),
         ],
         views: ["chart", "tab", "score"]
             .into_iter()
@@ -52,6 +70,7 @@ pub(super) fn claim() -> Claim {
                 label: label.into(),
             })
             .collect(),
+        pattern: Some(field("Bar grouping", "2 + 2")),
         example: Some(Example {
             title: EXAMPLE_BODY.trim_end().into(),
             body: EXAMPLE_BODY.into(),
