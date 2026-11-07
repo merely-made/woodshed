@@ -44,7 +44,7 @@ rust-version = "1.97.1"
 [workspace.dependencies]
 curation = { package = "mere-curation", git = "https://github.com/merely-made/mere.git", branch = "main" }
 pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas"] }
-sceno = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 scenomise = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 blake3 = "1"

@@ -20,8 +20,8 @@ woodshed-graph = { workspace = true }
 # The portable scene contract. woodshed owns the musical facts and
 # their typed relations; sceno owns placement, footprints, representation, and
 # routing. Sibling repo, like woodshed-graph's chartulary dep.
-sceno = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-scenotime = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+scenotime = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # Shared authored appearance definition in portable settings.
 tabard = { workspace = true }
 serde = { workspace = true }
