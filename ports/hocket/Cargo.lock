@@ -559,6 +559,7 @@ dependencies = [
  "audio-packs",
  "audio-pattern",
  "cambium",
+ "sceno-backdrops",
  "scenomise",
 ]
 
@@ -2969,7 +2970,7 @@ checksum = "fc0fef456e4baa96da950455cd02c081ca953b141298e41db3fc7e36b1da849c"
 [[package]]
 name = "hest"
 version = "0.2.1"
-source = "git+https://github.com/merely-made/graphshell.git?branch=main#7cd9ca53882d5a6debd502b5ba068a14fd3efef4"
+source = "git+https://github.com/merely-made/graphshell.git?branch=main#40e8c8df15915d86377117842c08cf10fd13c987"
 dependencies = [
  "serde",
 ]
@@ -5971,8 +5972,18 @@ dependencies = [
 [[package]]
 name = "sceno"
 version = "0.0.7"
-source = "git+https://github.com/merely-made/graphshell.git?branch=main#7cd9ca53882d5a6debd502b5ba068a14fd3efef4"
+source = "git+https://github.com/merely-made/graphshell.git?branch=main#40e8c8df15915d86377117842c08cf10fd13c987"
 dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "sceno-backdrops"
+version = "0.0.1"
+source = "git+https://github.com/merely-made/graphshell.git?branch=main#40e8c8df15915d86377117842c08cf10fd13c987"
+dependencies = [
+ "sceno",
  "serde",
  "serde_json",
 ]
