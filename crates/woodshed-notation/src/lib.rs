@@ -8,6 +8,17 @@
 //! playback description for native consumers. Hosts that supply accessible
 //! event controls and their own leaf label can disable default features; the
 //! same paint, layout, labels and event rectangles remain available.
+//!
+//! # Block guest
+//!
+//! Feature `block-guest` builds the `block-guest` world of `mere:script`: a pure
+//! wasm component a host loads to edit and show a Djot `progression` block. The
+//! adapter logic is `woodshedding::blocks`; the view paints this crate's leaf into a
+//! `vector-sheet` and names one region per event in a `sceno` scene. Build it with
+//! `cargo build -p woodshed-notation --target wasm32-wasip2 --profile block-guest
+//! --features block-guest`.
+#[cfg(feature = "block-guest")]
+mod guest;
 pub use sprigging::ColorF;
 use sprigging::{Leaf, PaintCx, Path, Size, SizeHint};
 use woodshedding::notation::{NoteValue, Score};

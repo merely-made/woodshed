@@ -26,3 +26,6 @@ __pycache__/
 /ports/ringdown/validation/
 /ports/redshank/receipts/
 /ports/redshank/scenarios/validation/
+
+# The block guest's WIT world, copied from graphshell-endpoint by woodshed-notation's build script.
+/crates/woodshed-notation/wit/

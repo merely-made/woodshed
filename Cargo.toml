@@ -47,6 +47,9 @@ pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main",
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 scenomise = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+# The guest-block contract (`block-guest` world) and the sheet a guest's view returns.
+graphshell-endpoint = { git = "https://github.com/merely-made/graphshell.git", branch = "main", default-features = false }
+vector-sheet = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 blake3 = "1"
 # Internal crates
 woodshed-notation = { path = "crates/woodshed-notation", version = "0.1.0" }
@@ -286,6 +289,17 @@ muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main"
 insigne = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 notochord = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
+
+# The size-tuned build of the wasm block guest:
+# `cargo build -p woodshed-notation --target wasm32-wasip2 --profile block-guest --features block-guest`.
+# A custom profile, so no other crate's build changes.
+[profile.block-guest]
+inherits = "release"
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
 
 [workspace.lints.clippy]
 missing_errors_doc = "warn"

@@ -6,6 +6,12 @@ rust-version = "1.97.1"
 license.workspace = true
 repository.workspace = true
 description = "Chart, tablature and staff notation leaves over woodshedding musical documents"
+build = "build.rs"
+
+[lib]
+# The cdylib is built only when this package is the build root (the wasm block guest);
+# dependents link the rlib as before.
+crate-type = ["rlib", "cdylib"]
 
 [features]
 # Native consumers keep the leaf's fallback labels and playback description.
@@ -13,12 +19,34 @@ description = "Chart, tablature and staff notation leaves over woodshedding musi
 # a second direct AccessKit version beside their Sprigging host's contract.
 default = ["accessibility"]
 accessibility = ["dep:accesskit"]
+# The `block-guest` world of `mere:script`: a pure wasm component a host loads to edit
+# and show a Djot `progression` block. The WIT comes from `graphshell-endpoint` (the
+# build script copies it to the git-ignored `wit/`).
+block-guest = [
+    "woodshedding/blocks",
+    "dep:graphshell-endpoint",
+    "dep:wit-bindgen",
+    "dep:vector-sheet",
+    "dep:sceno",
+    "dep:scenomise",
+    "dep:paint_list_api",
+    "dep:ciborium",
+    "dep:serde_json",
+]
 
 [dependencies]
 woodshedding.workspace = true
 sprigging.workspace = true
 accesskit = { version = "0.25", optional = true }
 ttf-parser = "0.25.1"
+wit-bindgen = { version = "0.57", optional = true }
+graphshell-endpoint = { workspace = true, optional = true }
+vector-sheet = { workspace = true, optional = true }
+sceno = { workspace = true, optional = true }
+scenomise = { workspace = true, optional = true }
+paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main", optional = true }
+ciborium = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde_json.workspace = true
