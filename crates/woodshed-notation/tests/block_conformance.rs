@@ -101,7 +101,7 @@ fn the_real_pack_is_reviewed_and_claims_the_progression_class() {
     assert_eq!(claim.source_key.as_deref(), Some("woodshed"));
     assert_eq!(claim.pattern.as_ref().unwrap().default, "2 + 2");
     let ids: Vec<_> = claim.commands.iter().map(|c| c.id.as_str()).collect();
-    assert_eq!(ids, ["group-bars", "write-notation", "export-plaintext", "arrangement-scene"]);
+    assert_eq!(ids, ["group-bars", "write-notation", "export-plaintext", "backdrop-scene"]);
     assert_eq!(claim.views.iter().map(|v| v.id.as_str()).collect::<Vec<_>>(), ["chart", "tab", "score"]);
     // Mere's size cap for a component is 16 MiB.
     assert!(bytes.len() < 16 * 1024 * 1024, "{} bytes", bytes.len());

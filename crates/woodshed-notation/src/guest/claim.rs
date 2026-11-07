@@ -12,7 +12,7 @@ use woodshedding::blocks;
 pub(super) const GROUP_BARS: &str = "group-bars";
 pub(super) const WRITE_NOTATION: &str = "write-notation";
 pub(super) const EXPORT_PLAINTEXT: &str = "export-plaintext";
-pub(super) const ARRANGEMENT_SCENE: &str = "arrangement-scene";
+pub(super) const ARRANGEMENT_SCENE: &str = "backdrop-scene";
 
 pub(super) const CLASS: &str = "progression";
 const EXAMPLE_BODY: &str = "Woodshed ii–V–I · structured arrangement\n";
@@ -57,7 +57,7 @@ pub(super) fn claim() -> Claim {
             ),
             command(
                 ARRANGEMENT_SCENE,
-                "Arrangement scene",
+                "Swatch scene",
                 CommandKind::Text,
                 None,
             ),

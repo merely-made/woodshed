@@ -89,7 +89,7 @@ fn describe_claims_progression_blocks() {
                 "Export bar-line plaintext",
                 CommandKind::Text
             ),
-            ("arrangement-scene", "Arrangement scene", CommandKind::Text),
+            ("backdrop-scene", "Swatch scene", CommandKind::Text),
         ]
     );
     let views: Vec<_> = claim
@@ -263,7 +263,7 @@ fn run_writes_notation_exports_plaintext_and_projects_the_arrangement() {
     assert!(text.contains("4/4 |") && text.contains(" r |"));
     let RunResult::Text(json) = Component::run(
         block(example_attrs()),
-        "arrangement-scene".into(),
+        "backdrop-scene".into(),
         "document#passage".into(),
     )
     .unwrap() else {
@@ -309,7 +309,7 @@ fn a_block_with_no_woodshed_source_is_refused_everywhere() {
     let refused = |e: String| assert!(e.contains("no structured Woodshed source"), "{e}");
     refused(Component::choices(plain.clone(), "group-bars".into()).unwrap_err());
     refused(Component::apply(plain.clone(), "group-bars".into(), vec![]).unwrap_err());
-    for command in ["write-notation", "export-plaintext", "arrangement-scene"] {
+    for command in ["write-notation", "export-plaintext", "backdrop-scene"] {
         refused(
             Component::run(plain.clone(), command.into(), "96".into())
                 .err()
