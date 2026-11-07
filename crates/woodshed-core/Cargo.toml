@@ -21,6 +21,7 @@ woodshed-graph = { workspace = true }
 # their typed relations; sceno owns placement, footprints, representation, and
 # routing. Sibling repo, like woodshed-graph's chartulary dep.
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+sceno-backdrops = { git = "https://github.com/merely-made/graphshell.git", branch = "main", optional = true }
 scenotime = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # Shared authored appearance definition in portable settings.
 tabard = { workspace = true }
@@ -53,7 +54,7 @@ serde_json = { workspace = true }
 tokio = { version = "1", features = ["macros", "rt"] }
 
 [features]
-portable-scenes = ["dep:scenomise", "dep:blake3"]
+portable-scenes = ["dep:scenomise", "dep:sceno-backdrops", "dep:blake3"]
 
 [[bin]]
 name = "woodshed-fretboard-scene"

@@ -9,6 +9,7 @@ publish = false
 audio-packs.workspace = true
 audio-pattern.workspace = true
 cambium.workspace = true
+sceno-backdrops.workspace = true
 scenomise.workspace = true
 
 [lints]

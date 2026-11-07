@@ -3,7 +3,8 @@
 use audio_packs::{PackEdit, PackSelection};
 use audio_pattern::{Sound, Step};
 use cambium::{AnyView, GenetCtx, GenetElement, button, el, text};
-use scenomise::{span_edit::SpanEdit, template::Span};
+use sceno_backdrops::template::Span;
+use scenomise::span_edit::SpanEdit;
 
 pub type Child<S> = Box<dyn AnyView<S, (), GenetCtx, GenetElement>>;
 #[derive(Clone, Debug)]
