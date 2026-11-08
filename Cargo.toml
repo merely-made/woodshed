@@ -43,7 +43,7 @@ rust-version = "1.97.1"
 
 [workspace.dependencies]
 incipit = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.2.2" }
-pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas"] }
+pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas", "physics-engine"] }
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 sceno-backdrops = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
