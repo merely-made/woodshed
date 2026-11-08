@@ -42,7 +42,7 @@ repository = "https://github.com/merely-made/woodshed"
 rust-version = "1.97.1"
 
 [workspace.dependencies]
-curation = { package = "mere-curation", git = "https://github.com/merely-made/mere.git", branch = "main" }
+incipit = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.2.2" }
 pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas"] }
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 sceno-backdrops = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
@@ -137,9 +137,9 @@ taproot = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # per-target manifest split, transitively. The genet stack is wgpu 30.
 wgpu = { version = "30", default-features = false, features = ["std"] }
 
-# Theming: pure OKLCH seed-to-palette derivation from the same Mere source
-# as the toolkit and shared appearance authoring.
-tinct = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+# Theming: pure OKLCH seed-to-palette derivation from Graphshell's contract
+# root (engine split D19), beside the toolkit and shared appearance authoring.
+tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # Shared theme authority and its reusable appearance-authoring surface.
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
@@ -173,7 +173,7 @@ serde_json = "1.0"
 # Castellan-client's native custody client over the custody
 # route (dramatis DR-C, D5) for the roster, a persona switch and the one
 # sealing key it needs. `personae` lends key types and sealing, `dramatis` the
-# roster's plain types, and `mere-persona-picker` the shared view over the
+# roster's plain types, and cambium's `persona_picker` the shared view over the
 # roster: the same question every Merely application asks, drawn the same way
 # everywhere. Declared here because woodshed-views draws the roster and
 # woodshed-genet acts on it. personae and dramatis live in merely-made/dramatis
@@ -183,7 +183,6 @@ dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main
 ostiary = { git = "https://github.com/merely-made/armillary.git", branch = "main", version = "0.0.1", default-features = false }
 castellan-client = { version = "0.0.2", git = "https://github.com/merely-made/dramatis.git", branch = "main", default-features = false, features = ["client"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-persona-picker = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 
 # Future:
 #   fundsp          — AP0-assessed supplier for later data-defined synth/effect packs;

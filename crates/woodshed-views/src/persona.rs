@@ -19,7 +19,7 @@
 //! want to say who they are.
 
 use cambium::{el, lens, map_action, text, CommandState};
-use persona_picker::{persona_picker_focused, picker_state, PickerEvent};
+use cambium::persona_picker::{persona_picker_focused, picker_state, PickerEvent};
 use dramatis::roster::Roster;
 
 use crate::stage::{UiChild, UiState};

@@ -113,10 +113,9 @@ paint_list_render = { git = "https://github.com/merely-made/netrender.git", bran
 # netrender's per-target split. Single wgpu 29 tree now the Masonry app
 # (wgpu 28) is retired.
 wgpu = { version = "30", default-features = false, features = ["std"] }
-# Pure OKLCH seed-to-palette theming (shared; woodshed's too). A Cambium
-# component, in mere since the 2026-09-03 boundary pass; the standalone mirror
-# repo retired with the 2026-07-23 consolidation.
-tinct = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.2.0" }
+# Pure OKLCH seed-to-palette theming (shared; woodshed's too). In Graphshell's
+# contract root since the 2026-11-07 engine split (D19).
+tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.2.0" }
 mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main", features = ["native-host"] }

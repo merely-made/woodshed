@@ -2,7 +2,7 @@
 //! Member stand-ins preserve source identity; neither owner facts nor layout seeds change.
 use super::{UiChild, UiState, overview};
 use cambium::{GraphCanvasSwatch, clickable, el, text};
-use curation::{FoldId, FoldRecord, FoldRule, FoldStandIn};
+use incipit::curation::{FoldId, FoldRecord, FoldRule, FoldStandIn};
 use std::collections::{BTreeMap, BTreeSet};
 use woodshed_core::session_overview::OverviewNodeId;
 

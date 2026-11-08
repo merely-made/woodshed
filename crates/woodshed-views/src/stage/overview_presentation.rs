@@ -30,7 +30,7 @@ pub struct OverviewPresentation {
     pub focus: Option<OverviewNodeId>,
     pub roles: Vec<(OverviewNodeId, String)>,
     pub background: Vec<OverviewNodeId>,
-    pub folds: Vec<curation::FoldRecord>,
+    pub folds: Vec<incipit::curation::FoldRecord>,
 }
 
 impl Default for OverviewPresentation {

@@ -17,7 +17,7 @@ tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "m
 timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
 cambium = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-tinct = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.

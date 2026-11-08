@@ -30,7 +30,9 @@ woodshed-core = { workspace = true }
 woodshedding = { workspace = true }
 woodshed-audio = { workspace = true }
 woodshed-views = { path = "../woodshed-views" }
-cambium = { workspace = true }
+# With the shared persona picker's event type (`cambium::persona_picker`); the
+# list itself is drawn in woodshed-views.
+cambium = { workspace = true, features = ["persona-picker"] }
 # The shared single-root Cambium desktop host (genet G1). It owns the winit
 # lifecycle, the surface, layout, paint, hit testing, input routing, and the
 # AccessKit sync woodshed used to assemble by hand — so the direct deps that
@@ -57,9 +59,6 @@ getrandom = "0.4"
 serde_json = { workspace = true }
 # Exclusive sibling temporary files for atomic media export publication.
 tempfile = "3"
-# The shared persona picker's event type. The list itself is drawn in
-# woodshed-views; this crate only reads what the user answered.
-persona-picker = { workspace = true }
 dramatis = { workspace = true }
 ostiary = { workspace = true }
 castellan-client = { workspace = true }

@@ -17,7 +17,7 @@
 use castellan_client::custody_client::BlockingCustodyClient;
 use dramatis::roster::Roster;
 use ostiary::app_admission::AppId;
-use persona_picker::PickerEvent;
+use cambium::persona_picker::PickerEvent;
 use woodshed_views::persona::{PendingSwitch, PersonaPick, PickPurpose, SwitchDecision};
 
 use crate::shared::Shared;
