@@ -54,7 +54,7 @@ sceno-backdrops = { workspace = true, optional = true }
 paint_list_api = { git = "https://github.com/merely-made/netrender.git", branch = "main", optional = true }
 ciborium = { workspace = true, optional = true }
 serde_json = { workspace = true, optional = true }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main", features = ["pack-signing"], optional = true }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main", default-features = false, features = ["pack-signing"], optional = true }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main", optional = true }
 
 [dev-dependencies]
@@ -62,7 +62,7 @@ serde_json.workspace = true
 # The conformance test loads the real pack through Mere's host: a guest above its host.
 graphshell = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["editable-blocks", "applets"] }
 graphshell-blocks = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main", features = ["pack-signing"] }
+eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main", default-features = false, features = ["pack-signing"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 cambium = { workspace = true }
 
