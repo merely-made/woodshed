@@ -5,7 +5,7 @@ edition="2024"
 publish=false
 [dependencies]
 woodshed-audio={path="@WOODSHED_ROOT@/crates/woodshed-audio"}
-firewheel={git="https://github.com/mark-ik/firewheel.git",rev="2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc",default-features=false,features=["std"]}
+firewheel={git="https://github.com/mark-ik/firewheel.git",branch="main",default-features=false,features=["std"]}
 audioadapter-buffers="5.2"
 serde_json="1"
 hound="=3.5.1"

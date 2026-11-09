@@ -121,8 +121,8 @@ woodshed-web = { path = "crates/woodshed-web" }
 # see validation/stack-family_20261011/pool-cohort-20261022.json.
 cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 sprigging = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
-genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.2" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.1" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.2" }
 mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 taproot = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # genet-layout, genet-winit-host, netrender, paint_list_api, paint_list_render,
@@ -146,7 +146,7 @@ tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "m
 
 # Audio
 cpal = "0.18"
-firewheel = { git = "https://github.com/mark-ik/firewheel.git", rev = "2b03846d2e0dcc6ded2a85367bb8c5071ae99cdc", default-features = false, features = ["std", "cpal"] }
+firewheel = { git = "https://github.com/mark-ik/firewheel.git", branch = "main", default-features = false, features = ["std", "cpal"] }
 rtrb = "0.3"
 audioadapter-buffers = "5.2"
 pitch-detector = { version = "0.3", features = ["hinted"] }
@@ -213,8 +213,8 @@ eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main" 
 muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 # Mirror the agreed Mere renderer source; git dependencies do not inherit patches.
 netrender_device = { git = "https://github.com/merely-made/netrender.git", branch = "main" }
-layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.1" }
-genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "=0.1.2" }
+layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.1" }
+genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.2" }
 # NO stylo/stylo_atoms patch (2026-07-12, mirroring genet's ring-3 rename):
 # the fork is now the RENAMED `genet-stylo` family, and a `[patch]` cannot
 # rename its target. Genet's crates git-dep genet-stylo by package rename, so
@@ -231,9 +231,9 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch 
 # The maintained renderer uses checked native shader compilation, initialized
 # workgroup memory, and validated fine command/segment spans. Cargo patches are
 # workspace-root authority: Mere's patch is not inherited by this application.
-netrender-vello = { git = "https://github.com/mark-ik/vello", rev = "dfb9b53b315561887761deff319afed08cc33ff0" }
-netrender-vello-encoding = { git = "https://github.com/mark-ik/vello", rev = "dfb9b53b315561887761deff319afed08cc33ff0" }
-netrender-vello-shaders = { git = "https://github.com/mark-ik/vello", rev = "dfb9b53b315561887761deff319afed08cc33ff0" }
+netrender-vello = { git = "https://github.com/mark-ik/vello", branch = "mark-ik/all-vellos" }
+netrender-vello-encoding = { git = "https://github.com/mark-ik/vello", branch = "mark-ik/all-vellos" }
+netrender-vello-shaders = { git = "https://github.com/mark-ik/vello", branch = "mark-ik/all-vellos" }
 
 # The app remains an ordinary debuggable dev build, but the retained UI and
 # renderer beneath it are runtime infrastructure. At opt-level 0 a headed
