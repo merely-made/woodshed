@@ -118,7 +118,7 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.2.0" }
 mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main", features = ["native-host"] }
+tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main", features = ["native-host"] }
 
 # Auto-update (2026-07-24 auto-update plan). Luggage is the family's update
 # pipeline (the cargo-packager-updater fork living in mere; ruled 2026-07-24):

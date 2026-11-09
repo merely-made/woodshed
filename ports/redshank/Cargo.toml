@@ -13,7 +13,7 @@ rust-version = "1.97.1"
 apparatus-core = { version = "0.1.0", git = "https://github.com/merely-made/armillary.git", branch = "main", default-features = false, features = ["serde"] }
 mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
 cambium = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main" }

@@ -142,7 +142,7 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # Shared theme authority and its reusable appearance-authoring surface.
 tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-tabard-workshop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 
 # Audio
 cpal = "0.18"
