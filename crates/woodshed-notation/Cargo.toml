@@ -59,12 +59,10 @@ personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main
 
 [dev-dependencies]
 serde_json.workspace = true
-# The conformance test loads the real pack through Mere's host: a guest above its host.
-graphshell = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["editable-blocks", "applets"] }
-graphshell-blocks = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+# The conformance test loads the real pack over the block-guest wire: a guest above its host.
+block-adapter = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["guest"] }
 eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main", default-features = false, features = ["pack-signing"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-cambium = { workspace = true }
 
 [lints]
 workspace = true
