@@ -92,17 +92,17 @@ winit = "0.30"
 # clean checkout (the Linux box), which is the only place it shows: a dev
 # machine's gitignored patch file redirects these to local checkouts that
 # git-dep netrender, unifying the graph by accident.
-cambium = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.6.0" }
-sprigging = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.3.0" }
+cambium = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.6.0" }
+sprigging = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.3.0" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.2" }
-cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.1.0" }
+cambium-desktop = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.1.0" }
 genet-clipboard = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # genet renamed genet-probe to taproot (7baa554c); the scenario driver follows
 # it at the revision Woodshed's own taproot row names.
 taproot = { git = "https://github.com/merely-made/genet.git", branch = "main" }
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.1.0" }
-workbench = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.1.0" }
+mere-surface-api = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.1.0" }
+workbench = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.1.0" }
 image = { version = "0.25", default-features = false, features = ["png"] }
 # Match Genet's immutable Netrender source identity. A branch reference here
 # creates a second `ExternalTexturePlacement` beside the host's renderer API.
@@ -116,8 +116,8 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 # Pure OKLCH seed-to-palette theming (shared; woodshed's too). In Graphshell's
 # contract root since the 2026-11-07 engine split (D19).
 tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.2.0" }
-mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+mandrake = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+tabard = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main", features = ["native-host"] }
 
 # Auto-update (2026-07-24 auto-update plan). Luggage is the family's update

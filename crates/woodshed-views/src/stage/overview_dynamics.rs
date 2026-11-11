@@ -4,7 +4,7 @@
 //! supplies motion and its advertised curation actions; neither edits a Set.
 use std::collections::BTreeMap;
 
-use pictograph::canvas::{
+use cartography::canvas::{
     AdvertisedAction, BoardItem, PhysicsBoard, PhysicsChoice, PhysicsLaw, Role,
 };
 use woodshed_core::session_overview::OverviewNodeId;
@@ -377,7 +377,7 @@ mod tests {
             !adapter
                 .actions(&node())
                 .iter()
-                .any(|a| a.intent.0 == pictograph::canvas::DRAG_INTENT)
+                .any(|a| a.intent.0 == cartography::canvas::DRAG_INTENT)
         );
     }
 

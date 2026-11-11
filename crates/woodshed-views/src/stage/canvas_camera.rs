@@ -1,18 +1,18 @@
 //! Pictograph's lifted canvas controls over Woodshed's Cambium graph canvases.
 //!
 //! The Graphshell stack lift (Mere P2) moved the camera commands, gestures and
-//! face measurement into `pictograph::canvas`, generic over a host camera.
+//! face measurement into `cartography::canvas`, generic over a host camera.
 //! Woodshed's session Overview, Related graph and relationship editor
 //! keep Cambium's [`GraphViewport`] as their camera; [`SurfaceCamera`] presents
 //! that viewport as a pictograph [`CameraView`] so the same commands drive it.
 //! Cameras are presentation only: no command here edits a Set or a mere.
 
 use cambium::{GraphCanvasSwatch, GraphViewport, WheelEvent, clickable, el, text};
-use pictograph::canvas::CameraView;
-use pictograph::canvas::camera_host::{CameraHost, FaceGeometry, FitHost, ScreenRect};
-use pictograph::canvas::controls::CanvasCommand;
-use pictograph::canvas::face_alignment::FaceAlignment;
-use pictograph::canvas::gestures::{PAN_GLIDE, WheelMode, WheelUse, wheel_use, wheel_zoom};
+use cartography::canvas::CameraView;
+use cartography::canvas::camera_host::{CameraHost, FaceGeometry, FitHost, ScreenRect};
+use cartography::canvas::controls::CanvasCommand;
+use cartography::canvas::face_alignment::FaceAlignment;
+use cartography::canvas::gestures::{PAN_GLIDE, WheelMode, WheelUse, wheel_use, wheel_zoom};
 use sprigging::Size;
 
 use super::{UiChild, UiState};

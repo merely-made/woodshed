@@ -42,12 +42,12 @@ repository = "https://github.com/merely-made/woodshed"
 rust-version = "1.97.1"
 
 [workspace.dependencies]
-incipit = { git = "https://github.com/merely-made/mere.git", branch = "main", version = "0.2.2" }
-pictograph = { git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false, features = ["canvas", "physics-engine"] }
+incipit = { git = "https://github.com/merely-made/graphshell.git", branch = "main", version = "0.2.2" }
+cartography = { package = "mere-cartography", git = "https://github.com/merely-made/graphshell.git", branch = "main", default-features = false, features = ["canvas", "physics-engine"] }
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 sceno-backdrops = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
-scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-scenomise = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+scenograph = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+scenomise = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # The guest-block contract (`block-guest` world) and the sheet a guest's view returns.
 graphshell-endpoint = { git = "https://github.com/merely-made/graphshell.git", branch = "main", default-features = false }
 vector-sheet = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
@@ -63,8 +63,8 @@ woodshedding = { path = "crates/woodshedding", version = "0.1.0" }
 woodshed-core = { path = "crates/woodshed-core", version = "0.1.0" }
 woodshed-audio = { path = "crates/woodshed-audio", version = "0.1.0" }
 woodshed-graph = { path = "crates/woodshed-graph", version = "0.1.0" }
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-workbench = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+mere-surface-api = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+workbench = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # Shared pure-DSP primitives (click synth, onset/tempo, latency) — the
 # `audio-primitives` extraction. Pure std; consumed by woodshed-audio
 # here and cross-repo by strophe-engine via path-dep.
@@ -105,9 +105,9 @@ winit = "0.30"
 #      `sprigging::PaintCmd` is not a `paint_list_api::PaintCmd`.
 #      `[patch.crates-io]` does not redirect a published crate's own registry
 #      dependency; taking all three from the source everything else uses does.
-cambium = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-cambium-rootstock = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-cambium-web = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+cambium-rootstock = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+cambium-web = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 woodshed-web = { path = "crates/woodshed-web" }
 # The single-root Cambium desktop host (genet G1, 2026-08-09). Woodshed was its
 # donor and is now its first consumer: the whole ApplicationHandler / SurfaceHost
@@ -119,11 +119,11 @@ woodshed-web = { path = "crates/woodshed-web" }
 # its paired Genet ea18315d source. Cargo-generated locks retain one source per
 # family. The synthesized-focus guard now lives in the shared Mere host;
 # see validation/stack-family_20261011/pool-cohort-20261022.json.
-cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-sprigging = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium-desktop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+sprigging = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 layout-dom-api = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.1" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main", version = "0.1.2" }
-mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+mandrake = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 taproot = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # genet-layout, genet-winit-host, netrender, paint_list_api, paint_list_render,
 # cambium-winit and cambium-winit-a11y are deliberately NOT declared here any
@@ -141,7 +141,7 @@ wgpu = { version = "30", default-features = false, features = ["std"] }
 # root (engine split D19), beside the toolkit and shared appearance authoring.
 tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # Shared theme authority and its reusable appearance-authoring surface.
-tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+tabard = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 
 # Audio

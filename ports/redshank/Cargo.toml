@@ -11,17 +11,17 @@ rust-version = "1.97.1"
 
 [workspace.dependencies]
 apparatus-core = { version = "0.1.0", git = "https://github.com/merely-made/armillary.git", branch = "main", default-features = false, features = ["serde"] }
-mandrake = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-tabard = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+mandrake = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+tabard = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 timed-text = { path = "../../crates/timed-text", version = "0.1.0" }
-cambium = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-cambium-desktop = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+cambium = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+cambium-desktop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 tinct = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 # The surface-descriptor half of a host's product-admission vocabulary. Same
 # Mere revision as cambium: the descriptor crosses the seam between Redshank
 # and an embedding host, so one revision or the types do not match themselves.
-mere-surface-api = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+mere-surface-api = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # Named genet-probe until genet 7baa554c (2026-09-14); same crate, new name.
 taproot = { git = "https://github.com/merely-made/genet.git", branch = "main" }
@@ -49,7 +49,7 @@ symphonia = { version = "0.5.5", default-features = false, features = ["aac", "i
 # The host's fetch handle: one HTTP policy (cookies, cache, HSTS, transport)
 # for streaming, downloads and feeds. Same Mere revision as cambium. Defaults
 # off: a listener takes the handle over netfetcher and none of the page actor.
-fetch = { package = "mere-fetch", git = "https://github.com/merely-made/mere.git", branch = "main", default-features = false }
+fetch = { package = "mere-fetch", git = "https://github.com/merely-made/graphshell.git", branch = "main", default-features = false }
 rfd = "0.17"
 errand = { version = "0.4.0", git = "https://github.com/merely-made/errand.git", branch = "main" }
 url = "2.5"

@@ -128,7 +128,7 @@ impl OverviewPresentation {
             .roles
             .into_iter()
             .take(MAX_ENTRIES)
-            .filter(|(_, role)| pictograph::canvas::Role::parse(role).is_some())
+            .filter(|(_, role)| cartography::canvas::Role::parse(role).is_some())
             .collect();
         Some(self)
     }

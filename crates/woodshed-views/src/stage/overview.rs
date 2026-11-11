@@ -7,7 +7,7 @@ use cambium::{
     GraphCanvasEvent, GraphCanvasInput, GraphCanvasNode, GraphCanvasRelation, GraphCanvasSubgraph,
     GraphCanvasSwatch, clickable, el, graph_canvas_with_wheel, map_state, text, text_field,
 };
-use pictograph::canvas::controls::CanvasCommand;
+use cartography::canvas::controls::CanvasCommand;
 use std::collections::BTreeMap;
 use woodshed_core::retained_sets::SavedSetId;
 use woodshed_core::session_overview::{
@@ -366,7 +366,7 @@ impl UiState {
             &items,
             self.overview_motion,
             self.overview_reduced_motion,
-            pictograph::canvas::PhysicsLaw::Springs.id(),
+            cartography::canvas::PhysicsLaw::Springs.id(),
             &self
                 .overview_roles
                 .iter()

@@ -21,8 +21,8 @@ ostiary = { git = "https://github.com/merely-made/armillary.git", branch = "main
 castellan-client = { git = "https://github.com/merely-made/dramatis.git", branch = "main", version = "0.0.2", default-features = false, features = ["client"] }
 sceno = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 directories = "5"
-scenograph = { git = "https://github.com/merely-made/mere.git", branch = "main" }
-scenomise = { git = "https://github.com/merely-made/mere.git", branch = "main" }
+scenograph = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
+scenomise = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 serde_json = "1"
 serde = { version = "1", features = ["derive"] }
 blake3 = "1"
