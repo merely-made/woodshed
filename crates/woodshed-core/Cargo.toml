@@ -39,7 +39,7 @@ async-trait = "0.1"
 # muniment's Backend is async so a browser can await OPFS; woodshed's save path
 # is the sync event loop, and a filesystem backend returns ready futures, so
 # driving them to completion costs a poll.
-pollster = "0.4"
+pollster = "1"
 # The lineage model the practice history is stored as (adopted 2026-07-26):
 # dated, branching engagements over stable catalog ids, with per-subject recency
 # and frequency maintained upstream. Already in the workspace through

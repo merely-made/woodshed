@@ -23,7 +23,7 @@ serde.workspace = true
 ciborium.workspace = true
 
 [dev-dependencies]
-pollster = "0.4"
+pollster = "1"
 tempfile = "3"
 
 [lints]

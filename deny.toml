@@ -1,0 +1,69 @@
+# cargo-deny configuration for woodshed.
+#
+#   cargo deny check bans
+#
+# Two versions of one crate in a build are a defect: move the older version's
+# holder forward. Each skip below is a duplicate that cannot be removed from
+# here yet, with the holder that keeps it and what would remove it.
+
+[graph]
+all-features = true
+
+[bans]
+multiple-versions = "deny"
+wildcards = "allow"
+skip = [
+  { crate = "approx@0.3.2", reason = "fitting 0.3.0, ndarray 0.13.1 require it; ndarray 0.13 via fitting 0.3 under pitch-detector 0.3.1 (latest, woodshed-audio); goes when pitch-detector moves to fitting 0.5" },
+  { crate = "base64@0.22.1", reason = "chirograph 0.0.5 (graphshell), ostiary 0.0.1 (armillary), wasmtime-internal-cache 45.0.3 require it; chirograph 0.0.5 (graphshell), ostiary (armillary) and wasmtime 45 (graphshell's block-host) hold it; goes when they move to base64 0.23" },
+  { crate = "bitflags@1.3.2", reason = "core-graphics 0.23.2, core-graphics-types 0.1.3, png 0.17.16, redox_syscall 0.4.1 require it; winit 0.30.13 (via cambium-desktop, graphshell; 0.31 is a beta) through core-graphics 0.23 and redox_syscall 0.4, and png 0.17 (graphshell's mandrake) hold it; goes when winit 0.31 releases and mandrake moves to png 0.18" },
+  { crate = "block2@0.5.1", reason = "objc2-foundation 0.2.2, winit 0.30.13 require it; winit 0.30.13 (cambium-desktop, graphshell) holds it; goes with winit 0.31" },
+  { crate = "core-foundation@0.9.4", reason = "core-graphics 0.23.2, core-graphics-types 0.1.3, winit 0.30.13 require it; winit 0.30.13 and core-graphics 0.23 hold it; goes with winit 0.31" },
+  { crate = "downcast-rs@1.2.1", reason = "wayland-backend 0.3.17 requires it; wayland-backend 0.3.17 under winit 0.30 holds it; goes when wayland-backend moves to downcast-rs 2" },
+  { crate = "foldhash@0.1.5", reason = "hashbrown 0.15.5 requires it; hashbrown 0.15 under petgraph 0.8.3 (latest) holds it; goes with hashbrown 0.17" },
+  { crate = "getrandom@0.2.17", reason = "rand_core 0.6.4, redox_users 0.4.6 require it; rand_core 0.6 (armillary's ostiary) and redox_users 0.4 (dirs-sys-next under wasmtime 45) hold it; goes when they move to getrandom 0.4" },
+  { crate = "getrandom@0.3.4", reason = "ahash 0.8.12, pandect 0.2.0 (mere), woodshed-web 0.0.1 require it; pandect (mere) and ahash 0.8 hold it; woodshed-web's 0.3 row only turns on wasm_js for that copy; goes when pandect moves to getrandom 0.4, then that row goes too" },
+  { crate = "hashbrown@0.15.5", reason = "petgraph 0.8.3 requires it; goes when petgraph 0.8.3 (latest) moves to hashbrown 0.17" },
+  { crate = "hashbrown@0.16.1", reason = "bevy_platform 0.19.1, gimli 0.33.0, gpu-allocator 0.28.0, regress 0.11.1 (genet) and others require it; bevy_platform 0.19, gimli 0.33 (wasmtime 45), gpu-allocator 0.28, spade and genet's regress hold it; goes when they move to hashbrown 0.17" },
+  { crate = "jni@0.21.1", reason = "jni-min-helper 0.3.4, midir 0.11.1 require it; midir 0.11.1 (latest, woodshed-instrument) via jni-min-helper holds it; goes when midir moves to jni 0.22" },
+  { crate = "jni-sys@0.3.1", reason = "jni 0.21.1, ndk 0.9.0, ndk-sys 0.6.0+11769913 require it; jni 0.21 (midir) and ndk 0.9 hold it; goes with jni 0.22" },
+  { crate = "libloading@0.7.4", reason = "jni 0.21.1 requires it; jni 0.21 under midir 0.11.1 holds it; goes with jni 0.22" },
+  { crate = "linux-raw-sys@0.4.15", reason = "rustix 0.38.44 requires it; rustix 0.38 (winit 0.30, wasmtime 45) holds it; goes with rustix 1" },
+  { crate = "matrixmultiply@0.2.4", reason = "ndarray 0.13.1 requires it; ndarray 0.13 via fitting 0.3 under pitch-detector 0.3.1 (latest); goes when pitch-detector moves to fitting 0.5" },
+  { crate = "miniz_oxide@0.8.9", reason = "png 0.17.16, png 0.18.1 require it; png 0.17 (graphshell's mandrake) and png 0.18 hold it; goes when png moves to miniz_oxide 0.9" },
+  { crate = "num-complex@0.2.4", reason = "ndarray 0.13.1 requires it; ndarray 0.13 via fitting 0.3 under pitch-detector 0.3.1 (latest); goes when pitch-detector moves to fitting 0.5" },
+  { crate = "num-derive@0.4.2", reason = "bluer 0.17.4, cpal 0.18.2 require it; the vendored bluer 0.17.4 (latest) and cpal 0.18.2 (latest) hold it; goes when both move to num-derive 0.5" },
+  { crate = "objc2@0.5.3", reason = "accesskit_macos 0.27.1, ble-peripheral-rust 0.2.0, block2 0.5.1, objc2-app-kit 0.2.2 and others require it; winit 0.30.13, accesskit_macos 0.27 (genet-winit) and the vendored ble-peripheral-rust 0.2.0 hold it; goes when winit 0.31 releases, accesskit_macos moves to objc2 0.6 and the vendored BLE peripheral follows" },
+  { crate = "objc2-app-kit@0.2.2", reason = "accesskit_macos 0.27.1, winit 0.30.13 require it; winit 0.30.13 and accesskit_macos 0.27 (genet-winit) hold it; goes with winit 0.31" },
+  { crate = "objc2-foundation@0.2.2", reason = "accesskit_macos 0.27.1, ble-peripheral-rust 0.2.0, objc2-app-kit 0.2.2, objc2-core-bluetooth 0.2.2 and others require it; winit 0.30.13, accesskit_macos 0.27 and the vendored ble-peripheral-rust hold it; goes with winit 0.31 and objc2 0.6" },
+  { crate = "png@0.17.16", reason = "mandrake 0.1.0 (graphshell) requires it; goes when graphshell moves mandrake to png 0.18" },
+  { crate = "r-efi@5.3.0", reason = "getrandom 0.3.4 requires it; getrandom 0.3 (pandect, ahash) holds it; goes with getrandom 0.4" },
+  { crate = "rand_core@0.6.4", reason = "ostiary 0.0.1 (armillary) requires it; goes when armillary moves ostiary off rand_core 0.6" },
+  { crate = "redox_syscall@0.4.1", reason = "winit 0.30.13 requires it; winit 0.30.13 (cambium-desktop, graphshell) holds it; goes with winit 0.31" },
+  { crate = "redox_syscall@0.5.18", reason = "parking_lot_core 0.9.12 requires it; parking_lot_core 0.9.12 (latest) holds it; goes when parking_lot_core moves on" },
+  { crate = "rustix@0.38.44", reason = "calloop 0.13.0, calloop-wayland-source 0.3.0, smithay-client-toolkit 0.19.2, winit 0.30.13 require it; winit 0.30.13 (calloop, smithay-client-toolkit) and wasmtime 45's cap-std crates hold it; goes with winit 0.31 and a wasmtime on rustix 1" },
+  { crate = "serde_spanned@0.6.9", reason = "toml 0.8.23, toml_edit 0.22.27 require it; toml 0.8 and toml_edit 0.22 (system-deps under gtk-sys) hold it; goes with system-deps 7" },
+  { crate = "spin@0.9.9", reason = "heapless 0.7.17 requires it; heapless 0.7 under postcard holds it; goes when postcard moves to heapless 0.8+" },
+  { crate = "strum@0.26.3", reason = "bluer 0.17.4 requires it; the vendored bluer 0.17.4 (latest, Linux BLE) holds it; goes with a bluer on strum 0.28, or a bump in vendor/ checked on Linux" },
+  { crate = "strum_macros@0.26.4", reason = "strum 0.26.3 requires it; strum 0.26 in the vendored bluer holds it; goes with strum 0.28" },
+  { crate = "syn@2.0.119", reason = "bevy_macro_utils 0.19.1, curve25519-dalek-derive 0.1.1, custom_debug_derive 0.6.2, darling_core 0.20.11 and others require it; most proc-macros still on syn 2; goes as they move to syn 3" },
+  { crate = "synstructure@0.13.2", reason = "custom_debug_derive 0.6.2 requires it; custom_debug_derive 0.6.2 in the vendored bluer holds it; goes when custom_debug moves to synstructure 0.14" },
+  { crate = "thiserror@1.0.69", reason = "calloop 0.13.0, fitting 0.3.0, jni 0.21.1, ndk 0.9.0 and others require it; fitting 0.3 (pitch-detector), jni 0.21 and ndk 0.9 (midir), calloop and smithay-client-toolkit (winit 0.30), witx (wasmtime 45) and ostiary (armillary) hold it; goes as each moves to thiserror 2" },
+  { crate = "thiserror-impl@1.0.69", reason = "thiserror 1.0.69 requires it; thiserror 1.0.69 holds it; goes with thiserror 2" },
+  { crate = "toml@0.8.23", reason = "system-deps 6.2.2 requires it; system-deps 6.2.2 under gtk-sys 0.18 (rfd 0.17.2, woodshed-genet) holds it; goes when the gtk-rs 0.18 sys crates move to system-deps 7" },
+  { crate = "toml_datetime@0.6.11", reason = "toml 0.8.23, toml_edit 0.22.27 require it; toml 0.8 (system-deps, gtk-sys) holds it; goes with system-deps 7" },
+  { crate = "toml_datetime@0.7.5+spec-1.1.0", reason = "toml_edit 0.23.10+spec-1.0.0, toml 0.9.12+spec-1.1.0 require it; toml 0.9 (wasmtime 45) and toml_edit 0.23 (firewheel-macros, mark-ik/firewheel) hold it; goes when both move on" },
+  { crate = "toml_edit@0.22.27", reason = "toml 0.8.23 requires it; toml 0.8 (system-deps under gtk-sys) holds it; goes with system-deps 7" },
+  { crate = "toml_edit@0.23.10+spec-1.0.0", reason = "firewheel-macros 0.14.0 (mark-ik/firewheel) requires it; firewheel-macros 0.14 (mark-ik/firewheel) holds it; goes when the firewheel fork moves to toml_edit 0.25" },
+  { crate = "windows-sys@0.45.0", reason = "jni 0.21.1 requires it; jni 0.21 under midir 0.11.1 holds it; goes with jni 0.22" },
+  { crate = "windows-sys@0.52.0", reason = "winit 0.30.13, android-build 0.1.4 require it; winit 0.30.13 and android-build 0.1.4 (midir) hold it; goes with winit 0.31" },
+  { crate = "windows-sys@0.59.0", reason = "cap-fs-ext 3.4.6, cap-primitives 3.4.6, fs-set-times 0.20.3, io-extras 0.18.4 and others require it; wasmtime 45's cap-std crates and rustix 0.38 hold it; goes when graphshell's block-host moves to a wasmtime on windows-sys 0.61" },
+  { crate = "windows-targets@0.42.2", reason = "windows-sys 0.45.0 requires it; windows-sys 0.45 under jni 0.21 (midir) holds it; goes with jni 0.22" },
+  { crate = "windows_aarch64_gnullvm@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "windows_aarch64_msvc@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "windows_i686_gnu@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "windows_i686_msvc@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "windows_x86_64_gnu@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "windows_x86_64_gnullvm@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "windows_x86_64_msvc@0.42.2", reason = "windows-targets 0.42.2 requires it; windows-targets 0.42 under jni 0.21 (midir); goes with jni 0.22" },
+  { crate = "winnow@0.7.15", reason = "toml 0.9.12+spec-1.1.0, toml_edit 0.22.27, toml_edit 0.23.10+spec-1.0.0 require it; toml 0.9 (wasmtime 45) and toml_edit 0.22/0.23 (system-deps, firewheel-macros) hold it; goes when they move to winnow 1" },
+]

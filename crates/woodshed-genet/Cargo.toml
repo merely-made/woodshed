@@ -25,7 +25,7 @@ muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main"
 # workspace since P1, because woodshed-views names the `Roster` too.
 personae = { workspace = true }
 async-trait = "0.1"
-pollster = "0.4"
+pollster = "1"
 woodshed-core = { workspace = true }
 woodshedding = { workspace = true }
 woodshed-audio = { workspace = true }
@@ -54,7 +54,7 @@ taproot = { workspace = true }
 mandrake = { workspace = true }
 # Window types used by the native chrome hooks. Mesquite owns GPU readback.
 winit = { workspace = true }
-directories = "5"
+directories = "6"
 getrandom = "0.4"
 serde_json = { workspace = true }
 # Exclusive sibling temporary files for atomic media export publication.
