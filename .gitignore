@@ -29,3 +29,5 @@ __pycache__/
 
 # The block guest's WIT world, copied from graphshell-endpoint by woodshed-notation's build script.
 /crates/woodshed-notation/wit/
+# Not tracked: what cargo resolved is a git note on each commit (scripts/record-resolved.sh).
+Cargo.lock
