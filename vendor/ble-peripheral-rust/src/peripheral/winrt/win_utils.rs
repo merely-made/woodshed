@@ -5,21 +5,20 @@ use windows::{
     Devices::Bluetooth::GenericAttributeProfile::{
         GattLocalCharacteristic, GattServiceProvider, GattSession,
     },
-    Foundation::EventRegistrationToken,
     Storage::Streams::{DataReader, DataWriter, IBuffer, InMemoryRandomAccessStream},
     core::GUID,
 };
 
 pub struct GattCharacteristicObject {
     pub obj: GattLocalCharacteristic,
-    pub subscribed_clients_token: EventRegistrationToken,
-    pub read_requested_token: EventRegistrationToken,
-    pub write_requested_token: EventRegistrationToken,
+    pub subscribed_clients_token: i64,
+    pub read_requested_token: i64,
+    pub write_requested_token: i64,
 }
 
 pub struct GattServiceProviderObject {
     pub obj: GattServiceProvider,
-    pub advertisement_status_changed_token: EventRegistrationToken,
+    pub advertisement_status_changed_token: i64,
     pub characteristics: HashMap<Uuid, GattCharacteristicObject>,
 }
 

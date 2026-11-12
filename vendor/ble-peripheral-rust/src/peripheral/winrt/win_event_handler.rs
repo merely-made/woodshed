@@ -55,7 +55,7 @@ impl WinEventHandler {
         let sender_tx: Sender<PeripheralEvent> = self.sender_tx.clone();
 
         return TypedEventHandler::new(
-            move |originator: &Option<Radio>, _: &Option<IInspectable>| {
+            move |originator: windows::core::Ref<'_, Radio>, _: windows::core::Ref<'_, IInspectable>| {
                 let radio = originator
                     .as_ref()
                     .ok_or_else(windows::core::Error::empty)?;
@@ -74,7 +74,7 @@ impl WinEventHandler {
         GattServiceProvider,
         GattServiceProviderAdvertisementStatusChangedEventArgs,
     > {
-        TypedEventHandler::new(move |originator: &Option<GattServiceProvider>, args: &Option<GattServiceProviderAdvertisementStatusChangedEventArgs>| {
+        TypedEventHandler::new(move |originator: windows::core::Ref<'_, GattServiceProvider>, args: windows::core::Ref<'_, GattServiceProviderAdvertisementStatusChangedEventArgs>| {
             let service = originator.as_ref().ok_or_else(windows::core::Error::empty)?;
             let event_args = args.as_ref().ok_or_else(windows::core::Error::empty)?;
             let status = event_args.Status()?;
@@ -108,7 +108,7 @@ impl WinEventHandler {
         let peers = self.connected_clients.clone();
         let generation = self.generation.clone();
         let sender = self.sender_tx.clone();
-        TypedEventHandler::new(move |originator: &Option<GattLocalCharacteristic>, _| {
+        TypedEventHandler::new(move |originator: windows::core::Ref<'_, GattLocalCharacteristic>, _| {
             let characteristic = originator
                 .as_ref()
                 .ok_or_else(windows::core::Error::empty)?;
@@ -163,8 +163,8 @@ impl WinEventHandler {
         let sender = self.sender_tx.clone();
         let runtime = self.runtime.clone();
         TypedEventHandler::new(
-            move |origin: &Option<GattLocalCharacteristic>,
-                  args: &Option<GattReadRequestedEventArgs>| {
+            move |origin: windows::core::Ref<'_, GattLocalCharacteristic>,
+                  args: windows::core::Ref<'_, GattReadRequestedEventArgs>| {
                 let characteristic = origin
                     .as_ref()
                     .ok_or_else(windows::core::Error::empty)?
@@ -227,8 +227,8 @@ impl WinEventHandler {
         let sender = self.sender_tx.clone();
         let runtime = self.runtime.clone();
         TypedEventHandler::new(
-            move |origin: &Option<GattLocalCharacteristic>,
-                  args: &Option<GattWriteRequestedEventArgs>| {
+            move |origin: windows::core::Ref<'_, GattLocalCharacteristic>,
+                  args: windows::core::Ref<'_, GattWriteRequestedEventArgs>| {
                 let characteristic = origin
                     .as_ref()
                     .ok_or_else(windows::core::Error::empty)?

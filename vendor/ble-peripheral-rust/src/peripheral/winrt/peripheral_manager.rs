@@ -14,12 +14,11 @@ use windows::Devices::Bluetooth::GenericAttributeProfile::{
 };
 use windows::Devices::Bluetooth::{BluetoothAdapter, BluetoothError};
 use windows::Devices::Radios::{Radio, RadioKind};
-use windows::Foundation::EventRegistrationToken;
 use windows::core::{Error, HRESULT};
 
 pub(crate) struct PeripheralManager {
     event_handler: WinEventHandler,
-    radios: Vec<(Radio, EventRegistrationToken)>,
+    radios: Vec<(Radio, i64)>,
     services: HashMap<Uuid, GattServiceProviderObject>,
 }
 
@@ -185,9 +184,9 @@ impl PeripheralManager {
                 descriptor_result.Descriptor()?;
             }
 
-            let read_token: Result<EventRegistrationToken, Error> = win_characteristic
+            let read_token: Result<i64, Error> = win_characteristic
                 .ReadRequested(&self.event_handler.create_read_handler(service.uuid));
-            let write_token: Result<EventRegistrationToken, Error> = win_characteristic
+            let write_token: Result<i64, Error> = win_characteristic
                 .WriteRequested(&self.event_handler.create_write_handler(service.uuid));
             let subscribed_clients_token = win_characteristic.SubscribedClientsChanged(
                 &self.event_handler.create_subscribe_handler(service.uuid),
