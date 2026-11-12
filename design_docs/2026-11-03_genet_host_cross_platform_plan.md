@@ -20,6 +20,18 @@ Mobile shell is downstream of web deployment, not scheduled by this plan. Stroph
 
 No fresh build, test, headed, audio or hardware gate was run for this successor. Recheck open work against current source before implementation.
 
+### Dependency relock: crates still locked at several versions (2026-11-12)
+
+Finding, 2026-11-12. The root `Cargo.lock` was relocked onto Mere f4aef3e68's successor (mere 52d740f8) with one scoped `cargo update` naming every package held from a family repository (mere, graphshell, dramatis, eidetic, murm, genet, wgpu-graft, distillery, inker, armillary, emblem, netrender, seiche, wavicle, wgpu-cue, firewheel); every one ends at a single commit. After it, 72 crates are locked at more than one version. Three are listed here with the packages that hold each version: the family-held `getrandom` 0.3 first (pandect, personae, sporran, woodshed-web), then `windows-sys` and `libloading`, which the relock moved edges between.
+
+The lock builds (`cargo check --locked --all-targets` on the workspace and on `validation/relationship-recipe`, Windows, including wgpu-hal's dx12 path) and passes the prek hooks (`cargo clippy --locked --all-targets`), so none of these is a conflict under D137. They are duplicates to clear when their holders move to a common version; nothing here blocks.
+
+- **getrandom**: `0.2.17` (rand_core, redox_users); `0.3.4` (ahash, pandect, personae, rand_core, sporran, woodshed-web); `0.4.3` (crypto-common, inker, jobserver, personae, rand, tempfile, uuid, uuid-rng-internal, woodshed-genet, woodshed-web)
+- **windows-sys**: `0.45.0` (jni); `0.48.0` (dirs-sys); `0.52.0` (android-build, winit); `0.59.0` (cap-fs-ext, cap-primitives, fs-set-times, io-extras, rustix, winx); `0.61.2` (async-io, async-signal, bevy_platform, cambium-desktop, dbus, dlopen2, errno, light-file-dialog, mio, polling, rfd, rustix, socket2, stacker, tempfile, tokio, uds_windows, wasmtime, wasmtime-internal-cache, wasmtime-internal-fiber, wasmtime-internal-jit-icache-coherence, wasmtime-wasi, winapi-util, zbus)
+- **libloading**: `0.7.4` (dlib, jni); `0.8.9` (ash, khronos-egl, wgpu-hal, x11rb)
+
+69 more crates are locked at several versions; the full list with holders is in `Code/testing/engine-split/p4/woodshed_duplicates_2026-11-12.md`.
+
 ## Closure carry-forward check (2026-11-03)
 
 Completed Cambium desktop-host migration does not close desktop matrix, accessibility, narrow layout, web or mobile gates. Preservation D1 supersedes the historical settings split; do not reinstate singleton paths or plaintext migration from that historical record. Original Closure carry-forward.
