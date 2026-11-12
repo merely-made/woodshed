@@ -83,12 +83,6 @@ muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main"
 # Dependency workspaces do not propagate patches. Keep the renderer and both
 # shader packages on the published Classic 0.11/wgpu-30 provider.
 
-[patch."https://github.com/merely-made/mere.git"]
-chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-eidetic = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-errand = { git = "https://github.com/merely-made/errand.git", branch = "main" }
-muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
-
 # Keep the actor and apparatus-core on one published Armillary source identity
 # when older Git suppliers refer to its www.github.com URL.
 [workspace.lints.clippy]
