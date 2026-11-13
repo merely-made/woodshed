@@ -14,7 +14,6 @@ multiple-versions = "deny"
 wildcards = "allow"
 skip = [
   { crate = "approx@0.3.2", reason = "fitting 0.3.0, ndarray 0.13.1 require it; ndarray 0.13 via fitting 0.3 under pitch-detector 0.3.1 (latest, woodshed-audio); goes when pitch-detector moves to fitting 0.5" },
-  { crate = "base64@0.22.1", reason = "chirograph 0.0.5 (graphshell), ostiary 0.0.1 (armillary), wasmtime-internal-cache 45.0.3 require it; chirograph 0.0.5 (graphshell), ostiary (armillary) and wasmtime 45 (graphshell's block-host) hold it; goes when they move to base64 0.23" },
   { crate = "bitflags@1.3.2", reason = "core-graphics 0.23.2, core-graphics-types 0.1.3, png 0.17.16, redox_syscall 0.4.1 require it; winit 0.30.13 (via cambium-desktop, graphshell; 0.31 is a beta) through core-graphics 0.23 and redox_syscall 0.4, and png 0.17 (graphshell's mandrake) hold it; goes when winit 0.31 releases and mandrake moves to png 0.18" },
   { crate = "block2@0.5.1", reason = "objc2-foundation 0.2.2, winit 0.30.13 require it; winit 0.30.13 (cambium-desktop, graphshell) holds it; goes with winit 0.31" },
   { crate = "core-foundation@0.9.4", reason = "core-graphics 0.23.2, core-graphics-types 0.1.3, winit 0.30.13 require it; winit 0.30.13 and core-graphics 0.23 hold it; goes with winit 0.31" },
