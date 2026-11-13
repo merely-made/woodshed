@@ -24,7 +24,7 @@
 use std::collections::{BTreeSet, HashMap};
 use std::sync::OnceLock;
 
-use chartulary::{Author, Container, GraphLog, LogId, Relation, RelationClass};
+use portolan::{Author, Container, GraphLog, LogId, Relation, RelationClass};
 use woodshedding::{chord, exercise, progression, scale};
 
 /// woodshed's app-private relation family name.

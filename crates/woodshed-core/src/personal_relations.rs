@@ -12,9 +12,9 @@
 
 use std::fmt;
 
-pub use chartulary::{AssertionBasis, Author, EdgeId, Relation, RelationClass};
-use chartulary::{AssertionRecord, Batch, CommitError, Container, EditSpec, GraphLog};
 use muniment::Journal;
+pub use portolan::{AssertionBasis, Author, EdgeId, Relation, RelationClass};
+use portolan::{AssertionRecord, Batch, CommitError, Container, EditSpec, GraphLog};
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error as DeError};
 
 /// Stable identity of the personal assertion source owned by one persisted
@@ -335,7 +335,7 @@ fn commit_error(error: CommitError<String>) -> PersonalRelationError {
 
 #[cfg(test)]
 mod tests {
-    use chartulary::{AssertionMethod, RelationClass};
+    use portolan::{AssertionMethod, RelationClass};
 
     use super::*;
 

@@ -44,7 +44,8 @@ pollster = "1"
 # dated, branching engagements over stable catalog ids, with per-subject recency
 # and frequency maintained upstream. Already in the workspace through
 # woodshed-graph's catalog graph; the same sibling-repo git dep.
-chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+hodograph = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+portolan = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 hex = "0.4"
 # Portable lossless companion storage; no audio driver or device dependency.
 wavicle = { git = "https://github.com/merely-made/wavicle.git", branch = "main", default-features = false, features = ["encode", "decode"] }

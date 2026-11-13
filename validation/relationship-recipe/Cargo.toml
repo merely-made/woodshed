@@ -37,7 +37,12 @@ ostiary = { version = "0.0.1", git = "https://github.com/merely-made/armillary.g
 document-session-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # Promoted sources shared with immutable older Mere suppliers.
 # Canonical promoted families; keep registry and Git consumers type-identical.
+# Registry eidetic 0.0.3 still names chartulary; this keeps it on the git shim.
 chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+fieldbook = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+hodograph = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+portolan = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+quadstore = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 muniment = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 
 # Shared view and graph tests use the same provider as the production host.

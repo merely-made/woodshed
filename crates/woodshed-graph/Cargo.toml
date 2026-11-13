@@ -7,15 +7,19 @@ rust-version = "1.97.1"
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "woodshed's real theory catalog (scales, chords, progressions, exercises) related as a content-addressed container graph over chartulary, with practice lineage over `chartulary::stemma`. The chartulary substrate's first real consumer (G3), proving the stack end to end on woodshed's existing data."
-keywords = ["knowledge-graph", "music-theory", "chartulary", "woodshed"]
+description = "woodshed's real theory catalog (scales, chords, progressions, exercises) related as a content-addressed container graph over portolan, with practice lineage over `hodograph`. The portolan substrate's first real consumer (G3), proving the stack end to end on woodshed's existing data."
+keywords = ["knowledge-graph", "music-theory", "portolan", "woodshed"]
 categories = ["data-structures"]
 
 [dependencies]
-# The chartulary substrate lives in sibling repos alongside woodshed.
-chartulary = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
+# The portolan substrate lives in sibling repos alongside woodshed.
+portolan = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 # woodshed's own theory-catalog crate, now a workspace sibling.
 woodshedding = { workspace = true }
+
+[dev-dependencies]
+# Practice lineage in the tests.
+hodograph = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 
 [lints]
 workspace = true

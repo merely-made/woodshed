@@ -96,7 +96,7 @@ fn a_user_forks_the_catalog_to_add_a_personal_chord() {
 #[test]
 fn the_catalog_projects_names_but_keeps_private_relations_private() {
     let graph = build_catalog_graph("woodshed:catalog");
-    let quads = chartulary::rdf::to_quads(graph.graph());
+    let quads = portolan::rdf::to_quads(graph.graph());
 
     // woodshed's relations (Contains, FitsInScale) are its private family, so
     // every projected triple is a curated literal; not one music relation
@@ -104,18 +104,18 @@ fn the_catalog_projects_names_but_keeps_private_relations_private() {
     assert!(
         quads
             .iter()
-            .all(|q| q.predicate == chartulary::rdf::SCHEMA_NAME
-                || q.predicate == chartulary::rdf::SCHEMA_KEYWORDS),
+            .all(|q| q.predicate == portolan::rdf::SCHEMA_NAME
+                || q.predicate == portolan::rdf::SCHEMA_KEYWORDS),
         "only schema.org literals project; the app ring stays private"
     );
     // A known chord's title reaches RDF as schema:name.
-    assert!(quads.iter().any(|q| q.predicate == chartulary::rdf::SCHEMA_NAME
-        && matches!(&q.object, chartulary::rdf::Term::Literal { value, .. } if value == "Major 7")));
+    assert!(quads.iter().any(|q| q.predicate == portolan::rdf::SCHEMA_NAME
+        && matches!(&q.object, portolan::rdf::Term::Literal { value, .. } if value == "Major 7")));
 }
 
 #[test]
 fn a_practice_session_records_lineage_over_the_same_node_ids() {
-    use chartulary::stemma::{EntryPrivacy, Stemma, TransitionKind};
+    use hodograph::{EntryPrivacy, Stemma, TransitionKind};
 
     // The lineage is keyed by the SAME identities as the chartulary graph, so
     // the two layers integrate by shared id, not by coupling. The consumer

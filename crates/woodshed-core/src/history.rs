@@ -2,7 +2,7 @@
 //!
 //! **Adopted stemma 2026-07-26.** This was a hand-rolled event log until the
 //! strength model came up and the investigation found woodshed already depended
-//! on a better one: `chartulary::stemma` maintains per-subject
+//! on a better one: `hodograph` maintains per-subject
 //! `first_seen_at_ms` / `last_seen_at_ms` / `visit_count`, and aggregates
 //! per-pair traversals with their own recency — exactly the inputs a decayed,
 //! recency-weighted strength model needs, and exactly what the local log did not
@@ -28,7 +28,7 @@
 //!   written before woodshed kept time) records `at_ms = 0` with
 //!   `dated: false`. A reader must never read that as 1970.
 
-use chartulary::stemma::{EntryPrivacy, Stemma, TransitionKind};
+use hodograph::{EntryPrivacy, Stemma, TransitionKind};
 use serde::de::Deserializer;
 use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
@@ -387,7 +387,7 @@ impl PracticeHistory {
     }
 }
 
-type HistorySnapshot = chartulary::stemma::StemmaSnapshot<String, (), String, Engagement>;
+type HistorySnapshot = hodograph::StemmaSnapshot<String, (), String, Engagement>;
 
 /// Durable-input guard for the locked supplier's trusted, infallible
 /// `from_snapshot` (Eidetic 738ef159). That revision has no checked reconstruction
