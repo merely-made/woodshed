@@ -1,7 +1,6 @@
 [workspace]
 resolver = "3"
 members = ["cache", "desktop", "feed", "model", "storage", "surfaces", "playback", "web"]
-exclude = ["spikes/playback"]
 
 [workspace.package]
 edition = "2024"

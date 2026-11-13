@@ -45,10 +45,10 @@ blob; it is not a content address and no receipt should read it as one.
 ## The range server
 
 `remote-buffering` and `longnames` point at `http://127.0.0.1:8765/…`, served
-by the spike's range server:
+by the range server in `scenarios/`:
 
 ```
-python ../spikes/playback/scripts/range_server.py \
+python ../range_server.py \
     C:\Users\mark_\Code\testing\woodshed\redshank-phase4-20260906\stereo.m4a 8765
 ```
 

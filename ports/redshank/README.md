@@ -133,5 +133,5 @@ Format per package, never `cargo fmt --all`: `audio-primitives` is a path
 dependency into the Woodshed root workspace, and cargo-fmt's `--all` follows
 path dependencies into that workspace and reformats every crate in it.
 
-Playback substrate experiments remain in the independent
-`spikes/playback` workspace.
+The playback substrate spike was removed on 2026-11-13; git keeps it. Its
+range server moved to `scenarios/range_server.py`.
