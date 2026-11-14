@@ -1,4 +1,4 @@
-# house hooks --no-decisions --deny
+# house hooks --no-decisions --deny --patches
 # Written by `house hooks` (eidetic, crates/house); `house hooks --check` fails when this file drifts from it.
 # `house` is on the PATH: cargo install --git https://github.com/merely-made/eidetic house
 fail_fast: true
@@ -24,6 +24,12 @@ repos:
       - id: dependency-bans
         name: dependency bans
         entry: cargo deny check bans
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: house-patches
+        name: house patches
+        entry: house patches --check
         language: system
         pass_filenames: false
         always_run: true

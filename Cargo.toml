@@ -237,6 +237,14 @@ genet-scripted-dom = { git = "https://github.com/merely-made/genet.git", branch 
 netrender-vello = { git = "https://github.com/mark-ik/vello", branch = "mark-ik/all-vellos" }
 netrender-vello-encoding = { git = "https://github.com/mark-ik/vello", branch = "mark-ik/all-vellos" }
 netrender-vello-shaders = { git = "https://github.com/mark-ik/vello", branch = "mark-ik/all-vellos" }
+# house patches --from https://github.com/merely-made/mere.git
+# Written by `house patches` (eidetic, crates/house) from the upstream's [patch.crates-io]; `house patches --check` fails when they drift.
+oxjsonld = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxrdf = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxrdfio = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxrdfxml = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxttl = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+# end house patches
 
 # The app remains an ordinary debuggable dev build, but the retained UI and
 # renderer beneath it are runtime infrastructure. At opt-level 0 a headed
