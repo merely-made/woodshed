@@ -180,8 +180,8 @@ serde_json = "1.0"
 # since DR-D. Cargo.lock receives the client extraction with the existing
 # Dramatis 0.0.3 contract cohort, so one personae reaches every graph.
 dramatis = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
-ostiary = { git = "https://github.com/merely-made/armillary.git", branch = "main", version = "0.0.1", default-features = false }
-castellan-client = { version = "0.0.2", git = "https://github.com/merely-made/dramatis.git", branch = "main", default-features = false, features = ["client"] }
+ostiary = { git = "https://github.com/merely-made/armillary.git", branch = "main", version = ">=0.0.1", default-features = false }
+castellan-client = { version = ">=0.0.2", git = "https://github.com/merely-made/dramatis.git", branch = "main", default-features = false, features = ["client"] }
 personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main" }
 
 # Future:
@@ -202,7 +202,7 @@ personae = { git = "https://github.com/merely-made/dramatis.git", branch = "main
 # revision as the Genet family above. Parley needs no row: genet's fork is
 # `genet-parley` now, which genet-livery reaches inside genet.
 [patch.crates-io]
-ostiary = { version = "0.0.1", git = "https://github.com/merely-made/armillary.git", branch = "main" }
+ostiary = { version = ">=0.0.1", git = "https://github.com/merely-made/armillary.git", branch = "main" }
 # Mirror the document-session supplier; workspace patches are not inherited
 # from Mere or Genet Git dependencies.
 document-session-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }
