@@ -57,6 +57,8 @@ pub struct ProjectionOccurrence {
     pub occurrence_id: String,
     pub source: SourceRef,
     pub values: BTreeMap<String, ProjectionValue>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub classes: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -197,6 +199,7 @@ pub fn fixture_dataset() -> ProjectionDataset {
                 occurrence_id,
                 source,
                 values,
+                classes: vec![card.material.tag().to_owned()],
             }
         })
         .collect();
@@ -251,6 +254,7 @@ mod tests {
     fn fixture_uses_stage_coordinates_and_real_card_timing() {
         let dataset = fixture_dataset();
         let first = &dataset.occurrences[0];
+        assert_eq!(first.classes, ["Chord"]);
         assert_eq!(
             first.values["catalog_id"],
             ProjectionValue::Text("chord:Major".into())
