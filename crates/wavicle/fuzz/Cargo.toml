@@ -1,0 +1,41 @@
+# cargo-fuzz harness for wavicle. Its own workspace so `cargo test` in the main
+# crate never pulls in libfuzzer-sys (nightly + sanitizer). Run with:
+#   cargo +nightly fuzz run decode
+[package]
+rust-version = "1.97.1"
+name = "wavicle-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[workspace]
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.wavicle]
+path = ".."
+features = ["encode"]
+
+[[bin]]
+name = "decode"
+path = "fuzz_targets/decode.rs"
+test = false
+doc = false
+bench = false
+
+[workspace.package]
+rust-version = "1.97.1"
+
+[workspace.lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"
+
+[lints]
+workspace = true

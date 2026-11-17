@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # Layer 0: runs everywhere with no reference codec. Decodes the checked-in
+  # golden vectors and runs the self round-trip, float/BLAKE3, and robustness
+  # tests. The reference legs of the encode tests skip automatically here.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+        with:
+          components: rustfmt
+          targets: wasm32-unknown-unknown
+      - run: cargo fmt --all --check
+      - run: cargo test
+      - run: cargo test --no-default-features --features decode
+      - run: cargo check --no-default-features --features encode
+      - run: cargo check --features encode --target wasm32-unknown-unknown
+
+  # Layer 1: install the reference WavPack CLI so the encode tests verify our
+  # output through the real wvunpack, and decode tests cross-check against it.
+  reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - run: sudo apt-get update && sudo apt-get install -y wavpack
+      - run: cargo test --features encode
+
+  # Confirm the fuzz target still builds (does not run a campaign).
+  fuzz-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - run: cargo install cargo-fuzz --locked
+      - run: cargo fuzz build decode
