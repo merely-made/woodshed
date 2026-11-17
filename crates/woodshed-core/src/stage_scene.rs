@@ -683,6 +683,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                 &mut relations,
                 &mut relation_sources,
                 RoutedRelation {
+                    form: Default::default(),
                     link_key: None,
                     marks: Default::default(),
                     strength: None,
@@ -730,6 +731,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     &mut relations,
                     &mut relation_sources,
                     RoutedRelation {
+                        form: Default::default(),
                         link_key: Some(sceno::LinkKey::new(
                             sceno::LinkStratum::Surface,
                             relation.provenance.original_from.clone(),
@@ -933,6 +935,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     continue;
                 };
                 let route = RoutedRelation {
+                    form: Default::default(),
                     link_key: None,
                     marks: Default::default(),
                     strength: None,
@@ -1020,6 +1023,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     let kind = "woodshed:chord-arpeggio";
                     if seen.insert((nodes[chord].id.clone(), nodes[arp].id.clone(), kind.into())) {
                         let route = RoutedRelation {
+                            form: Default::default(),
                             link_key: None,
                             marks: Default::default(),
                             strength: None,
@@ -1067,6 +1071,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         kind.into(),
                     )) {
                         let route = RoutedRelation {
+                            form: Default::default(),
                             link_key: None,
                             marks: Default::default(),
                             strength: None,
@@ -1114,6 +1119,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                         kind.into(),
                     )) {
                         let route = RoutedRelation {
+                            form: Default::default(),
                             link_key: None,
                             marks: Default::default(),
                             strength: None,
@@ -1139,6 +1145,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                               kind: &str,
                               weight: f32| {
                     let route = RoutedRelation {
+                        form: Default::default(),
                         link_key: None,
                         marks: Default::default(),
                         strength: None,
@@ -1224,6 +1231,7 @@ pub fn stage_scene(set: &Set, options: &StageSceneOptions) -> StageGraphSnapshot
                     && seen.insert((from, to, "woodshed:keyed-diatonic".into()))
                 {
                     let route = RoutedRelation {
+                        form: Default::default(),
                         link_key: None,
                         marks: Default::default(),
                         strength: None,

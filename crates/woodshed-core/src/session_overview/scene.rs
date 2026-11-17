@@ -40,6 +40,7 @@ pub fn overview_scene(overview: &OverviewSnapshot) -> SceneSnapshot {
             continue;
         };
         scene.relations.push(RoutedRelation {
+            form: Default::default(),
             link_key: None,
             marks: Default::default(),
             strength: None,
