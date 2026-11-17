@@ -430,6 +430,14 @@ impl CpalBackend {
         self.output.as_ref().map(OutputRuntime::snapshot)
     }
 
+    pub(crate) fn output_device_error_count(&self) -> Option<u64> {
+        self.output.as_ref().map(OutputRuntime::device_error_count)
+    }
+
+    pub(crate) fn set_output_gain(&mut self, gain: f32) -> Result<(), String> {
+        self.with_output(|output| output.set_output_gain(gain))
+    }
+
     pub fn capture_source_rate(&self) -> Option<u32> {
         self.input.as_ref().map(|input| input.capture.source_rate())
     }

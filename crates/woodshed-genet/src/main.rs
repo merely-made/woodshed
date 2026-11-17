@@ -48,6 +48,7 @@ mod shared;
 mod storage;
 mod sync;
 mod text;
+mod transport_bridge;
 mod wav_export;
 
 use std::cell::{Cell, RefCell};
@@ -330,6 +331,8 @@ fn persist_window_geometry(
 
 fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
     let mut lane = scenario::from_env(shared.clone());
+    let bridge = Rc::new(RefCell::new(transport_bridge::Bridge::from_env()));
+    let wake_bridge = bridge.clone();
     let frame_shared = shared.clone();
     let dispatch_shared = shared.clone();
     let after_frame_shared = shared.clone();
@@ -413,6 +416,12 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             if let Some(lane) = &mut lane {
                 scenario::drive(lane, ctx);
             }
+            let mut mailbox = bridge.borrow_mut();
+            if mailbox.as_mut().is_some_and(|bridge| {
+                bridge.poll(&mut after_frame_shared.borrow_mut(), ctx)
+            }) {
+                *mailbox = None;
+            }
             guard_requested_close(&mut after_frame_shared.borrow_mut(), ctx);
         }),
         prepare_presentation: Box::new(|_, _| None),
@@ -462,6 +471,13 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 });
             }
             persona::resume_switch(&mut shared, ctx);
+            let mut mailbox = wake_bridge.borrow_mut();
+            if let Some(bridge) = mailbox.as_mut() {
+                if bridge.poll(&mut shared, ctx) {
+                    *mailbox = None;
+                }
+                guard_requested_close(&mut shared, ctx);
+            }
             if wake_close_requested.get()
                 && !shared.capture_persistence.preparation_busy()
                 && midi_diagnostics::close_request(&mut shared, ctx).is_none()

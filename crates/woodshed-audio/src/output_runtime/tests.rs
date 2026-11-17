@@ -144,6 +144,39 @@ fn program_with_card_count(count: usize, end: ProgramEnd, bpm: f64) -> ProgramPl
 }
 
 #[test]
+fn gain_and_loop_wrap_keep_the_callback_transport_revision() {
+    let mut r = runtime();
+    let before = r.snapshot().transport_revision;
+    r.set_song(song(2)).unwrap();
+    r.play().unwrap();
+    r.service().unwrap();
+    render(&mut r, 8);
+    let active = r.snapshot();
+    assert_eq!(active.transport_revision, before + 2);
+    assert!(active.playing);
+
+    r.set_output_gain(0.15).unwrap();
+    r.service().unwrap();
+    render(&mut r, 20);
+    let wrapped = r.snapshot();
+    assert_eq!(wrapped.transport_revision, active.transport_revision);
+    assert_eq!(f32::from_bits(wrapped.output_gain_bits), 0.15);
+    assert_eq!(wrapped.cursor, active.cursor);
+    assert_eq!(wrapped.device_frames, active.device_frames + 20);
+    assert!(wrapped.playing);
+
+    r.rewind().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert_eq!(r.snapshot().transport_revision, wrapped.transport_revision + 1);
+    r.stop().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert_eq!(r.snapshot().transport_revision, wrapped.transport_revision + 2);
+    assert!(!r.snapshot().playing);
+}
+
+#[test]
 fn production_graph_is_silent_stopped_and_has_one_device_clock() {
     let mut r = runtime();
     let frames = r.snapshot().device_frames;

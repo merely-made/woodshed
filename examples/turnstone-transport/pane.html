@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Woodshed Transport</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #201d1a; color: #faf1df; font: 16px system-ui, sans-serif; }
+  main { padding: 20px 24px; }
+  h1 { font-size: 28px; margin: 0 0 10px; }
+  #position { font-variant-numeric: tabular-nums; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  button { width: 120px; height: 56px; border: 2px solid #a08b73; border-radius: 6px;
+           background: #423930; color: inherit; font: inherit; }
+  button:disabled { opacity: 0.55; }
+  button[aria-pressed="true"] { background: #68553b; }
+  #status { margin: 8px 0 0; }
+</style>
+<main>
+  <h1>Woodshed Transport</h1>
+  <div id="position">Connecting to Woodshed</div>
+  <div class="controls">
+    <button type="button" id="attach" disabled>Attach</button>
+    <button type="button" id="quiet" aria-pressed="false" disabled>Quiet</button>
+    <button type="button" id="detach" disabled>Detach</button>
+  </div>
+  <p id="status" role="status"></p>
+</main>
+<script>
+  const attach = document.querySelector("#attach");
+  const quiet = document.querySelector("#quiet");
+  const detach = document.querySelector("#detach");
+  const position = document.querySelector("#position");
+  const status = document.querySelector("#status");
+  let attached = false;
+  let returned = false;
+  let pending = false;
+  let lastState;
+  let revision = 0;
+
+  async function request(path, method) {
+    const response = await fetch(path, { method, cache: "no-store" });
+    if (!response.ok) throw new Error(`Woodshed returned HTTP ${response.status}`);
+    return response.json();
+  }
+
+  function render(state) {
+    lastState = state;
+    position.textContent = `${state.playing ? "Playing" : "Stopped"} · Bar ${state.bar} · Sample ${state.sample_in_bar}`;
+    quiet.setAttribute("aria-pressed", String(state.quiet));
+    attach.disabled = pending || attached || returned;
+    quiet.disabled = pending || !attached || returned;
+    detach.disabled = pending || !attached || returned;
+  }
+
+  async function change(action) {
+    if (pending) return;
+    revision++;
+    pending = true;
+    render(lastState);
+    try {
+      const state = await request(action, "POST");
+      if (action === "mounted") attached = state.view === "pane";
+      if (action === "detach") returned = state.view === "window";
+      if (returned) {
+        document.title = "Woodshed Transport Returned";
+        status.textContent = "Transport returned to the Woodshed window.";
+      } else if (attached && state.quiet) {
+        document.title = "Woodshed Transport Quiet";
+        status.textContent = "Quiet is on.";
+      } else if (attached) {
+        document.title = "Woodshed Transport Attached";
+        status.textContent = "Transport attached to this pane.";
+      }
+      lastState = state;
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      pending = false;
+      render(lastState);
+    }
+  }
+
+  async function refresh() {
+    if (returned) return;
+    if (!pending) {
+      const requestedRevision = revision;
+      try {
+        const state = await request("status", "GET");
+        if (!pending && !returned && requestedRevision === revision) render(state);
+      } catch (error) {
+        if (!returned && !lastState) status.textContent = error.message;
+      }
+    }
+    if (!returned) setTimeout(refresh, 350);
+  }
+
+  attach.addEventListener("click", () => change("mounted"));
+  quiet.addEventListener("click", () => change("quiet"));
+  detach.addEventListener("click", () => change("detach"));
+  refresh();
+</script>
+</html>

@@ -76,6 +76,10 @@ fn err(message: impl Into<String>) -> OutputError {
 pub struct OutputSnapshot {
     pub device_frames: u64,
     pub processing_blocks: u64,
+    /// Callback-applied backing, play, stop or seek changes.
+    pub transport_revision: u64,
+    /// Linear gain applied by the callback, represented as f32 bits.
+    pub output_gain_bits: u32,
     pub cursor: SongCursor,
     pub playing: bool,
     pub recording: bool,

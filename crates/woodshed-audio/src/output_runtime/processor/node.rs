@@ -55,6 +55,7 @@ impl AudioNode for OutputNode {
             pending_len: 0,
             rate: cx.stream_info.sample_rate.get(),
             blocks: 0,
+            transport_revision: 0,
             handled_commands: 0,
             invalid: false,
             program: None,
@@ -105,6 +106,7 @@ impl AudioNodeProcessor for Processor {
                         playing,
                         generation,
                     } => {
+                        self.transport_revision += 1;
                         if *clear {
                             self.program_replacement = None;
                             if self.program.is_some() {
@@ -199,6 +201,7 @@ impl AudioNodeProcessor for Processor {
                         }
                     },
                     Command::Playing(playing) => {
+                        self.transport_revision += 1;
                         self.start_playing(*playing);
                         if !*playing {
                             self.finish_take();
@@ -210,6 +213,7 @@ impl AudioNodeProcessor for Processor {
                             self.handled_commands += 1;
                             continue;
                         }
+                        self.transport_revision += 1;
                         self.cursor = Default::default();
                         self.count_in = 0;
                         self.clear_voices();
@@ -468,6 +472,8 @@ impl AudioNodeProcessor for Processor {
         self.shared.publish(OutputSnapshot {
             device_frames: info.clock_samples.0.max(0) as u64 + info.frames as u64,
             processing_blocks: self.blocks,
+            transport_revision: self.transport_revision,
+            output_gain_bits: self.gain.to_bits(),
             cursor: self.cursor,
             playing: self.playing,
             recording: self.take.is_some(),

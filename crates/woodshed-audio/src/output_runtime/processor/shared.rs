@@ -6,6 +6,10 @@ impl Shared {
         self.frames.store(snapshot.device_frames, Ordering::Relaxed);
         self.blocks
             .store(snapshot.processing_blocks, Ordering::Relaxed);
+        self.transport_revision
+            .store(snapshot.transport_revision, Ordering::Relaxed);
+        self.output_gain_bits
+            .store(snapshot.output_gain_bits as usize, Ordering::Relaxed);
         self.bar.store(snapshot.cursor.bar_idx, Ordering::Relaxed);
         self.in_bar
             .store(snapshot.cursor.sample_in_bar, Ordering::Relaxed);
@@ -66,6 +70,8 @@ impl Shared {
             let s = OutputSnapshot {
                 device_frames: self.frames.load(Ordering::Relaxed),
                 processing_blocks: self.blocks.load(Ordering::Relaxed),
+                transport_revision: self.transport_revision.load(Ordering::Relaxed),
+                output_gain_bits: self.output_gain_bits.load(Ordering::Relaxed) as u32,
                 cursor: SongCursor {
                     bar_idx: self.bar.load(Ordering::Relaxed),
                     sample_in_bar: self.in_bar.load(Ordering::Relaxed),

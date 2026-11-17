@@ -131,6 +131,7 @@ impl Processor {
                                 .as_ref()
                                 .is_some_and(|b| bar_idx < b.bars.len())
                         {
+                            self.transport_revision += 1;
                             self.cursor = SongCursor {
                                 bar_idx,
                                 sample_in_bar: 0,
@@ -150,6 +151,7 @@ impl Processor {
                         }
                     },
                     Boundary::Change(PendingChange::SetPlaying(playing)) => {
+                        self.transport_revision += 1;
                         self.playing = playing;
                         if !playing {
                             self.clear_voices();
@@ -163,6 +165,7 @@ impl Processor {
                         mut take,
                     } => {
                         if seek {
+                            self.transport_revision += 1;
                             self.cursor = SongCursor {
                                 bar_idx: bar,
                                 sample_in_bar: 0,
@@ -325,6 +328,7 @@ impl Processor {
                         self.cursor.bar_idx = target;
                     } else if self.cursor.bar_idx + 1 == backing.bars.len() {
                         if backing.one_shot {
+                            self.transport_revision += 1;
                             self.playing = false;
                             self.clear_voices();
                             self.invalid |= self.pending[..self.pending_len]
