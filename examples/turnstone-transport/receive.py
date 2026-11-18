@@ -61,6 +61,30 @@ def verify_loop_phase(points):
         raise RuntimeError("song position lost its sample offset against the audio device")
 
 
+def verify_controls(points):
+    expected = ["standalone", "mounted", "pause", "next", "previous", "gain", "play", "detach", "returned"]
+    stages = [point["stage"] for point in points]
+    if stages != expected:
+        raise RuntimeError(f"unexpected Woodshed transport transitions: {stages}")
+    standalone, mounted, pause, forward, back, gain, play, detach, returned = points
+    # Explicit seeks and pause/resume change song phase. Window handoffs must preserve it.
+    for leg in ([standalone, mounted], [play, detach, returned]):
+        verify_loop_phase(leg)
+        if not all(p["playing"] and p["transport_revision"] == leg[0]["transport_revision"] for p in leg):
+            raise RuntimeError("changing the window changed playback")
+    if any(p["playing"] for p in [pause, forward, back, gain]):
+        raise RuntimeError("paused controls started playback")
+    if forward["bar"] != (pause["bar"] + 1) % pause["bar_count"] or back["bar"] != pause["bar"]:
+        raise RuntimeError("bar navigation did not advance and return")
+    if forward["sample_in_bar"] or back["sample_in_bar"]:
+        raise RuntimeError("bar navigation missed the downbeat")
+    if (gain["bar"], gain["sample_in_bar"], gain["transport_revision"]) != (
+            back["bar"], back["sample_in_bar"], back["transport_revision"]):
+        raise RuntimeError("adjusting gain changed the paused transport")
+    if gain["gain"] != back["gain"] - 5 or returned["gain"] != gain["gain"]:
+        raise RuntimeError("pane gain did not reach the output and survive detach")
+
+
 class Producer:
     def __init__(self, mailbox, process):
         self.mailbox = mailbox
@@ -75,10 +99,13 @@ class Producer:
         except (FileNotFoundError, PermissionError):
             return {}
 
-    def command(self, action):
+    def command(self, action, value=None):
         self.sequence += 1
         pending = self.mailbox / "pending.json"
-        pending.write_text(json.dumps({"id": self.sequence, "action": action}))
+        message = {"id": self.sequence, "action": action}
+        if value is not None:
+            message["value"] = value
+        pending.write_text(json.dumps(message))
         pending.replace(self.mailbox / "command.json")
         def ack():
             state = self.read()
@@ -99,22 +126,25 @@ class Handoff:
         self.frame = None
         self.hwnd = None
 
-    def sample(self, label, view):
-        before = self.producer.read()
+    def sample(self, label, view, playing, before=None):
+        before = before or until(self.producer.read, "an audio snapshot")
+        initial_position = (before["bar"], before["sample_in_bar"])
         def progress():
             state = self.producer.read()
-            if not state.get("playing") or state.get("view") != view:
+            if state.get("playing") != playing or state.get("view") != view:
                 return None
             cursor = (state["bar"], state["sample_in_bar"])
-            if state["device_frames"] <= before.get("device_frames", 0):
+            if state["device_frames"] <= before["device_frames"]:
                 return None
-            if cursor == (before.get("bar"), before.get("sample_in_bar")):
+            if playing and cursor == initial_position:
                 return None
+            if not playing and cursor != initial_position:
+                raise RuntimeError("paused cursor moved at " + label)
             return state
-        current = until(progress, "active playback in " + label)
+        current = until(progress, "audio callback in " + label)
         if current["streams"] != 1 or current["device_errors"] != 0:
             raise RuntimeError(f"unhealthy audio output at {label}: {current}")
-        owner = (current["pid"], current["stream_id"], current["transport_revision"])
+        owner = (current["pid"], current["stream_id"])
         if owner[0] != self.producer.process.pid or owner[1] is None:
             raise RuntimeError("invalid playback owner")
         if self.owner and (owner != self.owner or current["device_frames"] <= self.frame):
@@ -129,14 +159,14 @@ class Handoff:
         self.report["checkpoints"].append(dict(stage=label, window=window, **current))
         return current
 
-    def move(self, action):
+    def move(self, action, value=None):
         with self.lock:
-            if self.returned or action not in ("mounted", "quiet", "detach"):
+            if self.returned or action not in ("mounted", "pause", "play", "previous", "next", "gain", "detach"):
                 return None
             if self.attached == (action == "mounted"):
                 return None
-            self.producer.command({"mounted": "attach", "quiet": "quiet", "detach": "detach"}[action])
-            state = self.sample(action, "window" if action == "detach" else "pane")
+            ack = self.producer.command("attach" if action == "mounted" else action, value)
+            state = self.sample(action, "window" if action == "detach" else "pane", ack["playing"], ack)
             self.attached = action != "detach"
             self.returned = action == "detach"
             return state
@@ -173,8 +203,16 @@ def serve(handoff, token):
                 or not self.path.startswith(base)):
                 return self.send_error(403)
             action = self.path[len(base):]
+            value = None
+            if action.startswith("gain/"):
+                raw = action.removeprefix("gain/")
+                if not raw.isascii() or not raw.isdecimal() or len(raw) > 3 or int(raw) > 100:
+                    return self.send_error(400)
+                action, value = "gain", int(raw)
             try:
-                state = handoff.move(action)
+                if action == "gain" and value is None:
+                    return self.send_error(400)
+                state = handoff.move(action, value)
             except Exception as error:
                 handoff.report["error"] = str(error)
                 return self.send_error(500)
@@ -230,7 +268,7 @@ def run(args, report):
         until(producer.read, "Woodshed transport", 120)
         handoff = Handoff(producer, report)
         producer.command("play")
-        handoff.sample("standalone", "window")
+        handoff.sample("standalone", "window", True)
         server, url = serve(handoff, token)
         threading.Thread(target=server.serve_forever, daemon=True).start()
         stack.callback(server.server_close)
@@ -250,17 +288,12 @@ def run(args, report):
                 raise RuntimeError(report["error"])
             if turn.poll() is not None or (captures / "scenario.done").exists():
                 return True
-        until(finished, "Turnstone's real pane scenario", 180)
+        until(finished, "Turnstone's real pane scenario", 300)
         done = captures / "scenario.done"
         if not done.exists() or done.read_text().splitlines()[:1] != ["RESULT ok"]:
             raise RuntimeError("Turnstone scenario failed; see pane/scenario.done and turnstone.log")
-        stages = [point["stage"] for point in report["checkpoints"]]
-        if stages != ["standalone", "mounted", "quiet", "detach"]:
-            raise RuntimeError(f"unexpected Woodshed transport transitions: {stages}")
-        if not report["checkpoints"][2]["quiet"]:
-            raise RuntimeError("Woodshed did not apply the pane's quiet control")
-        handoff.sample("returned", "window")
-        verify_loop_phase(report["checkpoints"])
+        handoff.sample("returned", "window", True)
+        verify_controls(report["checkpoints"])
         producer.command("release")
         report["passed"] = True
         if args.leave_playing:

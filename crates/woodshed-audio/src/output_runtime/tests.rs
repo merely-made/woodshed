@@ -177,6 +177,48 @@ fn gain_and_loop_wrap_keep_the_callback_transport_revision() {
 }
 
 #[test]
+fn paused_backing_keeps_its_cursor_and_steps_one_bar_in_either_direction() {
+    let mut r = runtime();
+    r.set_song(song(2)).unwrap();
+    r.play().unwrap();
+    r.service().unwrap();
+    render(&mut r, 4);
+    let cursor = r.snapshot().cursor;
+    assert_eq!(cursor.sample_in_bar, 4);
+
+    r.stop().unwrap();
+    r.service().unwrap();
+    render(&mut r, 20);
+    assert!(!r.snapshot().playing);
+    assert_eq!(r.snapshot().cursor, cursor);
+
+    r.play().unwrap();
+    r.service().unwrap();
+    render(&mut r, 1);
+    assert_eq!(r.snapshot().cursor.sample_in_bar, 5);
+    r.stop().unwrap();
+    r.step_bar(false).unwrap();
+    r.service().unwrap();
+    render(&mut r, 20);
+    assert!(!r.snapshot().playing);
+    assert_eq!(
+        r.snapshot().cursor,
+        SongCursor {
+            bar_idx: 1,
+            sample_in_bar: 0
+        }
+    );
+
+    r.step_bar(true).unwrap();
+    r.set_output_gain(0.23).unwrap();
+    r.service().unwrap();
+    render(&mut r, 20);
+    assert!(!r.snapshot().playing);
+    assert_eq!(r.snapshot().cursor, SongCursor::default());
+    assert_eq!(f32::from_bits(r.snapshot().output_gain_bits), 0.23);
+}
+
+#[test]
 fn production_graph_is_silent_stopped_and_has_one_device_clock() {
     let mut r = runtime();
     let frames = r.snapshot().device_frames;

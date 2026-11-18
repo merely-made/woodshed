@@ -220,6 +220,34 @@ impl AudioNodeProcessor for Processor {
                         self.song_last_beat = None;
                         self.song_last_measure = None;
                     },
+                    Command::StepBar { forward } => {
+                        if let Some(backing) = self.backing.as_ref().filter(|backing| {
+                            !backing.bars.is_empty() && self.selected_capture_bar().is_none()
+                        }) {
+                            let count = backing.bars.len();
+                            let bar = self.cursor.bar_idx;
+                            let target = if backing.one_shot {
+                                if *forward {
+                                    (bar + 1).min(count - 1)
+                                } else {
+                                    bar.saturating_sub(1)
+                                }
+                            } else if *forward {
+                                (bar + 1) % count
+                            } else {
+                                bar.checked_sub(1).unwrap_or(count - 1)
+                            };
+                            self.transport_revision += 1;
+                            self.cursor = SongCursor {
+                                bar_idx: target,
+                                sample_in_bar: 0,
+                            };
+                            self.count_in = 0;
+                            self.clear_voices();
+                            self.song_last_beat = None;
+                            self.song_last_measure = None;
+                        }
+                    },
                     Command::Gain(gain) => self.gain = *gain,
                     Command::RecordReplace(replace) => self.replace = *replace,
                     Command::Preview { revision, buffer } => {

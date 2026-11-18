@@ -164,6 +164,7 @@ pub struct CpalBackend {
     output: Option<OutputRuntime>,
     native_output: bool,
     heartbeat: Option<OutputHeartbeat>,
+    transport_bridge_active: bool,
     last_metronome: Option<TransportState>,
     pack_pattern: Option<(String, SequencerPattern)>,
     song_transport_requested: bool,
@@ -438,6 +439,26 @@ impl CpalBackend {
         self.with_output(|output| output.set_output_gain(gain))
     }
 
+    pub(crate) fn backing_bar_count(&self) -> usize {
+        self.output.as_ref().map_or(0, OutputRuntime::bar_count)
+    }
+
+    pub(crate) fn set_transport_bridge_active(&mut self, active: bool) {
+        if self.transport_bridge_active != active {
+            self.transport_bridge_active = active;
+            if let Some(heartbeat) = &self.heartbeat {
+                heartbeat.active(active || self.needs_service());
+            }
+        }
+    }
+
+    pub(crate) fn step_backing_bar(&mut self, forward: bool) -> Result<(), String> {
+        if self.loop_capture_busy() {
+            return Err("Stop recording before moving backing".into());
+        }
+        self.with_output(|output| output.step_bar(forward))
+    }
+
     pub fn capture_source_rate(&self) -> Option<u32> {
         self.input.as_ref().map(|input| input.capture.source_rate())
     }
@@ -506,7 +527,7 @@ impl CpalBackend {
             }
         }
         if let Some(heartbeat) = &self.heartbeat {
-            heartbeat.active(self.needs_service());
+            heartbeat.active(self.transport_bridge_active || self.needs_service());
         }
     }
 
@@ -672,6 +693,7 @@ impl CpalBackend {
             output,
             native_output,
             heartbeat: None,
+            transport_bridge_active: false,
             last_metronome: None,
             pack_pattern: None,
             song_transport_requested: false,

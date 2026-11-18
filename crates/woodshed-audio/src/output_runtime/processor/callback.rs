@@ -16,7 +16,7 @@ impl Processor {
         self.song_last_beat = None;
         self.song_last_measure = None;
         self.count_in_pos = 0;
-        self.count_in = if playing {
+        self.count_in = if playing && self.cursor.sample_in_bar == 0 {
             self.backing
                 .as_ref()
                 .filter(|b| b.click)

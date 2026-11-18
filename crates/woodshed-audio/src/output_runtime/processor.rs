@@ -132,6 +132,9 @@ pub(super) enum Command {
     ClickPlaying(bool),
     Playing(bool),
     Rewind,
+    StepBar {
+        forward: bool,
+    },
     Gain(f32),
     RecordReplace(bool),
     Preview {

@@ -26,21 +26,27 @@ assert maximized
 assert snap browser-current-engine == genet.scripted
 assert snap browser-current-content == live
 
-# Client pixels in the 1024x600 native scenario window. The bridge receipt
-# verifies the acknowledged transitions and captures show the rendered pane.
-click-at 168 400
+# Client pixels in the 1024x600 native scenario window.
+click-at 124 453
 settle 35
 move-at 880 285
-settle 5
 capture 01_transport_attached
-click-at 424 400
+click-at 310 363
+settle 35
+click-at 490 363
+settle 35
+click-at 130 363
+settle 35
+click-at 714 361
 settle 35
 move-at 880 285
-settle 5
-capture 02_transport_quiet
-click-at 680 400
+capture 02_transport_paused_with_gain
+click-at 310 363
 settle 35
 move-at 880 285
-settle 5
-capture 03_transport_returned
+capture 03_transport_resumed
+click-at 310 453
+settle 35
+move-at 880 285
+capture 04_transport_returned
 log Woodshed transport controls exercised through native Workbench pointer input.

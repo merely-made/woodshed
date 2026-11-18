@@ -7,51 +7,91 @@
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; background: #201d1a; color: #faf1df; font: 16px system-ui, sans-serif; }
-  main { padding: 20px 24px; }
-  h1 { font-size: 28px; margin: 0 0 10px; }
-  #position { font-variant-numeric: tabular-nums; }
-  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-  button { width: 120px; height: 56px; border: 2px solid #a08b73; border-radius: 6px;
+  main { padding: 16px 24px; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  #position, #gain-value { font-variant-numeric: tabular-nums; }
+  .controls, .handoff, .gain { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .controls { margin-top: 10px; }
+  .gain { gap: 6px; }
+  .handoff { margin-top: 8px; }
+  button { display: inline-flex; align-items: center; justify-content: center;
+           min-width: 82px; height: 44px; border: 2px solid #a08b73; border-radius: 6px;
            background: #423930; color: inherit; font: inherit; }
-  button:disabled { opacity: 0.55; }
-  button[aria-pressed="true"] { background: #68553b; }
-  #status { margin: 8px 0 0; }
+  button:focus-visible { outline: 2px solid #faf1df; outline-offset: 2px; }
+  button:disabled, button[aria-disabled="true"] { opacity: 0.55; }
+  .handoff button { height: 34px; }
+  .gain-step { min-width: 26px; height: 30px; }
+  #gain { position: relative; min-width: 0; width: 44px; border-radius: 50%; padding: 0;
+          touch-action: none; }
+  #gain-indicator { position: absolute; top: 2px; bottom: 2px; left: 19px; width: 2px;
+                    border-top: 9px solid #faf1df; pointer-events: none; }
+  #status { margin: 6px 0 0; font-size: 14px; }
 </style>
 <main>
   <h1>Woodshed Transport</h1>
   <div id="position">Connecting to Woodshed</div>
-  <div class="controls">
+  <div class="controls" role="group" aria-label="Playback">
+    <button type="button" id="previous" disabled>Previous</button>
+    <button type="button" id="playback" disabled>Play</button>
+    <button type="button" id="next" disabled>Next</button>
+    <div class="gain">
+      <button type="button" id="gain" role="slider" aria-label="Gain" aria-valuemin="0"
+              aria-valuemax="100" aria-valuenow="100" aria-valuetext="100 percent" disabled>
+        <span id="gain-indicator" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="gain-step" id="gain-down" aria-label="Decrease gain" disabled>−</button>
+      <button type="button" class="gain-step" id="gain-up" aria-label="Increase gain" disabled>+</button>
+      <span id="gain-value" aria-hidden="true">Gain 100%</span>
+    </div>
+  </div>
+  <div class="handoff" role="group" aria-label="Transport location">
     <button type="button" id="attach" disabled>Attach</button>
-    <button type="button" id="quiet" aria-pressed="false" disabled>Quiet</button>
     <button type="button" id="detach" disabled>Detach</button>
   </div>
   <p id="status" role="status"></p>
 </main>
 <script>
   const attach = document.querySelector("#attach");
-  const quiet = document.querySelector("#quiet");
   const detach = document.querySelector("#detach");
+  const previous = document.querySelector("#previous");
+  const playback = document.querySelector("#playback");
+  const next = document.querySelector("#next");
+  const gain = document.querySelector("#gain");
+  const gainDown = document.querySelector("#gain-down");
+  const gainUp = document.querySelector("#gain-up");
+  const gainIndicator = document.querySelector("#gain-indicator");
+  const gainValue = document.querySelector("#gain-value");
   const position = document.querySelector("#position");
   const status = document.querySelector("#status");
-  let attached = false;
   let returned = false;
   let pending = false;
   let lastState;
   let revision = 0;
+  let gainDrag;
+  let suppressDialClick = false;
 
   async function request(path, method) {
     const response = await fetch(path, { method, cache: "no-store" });
-    if (!response.ok) throw new Error(`Woodshed returned HTTP ${response.status}`);
+    if (!response.ok) throw new Error("Woodshed returned HTTP " + response.status);
     return response.json();
   }
 
   function render(state) {
     lastState = state;
-    position.textContent = `${state.playing ? "Playing" : "Stopped"} · Bar ${state.bar} · Sample ${state.sample_in_bar}`;
-    quiet.setAttribute("aria-pressed", String(state.quiet));
-    attach.disabled = pending || attached || returned;
-    quiet.disabled = pending || !attached || returned;
-    detach.disabled = pending || !attached || returned;
+    const attached = state.view === "pane";
+    position.textContent = (state.playing ? "Playing" : "Paused") +
+      " · Bar " + (state.bar + 1) + " of " + state.bar_count;
+    playback.textContent = state.playing ? "Pause" : "Play";
+    showGain(gainDrag?.preview ?? state.gain);
+    attach.disabled = attached || returned;
+    detach.disabled = !attached || returned;
+    for (const control of [previous, playback, next, gain, gainDown, gainUp]) {
+      control.disabled = !attached || returned;
+    }
+    for (const control of [attach, detach, previous, playback, next, gain, gainDown, gainUp]) {
+      if (pending) control.setAttribute("aria-disabled", "true");
+      else control.removeAttribute("aria-disabled");
+    }
   }
 
   async function change(action) {
@@ -61,17 +101,15 @@
     render(lastState);
     try {
       const state = await request(action, "POST");
-      if (action === "mounted") attached = state.view === "pane";
-      if (action === "detach") returned = state.view === "window";
+      returned = action === "detach" && state.view === "window";
       if (returned) {
         document.title = "Woodshed Transport Returned";
         status.textContent = "Transport returned to the Woodshed window.";
-      } else if (attached && state.quiet) {
-        document.title = "Woodshed Transport Quiet";
-        status.textContent = "Quiet is on.";
-      } else if (attached) {
+      } else if (action === "mounted" && state.view === "pane") {
         document.title = "Woodshed Transport Attached";
         status.textContent = "Transport attached to this pane.";
+      } else {
+        status.textContent = "";
       }
       lastState = state;
     } catch (error) {
@@ -96,9 +134,81 @@
     if (!returned) setTimeout(refresh, 350);
   }
 
+  function gainPercent(value) {
+    return Math.max(0, Math.min(100, Math.round(value)));
+  }
+
+  function showGain(percent) {
+    gainIndicator.style.transform = "rotate(" + (percent * 2.7 - 135) + "deg)";
+    gain.setAttribute("aria-valuenow", String(percent));
+    gain.setAttribute("aria-valuetext", percent + " percent");
+    gainValue.textContent = "Gain " + percent + "%";
+  }
+
+  function setGain(value) {
+    const percent = gainPercent(value);
+    if (percent !== lastState.gain) change("gain/" + percent);
+  }
+
+  gain.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 || gainDrag || pending) return;
+    suppressDialClick = false;
+    gainDrag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, startGain: lastState.gain };
+  });
+
+  window.addEventListener("pointermove", (event) => {
+    if (gainDrag?.id !== event.pointerId) return;
+    const distance = gainDrag.startY - event.clientY + event.clientX - gainDrag.startX;
+    if (gainDrag.preview === undefined && Math.abs(distance) < 4) return;
+    gainDrag.preview = gainPercent(gainDrag.startGain + distance);
+    showGain(gainDrag.preview);
+  });
+
+  window.addEventListener("pointerup", (event) => {
+    if (gainDrag?.id !== event.pointerId) return;
+    const preview = gainDrag.preview;
+    gainDrag = undefined;
+    if (preview === undefined) return;
+    suppressDialClick = true;
+    setGain(preview);
+  });
+
+  window.addEventListener("pointercancel", (event) => {
+    if (gainDrag?.id !== event.pointerId) return;
+    gainDrag = undefined;
+    showGain(lastState.gain);
+  });
+
+  gain.addEventListener("click", (event) => {
+    if (suppressDialClick) return;
+    const dial = gain.getBoundingClientRect();
+    if (event.clientX < dial.left || event.clientX > dial.right ||
+        event.clientY < dial.top || event.clientY > dial.bottom) return;
+    const x = event.clientX - (dial.left + dial.width / 2);
+    const y = event.clientY - (dial.top + dial.height / 2);
+    if (Math.hypot(x, y) < dial.width / 8) return;
+    const angle = Math.atan2(x, -y) * 180 / Math.PI;
+    setGain((angle + 135) / 2.7);
+  });
+
+  gain.addEventListener("keydown", (event) => {
+    const value = lastState.gain;
+    const keyValues = { ArrowUp: value + 1, ArrowRight: value + 1, ArrowDown: value - 1,
+                        ArrowLeft: value - 1, PageUp: value + 10, PageDown: value - 10,
+                        Home: 0, End: 100 };
+    if (!(event.key in keyValues)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setGain(keyValues[event.key]);
+  });
+
   attach.addEventListener("click", () => change("mounted"));
-  quiet.addEventListener("click", () => change("quiet"));
   detach.addEventListener("click", () => change("detach"));
+  previous.addEventListener("click", () => change("previous"));
+  next.addEventListener("click", () => change("next"));
+  playback.addEventListener("click", () => change(lastState.playing ? "pause" : "play"));
+  gainDown.addEventListener("click", () => setGain(lastState.gain - 5));
+  gainUp.addEventListener("click", () => setGain(lastState.gain + 5));
   refresh();
 </script>
 </html>

@@ -22,6 +22,19 @@ const QUIET_GAIN: f32 = 0.15;
 struct Command {
     id: u64,
     action: String,
+    value: Option<i64>,
+}
+
+enum Observation {
+    Gain(f32),
+    Playing(bool),
+    Stepped(u64),
+}
+
+struct Pending {
+    id: u64,
+    observation: Observation,
+    deadline: Instant,
 }
 
 enum AfterPublish {
@@ -35,7 +48,7 @@ pub(crate) struct Bridge {
     last_command: Option<u64>,
     command_error: Option<String>,
     attached: bool,
-    pending_quiet: Option<(u64, f32)>,
+    pending: Option<Pending>,
     after_publish: Option<AfterPublish>,
 }
 
@@ -52,7 +65,7 @@ impl Bridge {
             last_command: None,
             command_error: None,
             attached: false,
-            pending_quiet: None,
+            pending: None,
             after_publish: None,
         })
     }
@@ -64,12 +77,29 @@ impl Bridge {
             return false;
         }
         self.next_poll = now + STATUS_INTERVAL;
-        if self.after_publish.is_none() && self.pending_quiet.is_none() {
+        if let Some(backend) = shared.backend.as_mut() {
+            backend.set_transport_bridge_active(true);
+        }
+        if self.after_publish.is_none() && self.pending.is_none() {
             match read_command(&self.directory.join("command.json")) {
                 Ok(Some(command)) if self.last_command.is_none_or(|last| last < command.id) => {
-                    self.command_error = self.apply(&command, shared, ctx).err();
-                    if self.pending_quiet.is_none() {
-                        self.last_command = Some(command.id);
+                    self.command_error = None;
+                    match self.apply(&command, shared, ctx) {
+                        Ok(Some(observation)) => {
+                            self.pending = Some(Pending {
+                                id: command.id,
+                                observation,
+                                deadline: now + Duration::from_secs(5),
+                            });
+                            if let Some(backend) = shared.backend.as_mut() {
+                                backend.service();
+                            }
+                        },
+                        Ok(None) => self.last_command = Some(command.id),
+                        Err(error) => {
+                            self.command_error = Some(error);
+                            self.last_command = Some(command.id);
+                        },
                     }
                 },
                 Ok(_) => {},
@@ -77,22 +107,35 @@ impl Bridge {
             }
         }
         let backend = shared.backend.as_ref();
-        if let Some((id, gain)) = self.pending_quiet {
+        let output = backend.and_then(CpalBackend::output_snapshot);
+        if let Some(pending) = &self.pending {
             if backend.is_none_or(|backend| backend.output_stream_count() != 1) {
-                self.command_error = Some("Native audio output lost during gain change".into());
+                self.command_error =
+                    Some("Native audio output lost during transport change".into());
             }
-            let applied = backend
-                .and_then(CpalBackend::output_snapshot)
-                .is_some_and(|output| output.output_gain_bits == gain.to_bits());
+            let applied = output.is_some_and(|output| match pending.observation {
+                Observation::Gain(gain) => output.output_gain_bits == gain.to_bits(),
+                Observation::Playing(playing) => output.playing == playing,
+                Observation::Stepped(revision) => output.transport_revision != revision,
+            });
+            if !applied && now >= pending.deadline && self.command_error.is_none() {
+                self.command_error =
+                    Some("Native audio did not confirm the transport change".into());
+            }
             if applied || self.command_error.is_some() {
-                self.last_command = Some(id);
-                self.pending_quiet = None;
+                self.last_command = Some(pending.id);
+                self.pending = None;
             }
         }
-        if self.publish(backend).is_ok() {
+        if self.publish(backend, output.unwrap_or_default()).is_ok() {
             match self.after_publish.take() {
                 Some(AfterPublish::Quit) => *ctx.close = true,
-                Some(AfterPublish::Release) => return true,
+                Some(AfterPublish::Release) => {
+                    if let Some(backend) = shared.backend.as_mut() {
+                        backend.set_transport_bridge_active(false);
+                    }
+                    return true;
+                },
                 None => {},
             }
         }
@@ -104,7 +147,7 @@ impl Bridge {
         command: &Command,
         shared: &mut Shared,
         ctx: &mut Ctx<'_>,
-    ) -> Result<(), String> {
+    ) -> Result<Option<Observation>, String> {
         match command.action.as_str() {
             "attach" => {
                 ctx.window_commands.minimize();
@@ -115,15 +158,38 @@ impl Bridge {
                 self.attached = false;
             },
             "quiet" => {
-                let backend = shared.backend.as_mut().ok_or("Audio output unavailable")?;
+                let backend = native_backend(shared)?;
                 let quiet = backend
                     .output_snapshot()
                     .is_some_and(|output| output.output_gain_bits == QUIET_GAIN.to_bits());
                 let gain = if quiet { 1.0 } else { QUIET_GAIN };
                 backend.set_output_gain(gain)?;
-                self.pending_quiet = Some((command.id, gain));
+                return Ok(Some(Observation::Gain(gain)));
             },
-            "play" => play(shared, ctx)?,
+            "gain" => {
+                let percent = command
+                    .value
+                    .filter(|value| (0..=100).contains(value))
+                    .ok_or("Gain requires an integer value from 0 to 100")?;
+                let gain = percent as f32 / 100.0;
+                native_backend(shared)?.set_output_gain(gain)?;
+                return Ok(Some(Observation::Gain(gain)));
+            },
+            "previous" | "next" => {
+                let backend = native_backend(shared)?;
+                let revision = backend
+                    .output_snapshot()
+                    .ok_or("Audio output unavailable")?
+                    .transport_revision;
+                backend.step_backing_bar(command.action == "next")?;
+                return Ok(Some(Observation::Stepped(revision)));
+            },
+            "play" | "pause" => {
+                native_backend(shared)?;
+                let playing = command.action == "play";
+                set_playing(shared, ctx, playing)?;
+                return Ok(Some(Observation::Playing(playing)));
+            },
             "quit" => self.after_publish = Some(AfterPublish::Quit),
             "release" if !self.attached => self.after_publish = Some(AfterPublish::Release),
             "release" => {
@@ -131,13 +197,14 @@ impl Bridge {
             },
             action => return Err(format!("Unknown transport action: {action}")),
         }
-        Ok(())
+        Ok(None)
     }
 
-    fn publish(&self, backend: Option<&CpalBackend>) -> io::Result<()> {
-        let output = backend
-            .and_then(CpalBackend::output_snapshot)
-            .unwrap_or_default();
+    fn publish(
+        &self,
+        backend: Option<&CpalBackend>,
+        output: woodshed_audio::OutputSnapshot,
+    ) -> io::Result<()> {
         let status = json!({
             "pid": std::process::id(),
             "stream_id": backend.and_then(CpalBackend::output_observation_id),
@@ -146,11 +213,13 @@ impl Bridge {
             "sample_rate": backend.and_then(CpalBackend::output_sample_rate),
             "device_errors": backend.and_then(CpalBackend::output_device_error_count),
             "bar": output.cursor.bar_idx,
+            "bar_count": backend.map_or(0, CpalBackend::backing_bar_count),
             "sample_in_bar": output.cursor.sample_in_bar,
             "playing": output.playing,
             "transport_revision": output.transport_revision,
             "audio_error": backend.and_then(|backend| backend.error()),
             "view": if self.attached { "pane" } else { "window" },
+            "gain": (f32::from_bits(output.output_gain_bits) * 100.0).round() as u8,
             "quiet": output.output_gain_bits == QUIET_GAIN.to_bits(),
             "last_command": self.last_command,
             "command_error": self.command_error,
@@ -174,17 +243,18 @@ fn read_command(path: &Path) -> io::Result<Option<Command>> {
     Ok(Some(command?))
 }
 
-fn play(shared: &mut Shared, ctx: &mut Ctx<'_>) -> Result<(), String> {
-    if !shared
+fn native_backend(shared: &mut Shared) -> Result<&mut CpalBackend, String> {
+    shared
         .backend
-        .as_ref()
-        .is_some_and(|backend| backend.output_stream_count() == 1)
-    {
-        return Err("Play requires a native audio output stream".into());
-    }
+        .as_mut()
+        .filter(|backend| backend.output_stream_count() == 1)
+        .ok_or_else(|| "Transport requires a native audio output stream".into())
+}
+
+fn set_playing(shared: &mut Shared, ctx: &mut Ctx<'_>, playing: bool) -> Result<(), String> {
     ctx.runner.update(|ui| {
         // An empty isolated practice starts with two real Backing bars.
-        if ui.song.is_empty() {
+        if playing && ui.song.is_empty() {
             let first = SongBar::default();
             let mut second = SongBar {
                 root_pc: 7,
@@ -198,16 +268,12 @@ fn play(shared: &mut Shared, ctx: &mut Ctx<'_>) -> Result<(), String> {
                 ..SongDoc::default()
             };
         }
-        ui.song_playing = true;
+        ui.song_playing = playing;
     });
     crate::sync::after_dispatch(shared, ctx);
-    if shared
-        .backend
-        .as_ref()
-        .is_some_and(CpalBackend::song_playing)
-    {
+    if native_backend(shared)?.song_playing() == playing {
         Ok(())
     } else {
-        Err("The native backing did not start".into())
+        Err("The native backing rejected the play state".into())
     }
 }

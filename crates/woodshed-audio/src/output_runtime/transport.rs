@@ -153,6 +153,25 @@ impl OutputRuntime {
         self.send(Command::Rewind)
     }
 
+    pub fn bar_count(&self) -> usize {
+        self.song.bars.len()
+    }
+
+    /// Move one bar from the callback's current cursor, keeping play state.
+    pub fn step_bar(&mut self, forward: bool) -> Result<(), OutputError> {
+        if self.program_owns_output() || self.capture_busy() {
+            return Err(err(
+                "stop the prepared program or capture before moving backing",
+            ));
+        }
+        if self.song.bars.is_empty() {
+            return Err(err("no backing bars to move between"));
+        }
+        self.send(Command::StepBar { forward })?;
+        self.cancel_worker();
+        Ok(())
+    }
+
     pub fn set_output_gain(&mut self, gain: f32) -> Result<(), OutputError> {
         if !gain.is_finite() {
             return Err(err("output gain must be finite"));
