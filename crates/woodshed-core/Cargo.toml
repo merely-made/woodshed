@@ -48,7 +48,7 @@ hodograph = { git = "https://github.com/merely-made/eidetic.git", branch = "main
 portolan = { git = "https://github.com/merely-made/eidetic.git", branch = "main" }
 hex = "0.4"
 # Portable lossless companion storage; no audio driver or device dependency.
-wavicle = { git = "https://github.com/merely-made/wavicle.git", branch = "main", default-features = false, features = ["encode", "decode"] }
+wavicle.workspace = true
 
 [dev-dependencies]
 serde_json = { workspace = true }

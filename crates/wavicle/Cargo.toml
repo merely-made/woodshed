@@ -1,0 +1,33 @@
+[package]
+rust-version = "1.97.1"
+name = "wavicle"
+version = "0.1.0"
+edition = "2024"
+license = "MPL-2.0"
+description = "A pure-Rust WavPack v5 codec: lossless decode and encode of 16/24/32-bit integer and 32-bit float, mono and stereo, bit-exact and verified against the reference."
+repository = "https://github.com/merely-made/wavicle"
+readme = "README.md"
+keywords = ["wavpack", "audio", "codec", "lossless", "compression"]
+categories = ["multimedia::audio", "compression"]
+exclude = ["design_docs/", "fuzz/", ".github/"]
+
+[features]
+# Both directions by default now that the encoder is oracle-clean. A reader-only
+# build takes `default-features = false, features = ["decode"]`.
+default = ["decode", "encode"]
+decode = []
+encode = []
+
+[dependencies]
+
+[dev-dependencies]
+# The BLAKE3 identity gate mirrors the consumer's media-identity invariant:
+# blake3 over the decoded f32 bytes must survive the round trip.
+blake3 = "1"
+
+[lints.clippy]
+missing_errors_doc = "warn"
+missing_panics_doc = "warn"
+missing_safety_doc = "warn"
+undocumented_unsafe_blocks = "warn"
+too_many_lines = "warn"
