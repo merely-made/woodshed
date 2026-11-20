@@ -136,7 +136,7 @@ taproot = { git = "https://github.com/merely-made/genet.git", branch = "main" }
 # wgpu stays: the scenario lane still touches a `wgpu::TextureView` in the
 # capture the host hands it. Backend features come from netrender's own
 # per-target manifest split, transitively. The genet stack is wgpu 30.
-wgpu = { version = "30", default-features = false, features = ["std"] }
+wgpu = { version = "30.0.2", default-features = false, features = ["std"] }
 
 # Theming: pure OKLCH seed-to-palette derivation from Graphshell's contract
 # root (engine split D19), beside the toolkit and shared appearance authoring.
