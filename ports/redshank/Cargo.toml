@@ -9,7 +9,7 @@ license = "MPL-2.0"
 rust-version = "1.97.1"
 
 [workspace.dependencies]
-apparatus-core = { version = "0.1.0", git = "https://github.com/merely-made/armillary.git", branch = "main", default-features = false, features = ["serde"] }
+apparatus-core = { version = ">=0.1.0", git = "https://github.com/merely-made/armillary.git", branch = "main", default-features = false, features = ["serde"] }
 mandrake = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 tabard = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
 tabard-workshop = { git = "https://github.com/merely-made/graphshell.git", branch = "main" }
