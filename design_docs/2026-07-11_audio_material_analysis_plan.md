@@ -167,6 +167,14 @@ and publishes checkpoints and evaluation tooling under its own SAM license.
 Its resource cost and license require evaluation. The older Demucs repository
 is unmaintained and should be a legacy baseline only.
 
+**Candidates added 2026-11-22, none selected:** Mere's
+`mere/design_docs/2026-11-22_burn_ecosystem_survey_brief.md` reads two Burn
+ports at source. Watershed's BS-RoFormer (six stems, Burn 0.22.1, GPU required,
+weights with no declared license) and demucs-rs (HTDemucs, Burn 0.20.1, runs on
+CPU, no parity fixtures). The same brief lists Watershed's CPU tempo, beat,
+key and chord estimators, kord and maolan-pitch as observer candidates for
+this benchmark.
+
 Sources: <https://github.com/facebookresearch/sam-audio> and
 <https://github.com/facebookresearch/demucs>
 
