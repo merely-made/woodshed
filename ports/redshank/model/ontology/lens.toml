@@ -1,0 +1,13 @@
+id = "pack:redshank"
+version = "0.1.0"
+kind = ["lens"]
+licence = "MPL-2.0"
+
+[prefixes]
+pack = "https://mere.computer/packs/"
+
+[lens]
+select = [
+    { pack = "pack:web-annotation", version = "0.1.0" },
+    { pack = "pack:music-ontology", version = "0.1.0" },
+]

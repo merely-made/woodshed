@@ -376,6 +376,7 @@ pub(super) fn stage_css_with_roles(p: &Palette, authored_roles: bool) -> String 
 .side-item:focus {{ background-color: {surface}; }}
 .lens:focus {{ color: {text}; }}
 .pill:focus {{ color: {text}; }}
+.prog-quality-filter {{ display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }}
 .prog-cards {{ display: flex; margin-bottom: 12px; }}
 .prog-card {{ background-color: {surface_2}; border-radius: 8px; padding: 6px 14px;
              margin-right: 8px; }}

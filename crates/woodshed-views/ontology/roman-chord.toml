@@ -1,0 +1,26 @@
+# Term identity follows https://github.com/polifonia-project/roman-chord-ontology/blob/main/roman-chord.owl
+id = "pack:roman-chord"
+version = "0.1.0"
+kind = ["vocabulary"]
+licence = "CC-BY-SA-4.0"
+credit = ["Andrea Poltronieri, Roman Chord Ontology"]
+provides = ["roman:"]
+
+[prefixes]
+pack = "https://mere.computer/packs/"
+roman = "http://w3id.org/polifonia/ontology/roman-chord/"
+
+[[vocabulary.terms]]
+iri = "roman:Chord"
+kind = "class"
+labels = { en = "Roman chord" }
+
+[[vocabulary.terms]]
+iri = "roman:hasQuality"
+kind = "predicate"
+labels = { en = "Chord quality" }
+
+[[vocabulary.terms]]
+iri = "roman:Quality"
+kind = "class"
+labels = { en = "Quality" }

@@ -1,0 +1,12 @@
+id = "pack:woodshed"
+version = "0.1.0"
+kind = ["lens"]
+licence = "MPL-2.0"
+
+[prefixes]
+pack = "https://mere.computer/packs/"
+
+[lens]
+select = [
+    { pack = "pack:roman-chord", version = "0.1.0" },
+]

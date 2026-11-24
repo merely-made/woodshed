@@ -140,6 +140,7 @@ impl StageState {
             .map(|(i, c)| ProgressionCard {
                 numeral: format_role(&c.role),
                 chord_label: format!("{}{}{}", c.root.name, c.root.accidental, c.formula.symbol),
+                quality: c.formula.name,
                 is_expanded: i == expanded,
             })
             .collect();

@@ -274,3 +274,17 @@ Enable the commit checks with `prek install --allow-missing-config`; run
 `prek run --all-files` alongside the existing local gates. Check definitions
 live in `.pre-commit-config.yaml`, with source-size exclusions and exceptions
 in `line-ceiling.toml`. Shared house style and rollout: `mere/design_docs/mere_docs/implementation_strategy/2026-10-30_house_style_plan.md`.
+
+### Chord ontology
+
+The Progressions board reads the Roman Chord vocabulary bundled in
+`crates/woodshed-views/ontology`. Each role card identifies its Roman chord.
+Select a chord quality to compare its positions in that progression. Counts
+include every occurrence, including repeated chords. **All positions** restores
+the full sequence. Selecting a visible chord shows that position on the
+fretboard. The active vocabulary supplies the filter label.
+
+Set `WOODSHED_ONTOLOGY_DIR` before launch to use a local lens. Start by
+copying the bundled `lens.toml` into that directory. Its `select` list can
+select additional vocabulary packs stored beside it or drop the Roman Chord
+pack. An empty `[lens]` keeps the ordinary progression board.

@@ -201,7 +201,7 @@ fn model() -> RedshankModel {
             id: AnnotationId("voice".into()),
             target: anchor("blob", 500, None),
             body: NoteBody::Audio {
-                blob_id: "voice:abc".into(),
+                blob_id: "old voice/body".into(),
                 media_type: "audio/wav".into(),
                 duration_ms: 1_500,
             },
@@ -252,13 +252,43 @@ fn a_malformed_created_fails_exactly_its_assertion() {
 fn every_exported_annotation_passes_every_must_assertion() {
     let suite = Suite::load();
     let model = model();
-    let mut exported = 0;
     for item in ["remote", "local", "relative", "blob"] {
         let page = model.export_annotations(&ItemId(item.into()));
+        for annotation in page["items"].as_array().unwrap() {
+            assert!(suite.failures(annotation).is_empty());
+        }
+    }
+}
+
+#[test]
+fn default_lens_export_with_explicit_types_passes_every_must_assertion() {
+    let suite = Suite::load();
+    let model = model();
+    let profile = redshank_model::ontology::load(None).expect("Redshank default lens");
+    let mut exported = 0;
+    for item in ["remote", "local", "relative", "blob"] {
+        let page = model.export_annotations_with_profile(&ItemId(item.into()), &profile);
+        if item == "blob" {
+            assert_eq!(
+                page["items"][0]["body"]["id"],
+                "mere://redshank/voice?key=old+voice%2Fbody"
+            );
+        }
+        if item == "local" {
+            assert_eq!(
+                page["@included"][0]["@type"],
+                "http://purl.org/ontology/mo/AudioFile"
+            );
+            assert_eq!(
+                page["@included"][0]["@id"],
+                page["items"][0]["target"]["source"]
+            );
+        }
         assert_eq!(page["@context"], "http://www.w3.org/ns/anno.jsonld");
         assert_eq!(page["type"], "AnnotationPage");
         for annotation in page["items"].as_array().unwrap() {
             exported += 1;
+            assert_eq!(annotation["target"]["type"], "SpecificResource");
             let failures = suite.failures(annotation);
             assert!(
                 failures.is_empty(),
@@ -268,4 +298,30 @@ fn every_exported_annotation_passes_every_must_assertion() {
         }
     }
     assert_eq!(exported, 5);
+}
+
+#[test]
+fn omitting_subject_packs_keeps_the_original_page_and_private_sources_stay_private() {
+    let mut model = model();
+    let item = ItemId("local".into());
+    let bare_lens = r#"
+        id = "urn:redshank:test:bare"
+        version = "0.1.0"
+        kind = ["lens"]
+        licence = "MPL-2.0"
+        [lens]
+    "#;
+    let bare = mere_ontology::load(bare_lens, &[], None).unwrap();
+    assert_eq!(
+        model.export_annotations_with_profile(&item, &bare),
+        model.export_annotations(&item)
+    );
+
+    model
+        .set_annotation_privacy(&AnnotationId("local".into()), NotePrivacy::Private)
+        .unwrap();
+    let default = redshank_model::ontology::load(None).unwrap();
+    let page = model.export_annotations_with_profile(&item, &default);
+    assert_eq!(page["items"], json!([]));
+    assert!(page.get("@included").is_none());
 }

@@ -12,6 +12,7 @@ pub struct ItemId(pub String);
 #[serde(transparent)]
 pub struct AnnotationId(pub String);
 
+pub mod ontology;
 pub mod selected_export;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -827,17 +828,7 @@ impl RedshankModel {
     /// no I/O. Private notes are the listener's alone and stay out; a note
     /// is made shareable per note before it leaves.
     pub fn export_annotations(&self, item: &ItemId) -> serde_json::Value {
-        let items: Vec<_> = self
-            .annotations_for_item(item)
-            .into_iter()
-            .filter(|note| note.privacy == NotePrivacy::Shareable)
-            .map(|note| self.export_annotation(note))
-            .collect();
-        serde_json::json!({
-            "@context": "http://www.w3.org/ns/anno.jsonld",
-            "type": "AnnotationPage",
-            "items": items,
-        })
+        self.annotation_page(item, None)
     }
 
     /// The same export as pretty JSON text, for hosts without serde_json.
@@ -846,7 +837,7 @@ impl RedshankModel {
             .unwrap_or_else(|error| format!("{{\"error\":\"{error}\"}}"))
     }
 
-    fn export_annotation(&self, note: &Annotation) -> serde_json::Value {
+    fn export_annotation(&self, note: &Annotation, source: &str) -> serde_json::Value {
         let body = match &note.body {
             NoteBody::Text { plain_text } => serde_json::json!({
                 "type": "TextualBody",
@@ -859,7 +850,7 @@ impl RedshankModel {
                 duration_ms,
             } => serde_json::json!({
                 "type": "Audio",
-                "id": blob_id,
+                "id": voice_body_iri(blob_id),
                 "format": media_type,
                 "duration": format!("PT{:.3}S", *duration_ms as f64 / 1000.0),
             }),
@@ -872,7 +863,7 @@ impl RedshankModel {
             "motivation": "commenting",
             "body": body,
             "target": {
-                "source": self.annotation_source(note),
+                "source": source,
                 "selector": {
                     "type": "FragmentSelector",
                     "conformsTo": "http://www.w3.org/TR/media-frags/",
@@ -1015,6 +1006,17 @@ pub fn note_iri(id: &AnnotationId) -> String {
     format!("mere://redshank/note/{}", id.0)
 }
 
+/// Current voice bodies have a `voice:` IRI. Qualify an older local blob key
+/// in Redshank's namespace when projecting the native body onto the web.
+fn voice_body_iri(blob_id: &str) -> String {
+    if !blob_id.chars().any(char::is_whitespace) && url::Url::parse(blob_id).is_ok() {
+        return blob_id.to_owned();
+    }
+    let mut base = url::Url::parse("mere://redshank/voice").expect("Redshank IRI");
+    base.query_pairs_mut().append_pair("key", blob_id);
+    base.into()
+}
+
 /// A library item's IRI, for a source that has no URL of its own.
 pub fn item_iri(id: &ItemId) -> String {
     format!("mere://redshank/item/{}", id.0)
@@ -1061,7 +1063,7 @@ pub fn rfc3339_utc(ms: u64) -> String {
 }
 
 fn fragment_value(start_ms: u64, end_ms: Option<u64>) -> String {
-    let seconds = |milliseconds: u64| format!("{:.3}", milliseconds as f64 / 1000.0);
+    let seconds = |milliseconds: u64| format!("{}.{:03}", milliseconds / 1000, milliseconds % 1000);
     match end_ms {
         Some(end) => format!("t={},{}", seconds(start_ms), seconds(end)),
         None => format!("t={}", seconds(start_ms)),
@@ -1079,6 +1081,21 @@ pub trait AudioCaptureHost {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn valid_voice_iris_keep_their_original_spelling() {
+        for id in ["voice:abc", "https://EXAMPLE.test/sound"] {
+            assert_eq!(voice_body_iri(id), id);
+        }
+    }
+
+    #[test]
+    fn fragment_offsets_keep_every_millisecond() {
+        assert_eq!(
+            fragment_value(u64::MAX - 1, Some(u64::MAX)),
+            "t=18446744073709551.614,18446744073709551.615"
+        );
+    }
 
     fn local_item(id: &str) -> LibraryItem {
         LibraryItem::LocalAudio {

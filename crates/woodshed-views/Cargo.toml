@@ -9,6 +9,7 @@ repository.workspace = true
 description = "Woodshed's Cambium view layer: view fns + CSS sheets for the Genet host (desktop and web). Genet-host plan S0+."
 
 [dependencies]
+mere-ontology = { git = "https://github.com/merely-made/mere.git", branch = "main" }
 audio-packs.workspace = true
 audio-pack-views.workspace = true
 woodshed-notation.workspace = true

@@ -62,6 +62,12 @@ url = "2.5"
 # dropped its own rows at 767664df for the same reason; genet-livery reaches the
 # fork by path inside the git checkout.
 [patch.crates-io]
+# The local ontology reader uses Mere's RDF engine. Mirror its parser family.
+oxjsonld = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxrdf = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxrdfio = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxrdfxml = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
+oxttl = { git = "https://github.com/mark-ik/oxigraph", branch = "mark-ik/0.5" }
 # Mirror the document-session supplier; workspace patches are not inherited
 # from Mere or Genet Git dependencies.
 document-session-api = { git = "https://github.com/merely-made/genet.git", branch = "main" }

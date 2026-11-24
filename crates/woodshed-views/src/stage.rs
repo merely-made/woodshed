@@ -63,6 +63,7 @@ mod instances;
 mod looper;
 pub mod music_editor;
 mod musical_context;
+pub mod ontology;
 mod overview;
 pub mod overview_atmosphere;
 pub mod overview_dynamics;
@@ -1122,6 +1123,10 @@ pub enum PersonalRelationIntent {
 
 /// Runner state: the portable core slice plus view-layer widget state.
 pub struct UiState {
+    /// Active subject packs, available to additional views and projections.
+    pub ontology: Result<mere_ontology::Profile, String>,
+    /// Selected progression and quality; only filters the board’s visible positions.
+    progression_quality: Option<(&'static str, &'static str)>,
     pub audio_pack: Option<audio_packs::PackSelection>,
     pub pack_actions: Vec<audio_pack_views::PackAction>,
     pub pack_busy: bool,
@@ -1442,6 +1447,12 @@ impl UiState {
         let set_arrangement_dd = SelectState::new(app_settings.stage.set_arrangement.index())
             .with_label("Set arrangement");
         Self {
+            progression_quality: None,
+            ontology: ontology::load(
+                std::env::var_os("WOODSHED_ONTOLOGY_DIR")
+                    .as_deref()
+                    .map(std::path::Path::new),
+            ),
             set: Set::default(),
             working_sets: Default::default(),
             catalog_explorations: Default::default(),
@@ -3213,38 +3224,22 @@ fn progression_board_view(ui: &UiState) -> UiChild {
             .attr("class", "board"),
         );
     };
-    let cards: Vec<UiChild> = board
-        .cards
-        .iter()
-        .enumerate()
-        .map(|(i, c)| {
-            let class = if c.is_expanded {
-                "prog-card prog-card-active"
-            } else {
-                "prog-card"
-            };
-            Box::new(clickable(
-                el(
-                    "div",
-                    (
-                        el("div", text(c.numeral.clone())).attr("class", "prog-numeral"),
-                        el("div", text(c.chord_label.clone())).attr("class", "prog-chord"),
-                    ),
-                )
-                .attr("class", class),
-                move |ui: &mut UiState, _| {
-                    ui.stage.progression_expand(i);
-                },
-            )) as UiChild
-        })
-        .collect();
-    let controls: UiChild = Box::new(el("div", cards).attr("class", "prog-cards"));
-    let caption = format!(
-        "{} — {} · showing {}",
+    let terms = ui
+        .ontology
+        .as_ref()
+        .ok()
+        .map(ontology::ChordTerms::from_profile)
+        .unwrap_or_default();
+    let controls = terms.progression_controls(&board, ui.progression_quality);
+    let mut caption = format!(
+        "{} — {} · fretboard: {}",
         ui.stage.material_name(),
         board.description,
         board.expanded_label,
     );
+    if let Err(error) = &ui.ontology {
+        caption.push_str(&format!(" · Chord ontology unavailable: {error}"));
+    }
     let aria = format!(
         "{} progression, {} chord tones",
         ui.stage.material_name(),

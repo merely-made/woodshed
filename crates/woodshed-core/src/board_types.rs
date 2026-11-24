@@ -29,6 +29,8 @@ pub struct ProgressionCard {
     pub numeral: String,
     /// Concrete chord in the current key ("A", "Dm7", "E7").
     pub chord_label: String,
+    /// The formula Woodshed resolved for this role in the progression.
+    pub quality: &'static str,
     pub is_expanded: bool,
 }
 

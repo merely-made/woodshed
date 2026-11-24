@@ -277,6 +277,7 @@ fn transcript(state: &RedshankSurfaceState) -> Option<FullView> {
                 )),
             )));
         }
+        children.extend(super::transcript_notes::section(state, now, parsed));
         for cue in &parsed.cues {
             let position = cue.start_ms;
             let active = cue.active_at(now.position_ms);

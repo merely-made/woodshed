@@ -44,8 +44,14 @@ fn main() {
             privacy: NotePrivacy::Shareable,
         })
         .unwrap();
-    println!(
-        "{}",
-        serde_json::to_string_pretty(&model.export_selected_note(&id).unwrap()).unwrap()
-    );
+    let export = match std::env::args().nth(1).as_deref() {
+        Some("--annotation-page") => {
+            let directory = std::env::var_os("REDSHANK_ONTOLOGY_DIR").map(std::path::PathBuf::from);
+            let profile = redshank_model::ontology::load(directory.as_deref()).unwrap();
+            model.export_annotations_with_profile(&ItemId("recording".into()), &profile)
+        },
+        None => model.export_selected_note(&id).unwrap(),
+        Some(option) => panic!("Unknown option {option}"),
+    };
+    println!("{}", serde_json::to_string_pretty(&export).unwrap());
 }

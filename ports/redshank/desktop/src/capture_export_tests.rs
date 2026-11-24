@@ -323,6 +323,12 @@ fn annotation_export_worker_keeps_colliding_item_json_separate_and_atomically_re
     let directory = tempfile::tempdir().unwrap();
     let mut desktop = tests::desktop(directory.path());
     let mut state = RedshankSurfaceState::default();
+    let profile = redshank_model::ontology::load(None).unwrap();
+    let expected = |model: &RedshankModel, id: &ItemId| {
+        let page = model.export_annotations_with_profile(id, &profile);
+        assert_eq!(page["items"][0]["target"]["type"], "SpecificResource");
+        serde_json::to_vec_pretty(&page).unwrap()
+    };
     let first = ItemId("local:/takes/a/b.wav".into());
     let second = ItemId("local:/takes/a-b.wav".into());
     for (index, id) in [&first, &second].into_iter().enumerate() {
@@ -377,20 +383,9 @@ fn annotation_export_worker_keeps_colliding_item_json_separate_and_atomically_re
     assert_ne!(first_path, second_path);
     assert_eq!(
         fs::read(&first_path).unwrap(),
-        desktop
-            .session
-            .model
-            .export_annotations_json(&first)
-            .as_bytes()
+        expected(&desktop.session.model, &first)
     );
-    assert_eq!(
-        second_bytes,
-        desktop
-            .session
-            .model
-            .export_annotations_json(&second)
-            .as_bytes()
-    );
+    assert_eq!(second_bytes, expected(&desktop.session.model, &second));
     assert_ne!(fs::read(&first_path).unwrap(), second_bytes);
     desktop
         .session
@@ -402,11 +397,7 @@ fn annotation_export_worker_keeps_colliding_item_json_separate_and_atomically_re
     poll_until(&mut desktop, &mut state, |desktop| !desktop.export_pending);
     assert_eq!(
         fs::read(first_path).unwrap(),
-        desktop
-            .session
-            .model
-            .export_annotations_json(&first)
-            .as_bytes()
+        expected(&desktop.session.model, &first)
     );
     assert_eq!(fs::read(second_path).unwrap(), second_bytes);
     assert_eq!(

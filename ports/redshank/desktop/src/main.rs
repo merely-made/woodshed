@@ -449,6 +449,7 @@ struct Desktop {
     next_note_seek: u64,
     alignment_pending: Option<AnnotationId>,
     microphone_label: Option<String>,
+    ontology: Result<redshank_model::ontology::Profile, String>,
     export_pending: bool,
     data_root: PathBuf,
     closing: bool,
@@ -1027,7 +1028,12 @@ impl Desktop {
             .selected
             .clone()
             .ok_or("Select a recording before exporting its notes")?;
-        let json = self.session.model.export_annotations_json(&id);
+        let profile = self.ontology.as_ref().map_err(Clone::clone)?;
+        let page = self
+            .session
+            .model
+            .export_annotations_with_profile(&id, profile);
+        let json = serde_json::to_string_pretty(&page).map_err(|error| error.to_string())?;
         let path = self
             .data_root
             .join("exports")
@@ -2550,6 +2556,11 @@ fn main() {
         next_note_seek: 0,
         alignment_pending: None,
         microphone_label: LocalVoiceCapture::label(),
+        ontology: redshank_model::ontology::load(
+            std::env::var_os("REDSHANK_ONTOLOGY_DIR")
+                .as_deref()
+                .map(std::path::Path::new),
+        ),
         export_pending: false,
         data_root,
         closing: false,
@@ -3259,6 +3270,7 @@ mod tests {
             next_note_seek: 0,
             alignment_pending: None,
             microphone_label: None,
+            ontology: redshank_model::ontology::load(None),
             export_pending: false,
             data_root: directory.to_owned(),
             closing: false,

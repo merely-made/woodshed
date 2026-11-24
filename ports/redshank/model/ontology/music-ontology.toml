@@ -1,0 +1,15 @@
+# Music Ontology, https://github.com/motools/musicontology/blob/master/rdf/musicontology.n3
+id = "pack:music-ontology"
+version = "0.1.0"
+kind = ["vocabulary"]
+licence = "MPL-2.0"
+provides = ["mo:"]
+
+[prefixes]
+pack = "https://mere.computer/packs/"
+mo = "http://purl.org/ontology/mo/"
+
+[[vocabulary.terms]]
+iri = "mo:AudioFile"
+kind = "class"
+labels = { en = "Audio file" }

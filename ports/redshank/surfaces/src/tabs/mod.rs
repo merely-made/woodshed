@@ -6,6 +6,7 @@ pub mod listen;
 pub mod notes;
 pub mod rows;
 pub mod settings;
+mod transcript_notes;
 
 /// Rules for the tab-local classes the bodies emit. `theme::sheet()` must
 /// append this to `redshank.css`; it uses only `--t-*`, `--font-*`,

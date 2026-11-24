@@ -38,6 +38,10 @@ Current packages:
   Voice bodies are mono PCM WAV blobs in content-addressed local storage. Disk
   writes and the file picker run outside the UI thread.
 
+In Listen, the active transcript passage shows overlapping text and voice notes when the
+saved note and the current recording have matching representation receipts. Opening a
+match uses the existing note action.
+
 The storage package writes and flushes a pending generation before publishing
 it with a same-directory rename. Loading walks completed generations newest to
 oldest and selects the first valid document. An interrupted or corrupt newer
@@ -135,3 +139,16 @@ path dependencies into that workspace and reformats every crate in it.
 
 The playback substrate spike was removed on 2026-11-13; git keeps it. Its
 range server moved to `scenarios/range_server.py`.
+
+### Annotation ontology
+
+The desktop Notes export uses the Web Annotation and Music Ontology packs in
+its default lens. Targets carry their explicit Web Annotation resource type.
+The annotation page also identifies audio files for disclosed targets backed by
+a local file URL or a captured audio media type and byte length. The selected
+note clip keeps the native note with its representation receipt.
+
+Set `REDSHANK_ONTOLOGY_DIR` to a local directory containing `lens.toml`.
+Copy `model/ontology/lens.toml` to start with the shipped selection.
+Add local vocabulary packs beside it and select them by ID and version, or
+remove selections. An empty `[lens]` exports the original Web Annotation page.
