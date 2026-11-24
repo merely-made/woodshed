@@ -36,3 +36,25 @@ Baseline: `0ae6a96c`, uncommitted working tree. macOS, CPU tests only.
   fixture now reports host-observed tuner listening (admitted input,
   `tuner_active`). `cargo test --locked -q -p woodshed-views`: lib 309 passed,
   0 failed; `tests/midi_state.rs` 5 passed.
+
+## 2026-11-24: search results open on focus only (D1)
+
+- Bisect of `independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners`.
+  Each run is `cargo test -p woodshed-genet --bin woodshed-genet <test> --exact`
+  against a lock from `refs/notes/resolved`, or that lock with one genet
+  revision rewritten. Woodshed `a14c43f5`, Graphshell `8c68680a`: genet
+  `72ef547e`, `75036b3d` and `41e47c66` (genet-taffy 0.16.0) fail. `6873c0e7`
+  (Graphshell `6360c688`, genet `41e70983`) fails. `376d8941` (Graphshell
+  `88d2c386`, genet `6f058b9f`) passes. `9d21b785` (Graphshell `8885bb49`,
+  netrender `7060634f`) fails with genet `cbca38fe` and passes with
+  `d7cf480a`; nothing else in the lock differs. A temporary probe of the
+  centre hits printed the "Minor Pentatonic" label in every failing run and
+  the staging targets in every passing one.
+- Candidate on the failing lock (`a14c43f5`, genet `72ef547e`, genet-taffy
+  0.16.1): the target test and the new
+  `search_results_open_on_focus_and_stay_closed_for_a_restored_query` pass,
+  and `woodshed-genet` passes 370 tests with 8 ignored.
+- Landing on `939c210c`, fresh resolve (genet `335e441f`, Graphshell
+  `8c68680a`): the target test passes, as does the new test;
+  `layout_tests::` 29 passed; `cargo test -p woodshed-views --lib` 309
+  passed, 0 failed.

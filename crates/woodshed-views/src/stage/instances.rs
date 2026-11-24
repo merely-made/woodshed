@@ -24,6 +24,7 @@ impl UiState {
         self.set_arrangement_dd = SelectState::new(self.app_settings.stage.set_arrangement.index())
             .with_label("Set arrangement");
         self.search = TextInput::new(state.search_query.clone());
+        self.search_open.set(false);
         self.context_focus = state.context_focus.clone();
         self.pinned_markers.clear();
         self.hover_peek = None;

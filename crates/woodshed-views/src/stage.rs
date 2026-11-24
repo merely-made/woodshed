@@ -10,9 +10,9 @@
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 use cambium::{
-    AnyView, GenetCtx, GenetElement, GraphCanvasEvent, GraphCanvasNode, GraphCanvasRelation,
-    GraphCanvasSubgraph, GraphCanvasSwatch, GraphViewport, SelectState, TextInput, clickable,
-    custom_leaf, el, map_state, select, text, text_field,
+    AnyView, FocusEvent, FocusPhase, GenetCtx, GenetElement, GraphCanvasEvent, GraphCanvasNode,
+    GraphCanvasRelation, GraphCanvasSubgraph, GraphCanvasSwatch, GraphViewport, SelectState,
+    TextInput, clickable, custom_leaf, el, map_state, on_focus, select, text, text_field_typed,
 };
 pub use looper::recorder::{
     RECORDER_MOUNT, RecorderKey, dispatch as dispatch_recorder, projection as recorder_projection,
@@ -1280,6 +1280,11 @@ pub struct UiState {
     pub set_arrangement_dd: SelectState,
     /// Corpus search field (a small always-available field in the nav row).
     pub search: TextInput,
+    /// Whether the results list shows. Focusing the field opens it; a hit or
+    /// a restored query closes it, so a saved query never covers the Stage.
+    /// Shared with the field's focus handler, which sees only its
+    /// `TextInput`. Transient.
+    pub search_open: std::rc::Rc<std::cell::Cell<bool>>,
     /// Rename buffer for the selected card's label. A text field owns a
     /// `TextInput`, but a card stores a plain `String`, so the buffer loads on
     /// selection change and writes back as you type — see
@@ -1543,6 +1548,7 @@ impl UiState {
             root_dd: SelectState::new(stage.root_idx),
             set_arrangement_dd,
             search: TextInput::new(""),
+            search_open: Default::default(),
             card_rename: TextInput::new(""),
             card_rename_for: None,
             card_rename_owner: None,
@@ -1937,6 +1943,7 @@ impl UiState {
             self.activate_workspace_panel(WorkspacePanel::Practice);
         }
         self.search = TextInput::new("");
+        self.search_open.set(false);
     }
 
     /// Mirror dropdown picks into the core state. Hosts call this after
@@ -2704,6 +2711,7 @@ impl UiState {
         if let Some(config) = &session.active_exploration {
             config.apply(&mut self.stage, &mut self.app_settings);
             self.search = TextInput::new(config.search_query.clone());
+            self.search_open.set(false);
         }
         self.set_graph_positions.clear();
         self.context_positions.clear();
@@ -3775,10 +3783,21 @@ fn tab_content(ui: &UiState) -> UiChild {
 /// field in the nav row (no toolbar reorganization). Typing recomputes
 /// the results; clicking one jumps to its lens/tab.
 fn search_view(ui: &UiState) -> UiChild {
-    let field = map_state(text_field(&ui.search), |ui: &mut UiState| &mut ui.search);
+    let open = ui.search_open.clone();
+    let field = map_state(
+        on_focus(
+            text_field_typed(&ui.search),
+            move |_: &mut TextInput, event: FocusEvent| {
+                if event.phase == FocusPhase::Gained {
+                    open.set(true);
+                }
+            },
+        ),
+        |ui: &mut UiState| &mut ui.search,
+    );
     let query = ui.search.text().to_string();
     let results = search_corpus(&query, 8);
-    let list = (!results.is_empty()).then(|| {
+    let list = (ui.search_open.get() && !results.is_empty()).then(|| {
         let items: Vec<UiChild> = results
             .into_iter()
             .map(|r| {

@@ -1950,3 +1950,29 @@ fn exact_tone_relationship_controls_rebind_and_open_the_containing_scale_at_two_
         assert!(!h.state().rehearsal_running);
     }
 }
+
+#[test]
+fn search_results_open_on_focus_and_stay_closed_for_a_restored_query() {
+    for width in [1_100.0, 420.0] {
+        let mut h = harness(width, 664.0);
+        h.update(|ui| ui.search = cambium::TextInput::new("Minor"));
+        assert_eq!(
+            class_count(&h, "search-list"),
+            0,
+            "a set query opened results at {width}"
+        );
+        assert!(h.click_on(&Selector::class("search-wrap")));
+        assert!(
+            h.state().search_open.get(),
+            "focusing the field did not open results at {width}"
+        );
+        assert!(
+            class_count(&h, "search-list") > 0,
+            "focused results missing at {width}"
+        );
+        assert!(h.click_on(&Selector::class("search-label").containing("Minor Pentatonic")));
+        assert!(!h.state().search_open.get());
+        assert_eq!(h.state().search.text(), "");
+        assert_eq!(class_count(&h, "search-list"), 0);
+    }
+}

@@ -2,12 +2,15 @@
 
 Historical source: [Stage, Set, Tools, Rehearsal, and Looper Plan](archive_docs/2026-11-03/2026-07-11_stage_set_tools_plan.md).
 
-Status (2026-11-03): **in progress; successor approved.**
+Status (2026-11-24): **in progress; successor approved.**
 
 ## Boundaries and standing decisions
 One Set owns authored Card occurrences; the session Overview and tools project it. Exploration never silently edits the Set. Preserve catalog entry, configured material, playable realization and occurrence identities separately. Source: original Product model and connected exploration, lines 483–855. The 2026-10-11 release ruling says: “no GitHub workflows and no default pull-request review step.” Source: original lines 1089–1092. Explicit release instruction remains necessary.
 
 **Overview naming (Mark, 2026-11-04).** The workspace view over `woodshed-core` `session_overview` (`WorkspacePanel::Overview`) is labelled **Overview**, formerly "Mere". Lowercase mere is the data domain, not a panel. **Reservoir** is the name this view earns once it can browse other domains' meres (the [DSP/Graphshell/Hocket survey](2026-10-14_dsp_graphshell_hocket_survey_brief.md#three-readings-of-graphshell-in-woodshed)'s reading (c)); today it shows one domain.
+
+**stage_set_tools D1: search results open on focus only (Mark, 2026-11-24).** "Open on focus only (Recommended)." The corpus search results list opens when the search field takes focus. Applying a hit closes it, and so does restoring a query with a session or a catalog exploration. A restored query stays in the field, because search still travels with its exploration (original line 611). Options not taken: reordering the test to click the staging targets before setting the query (a restored query would still cover the Stage); laying the results out in the page flow at narrow widths (shifts the layout, list still always open); reverting or flagging genet `cbca38fe` (undoes a CSS 2.1 Appendix E fix genet had recorded as a defect). Evidence: "Search results over staging targets, 2026-11-24" below.
+Links: area Stage search · draws on genet:cbca38fe · governs crates/woodshed-views/src/stage.rs search_view · summary search results open on focus, never on restore
 
 ## Open work and done conditions
 - P1–P3: separate shell and section coordination, complete one-owner settings and explicit staging/tray interactions. Done when sections can change independently, host contains no product composition, settings and routes resolve to owned state and saved session reopening works (1393–1450).
@@ -88,3 +91,37 @@ altered title still fails closed. The
 [receipt](archive_docs/receipts/2026-11-03_stage_set_tools_plan_receipts.md)
 records the checks. Native GUI and headed acceptance of the label are not
 claimed.
+
+### Search results over staging targets, 2026-11-24
+
+Finding:
+`layout_tests::independent_instances_keep_background_rehearsal_and_explicit_staging_bound_to_their_owners`
+(`crates/woodshed-genet/src/layout_tests.rs:181`) failed at 420 px. Its
+exploration sets the query "Minor". The open results list is absolutely
+positioned under the nav-row field with z-index auto
+(`crates/woodshed-views/src/stage.rs:3820`), and at narrow widths it hangs
+over the top of the Stage. A centre click on "Working Set 1 copy" (152, 194,
+145, 32) landed on the "Minor Pentatonic" search label (30, 204, 278, 15).
+At 1100 px the list sits clear of the targets. The cause is genet `cbca38fe`
+("Paint auto z-index siblings in tree order", 2026-11-17). It moves
+positioned boxes with z-index auto into the positioned phase for both paint
+and hit testing. That follows CSS 2.1 Appendix E, and genet's 3D-transforms
+plan had recorded the old order as a defect on 2026-09-15. The test had
+passed only because the Stage, later in the document, painted over the list.
+Bisect, with locks from the resolved notes: Woodshed `9d21b785` with genet
+`d7cf480a` passes; the same lock with genet `cbca38fe` fails. Woodshed
+`376d8941` (genet `6f058b9f`) passes, and `6873c0e7` (genet `41e70983`)
+fails, before the Winit port. Graphshell plays no part. The same layout
+means a restored exploration's query covers the Stage in the app, not only
+in the test.
+
+Progress: D1 landed. `UiState::search_open` (`stage.rs:1287`) is opened by
+the field's focus handler in `search_view` (`stage.rs:3785`). It is closed by
+`apply_search_hit` (`stage.rs:1946`), by session restore (`stage.rs:2714`)
+and by `apply_exploration` (`stage/instances.rs:27`). The new
+`search_results_open_on_focus_and_stay_closed_for_a_restored_query`
+(`layout_tests.rs:1955`) is the positive control: a set query stays closed,
+focus opens the list at both widths, and a hit closes it. The
+[receipt](archive_docs/receipts/2026-11-03_stage_set_tools_plan_receipts.md)
+records the checks. Native scenarios, including
+`working_instances_narrow.scn`, and real-window focus were not run.
