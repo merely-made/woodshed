@@ -1,0 +1,41 @@
+# Open a live document tile in Turnstone's native Workbench.
+settle 20
+key escape
+open ${WOODSHED_LISTENING_URL}
+settle 45
+act Open node in Workbench
+settle 30
+act Open Inspector pane
+settle 10
+act Maximize pane
+settle 15
+click surface:inspector role:button Change viewer
+settle 15
+click surface:inspector role:radio Genet (Bole)
+settle 45
+assert row Viewer: genet.scripted
+act Close pane
+settle 12
+act Open node in Workbench
+settle 15
+assert wb-cells == 1
+assert wb-cell Ben Folds – Fired
+act Maximize pane
+settle 30
+assert maximized
+assert snap browser-current-engine == genet.scripted
+assert snap browser-current-content == live
+
+# Client pixels in the 1024x600 native scenario window.
+click-at 110 325
+insert 72
+click-at 355 325
+insert 76.500
+click-at 280 395
+insert Match the pickup and keep the left hand even.
+settle 20
+capture 00_listening_phrase
+click-at 140 470
+settle 60
+capture 01_listening_phrase_sent
+log Entered a time range and practice note in the live Genet Bole page and pressed Practice this phrase.

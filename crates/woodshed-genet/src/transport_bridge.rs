@@ -29,6 +29,7 @@ enum Observation {
     Gain(f32),
     Playing(bool),
     Stepped(u64),
+    WavPlaying(bool),
 }
 
 struct Pending {
@@ -113,11 +114,20 @@ impl Bridge {
                 self.command_error =
                     Some("Native audio output lost during transport change".into());
             }
-            let applied = output.is_some_and(|output| match pending.observation {
-                Observation::Gain(gain) => output.output_gain_bits == gain.to_bits(),
-                Observation::Playing(playing) => output.playing == playing,
-                Observation::Stepped(revision) => output.transport_revision != revision,
-            });
+            let applied = match pending.observation {
+                Observation::WavPlaying(playing) => backend
+                    .and_then(CpalBackend::listening_wav_observation)
+                    .is_some_and(|wav| wav.playing == playing && wav.region_frames > 0),
+                Observation::Gain(gain) => {
+                    output.is_some_and(|output| output.output_gain_bits == gain.to_bits())
+                },
+                Observation::Playing(playing) => {
+                    output.is_some_and(|output| output.playing == playing)
+                },
+                Observation::Stepped(revision) => {
+                    output.is_some_and(|output| output.transport_revision != revision)
+                },
+            };
             if !applied && now >= pending.deadline && self.command_error.is_none() {
                 self.command_error =
                     Some("Native audio did not confirm the transport change".into());
@@ -175,6 +185,9 @@ impl Bridge {
                 native_backend(shared)?.set_output_gain(gain)?;
                 return Ok(Some(Observation::Gain(gain)));
             },
+            "previous" | "next" if ctx.runner.state().set.wav_phrase.is_some() => {
+                return Err("The marked WAV loop has no backing bars.".into());
+            },
             "previous" | "next" => {
                 let backend = native_backend(shared)?;
                 let revision = backend
@@ -184,11 +197,35 @@ impl Bridge {
                 backend.step_backing_bar(command.action == "next")?;
                 return Ok(Some(Observation::Stepped(revision)));
             },
+            "play" | "pause" if ctx.runner.state().set.wav_phrase.is_some() => {
+                let playing = command.action == "play";
+                crate::practice_wav::set_playing(shared, ctx, playing)?;
+                return Ok(wav_playing_observation(shared, playing));
+            },
             "play" | "pause" => {
                 native_backend(shared)?;
                 let playing = command.action == "play";
                 set_playing(shared, ctx, playing)?;
                 return Ok(Some(Observation::Playing(playing)));
+            },
+            "import-practice" => crate::practice_clip::import(&self.directory, shared, ctx)?,
+            "inspect-practice" => crate::practice_clip::inspect(&self.directory, shared, ctx)?,
+            "import-listening" => {
+                crate::practice_clip::import_listening(&self.directory, shared, ctx)?
+            },
+            "inspect-listening" => {
+                crate::practice_clip::inspect_listening(&self.directory, shared, ctx)?
+            },
+            "import-wav" => crate::practice_wav::import(&self.directory, shared, ctx)?,
+            "inspect-wav" => crate::practice_wav::inspect(&self.directory, shared, ctx)?,
+            "play-wav" | "pause-wav" => {
+                let playing = command.action == "play-wav";
+                crate::practice_wav::set_playing(shared, ctx, playing)?;
+                return Ok(wav_playing_observation(shared, playing));
+            },
+            "play-practice" => {
+                native_backend(shared)?;
+                crate::practice_clip::play(shared, ctx)?;
             },
             "quit" => self.after_publish = Some(AfterPublish::Quit),
             "release" if !self.attached => self.after_publish = Some(AfterPublish::Release),
@@ -205,6 +242,19 @@ impl Bridge {
         backend: Option<&CpalBackend>,
         output: woodshed_audio::OutputSnapshot,
     ) -> io::Result<()> {
+        let wav = backend
+            .and_then(CpalBackend::listening_wav_observation)
+            .map(|wav| {
+                json!({
+                    "stream_epoch": wav.stream_epoch,
+                    "device_frames": wav.device_frames,
+                    "region_frames": wav.region_frames,
+                    "region_cursor": wav.region_cursor,
+                    "completed_wraps": wav.completed_wraps,
+                    "playing": wav.playing,
+                    "sample_rate": wav.sample_rate,
+                })
+            });
         let status = json!({
             "pid": std::process::id(),
             "stream_id": backend.and_then(CpalBackend::output_observation_id),
@@ -218,6 +268,16 @@ impl Bridge {
             "playing": output.playing,
             "transport_revision": output.transport_revision,
             "audio_error": backend.and_then(|backend| backend.error()),
+            "music_practice": {
+                "program_status": format!("{:?}", output.program.status),
+                "program_revision": output.program.revision,
+                "bar": output.program.card_index,
+                "event": output.program.event_index,
+                "beat_ticks": output.program.beat_ticks,
+                "bpm": f64::from_bits(output.program.bpm_bits),
+                "run_epoch": output.program.epoch.0,
+            },
+            "wav_loop": wav,
             "view": if self.attached { "pane" } else { "window" },
             "gain": (f32::from_bits(output.output_gain_bits) * 100.0).round() as u8,
             "quiet": output.output_gain_bits == QUIET_GAIN.to_bits(),
@@ -230,6 +290,10 @@ impl Bridge {
         temporary.persist(self.directory.join("status.json"))?;
         Ok(())
     }
+}
+
+fn wav_playing_observation(shared: &Shared, playing: bool) -> Option<Observation> {
+    (playing || shared.wav_practice.is_loaded()).then_some(Observation::WavPlaying(playing))
 }
 
 fn read_command(path: &Path) -> io::Result<Option<Command>> {

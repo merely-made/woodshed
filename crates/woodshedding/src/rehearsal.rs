@@ -398,6 +398,40 @@ pub enum LoopMode {
     Card,
 }
 
+/// A phrase marked for practice against an external recording.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ListeningPhrase {
+    pub title: String,
+    pub source_page_url: String,
+    pub listening_url: String,
+    pub start_ms: u64,
+    pub end_ms: u64,
+    pub note: String,
+}
+
+/// A phrase selected from a local recording.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct WavPhraseSource {
+    pub title: String,
+    pub source_page_url: String,
+    pub start_ms: u64,
+    pub end_ms: u64,
+    pub note: String,
+}
+
+/// Recording identity and selection owned by a working Set.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WavPhrase {
+    pub source: WavPhraseSource,
+    pub wav_blake3: String,
+    pub wav_bytes: usize,
+    /// The stored WAV starts at the in mark. Older Sets retain the complete take.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub region_only: bool,
+}
+
 /// A set: an ordered run of cards plus a cursor (the card on the stage).
 /// Every view (the stage, the timeline) reads from here, so the wiring
 /// concentrates in one owned model. Persisted so a session survives a
@@ -412,6 +446,13 @@ pub struct Set {
     /// Authored notation, saved/exported as MusicXML and independent of Card-order playback.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub music: Option<crate::notation::MusicDocument>,
+    /// Original source selection accompanying imported notation.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub music_source: Option<crate::notation::MusicSourceSelection>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub listening_phrase: Option<ListeningPhrase>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub wav_phrase: Option<WavPhrase>,
     /// Index of the card on the stage. Meaningless when `cards` is empty;
     /// clamped on mutation. Order is authoritative while the product is
     /// linear, so the cursor stays an index; identity-addressed callers use

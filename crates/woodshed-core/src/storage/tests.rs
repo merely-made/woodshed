@@ -1,5 +1,7 @@
 use super::*;
 use crate::loop_capture::decode_pcm;
+use crate::settings::AppSettings;
+use crate::{Lens, StageState};
 const NAMESPACE: &str = "0123456789abcdef0123456789abcdef";
 
 #[test]

@@ -128,12 +128,17 @@ class Handoff:
 
     def sample(self, label, view, playing, before=None):
         before = before or until(self.producer.read, "an audio snapshot")
-        initial_position = (before["bar"], before["sample_in_bar"])
+        def position(state):
+            wav = state.get("wav_loop")
+            if wav:
+                return wav["completed_wraps"], wav["region_cursor"]
+            return state["bar"], state["sample_in_bar"]
+        initial_position = position(before)
         def progress():
             state = self.producer.read()
-            if state.get("playing") != playing or state.get("view") != view:
+            if (state.get("wav_loop") or state).get("playing") != playing or state.get("view") != view:
                 return None
-            cursor = (state["bar"], state["sample_in_bar"])
+            cursor = position(state)
             if state["device_frames"] <= before["device_frames"]:
                 return None
             if playing and cursor == initial_position:
@@ -166,7 +171,8 @@ class Handoff:
             if self.attached == (action == "mounted"):
                 return None
             ack = self.producer.command("attach" if action == "mounted" else action, value)
-            state = self.sample(action, "window" if action == "detach" else "pane", ack["playing"], ack)
+            playing = (ack.get("wav_loop") or ack)["playing"]
+            state = self.sample(action, "window" if action == "detach" else "pane", playing, ack)
             self.attached = action != "detach"
             self.returned = action == "detach"
             return state
@@ -225,8 +231,8 @@ def serve(handoff, token):
     return server, "http://" + server.authority + base
 
 
-def launch(stack, binary, env, cwd, output, token):
-    child = subprocess.Popen([str(binary)], env={**os.environ, **env}, cwd=cwd,
+def launch(stack, binary, env, cwd, output, token, arguments=()):
+    child = subprocess.Popen([str(binary), *arguments], env={**os.environ, **env}, cwd=cwd,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     tail = deque(maxlen=100)
     def drain():

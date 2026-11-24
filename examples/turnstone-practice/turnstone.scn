@@ -1,0 +1,38 @@
+# Open a live document tile in Turnstone's native Workbench.
+settle 20
+key escape
+open ${WOODSHED_LESSON_URL}
+settle 45
+act Open node in Workbench
+settle 30
+act Open Inspector pane
+settle 10
+act Maximize pane
+settle 15
+click surface:inspector role:button Change viewer
+settle 15
+click surface:inspector role:radio Genet (Bole)
+settle 45
+assert row Viewer: genet.scripted
+act Close pane
+settle 12
+act Open node in Workbench
+settle 15
+assert wb-cells == 1
+assert wb-cell Alternating-thumb study
+act Maximize pane
+settle 30
+assert maximized
+assert snap browser-current-engine == genet.scripted
+assert snap browser-current-content == live
+# Client pixels in the 1024x600 native scenario window.
+click-at 300 502
+settle 25
+capture 00_selection_required
+click-at 120 502
+settle 25
+capture 01_phrase_selected
+click-at 300 502
+settle 60
+capture 02_phrase_sent
+log Exercised Use in Woodshed before and after selecting the phrase in the live Genet Bole lesson.

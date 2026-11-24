@@ -15,7 +15,8 @@ audio-pattern.workspace = true
 audio-primitives = { workspace = true }
 woodshedding = { workspace = true }
 scenomise = { workspace = true, optional = true, features = ["djot"] }
-blake3 = { version = "1", optional = true }
+# Practice WAV keys and integrity checks name a recording by its BLAKE3 digest.
+blake3 = { workspace = true }
 woodshed-graph = { workspace = true }
 # The portable scene contract. woodshed owns the musical facts and
 # their typed relations; sceno owns placement, footprints, representation, and
@@ -55,7 +56,7 @@ serde_json = { workspace = true }
 tokio = { version = "1", features = ["macros", "rt"] }
 
 [features]
-portable-scenes = ["dep:scenomise", "dep:sceno-backdrops", "dep:blake3"]
+portable-scenes = ["dep:scenomise", "dep:sceno-backdrops"]
 
 [[bin]]
 name = "woodshed-fretboard-scene"

@@ -137,6 +137,20 @@ pub(super) fn desktop_root(ui: &UiState, commands: &WindowCommands, frame: Windo
         .attr("class", "practice-close-panel")
         .attr("role", "alert")
     });
+    let practice_open_notice = ui.music_editor.practice_open_notice.as_ref().map(|notice| {
+        el(
+            "div",
+            (
+                el("span", text_node(notice.clone())),
+                clickable(
+                    el("button", text_node("Dismiss")).attr("class", "t-btn"),
+                    |ui: &mut UiState, _| ui.music_editor.practice_open_notice = None,
+                ),
+            ),
+        )
+        .attr("class", "practice-save-notice practice-open-notice")
+        .attr("role", "alert")
+    });
     Box::new(
         el(
             "div",
@@ -145,6 +159,7 @@ pub(super) fn desktop_root(ui: &UiState, commands: &WindowCommands, frame: Windo
                 decision,
                 persona_decision,
                 draft_decision,
+                practice_open_notice,
                 stage_root(ui),
             ),
         )

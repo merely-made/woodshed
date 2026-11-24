@@ -1,0 +1,9 @@
+# The source page opens this same pane's Woodshed transport after the import.
+settle 65
+assert snap browser-current-engine == genet.scripted
+click-at 124 453
+settle 45
+capture 02_piano_transport_attached
+click-at 310 453
+settle 40
+capture 03_piano_transport_detached

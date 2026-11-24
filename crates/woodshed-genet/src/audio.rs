@@ -439,6 +439,44 @@ impl CpalBackend {
         self.with_output(|output| output.set_output_gain(gain))
     }
 
+    pub(crate) fn validate_listening_wav(
+        bytes: &[u8],
+        start_ms: u64,
+        end_ms: u64,
+    ) -> Result<(), String> {
+        OutputRuntime::validate_listening_wav(bytes, start_ms, end_ms)
+            .map_err(|error| error.to_string())
+    }
+
+    pub(crate) fn set_listening_wav(
+        &mut self,
+        bytes: &[u8],
+        start_ms: u64,
+        end_ms: u64,
+    ) -> Result<(), String> {
+        self.with_output(|output| output.set_listening_wav(bytes, start_ms, end_ms))
+    }
+
+    pub(crate) fn set_listening_wav_playing(&mut self, playing: bool) -> Result<(), String> {
+        self.with_output(|output| output.set_listening_wav_playing(playing))
+    }
+
+    pub(crate) fn set_extracted_wav(&mut self, bytes: &[u8]) -> Result<(), String> {
+        self.with_output(|output| output.set_extracted_wav(bytes))
+    }
+
+    pub(crate) fn clear_listening_wav(&mut self) -> Result<(), String> {
+        self.with_output(OutputRuntime::clear_listening_wav)
+    }
+
+    pub(crate) fn listening_wav_observation(
+        &self,
+    ) -> Option<woodshed_audio::output_runtime::ListeningWavObservation> {
+        self.output
+            .as_ref()
+            .and_then(OutputRuntime::listening_wav_observation)
+    }
+
     pub(crate) fn backing_bar_count(&self) -> usize {
         self.output.as_ref().map_or(0, OutputRuntime::bar_count)
     }

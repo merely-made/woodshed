@@ -1696,7 +1696,7 @@ mod tests {
                 fonts: Vec::new(),
                 images: Vec::new(),
             },
-            crate::hooks(&shared),
+            crate::hooks(&shared, None, Default::default()),
         );
         host.layout_at(1280.0, 960.0);
         let wake = host.wake().callback();

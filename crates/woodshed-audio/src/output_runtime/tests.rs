@@ -65,6 +65,12 @@ fn nonfinite_preview_inputs_are_refused_before_normalization_without_cancelling_
 }
 
 fn render(runtime: &mut OutputRuntime, frames: usize) -> Vec<f32> {
+    let output = render_stereo(runtime, frames);
+    assert!(output.chunks_exact(2).all(|s| s[0] == s[1]));
+    output
+}
+
+fn render_stereo(runtime: &mut OutputRuntime, frames: usize) -> Vec<f32> {
     let mut output = vec![13.0; frames * 2];
     ALLOCS.with(|n| n.set(0));
     FREES.with(|n| n.set(0));
@@ -74,8 +80,88 @@ fn render(runtime: &mut OutputRuntime, frames: usize) -> Vec<f32> {
     result.unwrap();
     assert_eq!(ALLOCS.with(Cell::get), 0, "output processor allocated");
     assert_eq!(FREES.with(Cell::get), 0, "output processor deallocated");
-    assert!(output.chunks_exact(2).all(|s| s[0] == s[1]));
     output
+}
+
+#[test]
+fn marked_listening_wav_wraps_mid_block_and_resumes_same_stereo_cursor() {
+    let mut wav = std::io::Cursor::new(Vec::new());
+    let mut writer = hound::WavWriter::new(
+        &mut wav,
+        hound::WavSpec {
+            channels: 2,
+            sample_rate: 2000,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        },
+    )
+    .unwrap();
+    for frame in [
+        [30_000_i16, 31_000],
+        [30_000, 31_000],
+        [4096, -4096],
+        [8192, -8192],
+        [12_288, -12_288],
+        [16_384, -16_384],
+        [32_000, 32_767],
+        [32_000, 32_767],
+    ] {
+        for sample in frame {
+            writer.write_sample(sample).unwrap();
+        }
+    }
+    writer.finalize().unwrap();
+    let wav = wav.into_inner();
+    assert!(OutputRuntime::validate_listening_wav(&wav, 1, 3).is_ok());
+    assert!(OutputRuntime::validate_listening_wav(&wav, 1, 5).is_err());
+    assert!(OutputRuntime::validate_listening_wav(&wav[..wav.len() - 1], 1, 3).is_err());
+
+    let mut r = runtime();
+    r.set_listening_wav(&wav, 1, 3).unwrap();
+    r.set_output_gain(1.0).unwrap();
+    assert!(r.listening_wav_observation().is_none());
+    r.service().unwrap();
+    assert_eq!(render(&mut r, 3), vec![0.0; 6]);
+    let initial = r.listening_wav_observation().unwrap();
+    assert_eq!(initial.region_frames, 2);
+    assert_eq!(initial.region_cursor, 0);
+    assert!(!initial.playing);
+
+    r.set_listening_wav_playing(true).unwrap();
+    r.service().unwrap();
+    assert_eq!(
+        render_stereo(&mut r, 5),
+        [
+            0.125, -0.125, 0.375, -0.375, 0.125, -0.125, 0.375, -0.375, 0.125, -0.125
+        ]
+    );
+    let progressed = r.listening_wav_observation().unwrap();
+    assert_eq!(progressed.device_frames - initial.device_frames, 5);
+    assert_eq!(progressed.stream_epoch, initial.stream_epoch);
+    assert_eq!(
+        (progressed.region_cursor, progressed.completed_wraps),
+        (1, 2)
+    );
+
+    r.set_listening_wav_playing(false).unwrap();
+    r.service().unwrap();
+    assert_eq!(render(&mut r, 7), vec![0.0; 14]);
+    let paused = r.listening_wav_observation().unwrap();
+    assert_eq!(paused.device_frames - progressed.device_frames, 7);
+    assert_eq!((paused.region_cursor, paused.completed_wraps), (1, 2));
+    assert!(!paused.playing);
+
+    r.set_output_gain(0.5).unwrap();
+    r.set_listening_wav_playing(true).unwrap();
+    r.service().unwrap();
+    assert_eq!(render_stereo(&mut r, 2), [0.1875, -0.1875, 0.0625, -0.0625]);
+    let resumed = r.listening_wav_observation().unwrap();
+    assert_eq!((resumed.region_cursor, resumed.completed_wraps), (1, 3));
+    assert_eq!(resumed.stream_epoch, initial.stream_epoch);
+    r.clear_listening_wav().unwrap();
+    r.service().unwrap();
+    assert_eq!(render(&mut r, 3), vec![0.0; 6]);
+    assert!(r.listening_wav_observation().is_none());
 }
 fn runtime() -> OutputRuntime {
     let mut r = OutputRuntime::offline(1000).unwrap();
@@ -168,11 +254,17 @@ fn gain_and_loop_wrap_keep_the_callback_transport_revision() {
     r.rewind().unwrap();
     r.service().unwrap();
     render(&mut r, 1);
-    assert_eq!(r.snapshot().transport_revision, wrapped.transport_revision + 1);
+    assert_eq!(
+        r.snapshot().transport_revision,
+        wrapped.transport_revision + 1
+    );
     r.stop().unwrap();
     r.service().unwrap();
     render(&mut r, 1);
-    assert_eq!(r.snapshot().transport_revision, wrapped.transport_revision + 2);
+    assert_eq!(
+        r.snapshot().transport_revision,
+        wrapped.transport_revision + 2
+    );
     assert!(!r.snapshot().playing);
 }
 

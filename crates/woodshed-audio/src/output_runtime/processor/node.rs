@@ -7,7 +7,7 @@ impl AudioNode for OutputNode {
             .debug_name("woodshed_output")
             .channel_config(ChannelConfig {
                 num_inputs: ChannelCount::ZERO,
-                num_outputs: ChannelCount::MONO,
+                num_outputs: ChannelCount::STEREO,
             }))
     }
     fn construct_processor(
@@ -40,6 +40,7 @@ impl AudioNode for OutputNode {
             count_in_pos: 0,
             backing_click: default_click(cx.stream_info.sample_rate.get()),
             gain: 0.8,
+            listening: None,
             replace: false,
             bpm: 120.0,
             click_playing: false,
@@ -108,6 +109,7 @@ impl AudioNodeProcessor for Processor {
                     } => {
                         self.transport_revision += 1;
                         if *clear {
+                            self.listening = None;
                             self.program_replacement = None;
                             if self.program.is_some() {
                                 // Session replacement silences the old
@@ -249,6 +251,12 @@ impl AudioNodeProcessor for Processor {
                         }
                     },
                     Command::Gain(gain) => self.gain = *gain,
+                    Command::Listening { data } => std::mem::swap(data, &mut self.listening),
+                    Command::ListeningPlaying(playing) => {
+                        if let Some(region) = self.listening.as_mut() {
+                            region.set_playing(*playing);
+                        }
+                    },
                     Command::RecordReplace(replace) => self.replace = *replace,
                     Command::Preview { revision, buffer } => {
                         if !self.playing
@@ -460,9 +468,18 @@ impl AudioNodeProcessor for Processor {
             }
         }
         let first_frame = info.clock_samples.0.max(0) as u64;
-        for (offset, sample) in buffers.outputs[0][..info.frames].iter_mut().enumerate() {
+        let [left, right, ..] = buffers.outputs else {
+            unreachable!("Woodshed output node has two channels");
+        };
+        for offset in 0..info.frames {
             self.current_frame = first_frame.saturating_add(offset as u64);
-            *sample = self.frame();
+            let mono = self.frame();
+            let listening = self
+                .listening
+                .as_mut()
+                .map_or([0.0; 2], |region| region.frame());
+            left[offset] = (mono + listening[0] * self.gain).clamp(-1.0, 1.0);
+            right[offset] = (mono + listening[1] * self.gain).clamp(-1.0, 1.0);
         }
         self.current_frame = first_frame.saturating_add(info.frames as u64);
         self.flush_return();
@@ -515,6 +532,10 @@ impl AudioNodeProcessor for Processor {
             click_playing: self.click_playing,
             click_step,
             program,
+            listening: self
+                .listening
+                .as_ref()
+                .map_or_else(ListeningSnapshot::default, |region| region.snapshot()),
         });
         if self.handled_commands != 0 {
             self.shared

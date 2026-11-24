@@ -1,0 +1,259 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+<html lang="en">
+<meta charset="utf-8">
+<title>Window Seat</title>
+<style>
+  body { margin: 8px 16px; color: #18212a; background: #f4f3ed; font: 14px/20px sans-serif; }
+  h1 { margin: 0; font: bold 20px/24px sans-serif; }
+  p { margin: 0; }
+  .row { display: flex; align-items: center; gap: 6px; min-height: 30px; flex-wrap: wrap; }
+  audio { display: none; }
+  label { display: inline-flex; align-items: center; gap: 6px; }
+  input, button { box-sizing: border-box; height: 27px; border: 1px solid #637380;
+                  border-radius: 3px; background: white; color: inherit; font: inherit; }
+  input { width: 315px; max-width: 62vw; padding: 2px 6px; }
+  button { padding: 0 8px; cursor: pointer; }
+  button[aria-pressed="true"] { background: #c8e2d6; border-color: #346551; }
+  button:disabled { color: #6c7479; cursor: default; }
+  #cues button { min-width: 30px; }
+</style>
+<h1>Window Seat</h1>
+<p>Original piano take · 120 BPM · 4/4 · <a href="/piano.wav" target="_blank" rel="noopener">Open WAV</a></p>
+<audio id="take" preload="none" src="/piano.wav"></audio>
+<div class="row">
+  <button type="button" id="play">Play take</button>
+  <span id="playback" role="status"></span>
+</div>
+<div class="row" id="cues" aria-label="Bar cues">
+  <span>Cue</span>
+  <button type="button" data-time="0" aria-label="Bar 1, 0 seconds">1</button>
+  <button type="button" data-time="2000" aria-label="Bar 2, 2 seconds">2</button>
+  <button type="button" data-time="4000" aria-label="Bar 3, 4 seconds">3</button>
+  <button type="button" data-time="6000" aria-label="Bar 4, 6 seconds">4</button>
+  <button type="button" data-time="8000" aria-label="Bar 5, 8 seconds">5</button>
+  <button type="button" data-time="10000" aria-label="Bar 6, 10 seconds">6</button>
+  <button type="button" data-time="12000" aria-label="End, 12 seconds">End</button>
+</div>
+<div class="row">
+  <button type="button" id="mark-in">Mark in</button>
+  <button type="button" id="mark-out">Mark out</button>
+  <span id="marks" role="status">In — · Out —</span>
+</div>
+<div class="row">
+  <label>Practice note <input id="note"></label>
+</div>
+<div class="row">
+  <button type="button" id="send">Practice this phrase</button>
+  <span id="status" role="status"></span>
+  <a id="transport" href="#" hidden>Open Woodshed transport</a>
+</div>
+<script>
+  const take = document.getElementById("take");
+  const play = document.getElementById("play");
+  const playback = document.getElementById("playback");
+  const cues = Array.from(document.querySelectorAll("#cues button"));
+  const marks = document.getElementById("marks");
+  const note = document.getElementById("note");
+  const send = document.getElementById("send");
+  const status = document.getElementById("status");
+  const transport = document.getElementById("transport");
+  const barMs = 2000;
+  const endMs = 12000;
+  const nativeAudio = typeof take.play === "function" && typeof take.canPlayType === "function"
+    && Boolean(take.canPlayType("audio/wav"));
+  let cueMs = 0;
+  let start_ms = null;
+  let end_ms = null;
+  let previewPlaying = false;
+  let previewAvailable = true;
+  let previewTimer;
+  let previewGeneration = 0;
+  let previewCommand = Promise.resolve();
+
+  function showCue(timeMs) {
+    cueMs = timeMs;
+    for (const cue of cues) {
+      cue.setAttribute("aria-pressed", String(Number(cue.dataset.time) === timeMs));
+    }
+  }
+
+  function showMarks() {
+    const seconds = value => value === null ? "—" : (value / 1000).toFixed(3) + " s";
+    marks.textContent = "In " + seconds(start_ms) + " · Out " + seconds(end_ms);
+    status.textContent = "";
+  }
+
+  function barAtPlayhead(positionMs) {
+    return Math.min(endMs, Math.floor(positionMs / barMs) * barMs);
+  }
+
+  function showPosition(positionMs, playing) {
+    showCue(barAtPlayhead(positionMs));
+    play.textContent = playing ? "Pause take" : "Play take";
+    playback.textContent = (positionMs / 1000).toFixed(2) + " s";
+  }
+
+  async function preview(action, position_ms, marker) {
+    const response = await fetch("/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, position_ms, marker })
+    });
+    if (!response.ok) throw new Error("Preview unavailable");
+    const result = await response.json();
+    if (result.ok !== true || !Number.isFinite(result.position_ms)
+        || typeof result.playing !== "boolean") throw new Error("Invalid preview position");
+    return result;
+  }
+
+  function stopTracking() {
+    clearTimeout(previewTimer);
+    return ++previewGeneration;
+  }
+
+  function trackPreview(result, generation) {
+    if (generation !== previewGeneration) return;
+    previewPlaying = result.playing;
+    showPosition(result.position_ms, previewPlaying);
+    if (previewPlaying) {
+      previewTimer = setTimeout(async () => {
+        // Poll the audio driver, so a delayed paint never invents playhead progress.
+        try {
+          trackPreview(await preview("position"), generation);
+        } catch (error) {
+          if (generation === previewGeneration) unavailable();
+        }
+      }, 200);
+    }
+  }
+
+  function commandPreview(command) {
+    const generation = stopTracking();
+    previewCommand = previewCommand.then(command).then(
+      result => trackPreview(result, generation),
+      () => { if (generation === previewGeneration) unavailable(); }
+    );
+  }
+
+  for (const cue of cues) {
+    cue.addEventListener("click", () => {
+      const timeMs = Number(cue.dataset.time);
+      showCue(timeMs);
+      if (nativeAudio && take.readyState > 0) take.currentTime = timeMs / 1000;
+      if (previewPlaying) {
+        commandPreview(() => preview("seek", timeMs));
+      }
+    });
+  }
+  showCue(0);
+
+  function unavailable() {
+    stopTracking();
+    previewPlaying = false;
+    previewAvailable = false;
+    play.disabled = true;
+    playback.textContent = "Use Open WAV to listen, then choose bar cues here.";
+  }
+  playback.textContent = "Choose a bar cue or mark during playback.";
+  if (!nativeAudio) {
+    play.addEventListener("click", () => {
+      if (!previewAvailable) return;
+      const position = cueMs === endMs ? 0 : cueMs;
+      commandPreview(async () => {
+        if (previewPlaying) return preview("pause");
+        await preview("seek", position);
+        return preview("play");
+      });
+    });
+  } else {
+    take.addEventListener("error", unavailable);
+    take.addEventListener("timeupdate", () => {
+      showPosition(take.currentTime * 1000, !take.paused);
+    });
+    for (const event of ["play", "pause", "ended"]) {
+      take.addEventListener(event, () => {
+        play.textContent = take.paused ? "Play take" : "Pause take";
+      });
+    }
+    play.addEventListener("click", async () => {
+      if (!take.paused) {
+        take.pause();
+        return;
+      }
+      if (cueMs === endMs) showCue(0);
+      const position = cueMs / 1000;
+      try {
+        if (take.readyState > 0) {
+          take.currentTime = position;
+        } else {
+          take.addEventListener("loadedmetadata", () => { take.currentTime = position; }, { once: true });
+        }
+        await take.play();
+      } catch (error) {
+        unavailable();
+      }
+    });
+  }
+
+  async function currentMark(marker) {
+    if (nativeAudio && !take.paused && Number.isFinite(take.currentTime)) {
+      return barAtPlayhead(take.currentTime * 1000);
+    }
+    await previewCommand;
+    if (previewPlaying) {
+      try {
+        return barAtPlayhead((await preview("position", undefined, marker)).position_ms);
+      } catch (error) {
+        unavailable();
+      }
+    }
+    return cueMs;
+  }
+
+  document.getElementById("mark-in").addEventListener("click", async () => {
+    start_ms = await currentMark("in");
+    showMarks();
+  });
+  document.getElementById("mark-out").addEventListener("click", async () => {
+    end_ms = await currentMark("out");
+    showMarks();
+  });
+
+  send.addEventListener("click", async () => {
+    if (start_ms === null || end_ms === null || end_ms <= start_ms) {
+      status.textContent = "Mark an out point after the in point.";
+      return;
+    }
+    send.disabled = true;
+    try {
+      const response = await fetch("/clip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: document.title,
+          source_page_url: location.href,
+          start_ms,
+          end_ms,
+          note: note.value.trim()
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || result.ok !== true) {
+        throw new Error("Woodshed rejected the phrase");
+      }
+      status.textContent = "Sent to Woodshed";
+      stopTracking();
+      if (nativeAudio) take.pause();
+      if (result.transport_url) {
+        transport.href = result.transport_url;
+        transport.hidden = false;
+        location.assign(transport.href);
+      }
+    } catch (error) {
+      status.textContent = "Could not send the phrase";
+    } finally {
+      send.disabled = false;
+    }
+  });
+</script>

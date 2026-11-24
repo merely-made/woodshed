@@ -9,6 +9,8 @@ repository.workspace = true
 description = "Woodshed's desktop application over the shared Cambium desktop host: state, views, backends, and the self-drive lane. The native host itself is genet's."
 
 [dependencies]
+hound.workspace = true
+symphonia = { version = "0.5.5", default-features = false, features = ["wav", "pcm", "adpcm", "mp3"] }
 audio-packs.workspace = true
 audio-pack-views.workspace = true
 audio-pattern.workspace = true
@@ -57,6 +59,7 @@ winit = { workspace = true }
 directories = "6"
 getrandom = "0.4"
 serde_json = { workspace = true }
+url = "2"
 # Exclusive sibling temporary files for atomic media export publication.
 tempfile = "3"
 dramatis = { workspace = true }
@@ -70,6 +73,9 @@ rfd = { version = "0.17.2", default-features = false }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 rfd = { version = "0.17.2", default-features = false, features = ["gtk3"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_UI_Shell", "Win32_UI_WindowsAndMessaging"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 

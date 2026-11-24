@@ -84,7 +84,12 @@ pub struct MusicEditor {
     pub drafts: BTreeMap<WorkingSetId, MusicDraft>,
     pub notice: Option<String>,
     pub export_request: Option<(String, String)>,
+    pub listening_open_requested: bool,
+    pub wav_play_requested: Option<bool>,
+    pub wav_playing: bool,
+    pub practice_open_notice: Option<String>,
     pub legacy: bool,
+    source_open: Option<WorkingSetId>,
     pub choose_chord: bool,
     pub active_tone: Option<FrettedNote>,
     fret_gesture: Option<gestures::FretGesture>,
@@ -103,7 +108,12 @@ impl Default for MusicEditor {
             drafts: Default::default(),
             notice: None,
             export_request: None,
+            listening_open_requested: false,
+            wav_play_requested: None,
+            wav_playing: false,
+            practice_open_notice: None,
             legacy: false,
+            source_open: None,
             choose_chord: false,
             active_tone: None,
             fret_gesture: None,
@@ -385,6 +395,9 @@ pub const CSS:&str="
 .music-editor h3{font-size:17px;font-weight:500;}
 .music-commands{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
 .music-heading{display:flex;flex-direction:column;gap:6px;}
+.music-source{display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-width:0;}
+.music-source-record{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;overflow-wrap:anywhere;}
+.music-source-tab{box-sizing:border-box;width:100%;margin:0;padding:8px;white-space:pre;overflow:auto;max-height:240px;border:1px solid currentColor;}
 .music-quiet,.music-notice{font-size:13px;opacity:0.8;}
 .music-note{background:transparent;border:0;padding:0;border-radius:3px;}
 .music-note[aria-pressed=true],.music-note:hover,.music-note:focus{outline:1px solid #9eb68e;background:transparent;}
@@ -407,6 +420,9 @@ mod tests;
 
 #[path = "music_editor/editing.rs"]
 mod editing;
+
+#[path = "music_editor/phrase.rs"]
+mod phrase;
 
 #[path = "music_editor/render.rs"]
 mod render;

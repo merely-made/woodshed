@@ -18,7 +18,8 @@ impl Shared {
                 | usize::from(snapshot.recording) << 1
                 | usize::from(snapshot.capture_armed) << 2
                 | usize::from(snapshot.capture_invalid) << 3
-                | usize::from(snapshot.click_playing) << 4,
+                | usize::from(snapshot.click_playing) << 4
+                | usize::from(snapshot.listening.playing) << 5,
             Ordering::Relaxed,
         );
         self.previews
@@ -27,6 +28,14 @@ impl Shared {
             .store(snapshot.preview_starts, Ordering::Relaxed);
         self.click_step
             .store(snapshot.click_step, Ordering::Relaxed);
+        self.listening_revision
+            .store(snapshot.listening.revision, Ordering::Relaxed);
+        self.listening_region_frames
+            .store(snapshot.listening.region_frames, Ordering::Relaxed);
+        self.listening_cursor
+            .store(snapshot.listening.region_cursor, Ordering::Relaxed);
+        self.listening_wraps
+            .store(snapshot.listening.completed_wraps, Ordering::Relaxed);
         self.program_epoch
             .store(snapshot.program.epoch.0, Ordering::Relaxed);
         self.program_revision
@@ -84,6 +93,13 @@ impl Shared {
                 preview_voices: self.previews.load(Ordering::Relaxed),
                 preview_starts: self.preview_starts.load(Ordering::Relaxed),
                 click_step: self.click_step.load(Ordering::Relaxed),
+                listening: ListeningSnapshot {
+                    revision: self.listening_revision.load(Ordering::Relaxed),
+                    region_frames: self.listening_region_frames.load(Ordering::Relaxed),
+                    region_cursor: self.listening_cursor.load(Ordering::Relaxed),
+                    completed_wraps: self.listening_wraps.load(Ordering::Relaxed),
+                    playing: flags & 32 != 0,
+                },
                 program: ProgramSnapshot {
                     revision: self.program_revision.load(Ordering::Relaxed),
                     card_count: self.program_card_count.load(Ordering::Relaxed),

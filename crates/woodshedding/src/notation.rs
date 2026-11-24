@@ -6,6 +6,17 @@ use std::fmt::Write;
 pub struct MusicDocument {
     pub musicxml: String,
 }
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MusicSourceSelection {
+    pub title: String,
+    pub selected_text: String,
+    pub source_page_url: String,
+    pub listening_url: String,
+    pub grid: String,
+    pub tuning: String,
+    pub tempo_bpm: u16,
+}
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Score {
     pub title: String,

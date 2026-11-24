@@ -228,6 +228,7 @@ fn micros(elapsed: std::time::Duration) -> u64 {
 
 /// The application's own state, beside the host's.
 pub struct Shared {
+    pub(crate) wav_practice: crate::practice_wav::Playback,
     pub music_leaf_sig: Option<String>,
     /// The W0.1 audio seam: cpal on desktop, Web Audio on the web host.
     pub backend: Option<CpalBackend>,
@@ -326,6 +327,7 @@ impl Shared {
         let data_root = crate::storage::configured_root().ok();
         let theme_library = crate::appearance::configured_library_path(data_root.as_deref());
         Rc::new(RefCell::new(Self {
+            wav_practice: Default::default(),
             music_leaf_sig: None,
             backend: None,
             midi: MidiHost::new(),

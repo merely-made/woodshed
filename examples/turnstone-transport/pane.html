@@ -79,15 +79,22 @@
   function render(state) {
     lastState = state;
     const attached = state.view === "pane";
-    position.textContent = (state.playing ? "Playing" : "Paused") +
-      " · Bar " + (state.bar + 1) + " of " + state.bar_count;
-    playback.textContent = state.playing ? "Pause" : "Play";
+    const wav = state.wav_loop;
+    const playing = wav ? wav.playing : state.playing;
+    const progress = wav
+      ? (wav.region_cursor / wav.sample_rate).toFixed(1) + " of " +
+        (wav.region_frames / wav.sample_rate).toFixed(1) + " s"
+      : "Bar " + (state.bar + 1) + " of " + state.bar_count;
+    position.textContent = (playing ? "Playing" : "Paused") + " · " + progress;
+    playback.textContent = playing ? "Pause" : "Play";
     showGain(gainDrag?.preview ?? state.gain);
     attach.disabled = attached || returned;
     detach.disabled = !attached || returned;
     for (const control of [previous, playback, next, gain, gainDown, gainUp]) {
       control.disabled = !attached || returned;
     }
+    previous.disabled ||= Boolean(wav);
+    next.disabled ||= Boolean(wav);
     for (const control of [attach, detach, previous, playback, next, gain, gainDown, gainUp]) {
       if (pending) control.setAttribute("aria-disabled", "true");
       else control.removeAttribute("aria-disabled");
@@ -206,7 +213,7 @@
   detach.addEventListener("click", () => change("detach"));
   previous.addEventListener("click", () => change("previous"));
   next.addEventListener("click", () => change("next"));
-  playback.addEventListener("click", () => change(lastState.playing ? "pause" : "play"));
+  playback.addEventListener("click", () => change((lastState.wav_loop ?? lastState).playing ? "pause" : "play"));
   gainDown.addEventListener("click", () => setGain(lastState.gain - 5));
   gainUp.addEventListener("click", () => setGain(lastState.gain + 5));
   refresh();

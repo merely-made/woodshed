@@ -3,6 +3,7 @@ use super::clock::{
     ProgramEndReason, ProgramEpoch, ProgramLoop, ProgramPosition, ProgramSnapshot, ProgramStatus,
     ProgramTransition, ProgramTransitionKind,
 };
+use super::listening::{ListeningSnapshot, PreparedListening};
 use super::*;
 use crate::capture_feed::CaptureFeedConsumer;
 use audio_primitives::capture::CompletedTake;
@@ -40,6 +41,10 @@ pub(super) struct Shared {
     previews: AtomicUsize,
     preview_starts: AtomicU64,
     click_step: AtomicUsize,
+    listening_revision: AtomicU64,
+    listening_region_frames: AtomicU64,
+    listening_cursor: AtomicU64,
+    listening_wraps: AtomicU64,
     program_epoch: AtomicU64,
     program_revision: AtomicU64,
     program_card_count: AtomicUsize,
@@ -136,6 +141,10 @@ pub(super) enum Command {
         forward: bool,
     },
     Gain(f32),
+    Listening {
+        data: Option<OwnedGc<PreparedListening>>,
+    },
+    ListeningPlaying(bool),
     RecordReplace(bool),
     Preview {
         revision: u64,
@@ -250,6 +259,7 @@ struct Processor {
     count_in_pos: u64,
     backing_click: [ArcGc<SampleBuffer>; 2],
     gain: f32,
+    listening: Option<OwnedGc<PreparedListening>>,
     replace: bool,
     bpm: f32,
     click_playing: bool,

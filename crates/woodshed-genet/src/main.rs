@@ -28,6 +28,7 @@ mod audio;
 mod capture_persistence;
 mod desktop;
 mod drive;
+mod handoff;
 mod fold_receipt;
 mod fonts;
 #[cfg(test)]
@@ -49,7 +50,11 @@ mod storage;
 mod sync;
 mod text;
 mod transport_bridge;
+mod practice_clip;
+mod practice_wav;
 mod wav_export;
+mod wav_file;
+mod window_geometry;
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
@@ -61,12 +66,14 @@ use cambium_genet_winit_host::{
 };
 use woodshed_core::audio::AudioBackend as _;
 use woodshed_core::midi::MidiBackend as _;
-use woodshed_core::settings::WindowSettings;
 use woodshed_views::stage::{UiChild, UiState, ViewportClass, stage_root};
 
 use crate::audio::CpalBackend;
 use crate::shared::Shared;
 use crate::sync::{Ctx, Logic};
+#[cfg(test)]
+use crate::window_geometry::{to_host_geometry, to_window_settings};
+use crate::window_geometry::{initial_window_geometry, persist_window_geometry};
 
 /// One preservation path for native close, explicit retry/discard, and the
 /// completion of another product close decision such as appearance.
@@ -278,61 +285,16 @@ fn escape_policy(runner: &mut Runner<UiState, Logic, UiChild>, press: &KeyPress)
     true
 }
 
-fn to_host_geometry(settings: WindowSettings) -> cambium_genet_winit_host::WindowGeometry {
-    cambium_genet_winit_host::WindowGeometry {
-        position: (settings.x, settings.y),
-        size: (settings.width, settings.height),
-        maximized: settings.maximized,
-    }
-}
-
-fn to_window_settings(geometry: cambium_genet_winit_host::WindowGeometry) -> WindowSettings {
-    WindowSettings {
-        x: geometry.position.0,
-        y: geometry.position.1,
-        width: geometry.size.0,
-        height: geometry.size.1,
-        maximized: geometry.maximized,
-    }
-}
-
-fn initial_window_geometry(
+fn hooks(
     shared: &Rc<RefCell<Shared>>,
-) -> Option<cambium_genet_winit_host::WindowGeometry> {
-    let shared = shared.borrow();
-    let root = shared.data_root.as_deref()?;
-    match desktop::load(root) {
-        Ok(settings) => settings.window.map(to_host_geometry),
-        Err(error) => {
-            eprintln!("[woodshed] desktop preferences could not open: {error}");
-            None
-        },
-    }
-}
-
-fn persist_window_geometry(
-    shared: &mut Shared,
-    ctx: &mut Ctx<'_>,
-    geometry: cambium_genet_winit_host::WindowGeometry,
-) {
-    let Some(root) = shared.data_root.as_deref() else {
-        return;
-    };
-    let settings = desktop::DesktopSettings {
-        window: Some(to_window_settings(geometry)),
-    };
-    if let Err(error) = desktop::save(root, &settings) {
-        eprintln!("[woodshed] window placement was not saved: {error}");
-        ctx.runner.update(|ui| {
-            ui.appearance_notice = Some(format!("Window placement was not saved: {error}"))
-        });
-    }
-}
-
-fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
+    mut practice_request: Option<practice_clip::OpenRequest>,
+    handoff: Rc<RefCell<handoff::Service>>,
+) -> HostHooks<UiState, Logic, UiChild> {
     let mut lane = scenario::from_env(shared.clone());
     let bridge = Rc::new(RefCell::new(transport_bridge::Bridge::from_env()));
     let wake_bridge = bridge.clone();
+    let frame_handoff = handoff.clone();
+    let ready_handoff = handoff.clone();
     let frame_shared = shared.clone();
     let dispatch_shared = shared.clone();
     let after_frame_shared = shared.clone();
@@ -347,6 +309,22 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             let mut shared = frame_shared.borrow_mut();
             if !capture_persistence::session_current(&shared, ctx.runner.state()) {
                 sync::after_dispatch(&mut shared, ctx);
+            }
+            if !*ctx.close {
+                frame_handoff.borrow_mut().poll(&mut shared, ctx);
+            }
+            if ctx.runner.state().persona.is_none()
+                && !matches!(shared.seal, Some(woodshed_views::persona::PracticeSeal::Pending { .. }))
+            {
+                if let Some(request) = practice_request.take() {
+                    if let Err(error) = request.open(&mut shared, ctx) {
+                        eprintln!("[woodshed] Could not open practice phrase: {error}");
+                        ctx.runner.update(|ui| {
+                            ui.music_editor.practice_open_notice =
+                                Some(format!("Could not open practice phrase: {error}"));
+                        });
+                    }
+                }
             }
             let drag_active = ctx.runner.state().set_graph_drag_active;
             shared.drag_frame_metrics.begin(drag_active);
@@ -410,6 +388,12 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
             guard_requested_close(&mut shared, ctx);
         }),
         after_frame: Box::new(move |ctx: &mut Ctx<'_>| {
+            if let Err(error) = ready_handoff.borrow_mut().publish_ready() {
+                ctx.runner.update(|ui| {
+                    ui.music_editor.practice_open_notice =
+                        Some(format!("Turnstone handoff is unavailable: {error}"));
+                });
+            }
             let mut shared = after_frame_shared.borrow_mut();
             shared.drag_frame_metrics.finish(ctx.frame_profile);
             drop(shared);
@@ -471,6 +455,7 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
                 });
             }
             persona::resume_switch(&mut shared, ctx);
+            handoff.borrow_mut().poll(&mut shared, ctx);
             let mut mailbox = wake_bridge.borrow_mut();
             if let Some(bridge) = mailbox.as_mut() {
                 if bridge.poll(&mut shared, ctx) {
@@ -500,10 +485,40 @@ fn hooks(shared: &Rc<RefCell<Shared>>) -> HostHooks<UiState, Logic, UiChild> {
 }
 
 fn main() {
+    let mut practice_request = None;
+    let mut midi_pedal_stdio = false;
+    let mut args = std::env::args_os().skip(1);
+    while let Some(arg) = args.next() {
+        if arg == "--midi-pedal-stdio" {
+            midi_pedal_stdio = true;
+        } else if arg == "--open-listening-phrase" || arg == "--open-wav-phrase" {
+            let Some(path) = args.next() else {
+                eprintln!("[woodshed] {} requires a JSON file", arg.to_string_lossy());
+                std::process::exit(2);
+            };
+            let path = std::path::PathBuf::from(path);
+            practice_request = Some(if arg == "--open-wav-phrase" {
+                practice_clip::OpenRequest::Wav(path)
+            } else {
+                practice_clip::OpenRequest::Listening(path)
+            });
+        }
+    }
+    let root = storage::configured_root().unwrap_or_else(|error| launch_error(&error));
+    let activation = practice_request.as_ref().map_or(handoff::Command::Activate, |request| {
+        request.to_handoff()
+    });
+    let owner = match handoff::claim_or_forward(&root, activation).unwrap_or_else(|error| launch_error(&error)) {
+        Some(owner) => Rc::new(owner),
+        None => return,
+    };
     let shared = Shared::boot();
-    if std::env::args_os().any(|arg| arg == "--midi-pedal-stdio") {
+    if midi_pedal_stdio {
         shared.borrow().midi.enable_pedal_stdio();
     }
+    let handoff = Rc::new(RefCell::new(handoff::Service::default()));
+    let init_handoff = handoff.clone();
+    let init_owner = owner.clone();
     let init_shared = shared.clone();
     let initial_geometry = initial_window_geometry(&shared);
     let frame = platform_window_frame();
@@ -522,10 +537,19 @@ fn main() {
     };
     run(
         options,
-        move |window, commands, wake| boot_state(&init_shared, window, commands, wake, frame),
-        hooks(&shared),
+        move |window, commands, wake| {
+            let init = boot_state(&init_shared, window, commands, wake, frame);
+            init_handoff.borrow_mut().prepare(&init_owner, wake.callback());
+            init
+        },
+        hooks(&shared, practice_request, handoff),
     )
     .expect("run app");
+}
+
+fn launch_error(message: &str) -> ! {
+    eprintln!("[woodshed] {message}");
+    std::process::exit(2);
 }
 
 #[cfg(test)]

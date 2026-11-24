@@ -275,7 +275,7 @@ fn fixture_with_candidate(
     });
     let mut initial_seals = initial_seals.into_iter();
     let transition_shared = shared.clone();
-    let mut hooks = crate::hooks(&shared);
+    let mut hooks = crate::hooks(&shared, None, Default::default());
     hooks.after_dispatch = Box::new(move |ctx| {
         let mut shared = transition_shared.borrow_mut();
         if selection {

@@ -1,0 +1,16 @@
+settle 15
+ui-zoom 0.8
+click .workspace-panel Arrangement
+settle 6
+assert snap music-saved == true
+assert snap music-bars == 2
+click .music-source-toggle Show original tab
+settle 6
+assert text Tab source
+assert text Listening recording
+assert text U2xFLLG2jqk
+assert text e | - - - - - 3 - -
+click .music-view @data-music-view=Tab
+settle 6
+assert text Hide original tab
+capture 03_source_and_reading

@@ -32,6 +32,7 @@ use std::{
 };
 
 mod clock;
+mod listening;
 mod preview;
 mod processor;
 #[cfg(test)]
@@ -41,6 +42,7 @@ pub use clock::{
     ProgramEndReason, ProgramEpoch, ProgramEvent, ProgramLoop, ProgramPlan, ProgramPosition,
     ProgramSnapshot, ProgramStatus, ProgramToken, ProgramTransition, ProgramTransitionKind,
 };
+pub use listening::{ListeningWavObservation, MAX_LISTENING_WAV_BYTES};
 use preview::PreviewWorker;
 use processor::{
     ChordCache, Command, CompletedRecording, OutputNode, PreparedBacking, PreparedClick, Recording,
@@ -92,6 +94,7 @@ pub struct OutputSnapshot {
     pub click_playing: bool,
     pub click_step: usize,
     pub program: ProgramSnapshot,
+    listening: listening::ListeningSnapshot,
 }
 
 pub struct OutputRuntime {
@@ -118,6 +121,8 @@ pub struct OutputRuntime {
     next_program_epoch: u64,
     active_program_cards: Option<usize>,
     requested_program_revision: u64,
+    listening_revision: u64,
+    listening_loaded: bool,
 }
 
 impl OutputRuntime {
@@ -166,7 +171,7 @@ impl OutputRuntime {
                 None,
             )
             .map_err(|e| err(format!("output node: {e:?}")))?;
-        cx.connect(node, cx.graph_out_node_id(), &[(0, 0), (0, 1)], false)
+        cx.connect(node, cx.graph_out_node_id(), &[(0, 0), (1, 1)], false)
             .map_err(|e| err(format!("output wiring: {e:?}")))?;
         let native = stream.is_some();
         let mut result = Self {
@@ -192,6 +197,8 @@ impl OutputRuntime {
             next_program_epoch: 0,
             active_program_cards: None,
             requested_program_revision: 0,
+            listening_revision: 0,
+            listening_loaded: false,
         };
         result.set_click_pattern(SequencerPattern::metronome(
             120.0,
@@ -235,6 +242,7 @@ impl OutputRuntime {
         self.preview.busy()
             || self.shared.commands.load(Ordering::Acquire) != 0
             || s.playing
+            || s.listening.playing
             || matches!(
                 s.program.status,
                 ProgramStatus::Playing
@@ -371,6 +379,7 @@ impl OutputRuntime {
         self.cancel_worker();
         self.shared.generation.store(generation, Ordering::Release);
         self.song = song;
+        self.listening_loaded = false;
         Ok(())
     }
     fn send(&mut self, command: Command) -> Result<(), OutputError> {

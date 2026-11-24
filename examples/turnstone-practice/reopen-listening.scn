@@ -1,0 +1,9 @@
+settle 15
+ui-zoom 0.8
+click .workspace-panel Arrangement
+settle 8
+assert text Ben Folds
+assert text 1:12.000 to 1:16.500
+assert text Match the pickup and keep the left hand even.
+assert text Open original recording
+capture 03_reopened_listening_phrase

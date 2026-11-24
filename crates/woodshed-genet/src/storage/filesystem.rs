@@ -1,4 +1,20 @@
 use super::*;
+use woodshed_core::storage::{MAX_PRACTICE_WAV_BYTES, practice_wav_key};
+
+const PRACTICE_WAV_PREFIX: &str = "practice-wav/";
+const MAX_PRACTICE_WAV_FILE_BYTES: usize = MAX_PRACTICE_WAV_BYTES + 40;
+
+fn bounded_slot(key: &str) -> Option<(&'static str, usize)> {
+    if key == "owner" {
+        Some(("Owner record", MAX_OWNER_FILE_BYTES))
+    } else if key.starts_with("loop-pcm/") {
+        Some(("Loop PCM", MAX_CAPTURE_FILE_BYTES))
+    } else if key.starts_with(PRACTICE_WAV_PREFIX) {
+        Some(("Practice WAV", MAX_PRACTICE_WAV_FILE_BYTES))
+    } else {
+        None
+    }
+}
 
 impl FsBackend {
     pub fn at(directory: impl AsRef<Path>) -> Self {
@@ -10,6 +26,15 @@ impl FsBackend {
     pub(super) fn path(&self, key: &str) -> Result<Option<PathBuf>, StoreError> {
         match key {
             "owner" | "session" | "settings" => Ok(Some(self.directory.join(key))),
+            _ if key.starts_with(PRACTICE_WAV_PREFIX) => {
+                let digest = &key[PRACTICE_WAV_PREFIX.len()..];
+                practice_wav_key(digest).map_err(StoreError::Backend)?;
+                Ok(Some(
+                    self.directory
+                        .join("practice-wav")
+                        .join(format!("{digest}.bin")),
+                ))
+            },
             _ => {
                 let (namespace, digest) = key
                     .strip_prefix("loop-pcm/")
@@ -45,12 +70,7 @@ impl Backend for FsBackend {
         let Some(path) = self.path(key)? else {
             return Ok(None);
         };
-        if key.starts_with("loop-pcm/") || key == "owner" {
-            let maximum = if key == "owner" {
-                MAX_OWNER_FILE_BYTES
-            } else {
-                MAX_CAPTURE_FILE_BYTES
-            };
+        if let Some((label, maximum)) = bounded_slot(key) {
             let file = match std::fs::File::open(path) {
                 Ok(file) => file,
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
@@ -62,12 +82,7 @@ impl Backend for FsBackend {
                 .len();
             if length > maximum as u64 {
                 return Err(StoreError::Backend(format!(
-                    "{} file exceeds its bounded byte budget.",
-                    if key == "owner" {
-                        "Owner record"
-                    } else {
-                        "Loop PCM"
-                    }
+                    "{label} file exceeds its bounded byte budget."
                 )));
             }
             let mut bytes = Vec::with_capacity(length as usize);
@@ -76,12 +91,7 @@ impl Backend for FsBackend {
                 .map_err(|error| StoreError::Backend(error.to_string()))?;
             if bytes.len() > maximum {
                 return Err(StoreError::Backend(format!(
-                    "{} file grew beyond its bounded byte budget.",
-                    if key == "owner" {
-                        "Owner record"
-                    } else {
-                        "Loop PCM"
-                    }
+                    "{label} file grew beyond its bounded byte budget."
                 )));
             }
             return Ok(Some(bytes));
@@ -97,17 +107,15 @@ impl Backend for FsBackend {
         let Some(path) = self.path(key)? else {
             return Ok(());
         };
-        if key.starts_with("loop-pcm/") && bytes.len() > MAX_CAPTURE_FILE_BYTES {
-            return Err(StoreError::Backend(
-                "Loop PCM write exceeds its bounded byte budget.".into(),
-            ));
+        let bound = bounded_slot(key);
+        if let Some((label, maximum)) = bound {
+            if bytes.len() > maximum {
+                return Err(StoreError::Backend(format!(
+                    "{label} write exceeds its bounded byte budget."
+                )));
+            }
         }
-        if key == "owner" && bytes.len() > MAX_OWNER_FILE_BYTES {
-            return Err(StoreError::Backend(
-                "Owner record exceeds its bounded byte budget.".into(),
-            ));
-        }
-        atomic_write(&path, bytes, key.starts_with("loop-pcm/") || key == "owner")
+        atomic_write(&path, bytes, bound.is_some())
     }
 
     async fn delete(&self, key: &str) -> Result<(), StoreError> {
@@ -182,6 +190,30 @@ impl Backend for FsBackend {
                     }
                 }
             }
+        }
+        match std::fs::read_dir(self.directory.join("practice-wav")) {
+            Ok(entries) => {
+                for entry in entries {
+                    let entry = entry.map_err(|error| StoreError::Backend(error.to_string()))?;
+                    if !entry
+                        .file_type()
+                        .map_err(|error| StoreError::Backend(error.to_string()))?
+                        .is_file()
+                    {
+                        continue;
+                    }
+                    let name = entry.file_name();
+                    if let Some(digest) = name.to_str().and_then(|name| name.strip_suffix(".bin")) {
+                        if let Ok(key) = practice_wav_key(digest) {
+                            if key.starts_with(prefix) {
+                                keys.push(key);
+                            }
+                        }
+                    }
+                }
+            },
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {},
+            Err(error) => return Err(StoreError::Backend(error.to_string())),
         }
         Ok(keys)
     }

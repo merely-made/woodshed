@@ -1,0 +1,31 @@
+# Run with TURNSTONE_GENET_ENGINE=bole to route the live document through Bole.
+settle 20
+key escape
+open ${WOODSHED_PIANO_URL}
+settle 45
+act Open node in Workbench
+settle 30
+assert wb-cells == 1
+assert wb-cell Window Seat
+act Maximize pane
+settle 30
+assert maximized
+assert snap browser-current-engine == genet.scripted
+assert snap browser-current-content == live
+
+# Client pixels in the 1024x600 native scenario window.
+click-at 205 342
+click-at 90 282
+settle 5
+click-at 90 402
+settle 3
+click-at 490 342
+settle 1
+click-at 225 402
+click-at 280 462
+insert Keep the left hand light on the repeat.
+settle 20
+capture 00_piano_phrase
+click-at 140 522
+settle 35
+log Chose two bar cues and marked the piano phrase through the live Genet Bole page.

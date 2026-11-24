@@ -219,6 +219,40 @@ fn sealed_filesystem_blobs_and_pending_write_drop_keep_custody_semantics() {
 }
 
 #[test]
+fn practice_wav_reopens_from_immutable_sealed_storage() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = SessionStore::new(SealedBackend::new(backend(directory.path()), [3; 32]));
+    let wav = b"retained recording bytes";
+    let digest = store.try_write_practice_wav(wav).unwrap();
+    let key = woodshed_core::storage::practice_wav_key(&digest).unwrap();
+    let raw = ready(backend(directory.path()).get(&key)).unwrap().unwrap();
+    assert_eq!(raw.len(), wav.len() + 40);
+    assert_ne!(raw, wav);
+    assert_eq!(store.try_write_practice_wav(wav).unwrap(), digest);
+    assert_eq!(ready(backend(directory.path()).get(&key)).unwrap().unwrap(), raw);
+
+    let reopened = SessionStore::new(SealedBackend::new(backend(directory.path()), [3; 32]));
+    assert_eq!(reopened.try_read_practice_wav(&digest, wav.len()).unwrap(), wav);
+    assert!(reopened.try_read_practice_wav(&digest, wav.len() + 1).is_err());
+    assert_eq!(ready(reopened.backend().list("practice-wav/")).unwrap(), vec![key]);
+    let wrong_persona = SessionStore::new(SealedBackend::new(backend(directory.path()), [4; 32]));
+    assert!(wrong_persona.try_write_practice_wav(wav).is_err());
+    assert!(wrong_persona.try_read_practice_wav(&digest, wav.len()).is_err());
+}
+
+#[test]
+fn local_wav_region_spans_multiple_sealed_slots() {
+    let directory = tempfile::tempdir().unwrap();
+    let store = SessionStore::new(SealedBackend::new(backend(directory.path()), [3; 32]));
+    let mut bytes = vec![0x21; woodshed_core::storage::MAX_PRACTICE_WAV_BYTES + 100];
+    *bytes.last_mut().unwrap() = 0x45;
+    let digest = store.try_write_wav_region(&bytes).unwrap();
+    assert_eq!(blake3::hash(&bytes).to_hex().as_str(), digest);
+    assert_eq!(store.try_read_wav_region(&digest, bytes.len()).unwrap(), bytes);
+    assert!(store.try_read_wav_region(&digest, bytes.len() - 1).is_err());
+}
+
+#[test]
 fn two_personas_share_pcm_only_through_distinct_artifacts_and_cannot_clobber_ciphertext() {
     let directory = tempfile::tempdir().unwrap();
     let first = SessionStore::new(SealedBackend::new(backend(directory.path()), [1; 32]));

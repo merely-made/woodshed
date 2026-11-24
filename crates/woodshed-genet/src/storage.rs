@@ -58,6 +58,14 @@ enum BindingAuthority {
 }
 
 impl StoreBinding {
+    pub(crate) fn is_unlocked(&self) -> bool {
+        match &self.authority {
+            BindingAuthority::Custody(identity) => !identity.is_locked(),
+            #[cfg(test)]
+            BindingAuthority::Test { .. } => true,
+        }
+    }
+
     pub fn root(&self) -> &Path {
         &self.root
     }

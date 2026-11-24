@@ -1,6 +1,13 @@
 use super::*;
+use super::phrase::{listening_phrase, wav_phrase};
 
 pub fn screen(ui: &UiState) -> UiChild {
+    if let Some(phrase) = &ui.set.wav_phrase {
+        return wav_phrase(ui, phrase);
+    }
+    if let Some(phrase) = &ui.set.listening_phrase {
+        return listening_phrase(ui, phrase);
+    }
     if ui.music_editor.legacy && ui.set.music.is_none() && ui.music_draft().is_none() {
         return super::super::arrangement_editor::screen(ui);
     }
@@ -14,6 +21,59 @@ pub fn screen(ui: &UiState) -> UiChild {
                 .attr("role", "status")
                 .attr("class", "music-notice"),
         ));
+    }
+    if let Some(source) = &ui.set.music_source {
+        let owner = ui.working_sets.active_id;
+        let open = ui.music_editor.source_open == Some(owner);
+        let mut panel: Vec<UiChild> = vec![Box::new(clickable(
+            el(
+                "button",
+                text(if open { "Hide original tab" } else { "Show original tab" }),
+            )
+            .attr("class", "t-btn music-source-toggle")
+            .attr("aria-expanded", open.to_string()),
+            move |ui: &mut UiState, _| {
+                ui.music_editor.source_open = if open { None } else { Some(owner) };
+            },
+        ))];
+        if open {
+            panel.push(Box::new(
+                el(
+                    "div",
+                    (
+                        el("h3", text(source.title.clone())),
+                        el(
+                            "p",
+                            text(format!(
+                                "{} · {} · {} BPM",
+                                source.tuning, source.grid, source.tempo_bpm
+                            )),
+                        )
+                        .attr("class", "music-quiet"),
+                        el(
+                            "p",
+                            (
+                                el("strong", text("Tab source ")),
+                                text(source.source_page_url.clone()),
+                            ),
+                        ),
+                        el(
+                            "p",
+                            (
+                                el("strong", text("Listening recording ")),
+                                text(source.listening_url.clone()),
+                            ),
+                        ),
+                        el("pre", text(source.selected_text.clone()))
+                            .attr("class", "music-source-tab")
+                            .attr("aria-label", "Original tab")
+                            .attr("tabindex", "0"),
+                    ),
+                )
+                .attr("class", "music-source-record"),
+            ));
+        }
+        children.push(Box::new(el("section", panel).attr("class", "music-source")));
     }
     let Some(d) = ui.music_draft() else {
         if ui.set.music.is_some() {

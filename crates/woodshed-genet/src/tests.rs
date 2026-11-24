@@ -141,7 +141,7 @@ fn save_close_harness_with_frame_exit(
     let mut ui = UiState::new();
     ui.seal = Some(seal);
     ui.stage_current(None);
-    let mut host_hooks = hooks(&shared);
+    let mut host_hooks = hooks(&shared, None, Default::default());
     let mut frame = host_hooks.after_frame;
     host_hooks.after_frame = Box::new(move |ctx| {
         if std::mem::take(&mut request_frame_exit) {
