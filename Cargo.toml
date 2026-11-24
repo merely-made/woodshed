@@ -81,7 +81,7 @@ toml = "1"
 # consumers — the shared xilem-components + audio-widgets crates, used by
 # Strophe's Masonry app — are gone now Strophe runs on Cambium with
 # Sprigging leaves. Woodshed itself has been Genet-only since the S5 cut.
-winit = "0.30"
+winit = ">=0.31.0-beta.4"
 
 # UI — Genet host (2026-07-04 genet-host plan). The woodshed app now
 # rides this stack exclusively. Git deps on the owned repos so any machine

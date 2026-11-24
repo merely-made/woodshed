@@ -188,7 +188,7 @@ mod tests {
         // Undo in place retains the empty fret's native focus for keyboard entry.
         h.update(|ui| ui.music_undo());
         h.relayout();
-        h.key_named(winit::keyboard::NamedKey::Space);
+        h.key_char(" ");
         h.relayout();
         assert_eq!(
             h.state().music_draft().unwrap().score.measures[0].events[0]

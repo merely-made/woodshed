@@ -68,7 +68,7 @@ firewheel = { git = "https://github.com/mark-ik/firewheel.git", branch = "main",
 # (audio-primitives, audio-widgets, audio-devices), not direct
 # coupling. See memory/project_hocket_audio_pressure_vessel.md.
 
-winit = "0.30"
+winit = ">=0.31.0-beta.4"
 
 # **The Cambium family moved from genet to mere on 2026-09-03** (the platform
 # boundary pass). `cambium`, `sprigging`, `cambium-genet-winit-host`,
