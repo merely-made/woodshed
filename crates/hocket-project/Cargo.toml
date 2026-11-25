@@ -20,10 +20,9 @@ hound.workspace = true
 personae.workspace = true
 insigne.workspace = true
 serde.workspace = true
-ciborium.workspace = true
+cbor-core.workspace = true
 
 [dev-dependencies]
-cbor-core.workspace = true
 pollster = "1"
 tempfile = "3"
 

@@ -20,10 +20,8 @@
 //! to the same bytes every time. That determinism is a prerequisite for
 //! content-addressing the project bundle itself later.
 //!
-//! Decoding is strict, with one exception for manifests saved before D209:
-//! ciborium wrote struct fields in declaration order. Such a manifest is read
-//! once through cbor-core's normalization of key order (and float width) and
-//! written canonically at the next save.
+//! Decoding is strict. A manifest saved before D209, which ciborium wrote
+//! with struct fields in declaration order, is refused: a clean break (D239).
 //!
 //! Encoding is not carried in `format_version`: that field tracks the
 //! payload *schema*, which this migration did not change, and it cannot be
@@ -31,7 +29,7 @@
 //! simply not decodable, which is a clean break — no such file exists on
 //! disk (DOC_POLICY section 3).
 
-use cbor_core::{DecodeOptions, Strictness, Value};
+use cbor_core::{DecodeOptions, Value};
 use serde::{Deserialize, Serialize};
 
 use crate::history::{History, HistoryError};
@@ -108,30 +106,17 @@ impl ProjectBundle {
             .map_err(|error| PersistenceError::Encode(error.to_string()))
     }
 
-    /// Decode from canonical CBOR bytes, or from a manifest ciborium wrote.
+    /// Decode from canonical CBOR bytes; anything else is refused.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, PersistenceError> {
-        let value = match DecodeOptions::new().decode(bytes) {
-            Err(cbor_core::Error::NonDeterministic) => DecodeOptions::new()
-                .strictness(LEGACY)
-                .decode(bytes),
-            decoded => decoded,
-        }
-        .map_err(|error| PersistenceError::Decode(error.to_string()))?;
-        let bundle: Self = value
+        let bundle: Self = DecodeOptions::new()
+            .decode(bytes)
+            .map_err(|error| PersistenceError::Decode(error.to_string()))?
             .deserialized()
             .map_err(|error| PersistenceError::Decode(error.to_string()))?;
         bundle.validate()?;
         Ok(bundle)
     }
 }
-
-/// What a pre-D209 manifest may differ by: ciborium's key order and,
-/// defensively, a float wider than it needs. Nothing else is normalized.
-const LEGACY: Strictness = Strictness {
-    allow_unsorted_map_keys: true,
-    allow_non_shortest_floats: true,
-    ..Strictness::STRICT
-};
 
 /// Raw bytes for a bundle, bypassing validation: hostile durable input.
 #[cfg(test)]
@@ -241,20 +226,19 @@ mod tests {
     }
 
     #[test]
-    fn a_manifest_ciborium_wrote_is_read_once_and_saved_canonically() {
+    fn a_manifest_ciborium_wrote_is_refused() {
         let legacy = ciborium_manifest();
-        // Struct fields in declaration order: strict decoding refuses it.
-        assert_eq!(
-            DecodeOptions::new().decode(&legacy).unwrap_err(),
-            cbor_core::Error::NonDeterministic
-        );
-        let bundle = ProjectBundle::from_bytes(&legacy).unwrap();
-        assert_eq!(bundle.session.phrases.len(), 1);
+        assert!(matches!(ProjectBundle::from_bytes(&legacy), Err(PersistenceError::Decode(_))));
+        // Control: the same bundle, decoded leniently and written canonically, loads.
+        let bundle: ProjectBundle = DecodeOptions::new()
+            .strictness(cbor_core::Strictness::LENIENT)
+            .decode(&legacy)
+            .unwrap()
+            .deserialized()
+            .unwrap();
         assert_eq!(bundle.session.bpm, 92.5);
         let canonical = bundle.to_bytes().unwrap();
-        assert_ne!(canonical, legacy);
-        assert_eq!(canonical.len(), legacy.len(), "only the key order moved");
-        assert!(DecodeOptions::new().decode(&canonical).is_ok(), "the rewrite is canonical");
+        assert_eq!(canonical.len(), legacy.len(), "only the key order differs");
         assert_eq!(ProjectBundle::from_bytes(&canonical).unwrap(), bundle);
     }
 
@@ -262,7 +246,7 @@ mod tests {
     fn other_non_canonical_manifests_are_refused() {
         let canonical = ProjectBundle::new(Session::new_default(), History::new()).to_bytes().unwrap();
         assert!(ProjectBundle::from_bytes(&canonical).is_ok(), "control");
-        // The top-level map head widened to two bytes, which ciborium never wrote.
+        // The top-level map head widened to two bytes: well-formed, not canonical.
         assert!((0xa0..0xb8).contains(&canonical[0]), "a short map head");
         let mut wide = vec![0xb9, 0x00, canonical[0] & 0x1f];
         wide.extend_from_slice(&canonical[1..]);

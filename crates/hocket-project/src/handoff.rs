@@ -13,11 +13,12 @@
 //! an eventual invite flow can carry its CBOR bytes without changing the
 //! application protocol; confidentiality remains the carrier's responsibility.
 //!
-//! The envelope, and the bytes the signature covers, serialize as CBOR via
-//! ciborium (the FT8 serialization migration, 2026-07-14). Signing and
-//! verification both re-serialize the same `UnsignedHandoff`; CBOR over these
-//! `BTreeMap`/`Vec` types is deterministic, so the verifier reconstructs the
-//! exact signed bytes.
+//! The envelope, and the bytes the signature covers, serialize as canonical
+//! CBOR::Core through cbor-core (Mere engine split D209). Signing and
+//! verification both re-serialize the same `UnsignedHandoff`; canonical
+//! encoding is deterministic, so the verifier reconstructs the exact signed
+//! bytes. Format 3 began with that move (D240): a format 2 envelope, signed
+//! over ciborium's bytes, is refused.
 //!
 //! This module deliberately does not merge edits. `hocket-model::History`
 //! retains and integrates divergent branches, but it does not yet synthesize a
@@ -152,7 +153,7 @@ impl From<hocket_model::HistoryError> for HandoffError {
 }
 
 impl HandoffEnvelope {
-    pub const FORMAT_VERSION: u16 = 2;
+    pub const FORMAT_VERSION: u16 = 3;
 
     /// Build a signed complete snapshot for `recipient`.
     pub fn create(
@@ -219,7 +220,10 @@ impl HandoffEnvelope {
     }
 
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, HandoffError> {
-        let envelope: Self = ciborium::from_reader(bytes)
+        let envelope: Self = cbor_core::DecodeOptions::new()
+            .decode(bytes)
+            .map_err(|error| HandoffError::Decode(error.to_string()))?
+            .deserialized()
             .map_err(|error| HandoffError::Decode(error.to_string()))?;
         if envelope.format_version != Self::FORMAT_VERSION {
             return Err(HandoffError::UnsupportedVersion(envelope.format_version));
@@ -388,17 +392,17 @@ impl ReceivedHandoff {
     }
 }
 
-/// Serialize a value to CBOR. Used for both the on-wire envelope and the exact
-/// bytes the signature covers, so signing and verification stay byte-identical.
+/// Serialize a value to canonical CBOR. Used for both the on-wire envelope and
+/// the exact bytes the signature covers, so signing and verification stay
+/// byte-identical.
 fn cbor_bytes<T: Serialize>(value: &T) -> Result<Vec<u8>, HandoffError> {
-    let mut bytes = Vec::new();
-    ciborium::into_writer(value, &mut bytes)
-        .map_err(|error| HandoffError::Encode(error.to_string()))?;
-    Ok(bytes)
+    cbor_core::Value::serialized(value)
+        .map(|value| value.encode())
+        .map_err(|error| HandoffError::Encode(error.to_string()))
 }
 
 fn handoff_salt(session_id: SessionId) -> Vec<u8> {
-    let mut salt = b"hocket/handoff/v2/".to_vec();
+    let mut salt = b"hocket/handoff/v3/".to_vec();
     salt.extend_from_slice(session_id.0.as_bytes());
     salt
 }

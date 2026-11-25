@@ -476,3 +476,40 @@ fn acceptance_rejects_conflicting_phrase_identity_without_mutation() {
         );
     }
 }
+
+/// D240: format 3 is canonical CBOR; a format 2 envelope, or one in
+/// ciborium's field order, is refused.
+#[test]
+fn format_2_and_ciborium_ordered_envelopes_are_refused() {
+    let sender = InMemoryProvider::from_seed([1; 32]);
+    let recipient = InMemoryProvider::from_seed([2; 32]);
+    let mut store = InMemoryStore::new();
+    let bundle = bundle_with_media(&mut store);
+    let envelope =
+        HandoffEnvelope::create(&bundle, &store, recipient.master_public_key(), &sender).unwrap();
+    let canonical = envelope.to_bytes().unwrap();
+    assert_eq!(HandoffEnvelope::from_bytes(&canonical).unwrap(), envelope, "control");
+
+    let mut v2 = envelope.clone();
+    v2.format_version = 2;
+    assert!(matches!(
+        HandoffEnvelope::from_bytes(&v2.to_bytes().unwrap()),
+        Err(HandoffError::UnsupportedVersion(2))
+    ));
+
+    let Ok(cbor_core::Value::Map(entries)) = cbor_core::Value::decode(&canonical) else {
+        panic!("an envelope is a map");
+    };
+    let order = ["format_version", "session_id", "sender", "recipient", "payload", "signature"];
+    let mut ciborium_order = vec![0xa0 + order.len() as u8];
+    for key in order {
+        let (k, v) = entries.get_key_value(&cbor_core::Value::from(key)).unwrap();
+        ciborium_order.extend(k.encode());
+        ciborium_order.extend(v.encode());
+    }
+    assert_ne!(ciborium_order, canonical, "the keys moved");
+    assert!(matches!(
+        HandoffEnvelope::from_bytes(&ciborium_order),
+        Err(HandoffError::Decode(_))
+    ));
+}
