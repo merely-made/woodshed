@@ -51,7 +51,8 @@ fn ask(mode: &str, selected: Option<(u32, u32)>) -> ViewAsk {
 }
 fn decode_scene(bytes: &[u8]) -> Scene {
     assert_eq!(bytes[0], 1, "version byte");
-    ciborium::from_reader(&bytes[1..]).unwrap()
+    // Strict: the guest writes canonical CBOR::Core.
+    cbor_core::DecodeOptions::new().decode(&bytes[1..]).unwrap().deserialized().unwrap()
 }
 fn events_in(b: &Block) -> usize {
     let attrs: BTreeMap<_, _> = b

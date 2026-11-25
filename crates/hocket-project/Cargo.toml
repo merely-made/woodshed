@@ -23,6 +23,7 @@ serde.workspace = true
 ciborium.workspace = true
 
 [dev-dependencies]
+cbor-core.workspace = true
 pollster = "1"
 tempfile = "3"
 

@@ -15,7 +15,7 @@ audio-packs.workspace = true
 # Intentionally minimal — this crate must remain framework-agnostic.
 # No cpal, no xilem, no masonry, no winit.
 serde = { workspace = true }
-ciborium = { workspace = true }
+cbor-core = { workspace = true }
 uuid = { workspace = true }
 
 [lints]

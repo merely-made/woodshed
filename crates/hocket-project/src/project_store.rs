@@ -349,8 +349,7 @@ mod tests {
             }
             // Replace only the manifest to simulate a damaged archive, then
             // ensure failed load never repairs or prunes its stored bytes.
-            let mut corrupt = Vec::new();
-            ciborium::into_writer(&invalid, &mut corrupt).unwrap();
+            let corrupt = cbor_core::Value::serialized(&invalid).unwrap().encode();
             backend.put(MANIFEST_KEY, &corrupt).await.unwrap();
             assert!(matches!(project.load().await,
                 Err(ProjectStoreError::Manifest(PersistenceError::History(_)))));

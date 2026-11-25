@@ -134,11 +134,6 @@ hound = "3.5"
 # Persistence
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-# CBOR (RFC 8949) for the durable project manifest and the hand-off envelope.
-# Self-describing and cross-language, and the serialization Moothold uses, so
-# saved bytes and handed-off bytes are the same format. Replaced postcard at
-# the FT8 serialization migration (2026-07-14).
-ciborium = "0.2"
 
 # Identifiers
 uuid = { version = "1.10", features = ["v4", "serde"] }

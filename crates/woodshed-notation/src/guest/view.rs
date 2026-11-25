@@ -89,9 +89,11 @@ fn scene(leaf: &NotationLeaf, score: &Score, width: f32, height: f32) -> Scene {
     scene
 }
 
+/// Version byte, then canonical CBOR::Core (Mere engine split D209).
 fn encode_scene(scene: &Scene) -> Result<Vec<u8>, String> {
+    let body = cbor_core::Value::serialized(scene).map_err(|e| e.to_string())?;
     let mut bytes = vec![SCENE_VERSION];
-    ciborium::into_writer(scene, &mut bytes).map_err(|e| e.to_string())?;
+    bytes.extend(body.encode());
     if bytes.len() > MAX_PAYLOAD_BYTES {
         return Err("Notation scene exceeds one MiB".into());
     }

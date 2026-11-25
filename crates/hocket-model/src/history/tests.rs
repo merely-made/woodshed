@@ -84,8 +84,7 @@ fn malformed_topology_is_refused_before_checkout_or_integration_mutation() {
     for (case, mut malformed) in malformed_histories() {
         assert!(malformed.validate().is_err(), "{case}");
         let bundle = crate::ProjectBundle::new(Session::new_default(), malformed.clone());
-        let mut bytes = Vec::new();
-        ciborium::into_writer(&bundle, &mut bytes).unwrap();
+        let bytes = crate::persistence::unvalidated_bytes(&bundle);
         assert!(
             matches!(
                 crate::ProjectBundle::from_bytes(&bytes),

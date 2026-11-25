@@ -6,21 +6,24 @@
 
 //! Save / load support for sessions.
 //!
-//! Sessions serialize via [ciborium](https://docs.rs/ciborium) as CBOR
-//! (RFC 8949). CBOR is self-describing and cross-language, so a saved
+//! Sessions serialize as canonical CBOR::Core (RFC 8949 §4.2.1) through
+//! cbor-core, the family's one codec (Mere engine split D209). CBOR is
+//! self-describing and cross-language, so a saved
 //! project is inspectable without Hocket, and it is the serialization
 //! Moothold uses — the same bytes persist locally and travel on a
 //! hand-off. This replaced postcard at the FT8 serialization migration
 //! (2026-07-14); postcard had been the FT2 choice (compact, but Rust-only
 //! and not self-describing).
 //!
-//! Because `Session` and `History` use `BTreeMap` collections, ciborium
-//! emits map entries in sorted key order with definite lengths, so encoded
-//! output is deterministic — the same logical state encodes to the same
-//! bytes every time. That determinism is a prerequisite for
-//! content-addressing the project bundle itself later. If a future field
-//! introduces a non-`BTreeMap` map or a float that needs shortest-form
-//! reduction, revisit against RFC 8949 §4.2 canonical rules.
+//! cbor-core sorts every map's keys, struct fields included, and writes
+//! shortest integers, lengths and floats, so the same logical state encodes
+//! to the same bytes every time. That determinism is a prerequisite for
+//! content-addressing the project bundle itself later.
+//!
+//! Decoding is strict, with one exception for manifests saved before D209:
+//! ciborium wrote struct fields in declaration order. Such a manifest is read
+//! once through cbor-core's normalization of key order (and float width) and
+//! written canonically at the next save.
 //!
 //! Encoding is not carried in `format_version`: that field tracks the
 //! payload *schema*, which this migration did not change, and it cannot be
@@ -28,6 +31,7 @@
 //! simply not decodable, which is a clean break — no such file exists on
 //! disk (DOC_POLICY section 3).
 
+use cbor_core::{DecodeOptions, Strictness, Value};
 use serde::{Deserialize, Serialize};
 
 use crate::history::{History, HistoryError};
@@ -96,23 +100,43 @@ impl ProjectBundle {
         self.history.validate().map_err(PersistenceError::History)
     }
 
-    /// Encode to CBOR bytes. Deterministic given equal input because all
-    /// collections are `BTreeMap` (sorted keys, definite lengths).
+    /// Encode to canonical CBOR bytes.
     pub fn to_bytes(&self) -> Result<Vec<u8>, PersistenceError> {
         self.validate()?;
-        let mut bytes = Vec::new();
-        ciborium::into_writer(self, &mut bytes)
-            .map_err(|error| PersistenceError::Encode(error.to_string()))?;
-        Ok(bytes)
+        Value::serialized(self)
+            .map(|value| value.encode())
+            .map_err(|error| PersistenceError::Encode(error.to_string()))
     }
 
-    /// Decode from CBOR bytes.
+    /// Decode from canonical CBOR bytes, or from a manifest ciborium wrote.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self, PersistenceError> {
-        let bundle: Self = ciborium::from_reader(bytes)
+        let value = match DecodeOptions::new().decode(bytes) {
+            Err(cbor_core::Error::NonDeterministic) => DecodeOptions::new()
+                .strictness(LEGACY)
+                .decode(bytes),
+            decoded => decoded,
+        }
+        .map_err(|error| PersistenceError::Decode(error.to_string()))?;
+        let bundle: Self = value
+            .deserialized()
             .map_err(|error| PersistenceError::Decode(error.to_string()))?;
         bundle.validate()?;
         Ok(bundle)
     }
+}
+
+/// What a pre-D209 manifest may differ by: ciborium's key order and,
+/// defensively, a float wider than it needs. Nothing else is normalized.
+const LEGACY: Strictness = Strictness {
+    allow_unsorted_map_keys: true,
+    allow_non_shortest_floats: true,
+    ..Strictness::STRICT
+};
+
+/// Raw bytes for a bundle, bypassing validation: hostile durable input.
+#[cfg(test)]
+pub(crate) fn unvalidated_bytes(bundle: &ProjectBundle) -> Vec<u8> {
+    Value::serialized(bundle).unwrap().encode()
 }
 
 #[cfg(test)]
@@ -126,9 +150,7 @@ mod tests {
     fn decode_and_encode_refuse_invalid_retained_history() {
         let mut bundle = ProjectBundle::new(Session::new_default(), History::new());
         bundle.history.head = crate::NodeId::new();
-        // Serialize directly to represent hostile durable input.
-        let mut bytes = Vec::new();
-        ciborium::into_writer(&bundle, &mut bytes).unwrap();
+        let bytes = unvalidated_bytes(&bundle);
         assert!(matches!(ProjectBundle::from_bytes(&bytes), Err(PersistenceError::History(_))));
         assert!(matches!(bundle.to_bytes(), Err(PersistenceError::History(_))));
     }
@@ -203,11 +225,47 @@ mod tests {
     fn rejects_unknown_format_version() {
         let mut bundle = ProjectBundle::new(Session::new_default(), History::new());
         bundle.format_version += 1;
-        let mut bytes = Vec::new();
-        ciborium::into_writer(&bundle, &mut bytes).unwrap();
+        let bytes = unvalidated_bytes(&bundle);
         assert_eq!(
             ProjectBundle::from_bytes(&bytes).unwrap_err().to_string(),
             "unsupported project format version 2"
         );
+    }
+
+    /// A manifest the pre-D209 code wrote with ciborium (captured 2026-11-25).
+    fn ciborium_manifest() -> Vec<u8> {
+        let hex: String = include_str!("../tests/fixtures/ciborium_manifest_v1.hex")
+            .split_whitespace()
+            .collect();
+        (0..hex.len()).step_by(2).map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap()).collect()
+    }
+
+    #[test]
+    fn a_manifest_ciborium_wrote_is_read_once_and_saved_canonically() {
+        let legacy = ciborium_manifest();
+        // Struct fields in declaration order: strict decoding refuses it.
+        assert_eq!(
+            DecodeOptions::new().decode(&legacy).unwrap_err(),
+            cbor_core::Error::NonDeterministic
+        );
+        let bundle = ProjectBundle::from_bytes(&legacy).unwrap();
+        assert_eq!(bundle.session.phrases.len(), 1);
+        assert_eq!(bundle.session.bpm, 92.5);
+        let canonical = bundle.to_bytes().unwrap();
+        assert_ne!(canonical, legacy);
+        assert_eq!(canonical.len(), legacy.len(), "only the key order moved");
+        assert!(DecodeOptions::new().decode(&canonical).is_ok(), "the rewrite is canonical");
+        assert_eq!(ProjectBundle::from_bytes(&canonical).unwrap(), bundle);
+    }
+
+    #[test]
+    fn other_non_canonical_manifests_are_refused() {
+        let canonical = ProjectBundle::new(Session::new_default(), History::new()).to_bytes().unwrap();
+        assert!(ProjectBundle::from_bytes(&canonical).is_ok(), "control");
+        // The top-level map head widened to two bytes, which ciborium never wrote.
+        assert!((0xa0..0xb8).contains(&canonical[0]), "a short map head");
+        let mut wide = vec![0xb9, 0x00, canonical[0] & 0x1f];
+        wide.extend_from_slice(&canonical[1..]);
+        assert!(matches!(ProjectBundle::from_bytes(&wide), Err(PersistenceError::Decode(_))));
     }
 }
