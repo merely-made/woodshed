@@ -1,7 +1,7 @@
 [package]
 rust-version = "1.97.1"
 name = "wavicle"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 license = "MPL-2.0"
 description = "A pure-Rust WavPack v5 codec: lossless decode and encode of 16/24/32-bit integer and 32-bit float, mono and stereo, bit-exact and verified against the reference."

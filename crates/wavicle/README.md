@@ -3,10 +3,17 @@
 A pure-Rust WavPack v5 codec: lossless, bit-exact decode and encode with no C
 anywhere in the build graph.
 
-## Status (2026-10-31)
+Wavicle is maintained in
+[Woodshed](https://github.com/merely-made/woodshed/tree/main/crates/wavicle)
+as `crates/wavicle`; its own repository was retired on 2026-11-25 and its
+history came along.
+
+## Status (2026-11-26)
 
 Feature-complete for its declared scope; published on crates.io as
-`wavicle` 0.1.0 (2026-07-18).
+`wavicle` 0.2.0. Since 0.1.0: the licence is MPL-2.0, both codec directions
+are default features, and malformed WavPack arithmetic is rejected in bounded
+capture decode.
 
 - Both directions are lossless and bit-exact: decode and encode of 16/24/32
   bit integer and 32-bit float, mono and stereo, any input length (long data
@@ -32,7 +39,7 @@ lives in Woodshed). The founding plan and conformance-oracle method live in
 
 ## Use
 
-First consumer is [Hocket](https://github.com/merely-made/hocket), which
+First consumer is [Hocket](https://github.com/merely-made/woodshed/tree/main/ports/hocket), which
 stores audio phrases as `.wv` entries. Usable from any Rust project
 (including wasm) that needs WavPack without a C toolchain.
 
@@ -63,7 +70,7 @@ The codec modules are substantial derivatives of the BSD-3-Clause reference and
 carry MPL-2.0 with that notice retained; [LICENSES.md](LICENSES.md) is the
 provenance ledger, [ATTRIBUTION.md](ATTRIBUTION.md) holds the upstream notice
 verbatim. The published 0.1.0 keeps the MIT OR Apache-2.0 grant it shipped
-with; MPL-2.0 ships at the next functional bump.
+with; 0.2.0 and later are MPL-2.0.
 
 ---
 
