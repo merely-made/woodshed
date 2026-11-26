@@ -24,7 +24,7 @@ side is deliberately local until the hand-off UI and a carrier exist.
   cached waveforms, configurable meter ballistics.
 - Open project format: a `.hock` file is an ordinary zip of `manifest.cbor`
   plus one `media/<hash>.wv` per captured phrase (lossless WavPack via the
-  sibling [wavicle](https://github.com/merely-made/wavicle) codec, switched
+  sibling [wavicle](../../crates/wavicle) codec, switched
   from WAV 2026-07-18). It opens in any zip tool without Hocket.
 - Loop-first WAV mix export through the project worker, including explicit
   musical-bar export for unequal loops.

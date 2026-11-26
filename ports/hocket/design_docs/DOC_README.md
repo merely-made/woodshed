@@ -94,8 +94,9 @@ before any other doc in this directory.
   - **LANDED.** Real cached summed/per-layer waveform projections through
   responsive Chisel leaves, plus shared configurable meter ballistics.
 - **WavPack codec — founded as wavicle, wired into Hocket.** The pure-Rust
-  WavPack codec was founded 2026-07-15 as **wavicle**
-  (github.com/merely-made/wavicle). Its plan lives in that repo's `design_docs/`; the
+  WavPack codec was founded 2026-07-15 as **wavicle**, now
+  [`crates/wavicle`](../../../crates/wavicle) in this repository. Its plan lives in that
+  crate's `design_docs/`; the
   pre-founding copy is archived at
   [archive_docs/2026-07-15/](archive_docs/2026-07-15/2026-07-15_wavpack_codec_plan.md).
   M6 landed 2026-07-18: `project_store` media is now `.wv` via
