@@ -9,18 +9,15 @@ fn supplied_stereo_fixtures_preserve_two_distinct_channels() {
     for name in ["stereo.mp3", "stereo.m4a"] {
         let (mut decoder, _) = open_local(&fixture(name)).unwrap();
         let mut distinct = false;
-        while let Ok(packet) = decoder.format.next_packet() {
-            if packet.track_id() != decoder.track_id {
+        while let Ok(Some(packet)) = decoder.format.next_packet() {
+            if packet.track_id != decoder.track_id {
                 continue;
             }
             let decoded = decoder.decoder.decode(&packet).unwrap();
-            let spec = *decoded.spec();
-            assert_eq!(spec.channels.count(), 2);
-            let mut samples =
-                symphonia::core::audio::SampleBuffer::<f32>::new(decoded.capacity() as u64, spec);
-            samples.copy_interleaved_ref(decoded);
+            assert_eq!(decoded.spec().channels().count(), 2);
+            let mut samples: Vec<f32> = Vec::new();
+            decoded.copy_to_vec_interleaved::<f32>(&mut samples);
             distinct |= samples
-                .samples()
                 .as_chunks::<2>()
                 .0
                 .iter()
@@ -67,8 +64,8 @@ fn supplied_http_fixture_decodes_progressively() {
     assert_eq!(receipt.requested_url.as_deref(), Some(url.as_str()));
     assert!(receipt.byte_length.is_some());
     loop {
-        let packet = decoder.format.next_packet().unwrap();
-        if packet.track_id() != decoder.track_id {
+        let packet = decoder.format.next_packet().unwrap().unwrap();
+        if packet.track_id != decoder.track_id {
             continue;
         }
         let decoded = decoder.decoder.decode(&packet).unwrap();

@@ -22,13 +22,11 @@ use firewheel::{
 use redshank_model::RepresentationReceipt;
 use servo_media_player::controller::PlaybackRateRange;
 use symphonia::core::{
-    audio::SampleBuffer,
-    codecs::DecoderOptions,
+    codecs::audio::AudioDecoderOptions,
     errors::Error as SymphoniaError,
-    formats::{FormatOptions, SeekMode, SeekTo},
+    formats::{FormatOptions, SeekMode, SeekTo, TrackType, probe::Hint},
     io::{MediaSource, MediaSourceStream},
     meta::MetadataOptions,
-    probe::Hint,
     units::Time,
 };
 
@@ -225,9 +223,9 @@ impl Sink {
 
 pub(super) struct Decoder {
     pub(crate) format: Box<dyn symphonia::core::formats::FormatReader>,
-    pub(crate) decoder: Box<dyn symphonia::core::codecs::Decoder>,
+    pub(crate) decoder: Box<dyn symphonia::core::codecs::audio::AudioDecoder>,
     pub(crate) track_id: u32,
-    sample_buffer: Option<SampleBuffer<f32>>,
+    sample_buffer: Vec<f32>,
     pub(super) rate: u32,
     pub(super) channels: Option<u32>,
     time_base: symphonia::core::units::TimeBase,
@@ -313,40 +311,43 @@ fn open_decoder(source: Box<dyn MediaSource>, hint_source: &str) -> Result<Decod
     }
     let stream = MediaSourceStream::new(source, Default::default());
     let probed = symphonia::default::get_probe()
-        .format(
+        .probe(
             &hint,
             stream,
-            &FormatOptions::default(),
-            &MetadataOptions::default(),
+            FormatOptions::default(),
+            MetadataOptions::default(),
         )
         .context("unsupported or invalid audio")?;
     let track = probed
-        .format
-        .default_track()
+        .default_track(TrackType::Audio)
         .context("audio file has no default audio track")?;
-    let rate = track
+    let params = track
         .codec_params
+        .as_ref()
+        .and_then(|params| params.audio())
+        .context("audio file has no default audio track")?;
+    let rate = params
         .sample_rate
         .context("audio track has no sample rate")?;
-    let time_base = track
-        .codec_params
-        .time_base
-        .context("audio track has no time base")?;
-    let duration_ms = track.codec_params.n_frames.map(|frames| {
-        let time = time_base.calc_time(frames);
-        time.seconds * 1000 + (time.frac * 1000.0) as u64
-    });
-    let channels = track
-        .codec_params
-        .channels
-        .map(|layout| layout.count() as u32);
+    let time_base = track.time_base.context("audio track has no time base")?;
+    let duration_ms = track
+        .duration
+        .and_then(|duration| time_base.calc_duration(duration))
+        .and_then(|time| u64::try_from(time.as_millis()).ok())
+        .or_else(|| {
+            let frames = track.num_frames?;
+            u64::try_from(u128::from(frames) * 1000 / u128::from(rate)).ok()
+        });
+    let channels = params.channels.as_ref().map(|layout| layout.count() as u32);
     Ok(Decoder {
+        // 0.5 defaulted to no gapless trimming; keep decoded frames and
+        // timestamps exactly as the container reports them.
         decoder: symphonia::default::get_codecs()
-            .make(&track.codec_params, &DecoderOptions::default())
+            .make_audio_decoder(params, &AudioDecoderOptions::default().gapless(false))
             .context("could not create audio decoder")?,
         track_id: track.id,
-        format: probed.format,
-        sample_buffer: None,
+        format: probed,
+        sample_buffer: Vec::new(),
         rate,
         channels,
         time_base,
@@ -551,8 +552,8 @@ impl Backend {
         // just before it (e.g. 5123 ms at 44.1 kHz). Admit the first track tick
         // at or after the request, using integer arithmetic at that boundary.
         let requested_ts = u64::try_from(
-            (position.as_nanos() * u128::from(decoder.time_base.denom))
-                .div_ceil(u128::from(decoder.time_base.numer) * 1_000_000_000),
+            (position.as_nanos() * u128::from(decoder.time_base.denom.get()))
+                .div_ceil(u128::from(decoder.time_base.numer.get()) * 1_000_000_000),
         )
         .map_err(|_| "seek position exceeds the track timestamp range")?;
         let seeked = decoder
@@ -560,18 +561,21 @@ impl Backend {
             .seek(
                 SeekMode::Accurate,
                 SeekTo::Time {
-                    time: Time::from(position.as_secs_f64()),
+                    time: Time::try_from_secs_f64(position.as_secs_f64())
+                        .ok_or("seek position exceeds the representable time range")?,
                     track_id: Some(decoder.track_id),
                 },
             )
             .map_err(|error| format!("seek unavailable: {error}"))?;
         decoder.decoder.reset();
-        let required_ts = seeked.required_ts.max(requested_ts);
+        let required_ts = u64::try_from(seeked.required_ts.get().max(0))
+            .unwrap_or(0)
+            .max(requested_ts);
         decoder.discard_before_ts = Some(required_ts);
         // Use track time, not the earlier demux packet boundary. Integer
         // conversion also avoids rounding an exact millisecond down in f64.
-        self.base_ms = (u128::from(required_ts) * u128::from(decoder.time_base.numer) * 1000
-            / u128::from(decoder.time_base.denom)) as u64;
+        self.base_ms = (u128::from(required_ts) * u128::from(decoder.time_base.numer.get()) * 1000
+            / u128::from(decoder.time_base.denom.get())) as u64;
         // Both clocks re-anchor at the seek point: the sink is new, so the
         // stretcher restarts rather than carrying the old stream's frames.
         self.discard_retiming();
@@ -933,17 +937,19 @@ pub(super) enum Decoded {
 pub(super) fn decode_packet(decoder: &mut Decoder) -> Result<Decoded, String> {
     loop {
         match decoder.format.next_packet() {
-            Ok(packet) if packet.track_id() == decoder.track_id => {
+            Ok(Some(packet)) if packet.track_id == decoder.track_id => {
                 match decoder.decoder.decode(&packet) {
                     Ok(decoded) => {
-                        let spec = *decoded.spec();
-                        if spec.rate != decoder.rate {
+                        let (rate, channels) = (
+                            decoded.spec().rate(),
+                            decoded.spec().channels().count() as u32,
+                        );
+                        if rate != decoder.rate {
                             return Err(format!(
                                 "decoded sample rate changed from {} to {}",
-                                decoder.rate, spec.rate
+                                decoder.rate, rate
                             ));
                         }
-                        let channels = spec.channels.count() as u32;
                         if let Some(expected) = decoder.channels
                             && expected != channels
                         {
@@ -952,20 +958,21 @@ pub(super) fn decode_packet(decoder: &mut Decoder) -> Result<Decoded, String> {
                             ));
                         }
                         decoder.channels = Some(channels);
-                        let buffer = decoder.sample_buffer.get_or_insert_with(|| {
-                            SampleBuffer::new(decoded.capacity() as u64, spec)
-                        });
-                        buffer.copy_interleaved_ref(decoded);
-                        let samples = buffer.samples();
+                        decoded.copy_to_vec_interleaved::<f32>(&mut decoder.sample_buffer);
+                        let samples = &decoder.sample_buffer;
                         let frames = samples.len() / channels as usize;
                         let discard = decoder.discard_before_ts.map_or(0, |required| {
                             // Packet timestamps use the track time base, which need
                             // not be 1/sample_rate. Round up so no earlier frame is
                             // emitted, and trim whole interleaved channel frames.
-                            (u128::from(required.saturating_sub(packet.ts()))
-                                * u128::from(decoder.time_base.numer)
-                                * u128::from(spec.rate))
-                            .div_ceil(u128::from(decoder.time_base.denom))
+                            // With gapless off the buffer also holds the
+                            // trim_start frames that precede the packet pts.
+                            let start =
+                                packet.pts.saturating_sub(packet.trim_start).get().max(0) as u64;
+                            (u128::from(required.saturating_sub(start))
+                                * u128::from(decoder.time_base.numer.get())
+                                * u128::from(rate))
+                            .div_ceil(u128::from(decoder.time_base.denom.get()))
                             .min(frames as u128) as usize
                         });
                         if discard == frames && decoder.discard_before_ts.is_some() {
@@ -982,7 +989,8 @@ pub(super) fn decode_packet(decoder: &mut Decoder) -> Result<Decoded, String> {
                     Err(error) => return Err(format!("decode failed: {error}")),
                 }
             },
-            Ok(_) => return Ok(Decoded::Skipped),
+            Ok(Some(_)) => return Ok(Decoded::Skipped),
+            Ok(None) => return Ok(Decoded::EndOfFile),
             Err(SymphoniaError::IoError(error))
                 if error.kind() == std::io::ErrorKind::UnexpectedEof =>
             {
@@ -1177,6 +1185,31 @@ mod seek_tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn opened_wav_reports_rate_channels_and_duration() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("duration.wav");
+        let mut writer = hound::WavWriter::create(
+            &path,
+            hound::WavSpec {
+                channels: 2,
+                sample_rate: 44_100,
+                bits_per_sample: 16,
+                sample_format: hound::SampleFormat::Int,
+            },
+        )
+        .unwrap();
+        for _ in 0..44_100 * 3 {
+            writer.write_sample(0_i16).unwrap();
+            writer.write_sample(0_i16).unwrap();
+        }
+        writer.finalize().unwrap();
+        let (decoder, _) = open_local(&path).unwrap();
+        assert_eq!(decoder.rate, 44_100);
+        assert_eq!(decoder.channels, Some(2));
+        assert_eq!(decoder.duration_ms, Some(3_000));
     }
 }
 

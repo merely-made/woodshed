@@ -421,11 +421,11 @@ fn captured_pcm_wav_is_decodable() {
     writer.finalize().unwrap();
 
     let (mut decoder, receipt) = open_local(&path).unwrap();
-    let packet = decoder.format.next_packet().unwrap();
+    let packet = decoder.format.next_packet().unwrap().unwrap();
     let decoded = decoder.decoder.decode(&packet).unwrap();
     assert!(decoded.frames() > 0);
-    assert_eq!(decoded.spec().channels.count(), 1);
-    assert_eq!(decoded.spec().rate, 48_000);
+    assert_eq!(decoded.spec().channels().count(), 1);
+    assert_eq!(decoded.spec().rate(), 48_000);
     assert_eq!(receipt.byte_length, Some(9_644));
 }
 

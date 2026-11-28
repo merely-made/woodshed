@@ -2,10 +2,10 @@
 use std::{fs::File, io::Cursor, path::Path};
 
 use symphonia::core::{
-    audio::SampleBuffer,
-    formats::{SeekMode, SeekTo},
+    codecs::audio::AudioDecoderOptions,
+    formats::{SeekMode, SeekTo, TrackType, probe::Hint},
     io::MediaSourceStream,
-    probe::Hint,
+    units::Timestamp,
 };
 
 pub(crate) fn extract(path: &Path, start_ms: u64, end_ms: u64) -> Result<Vec<u8>, String> {
@@ -21,17 +21,24 @@ fn extract_region(
     let stream = MediaSourceStream::new(Box::new(file), Default::default());
     let mut hint = Hint::new();
     hint.with_extension("wav");
-    let mut format = symphonia::default::get_probe()
-        .format(&hint, stream, &Default::default(), &Default::default())?
-        .format;
-    let track = format.default_track().ok_or("missing audio track")?;
-    let rate = track
+    let mut format = symphonia::default::get_probe().probe(
+        &hint,
+        stream,
+        Default::default(),
+        Default::default(),
+    )?;
+    let track = format
+        .default_track(TrackType::Audio)
+        .ok_or("missing audio track")?;
+    let params = track
         .codec_params
-        .sample_rate
-        .ok_or("missing sample rate")?;
-    let channels = track
-        .codec_params
+        .as_ref()
+        .and_then(|p| p.audio())
+        .ok_or("missing audio track")?;
+    let rate = params.sample_rate.ok_or("missing sample rate")?;
+    let channels = params
         .channels
+        .as_ref()
         .ok_or("missing channel layout")?
         .count();
     if !(1_000..=384_000).contains(&rate) || channels == 0 {
@@ -44,7 +51,7 @@ fn extract_region(
     };
     let first = frame(start_ms)?;
     let mut end = frame(end_ms)?;
-    if let Some(length) = track.codec_params.n_frames {
+    if let Some(length) = track.num_frames {
         // A duration reported in milliseconds can round the final partial ms up.
         if end > length && end_ms == (length * 1000).div_ceil(u64::from(rate)) {
             end = length;
@@ -75,35 +82,35 @@ fn extract_region(
         },
     )?;
     let id = track.id;
-    let mut decoder =
-        symphonia::default::get_codecs().make(&track.codec_params, &Default::default())?;
+    let mut decoder = symphonia::default::get_codecs()
+        .make_audio_decoder(params, &AudioDecoderOptions::default().gapless(false))?;
     if first != 0 {
         format.seek(
             SeekMode::Accurate,
-            SeekTo::TimeStamp {
-                ts: first,
+            SeekTo::Timestamp {
+                ts: Timestamp::new(i64::try_from(first)?),
                 track_id: id,
             },
         )?;
     }
     let mut next = first;
+    let mut converted: Vec<f32> = Vec::new();
     while next < end {
-        let packet = format.next_packet()?;
-        if packet.track_id() != id {
+        let packet = format
+            .next_packet()?
+            .ok_or("the recording ends before the out mark")?;
+        if packet.track_id != id {
             continue;
         }
         let audio = decoder.decode(&packet)?;
-        if audio.spec().channels.count() != channels
-            || audio.spec().rate != rate
-            || packet.ts() > next
+        let pts = u64::try_from(packet.pts.get()).map_err(|_| "negative packet position")?;
+        if audio.spec().channels().count() != channels || audio.spec().rate() != rate || pts > next
         {
             return Err("discontinuous or changing WAV format".into());
         }
-        let mut converted = SampleBuffer::<f32>::new(audio.capacity() as u64, *audio.spec());
-        converted.copy_interleaved_ref(audio);
-        let skip = usize::try_from(next - packet.ts())?;
+        audio.copy_to_vec_interleaved::<f32>(&mut converted);
+        let skip = usize::try_from(next - pts)?;
         for samples in converted
-            .samples()
             .chunks_exact(channels)
             .skip(skip)
             .take((end - next) as usize)
@@ -159,5 +166,42 @@ mod tests {
         assert_eq!(selected[88], (484 * 127) as f32 / 8_388_608.0);
         assert!(extract(&path, 50, 101).is_err());
         assert!(extract(&path, 50, 49).is_err());
+    }
+
+    #[test]
+    fn stereo_extract_keeps_interleaving_and_seeks_to_the_requested_frame() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("stereo.wav");
+        let spec = hound::WavSpec {
+            channels: 2,
+            sample_rate: 8000,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut output = hound::WavWriter::create(&path, spec).unwrap();
+        for frame in 0..8000i16 {
+            output.write_sample(frame).unwrap();
+            output.write_sample(-frame).unwrap();
+        }
+        output.finalize().unwrap();
+        // 0..250 ms from the start: 2000 frames, no seek.
+        let head = extract(&path, 0, 250).unwrap();
+        let mut reader = hound::WavReader::new(Cursor::new(head)).unwrap();
+        assert_eq!(reader.spec().channels, 2);
+        let head: Vec<f32> = reader.samples::<f32>().map(Result::unwrap).collect();
+        assert_eq!(head.len(), 2000 * 2);
+        assert_eq!(head[2], 1.0 / 32768.0);
+        assert_eq!(head[3], -1.0 / 32768.0);
+        // 500..501 ms seeks to frame 4000 and keeps 8 frames, L/R interleaved.
+        let tail = extract(&path, 500, 501).unwrap();
+        let mut reader = hound::WavReader::new(Cursor::new(tail)).unwrap();
+        let tail: Vec<f32> = reader.samples::<f32>().map(Result::unwrap).collect();
+        assert_eq!(tail.len(), 8 * 2);
+        assert_eq!(tail[0], 4000.0 / 32768.0);
+        assert_eq!(tail[1], -4000.0 / 32768.0);
+        assert_eq!(tail[14], 4007.0 / 32768.0);
+        // The recording's last frame is readable and one more is refused.
+        assert!(extract(&path, 999, 1000).is_ok());
+        assert!(extract(&path, 999, 1001).is_err());
     }
 }

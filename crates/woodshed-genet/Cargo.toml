@@ -10,7 +10,7 @@ description = "Woodshed's desktop application over the shared Cambium desktop ho
 
 [dependencies]
 hound.workspace = true
-symphonia = { version = "0.5.5", default-features = false, features = ["wav", "pcm", "adpcm", "mp3"] }
+symphonia = { version = "0.6", default-features = false, features = ["wav", "pcm", "adpcm", "mp3"] }
 audio-packs.workspace = true
 audio-pack-views.workspace = true
 audio-pattern.workspace = true
