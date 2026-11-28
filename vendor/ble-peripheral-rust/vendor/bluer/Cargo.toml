@@ -237,7 +237,7 @@ features = ["derive"]
 optional = true
 
 [dependencies.strum]
-version = "0.26"
+version = "0.28"
 features = ["derive"]
 
 [dependencies.tokio]

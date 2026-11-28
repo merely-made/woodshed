@@ -38,8 +38,6 @@ skip = [
   { crate = "redox_syscall@0.5.18", reason = "parking_lot_core 0.9.12 requires it; parking_lot_core 0.9.12 (latest) holds it; goes when parking_lot_core moves on" },
   { crate = "serde_spanned@0.6.9", reason = "toml 0.8.23, toml_edit 0.22.27 require it; toml 0.8 and toml_edit 0.22 (system-deps under gtk-sys) hold it; goes with system-deps 7" },
   { crate = "spin@0.9.9", reason = "heapless 0.7.17 requires it; heapless 0.7 under postcard holds it; goes when postcard moves to heapless 0.8+" },
-  { crate = "strum@0.26.3", reason = "bluer 0.17.4 requires it; the vendored bluer 0.17.4 (latest, Linux BLE) holds it; goes with a bluer on strum 0.28, or a bump in vendor/ checked on Linux" },
-  { crate = "strum_macros@0.26.4", reason = "strum 0.26.3 requires it; strum 0.26 in the vendored bluer holds it; goes with strum 0.28" },
   { crate = "syn@2.0.119", reason = "bevy_macro_utils 0.19.1, curve25519-dalek-derive 0.1.1, custom_debug_derive 0.6.2, darling_core 0.20.11 and others require it; most proc-macros still on syn 2; goes as they move to syn 3" },
   { crate = "synstructure@0.13.2", reason = "custom_debug_derive 0.6.2 requires it; custom_debug_derive 0.6.2 in the vendored bluer holds it; goes when custom_debug moves to synstructure 0.14" },
   { crate = "thiserror@1.0.69", reason = "fitting 0.3.0, jni 0.21.1, ndk 0.9.0 require it; fitting 0.3 (pitch-detector), jni 0.21 and ndk 0.9 (midir) hold it; goes as each moves to thiserror 2" },
